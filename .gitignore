@@ -8,3 +8,5 @@
 config/ranger/**/__init__.py
 # ignore netrw history file
 config/nvim/.netrwhist
+# ignore weechat logs
+weechat/logs

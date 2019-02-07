@@ -9,7 +9,7 @@
     * [awesome-revelation](https://github.com/guotsuan/awesome-revelation): Show all clients all screens in Awesome window manager 
     * [awesome-freedesktop](https://github.com/lcpz/awesome-freedesktop): Freedesktop.org menu and desktop icons support for Awesome WM
 * [kitty](https://github.com/kovidgoyal/kitty): A cross-platform, fast, feature full, GPU based terminal emulator 
-* [MPD](https://github.com/MusicPlayerDaemon/MPD): Music Player Daemon
+* [mpd](https://github.com/MusicPlayerDaemon/MPD): Music Player Daemon
 * [ncmpcpp](https://github.com/arybczak/ncmpcpp): Featureful ncurses based MPD client inspired by ncmpc
 * [nvim](https://github.com/neovim/neovim): Vim-fork focused on extensibility and usability
     * [vim-plug](https://github.com/junegunn/vim-plug): Minimalist Vim Plugin Manager 
@@ -36,3 +36,4 @@
     * [grml-zsh](https://github.com/grml/grml-etc-core/tree/master/usr_share_grml/zsh): default zsh config of the grml system
     * [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting): Fish shell like syntax highlighting for Zsh.
     * [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions): Fish-like autosuggestions for zsh
+* [weechat](https://github.com/weechat/weechat): The extensible chat client. 
