@@ -1,0 +1,92 @@
+conky.config = {
+	background = true,
+	use_xft = true,
+	font = 'Ubuntu:size=10',
+	xftalpha = 1,
+	update_interval = 3,
+	total_run_times = 0,
+	own_window = true,
+	own_window_type = 'override',
+	own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+	own_window_transparent = true,
+	double_buffer = true,
+	minimum_width = 220,
+	maximum_width = 226,
+	draw_shades = false,
+	draw_borders = false,
+	draw_graph_borders = true,
+	default_color = '#ebdbb2',
+	default_shade_color = '#1d2021',
+	default_outline_color = '#1d2021',
+	alignment = 'middle_right',
+	no_buffers = true,
+	uppercase = false,
+	cpu_avg_samples = 3,
+	override_utf8_locale = true,
+	own_window_argb_visual = true,
+	own_window_colour = '#000000',
+	gap_y = 12,
+	gap_x = 12,
+	border_inner_margin = 6,
+	border_outer_margin = 6,
+	use_spacer = 'right',
+	color1 = '#cc241d',
+	color2 = '#b8bb26',
+	color3 = '#fe8019',
+	color4 = '#fb4934',
+};
+
+conky.text = [[
+$color1${font ubuntu:size=14}System $font${hr 1}$color
+${voffset 2}#
+${voffset 2}#
+Uptime: $alignr$uptime
+Temp: $alignr#
+${if_match $acpitemp>=60}$color3$endif#
+${if_match $acpitemp>=75}$color4$endif#
+${acpitemp}$color°C
+CPU: $alignr$freq MHz
+Processes: $alignr$processes ($running_processes running)
+Disk IO: $alignr$diskio
+${voffset 5}#
+$color1${offset 12}${cpubar cpu1 20,100}$alignc${offset 5}${cpubar cpu2 20,100}#
+$color${goto 30}${voffset 8}CPU 1${offset 15}${cpu cpu1}%${goto 135}CPU 2${offset 15}${cpu cpu2}%$color
+${voffset -15}#
+$color1${offset 12}${cpubar cpu3 20,100}$alignc${offset 5}${cpubar cpu4 20,100}#
+$color${goto 30}${voffset 8}CPU 3${offset 15}${cpu cpu3}%${goto 135}CPU 4${offset 15}${cpu cpu4}%$color
+${voffset -15}#
+$color1${offset 12}${cpubar cpu5 20,100}$alignc${offset 5}${cpubar cpu6 20,100}#
+$color${goto 30}${voffset 8}CPU 5${offset 15}${cpu cpu5}%${goto 135}CPU 6${offset 15}${cpu cpu6}%$color
+${voffset -15}#
+$color1${offset 12}${cpubar cpu7 20,100}$alignc${offset 5}${cpubar cpu8 20,100}#
+$color${goto 30}${voffset 8}CPU 7${offset 15}${cpu cpu7}%${goto 135}CPU 8${offset 15}${cpu cpu8}%$color
+${voffset -10}#
+RAM ${alignr}$mem / $memmax ($memperc%)
+${alignc}${memgraph 40,220  -t}
+$color1${font ubuntu:size=14}Activity $font ${hr 1}$color
+${voffset 2}#
+${font ubuntu:size=10:bold}Top CPU$font ${goto 135}${font ubuntu:size=9:italic}CPU%${goto 185}MEM%$font
+${top name 1}${goto 130}${top cpu 1}${goto 180}${top mem 1}
+${top name 2}${goto 130}${top cpu 2}${goto 180}${top mem 2}
+${top name 3}${goto 130}${top cpu 3}${goto 180}${top mem 3}
+${voffset 4}#
+${font ubuntu:size=10:bold}Top RAM$font${goto 135}${font ubuntu:size=9:italic}CPU%${goto 185}MEM%$font
+${top_mem name 1}${goto 130}${top_mem cpu 1}${goto 180}${top_mem mem 1}
+${top_mem name 2}${goto 130}${top_mem cpu 2}${goto 180}${top_mem mem 2}
+${top_mem name 3}${goto 130}${top_mem cpu 3}${goto 180}${top_mem mem 3}
+${voffset 2}#
+$color1${font ubuntu:size=14}Filesystem $font ${hr 1}$color
+${voffset 2}#
+Root: ${alignr}${fs_free /} / ${fs_size /}
+${fs_bar 4 /}
+${voffset 2}#
+$color1${font ubuntu:size=14}Network  $font ${hr 1}$color
+${voffset 2}#
+${if_existing /sys/class/net/enp3s0/operstate up}Up: ${upspeed enp3s0}${alignr}Down: ${downspeed enp3s0}${else}Up: ${upspeed wlp5s0}${alignr}Down: ${downspeed wlp5s0}${endif}
+${if_existing /sys/class/net/enp3s0/operstate up}${upspeedgraph enp3s0 20,100}${alignr}${downspeedgraph enp3s0 20,100}${else}${upspeedgraph wlp5s0 20,100}${alignr}${downspeedgraph wlp5s0 20,100}${endif}
+${if_existing /sys/class/net/enp3s0/operstate up}Total ${totalup enp3s0} ${alignr}Total ${totaldown enp3s0}${else}Total ${totalup wlp5s0} ${alignr}Total ${totaldown wlp5s0}${endif}
+${hr}
+${font SauceCodePro Nerd Font}${font} ${alignr}${if_existing /sys/class/net/enp3s0/operstate up}${addrs enp3s0}${else}${addrs wlp5s0}${endif}
+${hr}
+${font SauceCodePro Nerd Font}${font} ${alignr}${exec curl ipinfo.io/ip}
+]];

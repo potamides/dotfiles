@@ -1,0 +1,25 @@
+# if not in vim or ranger show greeter
+if [[ -z $VIM ]] && [[ -z $RANGER_LEVEL ]]; then
+    fortune computers linux linuxcookie debian -as | cowsay | lolcat
+fi
+
+# Syntax highlighting
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+autoload -Uz compinit
+compinit
+
+# Auto suggestions
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# Completion for kitty
+kitty + complete setup zsh | source /dev/stdin
+
+# cat small files and less long files; also works on images
+function inspect(){
+    if identify $1 &> /dev/null; then
+        kitty +kitten icat $1
+    else 
+        highlight --stdout --force --out-format=ansi $1 | less -FR
+    fi
+}
+alias ins=inspect

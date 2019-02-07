@@ -1,0 +1,12 @@
+[Unit]
+Description=Lock X session
+Before=sleep.target
+
+[Service]
+User=%I
+ExecStart=/usr/bin/physlock -s
+Restart=on-failure
+
+[Install]
+WantedBy=sleep.target
+
