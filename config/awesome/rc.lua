@@ -12,12 +12,13 @@ local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
 -- other stuff
 local freedesktop = require("freedesktop")
-local wibarutil = require("wibarutil")
-beautiful.init(awful.util.getdir("config") .. "/themes/gruvbox/theme.lua")
+beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua")
 -- import this stuff after theme initialisation for proper colors
+local wibarutil = require("wibarutil")
+local mpd = require("mpd")
 local battery = require("battery")
 local volume = require("volume")
-local revelation =require("revelation")
+local revelation = require("revelation")
 
 revelation.init()
 awful.util.shell="/usr/bin/zsh"
@@ -239,6 +240,7 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Left widgets
             wibarutil.rectangle(mylauncher, beautiful.gruv_lightblue),
             s.mytaglist,
+            mpd.widget,
             layout = wibox.layout.fixed.horizontal,
         },
         { -- Middle widgets
@@ -251,7 +253,7 @@ awful.screen.connect_for_each_screen(function(s)
             systray,
         {
             -- Audio Volume
-            wibarutil.separator(beautiful.bg_normal,beautiful.gruv_fg4),
+            wibarutil.separator(beautiful.bg_normal,beautiful.gruv_fg4, true),
             wibarutil.rectangle(volume.text, beautiful.gruv_fg4),
             wibarutil.separator(beautiful.gruv_fg4, beautiful.gruv_bg1),
             wibarutil.rectangle(volume.img, beautiful.gruv_bg1),
@@ -685,34 +687,35 @@ end
 
 -- Update Titlbar Buttons in Wibar on focus / unfocus
 --------------------------------------------------------------------------------
-local width = 0
+local should_remove = true
 local function buttons_remove(c)
     local s = awful.screen.focused()
+    should_remove = true
 
-    -- find container widget in wibar
-    local wibar_width = s.mywibox:geometry().width
-    local widgets = s.mywibox:find_widgets(wibar_width-1, 1)
-    local widget = widgets[#widgets-1]
-
-    -- delay the resizing for smoother transmission
-    if widget and widget.width > width then
-        width = widget.width
-    end
-    s.titlebar_buttons.forced_width=width
-    s.titlebar_buttons:remove_widgets_at(1,1,1,3)
-    awful.spawn.easy_async("sleep 0.05", function ()
-            s.titlebar_buttons.forced_width=nil
+    -- delay the resizing for smoother transition
+    gears.timer.weak_start_new(0.05,
+        function ()
+            if should_remove then
+                s.titlebar_buttons.visible = false
+            end
          end)
 end
 
 local function buttons_insert(c)
-    buttons_remove(c)
     local s = awful.screen.focused()
-    s.titlebar_buttons:add_widget_at(awful.titlebar.widget.ontopbutton(c), 1, 1)
-    s.titlebar_buttons:add_widget_at(awful.titlebar.widget.maximizedbutton(c), 1, 2)
-    s.titlebar_buttons:add_widget_at(awful.titlebar.widget.stickybutton(c), 1, 3)
-    --awful.titlebar.widget.closebutton(c)
-    --s.titlebar_buttons:add(awful.titlebar.widget.floatingbutton(c))
+    local buttons = s.titlebar_buttons:get_widgets_at(1, 1, 1, 3)
+    should_remove = false
+    s.titlebar_buttons.visible = true
+
+    if buttons then
+        s.titlebar_buttons:replace_widget(buttons[1], awful.titlebar.widget.ontopbutton(c))
+        s.titlebar_buttons:replace_widget(buttons[2], awful.titlebar.widget.maximizedbutton(c))
+        s.titlebar_buttons:replace_widget(buttons[3], awful.titlebar.widget.stickybutton(c))
+    else
+        s.titlebar_buttons:add_widget_at(awful.titlebar.widget.ontopbutton(c), 1, 1)
+        s.titlebar_buttons:add_widget_at(awful.titlebar.widget.maximizedbutton(c), 1, 2)
+        s.titlebar_buttons:add_widget_at(awful.titlebar.widget.stickybutton(c), 1, 3)
+    end
 end
 
 client.connect_signal("focus", border_adjust)
@@ -720,7 +723,6 @@ client.connect_signal("focus", buttons_insert)
 client.connect_signal("property::maximized", border_adjust)
 client.connect_signal("unfocus", border_unadjust)
 client.connect_signal("unfocus", buttons_remove)
-
 
 -- turn titlebar on when client is floating
 -------------------------------------------------------------------------------
@@ -731,7 +733,6 @@ client.connect_signal("property::floating", function (c)
         awful.titlebar.hide(c)
     end
 end)
-
 
 -- turn tilebars on when layout is floating
 -------------------------------------------------------------------------------

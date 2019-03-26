@@ -9,54 +9,46 @@ local wibox = require("wibox")
 local separator = function(left_color, right_color, draw_space, reverse)
     local margin
     if draw_space then
-        margin = -9
+        margin = -8
     else
-        margin = -15
+        margin = -14
     end
 
     local left_shape
     local right_shape
     if reverse then
         left_shape = function(cr, width, height)
-            -- cr:set_source(gears.color(left_color))
             cr:move_to(0, 0)
             cr:line_to(width, height)
             cr:line_to(0, height)
             cr:line_to(0, 0)
             cr:line_to(0, 0)
             cr:close_path()
-            --cr:fill()
         end
         right_shape = function(cr, width, height)
-            -- cr:set_source(gears.color(right_color))
             cr:move_to(width, height)
             cr:move_to(width, height)
             cr:line_to(0, 0)
             cr:line_to(width, 0)
             cr:line_to(width, height)
             cr:close_path()
-            -- cr:fill()
         end
     else
         left_shape = function(cr, width, height)
-            -- cr:set_source(gears.color(left_color))
             cr:move_to(0, height)
             cr:line_to(width, 0)
             cr:line_to(0, 0)
             cr:line_to(0, height)
             cr:line_to(0, height)
             cr:close_path()
-            --cr:fill()
         end
         right_shape = function(cr, width, height)
-            -- cr:set_source(gears.color(right_color))
             cr:move_to(0, height)
             cr:line_to(width, 0)
             cr:line_to(width, 0)
             cr:line_to(width, height)
             cr:line_to(0, height)
             cr:close_path()
-            -- cr:fill()
         end
     end
 
@@ -68,7 +60,7 @@ local separator = function(left_color, right_color, draw_space, reverse)
                 shape              = left_shape,
                 bg                 = left_color,
                 shape_border_color = beautiful.border_color,
-                forced_width       = 15,
+                forced_width       = 13,
                 widget             = wibox.container.background
             },
             wibox.widget {{
@@ -77,7 +69,7 @@ local separator = function(left_color, right_color, draw_space, reverse)
                 shape              = right_shape,
                 bg                 = right_color,
                 shape_border_color = beautiful.border_color,
-                forced_width       = 15,
+                forced_width       = 13,
                 widget             = wibox.container.background
             },
             spacing = margin,
@@ -94,8 +86,8 @@ local function rectangle(widget, color, lmargin, rmargin)
 return wibox.widget {
         {
                 widget,
-            left   = lmargin,
-            right  = rmargin,
+            left   = lmargin or 2,
+            right  = rmargin or 2,
             top    = 0,
             bottom = 0,
             widget = wibox.container.margin
@@ -108,6 +100,7 @@ end
 
 -- custom list_update function, adds a seperator after each tag to make them
 -- look like parallelograms
+local last_separator
 local function list_update(left_color)
     return function(w, buttons, label, data, objects)
         local previous_color = left_color
@@ -198,12 +191,19 @@ local function list_update(left_color)
             left_sep:set_bg(previous_color)
             w:add(end_sep)
         else
-            data.end_sep = separator(previous_color, beautiful.bg_normal, true, true)
-            w:add(data.end_sep)
+            end_sep = separator(previous_color, beautiful.bg_normal, true, true)
+            w:add(end_sep)
+            data.end_sep = end_sep
         end
+        last_separator = end_sep:get_widgets_at(1,2)[1]
     end
 end
 
-local auxiliary = {separator = separator, rectangle = rectangle, list_update = list_update}
+local function set_last_separator_color(color)
+    last_separator:set_bg(gears.color(color))
+end
 
-return auxiliary
+local wibarutil = {separator = separator, rectangle = rectangle, list_update = list_update,
+                   set_last_separator_color = set_last_separator_color}
+
+return wibarutil
