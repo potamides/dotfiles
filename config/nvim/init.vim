@@ -19,9 +19,7 @@ set hidden
 
 " Uncomment the following to have Vim jump to the last position when
 " reopening a file
-if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-endif
 
 " To use C+{h,j,k,l}` to navigate windows from any mode:
 tnoremap <silent> <C-h> <C-\><C-N><C-w>h
@@ -60,7 +58,9 @@ set smarttab
 
 " Highlight 80th line
 set colorcolumn=80,120
-"set textwidth=79
+
+" Insert line break at column 80
+au BufReadPost,BufNewFile *.md,*.txt,*.tex setlocal textwidth=79
 
 " highlight current line
 " set cursorline 
@@ -84,6 +84,7 @@ Plug 'maximbaz/lightline-ale'
 Plug 'mgee/lightline-bufferline'
 Plug 'lervag/vimtex'
 Plug 'ryanoasis/vim-devicons'
+Plug 'unblevable/quick-scope'
 call plug#end()
 
 " ------------------------------------------------
@@ -107,6 +108,18 @@ autocmd TermOpen term://* set nonumber
 " Disable relative numbers for buffers with matching filetypes
 autocmd FileType defx,qf set norelativenumber
 autocmd TermOpen term://* set norelativenumber
+
+
+" ------------------------------------------------
+"               QUICK-SCOPE
+" ------------------------------------------------
+
+" use gruvbox bg colors to distinguish marked characters
+augroup qs_colors
+  autocmd!
+  autocmd ColorScheme * highlight QuickScopePrimary guibg='#504945'
+  autocmd ColorScheme * highlight QuickScopeSecondary guibg='#3c3836'
+augroup END
 
 " ------------------------------------------------
 "               GRUVBOX
@@ -487,7 +500,6 @@ augroup vimtex_config
   au!
   au User VimtexEventQuit call vimtex#compiler#clean(0)
 augroup END
-
 
 " ------------------------------------------------
 "               MISC
