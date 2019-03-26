@@ -12,7 +12,7 @@ local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
 -- other stuff
 local freedesktop = require("freedesktop")
-local aux = require("auxiliary")
+local wibarutil = require("wibarutil")
 beautiful.init(awful.util.getdir("config") .. "/themes/gruvbox/theme.lua")
 -- import this stuff after theme initialisation for proper colors
 local battery = require("battery")
@@ -193,7 +193,7 @@ awful.screen.connect_for_each_screen(function(s)
         taglist_buttons,
         nil,
         -- pass custom list_update function for fancy shapes
-        aux.list_update(beautiful.gruv_lightblue)
+        wibarutil.list_update(beautiful.gruv_lightblue)
     )
 
 -- Systray
@@ -237,7 +237,7 @@ awful.screen.connect_for_each_screen(function(s)
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
-            aux.rectangle(mylauncher, beautiful.gruv_lightblue),
+            wibarutil.rectangle(mylauncher, beautiful.gruv_lightblue),
             s.mytaglist,
             layout = wibox.layout.fixed.horizontal,
         },
@@ -251,26 +251,26 @@ awful.screen.connect_for_each_screen(function(s)
             systray,
         {
             -- Audio Volume
-            aux.separator(beautiful.bg_normal,beautiful.gruv_fg4),
-            aux.rectangle(volume.text, beautiful.gruv_fg4),
-            aux.separator(beautiful.gruv_fg4, beautiful.gruv_bg1),
-            aux.rectangle(volume.img, beautiful.gruv_bg1),
+            wibarutil.separator(beautiful.bg_normal,beautiful.gruv_fg4),
+            wibarutil.rectangle(volume.text, beautiful.gruv_fg4),
+            wibarutil.separator(beautiful.gruv_fg4, beautiful.gruv_bg1),
+            wibarutil.rectangle(volume.img, beautiful.gruv_bg1),
 
             -- Battery Indicator
-            aux.separator(beautiful.gruv_bg1,beautiful.gruv_fg4, true),
-            aux.rectangle(battery.text, beautiful.gruv_fg4),
-            aux.separator(beautiful.gruv_fg4, beautiful.gruv_bg1),
-            aux.rectangle(battery.img, beautiful.gruv_bg1),
+            wibarutil.separator(beautiful.gruv_bg1,beautiful.gruv_fg4, true),
+            wibarutil.rectangle(battery.text, beautiful.gruv_fg4),
+            wibarutil.separator(beautiful.gruv_fg4, beautiful.gruv_bg1),
+            wibarutil.rectangle(battery.img, beautiful.gruv_bg1),
 
             -- Clock / Layout
-            aux.separator(beautiful.gruv_bg1, beautiful.gruv_fg4, true),
-            aux.rectangle(mytextclock, beautiful.gruv_fg4),
-            aux.separator(beautiful.gruv_fg4, beautiful.gruv_bg1),
-            aux.rectangle(s.mylayoutbox,beautiful.gruv_bg1),
+            wibarutil.separator(beautiful.gruv_bg1, beautiful.gruv_fg4, true),
+            wibarutil.rectangle(mytextclock, beautiful.gruv_fg4),
+            wibarutil.separator(beautiful.gruv_fg4, beautiful.gruv_bg1),
+            wibarutil.rectangle(s.mylayoutbox,beautiful.gruv_bg1),
 
             -- Global Titlebar Buttons
-            aux.separator(beautiful.gruv_bg1, beautiful.gruv_bg1, true),
-            aux.rectangle(s.titlebar_buttons, beautiful.gruv_bg1),
+            wibarutil.separator(beautiful.gruv_bg1, beautiful.gruv_bg1, true),
+            wibarutil.rectangle(s.titlebar_buttons, beautiful.gruv_bg1),
             layout = wibox.layout.fixed.horizontal,
         }
         },
