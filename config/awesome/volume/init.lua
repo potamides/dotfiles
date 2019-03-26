@@ -24,7 +24,7 @@ local volume_widget = wibox.widget {
         resize = false,
         widget = wibox.widget.imagebox,
     },
-    layout = wibox.container.margin(nil, 0, 2, 4),
+    layout = wibox.container.margin(nil, 0, 0, 4),
     set_image = function(self, path)
         self.icon.image = path
     end

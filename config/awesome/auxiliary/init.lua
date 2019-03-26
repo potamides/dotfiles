@@ -5,60 +5,91 @@ local gears = require("gears")
 local wibox = require("wibox")
 
 
--- a seperator that makes a square look like a parallelogram
+-- a seperator that makes a rectangle look like a parallelogram
 local separator = function(left_color, right_color, draw_space, reverse)
-    local margin = 3
-    local space = -1
+    local margin
     if draw_space then
-        margin = 0
-        space = 6
+        margin = -9
+    else
+        margin = -15
     end
 
-    local separator_shape = function(cr, width, height)
-        if reverse then
-            cr:set_source(gears.color(left_color))
-            cr:move_to(margin, 0)
-            cr:line_to(width-space-margin, height)
+    local left_shape
+    local right_shape
+    if reverse then
+        left_shape = function(cr, width, height)
+            -- cr:set_source(gears.color(left_color))
+            cr:move_to(0, 0)
+            cr:line_to(width, height)
             cr:line_to(0, height)
             cr:line_to(0, 0)
-            cr:line_to(margin, 0)
-            cr:fill()
-            cr:set_source(gears.color(right_color))
+            cr:line_to(0, 0)
+            cr:close_path()
+            --cr:fill()
+        end
+        right_shape = function(cr, width, height)
+            -- cr:set_source(gears.color(right_color))
             cr:move_to(width, height)
-            cr:move_to(width-margin, height)
-            cr:line_to(space+margin, 0)
+            cr:move_to(width, height)
+            cr:line_to(0, 0)
             cr:line_to(width, 0)
             cr:line_to(width, height)
-            cr:fill()
-        else
-            cr:set_source(gears.color(left_color))
-            cr:move_to(margin, height)
-            cr:line_to(width-space-margin, 0)
+            cr:close_path()
+            -- cr:fill()
+        end
+    else
+        left_shape = function(cr, width, height)
+            -- cr:set_source(gears.color(left_color))
+            cr:move_to(0, height)
+            cr:line_to(width, 0)
             cr:line_to(0, 0)
             cr:line_to(0, height)
-            cr:line_to(margin, height)
-            cr:fill()
-            cr:set_source(gears.color(right_color))
-            cr:move_to(space+margin, height)
-            cr:line_to(width-margin, 0)
+            cr:line_to(0, height)
+            cr:close_path()
+            --cr:fill()
+        end
+        right_shape = function(cr, width, height)
+            -- cr:set_source(gears.color(right_color))
+            cr:move_to(0, height)
+            cr:line_to(width, 0)
             cr:line_to(width, 0)
             cr:line_to(width, height)
-            cr:line_to(space+margin, height)
-            cr:fill()
+            cr:line_to(0, height)
+            cr:close_path()
+            -- cr:fill()
         end
     end
-    return wibox.widget {{
-            widget = wibox.widget.textbox
-        },
-        shape              = separator_shape,
-        bg                 = beautiful.bg_normal,
-        shape_border_color = beautiful.border_color,
-        forced_width = 20,
-        widget             = wibox.container.background
-    }
+
+    return
+        wibox.widget {
+            wibox.widget {{
+                    widget = wibox.widget.textbox
+                },
+                shape              = left_shape,
+                bg                 = left_color,
+                shape_border_color = beautiful.border_color,
+                forced_width       = 15,
+                widget             = wibox.container.background
+            },
+            wibox.widget {{
+                    widget = wibox.widget.textbox
+                },
+                shape              = right_shape,
+                bg                 = right_color,
+                shape_border_color = beautiful.border_color,
+                forced_width       = 15,
+                widget             = wibox.container.background
+            },
+            spacing = margin,
+            forced_num_cols = 2,
+            forced_num_rows = 1,
+            expand          = true,
+            homogeneous     = true,
+            layout          = wibox.layout.grid.horizontal
+        }
 end
 
--- custom square shape
+-- surrounds a widget with a colored rectangle
 local function rectangle(widget, color, lmargin, rmargin)
 return wibox.widget {
         {
@@ -84,19 +115,21 @@ local function list_update(left_color)
         w:reset()
         for i, o in ipairs(objects) do
             local cache = data[o]
-            local ib, tb, bgb, tbm, ibm, l
+            local ib, tb, bgb, tbm, ibm, sep, l
             if cache then
                 ib = cache.ib
                 tb = cache.tb
                 bgb = cache.bgb
                 tbm = cache.tbm
                 ibm = cache.ibm
+                sep = cache.sep
             else
                 ib = wibox.widget.imagebox()
                 tb = wibox.widget.textbox()
                 bgb = wibox.container.background()
                 tbm = wibox.container.margin(tb, dpi(4), dpi(4))
                 ibm = wibox.container.margin(ib, dpi(4))
+                sep = separator(beautiful.gruv_red, beautiful.gruv_red, true, true)
                 l = wibox.layout.fixed.horizontal()
 
                 -- All of this is added in a fixed widget
@@ -109,12 +142,14 @@ local function list_update(left_color)
 
                 bgb:buttons(awful.widget.common.create_buttons(buttons, o))
 
+
                 data[o] = {
                     ib  = ib,
                     tb  = tb,
                     bgb = bgb,
                     tbm = tbm,
                     ibm = ibm,
+                    sep = sep,
                 }
             end
 
@@ -146,13 +181,26 @@ local function list_update(left_color)
 
             -- don't add the revelation tags
             if not (tb.text == "Revelation" or tb.text == "Revelation_zoom") then
-                w:add(separator(previous_color, bg or beautiful.bg_normal, true, true))
+                local left_sep = sep:get_widgets_at(1,1)[1]
+                local right_sep = sep:get_widgets_at(1,2)[1]
+                left_sep:set_bg(previous_color)
+                right_sep:set_bg(bg or beautiful.bg_normal)
+                w:add(sep)
                 previous_color = bg or beautiful.bg_normal
 
                 w:add(bgb)
             end
-       end
-       w:add(separator(previous_color, beautiful.bg_normal, true, true))
+        end
+
+        local end_sep = data.end_sep
+        if end_sep then
+            local left_sep = end_sep:get_widgets_at(1,1)[1]
+            left_sep:set_bg(previous_color)
+            w:add(end_sep)
+        else
+            data.end_sep = separator(previous_color, beautiful.bg_normal, true, true)
+            w:add(data.end_sep)
+        end
     end
 end
 

@@ -9,22 +9,17 @@ local beautiful = require("beautiful")
 -- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
-local hotkeys_popup = require("awful.hotkeys_popup").widget
+local hotkeys_popup = require("awful.hotkeys_popup")
 -- other stuff
 local freedesktop = require("freedesktop")
 local aux = require("auxiliary")
--- import this stuff after theme initialisation for proper colors
 beautiful.init(awful.util.getdir("config") .. "/themes/gruvbox/theme.lua")
+-- import this stuff after theme initialisation for proper colors
 local battery = require("battery")
 local volume = require("volume")
 local revelation =require("revelation")
 
 revelation.init()
-
--- Enable hotkeys help widget for VIM and other apps
--- when client with a matching name is opened:
-require("awful.hotkeys_popup.keys")
-
 awful.util.shell="/usr/bin/zsh"
 
 -------------------------------------------------------------------------------
@@ -185,7 +180,7 @@ awful.screen.connect_for_each_screen(function(s)
     s.mypromptbox = awful.widget.prompt()
     -- Create an imagebox widget which will contain an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
-    s.mylayoutbox = wibox.container.margin(awful.widget.layoutbox(s), 4,6,7,7)
+    s.mylayoutbox = wibox.container.margin(awful.widget.layoutbox(s), 4,4,7,7)
     s.mylayoutbox:buttons(gears.table.join(
     awful.button({ }, 1, function () awful.layout.inc( 1) end),
     awful.button({ }, 3, function () awful.layout.inc(-1) end),
@@ -224,7 +219,7 @@ awful.screen.connect_for_each_screen(function(s)
     end
     client.connect_signal("focus", update_title_text)
     client.connect_signal("property::name", update_title_text)
-    client.connect_signal("unfocus", function (c)s = awful.screen.focused() s.mytitle.markup = " " end)
+    client.connect_signal("unfocus", function (c) s = awful.screen.focused() s.mytitle.markup = "" end)
 
 -- Wibar
 -------------------------------------------------------------------------------
@@ -386,14 +381,14 @@ local globalkeys = gears.table.join(
     awful.key({ modkey, "Control" }, "l", function () awful.tag.incncol(-1, nil, true) end,
           {description = "decrease the number of columns", group = "layout"}),
     awful.key({ modkey,           }, "space", function () awful.layout.inc( 1) end,
-          {description = "select next", group = "layout"}),
+          {description = "select next layout", group = "layout"}),
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(-1) end,
-          {description = "select previous", group = "layout"}),
+          {description = "select previous next", group = "layout"}),
     awful.key({ modkey,           }, "e", function ()
         awful.spawn(terminal.." -e "..os.getenv("HOME").."/.config/awesome/ncmpcpp.sh",
         {tag=awful.screen.focused().tags[6]})
         end,
-          {description = "select previous", group = "layout"}),
+          {description = "launch ncmpcpp", group = "launcher"}),
     awful.key({ modkey, "Control" }, "n",
     function ()
         local c = awful.client.restore()
@@ -558,12 +553,12 @@ awful.rules.rules = {
        },
 
     -- Firefox always on tag 1
-    { rule_any = { class = {"Firefox"} },
+    { rule = { class = "Firefox" },
       properties = { tag = awful.screen.focused().tags[1]} },
 
     -- Make dragon sticky for easy drag and drop in ranger
-    { rule_any = { class = {"Dragon-drag-and-drop"} },
-      properties = { ontop = true, sticky = true} },
+    { rule = { class = "Dragon-drag-and-drop" },
+      properties = { ontop = true, sticky = true } },
 }
 -- }}}
 

@@ -26,7 +26,7 @@ local battery_widget = wibox.widget {
         widget = wibox.widget.imagebox,
         resize = false
     },
-    layout = wibox.container.margin(nil, 0, 2, 4)
+    layout = wibox.container.margin(nil, 0, 0, 4)
 }
 
 local should_notify = true
