@@ -20,7 +20,7 @@ class umount(Command):
 
         if self.arg(1):
             self.fm.run("udiskie-umount " + self.arg(1))
-        elif "/run/media/"+os.environ.get("USER") == self.fm.thisdir.path:
+        elif "/run/media/" + os.environ.get("USER") == self.fm.thisdir.path:
             self.fm.run("udiskie-umount " + "'" + self.fm.thisfile.path + "'")
         else:
             self.fm.ui.console.ask(
@@ -74,8 +74,9 @@ class extracthere(Command):
         else:
             descr = "extracting files from: " + \
                 os.path.basename(one_file.dirname)
-        obj = CommandLoader(args=['aunpack'] + au_flags
-                            + [f.path for f in copied_files], descr=descr)
+        obj = CommandLoader(
+            args=['aunpack'] + au_flags + [f.path for f in copied_files],
+            descr=descr)
 
         obj.signal_bind('after', refresh)
         self.fm.loader.add(obj)
