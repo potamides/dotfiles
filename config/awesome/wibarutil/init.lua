@@ -86,8 +86,8 @@ local function rectangle(widget, color, lmargin, rmargin)
 return wibox.widget {
         {
                 widget,
-            left   = lmargin or 2,
-            right  = rmargin or 2,
+            left   = lmargin or 4,
+            right  = rmargin or 4,
             top    = 0,
             bottom = 0,
             widget = wibox.container.margin
@@ -122,7 +122,7 @@ local function list_update(left_color)
                 bgb = wibox.container.background()
                 tbm = wibox.container.margin(tb, dpi(4), dpi(4))
                 ibm = wibox.container.margin(ib, dpi(4))
-                sep = separator(beautiful.gruv_red, beautiful.gruv_red, true, true)
+                sep = separator(nil, nil, true, true)
                 l = wibox.layout.fixed.horizontal()
 
                 -- All of this is added in a fixed widget
@@ -176,8 +176,8 @@ local function list_update(left_color)
             if not (tb.text == "Revelation" or tb.text == "Revelation_zoom") then
                 local left_sep = sep:get_widgets_at(1,1)[1]
                 local right_sep = sep:get_widgets_at(1,2)[1]
-                left_sep:set_bg(previous_color)
-                right_sep:set_bg(bg or beautiful.bg_normal)
+                left_sep.bg = previous_color
+                right_sep.bg = bg or beautiful.bg_normal
                 w:add(sep)
                 previous_color = bg or beautiful.bg_normal
 
@@ -188,19 +188,21 @@ local function list_update(left_color)
         local end_sep = data.end_sep
         if end_sep then
             local left_sep = end_sep:get_widgets_at(1,1)[1]
-            left_sep:set_bg(previous_color)
+            left_sep.bg = previous_color
             w:add(end_sep)
         else
             end_sep = separator(previous_color, beautiful.bg_normal, true, true)
+            last_separator = end_sep:get_widgets_at(1,2)[1]
             w:add(end_sep)
             data.end_sep = end_sep
         end
-        last_separator = end_sep:get_widgets_at(1,2)[1]
     end
 end
 
 local function set_last_separator_color(color)
-    last_separator:set_bg(gears.color(color))
+    if last_separator then
+        last_separator.bg = gears.color(color)
+    end
 end
 
 local wibarutil = {separator = separator, rectangle = rectangle, list_update = list_update,

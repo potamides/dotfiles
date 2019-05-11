@@ -125,8 +125,8 @@ local startmenu = wibox.widget {
     widget = wibox.widget.imagebox
 }
 
-startmenu:connect_signal("button::press", function(s) mymainmenu:toggle({ coords = { x = 0, y = 0 } }) end)
-local mylauncher = wibox.layout.margin(startmenu, 2,0,2,2)
+startmenu:connect_signal("button::press", function(_) mymainmenu:toggle({ coords = { x = 0, y = 0 } }) end)
+local mylauncher = wibox.layout.margin(startmenu, 0,0,2,2)
 
 -- Clock
 -------------------------------------------------------------------------------
@@ -181,7 +181,7 @@ awful.screen.connect_for_each_screen(function(s)
     s.mypromptbox = awful.widget.prompt()
     -- Create an imagebox widget which will contain an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
-    s.mylayoutbox = wibox.container.margin(awful.widget.layoutbox(s), 4,4,7,7)
+    s.mylayoutbox = wibox.container.margin(awful.widget.layoutbox(s), 3,3,7,7)
     s.mylayoutbox:buttons(gears.table.join(
     awful.button({ }, 1, function () awful.layout.inc( 1) end),
     awful.button({ }, 3, function () awful.layout.inc(-1) end),
@@ -194,12 +194,12 @@ awful.screen.connect_for_each_screen(function(s)
         taglist_buttons,
         nil,
         -- pass custom list_update function for fancy shapes
-        wibarutil.list_update(beautiful.gruv_lightblue)
+        wibarutil.list_update(beautiful.lightblue)
     )
 
 -- Systray
 -------------------------------------------------------------------------------
-    local systray = wibox.layout.margin(wibox.widget.systray(), 0,0,5,5)
+    local systray = wibox.layout.margin(wibox.widget.systray(), 0, 0, 5, 5)
     beautiful.systray_icon_spacing = 7
 
 -- global title bar    ------ holgerschurig.de/en/awesome-4.0-global-titlebar/
@@ -225,7 +225,7 @@ awful.screen.connect_for_each_screen(function(s)
 -- Wibar
 -------------------------------------------------------------------------------
     -- Create the wibar
-    s.mywibox = awful.wibar({ position = "top", screen = s, height = 25,})
+    s.mywibox = awful.wibar({position = "top", screen = s, height = 25})
 
     s.titlebar_buttons = wibox.widget {
         homogeneous     = true,
@@ -234,47 +234,48 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.grid
     }
 
+--local vimawesome = require("vimawesome")
     -- add widgets to the wibar
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
+        expand = "none",
         { -- Left widgets
-            wibarutil.rectangle(mylauncher, beautiful.gruv_lightblue),
+            wibarutil.rectangle(mylauncher, beautiful.lightblue),
             s.mytaglist,
             mpd.widget,
+            s.mypromptbox,
+            --vimawesome.sequence,
+            --vimawesome.modename,
             layout = wibox.layout.fixed.horizontal,
         },
         { -- Middle widgets
-            s.mypromptbox,
             s.mytitle,
             layout = wibox.layout.align.horizontal,
         },
         { -- Right widgets
-            layout = wibox.layout.fixed.horizontal,
             systray,
-        {
             -- Audio Volume
-            wibarutil.separator(beautiful.bg_normal,beautiful.gruv_fg4, true),
-            wibarutil.rectangle(volume.text, beautiful.gruv_fg4),
-            wibarutil.separator(beautiful.gruv_fg4, beautiful.gruv_bg1),
-            wibarutil.rectangle(volume.img, beautiful.gruv_bg1),
+            wibarutil.separator(beautiful.bg_normal,beautiful.fg4, true),
+            wibarutil.rectangle(volume.text, beautiful.fg4),
+            wibarutil.separator(beautiful.fg4, beautiful.bg1),
+            wibarutil.rectangle(volume.img, beautiful.bg1),
 
             -- Battery Indicator
-            wibarutil.separator(beautiful.gruv_bg1,beautiful.gruv_fg4, true),
-            wibarutil.rectangle(battery.text, beautiful.gruv_fg4),
-            wibarutil.separator(beautiful.gruv_fg4, beautiful.gruv_bg1),
-            wibarutil.rectangle(battery.img, beautiful.gruv_bg1),
+            wibarutil.separator(beautiful.bg1,beautiful.fg4, true),
+            wibarutil.rectangle(battery.text, beautiful.fg4),
+            wibarutil.separator(beautiful.fg4, beautiful.bg1),
+            wibarutil.rectangle(battery.img, beautiful.bg1),
 
             -- Clock / Layout
-            wibarutil.separator(beautiful.gruv_bg1, beautiful.gruv_fg4, true),
-            wibarutil.rectangle(mytextclock, beautiful.gruv_fg4),
-            wibarutil.separator(beautiful.gruv_fg4, beautiful.gruv_bg1),
-            wibarutil.rectangle(s.mylayoutbox,beautiful.gruv_bg1),
+            wibarutil.separator(beautiful.bg1, beautiful.fg4, true),
+            wibarutil.rectangle(mytextclock, beautiful.fg4),
+            wibarutil.separator(beautiful.fg4, beautiful.bg1),
+            wibarutil.rectangle(s.mylayoutbox,beautiful.bg1),
 
             -- Global Titlebar Buttons
-            wibarutil.separator(beautiful.gruv_bg1, beautiful.gruv_bg1, true),
-            wibarutil.rectangle(s.titlebar_buttons, beautiful.gruv_bg1),
+            wibarutil.separator(beautiful.bg1, beautiful.bg1, true),
+            wibarutil.rectangle(s.titlebar_buttons, beautiful.bg1),
             layout = wibox.layout.fixed.horizontal,
-        }
         },
     }
 end)
@@ -300,16 +301,12 @@ local globalkeys = gears.table.join(
                 curr_tag_only=true}) end,
     {description = "show all clients on current tag", group = "tag"}),
     awful.key({modkey             }, "a", function()
-                local tags = mouse.screen.selected_tags
-                for i = 1, #tags do
-                  tags[i].selected = false
-                end
-                local grabber
-                grabber = awful.keygrabber.run(function(mod, key, event)
+                local tags = awful.screen.focused().selected_tags
+                awful.tag.viewnone(awful.screen.focused())
+
+                local grabber = awful.keygrabber.run(function(_, _, event)
                     if event == "press" then
-                        for i = 1, #tags do
-                            tags[i].selected = true
-                        end
+                        awful.tag.viewmore(tags)
                         awful.keygrabber.stop(grabber)
                     end
                 end)
@@ -424,21 +421,21 @@ local globalkeys = gears.table.join(
 -- Lenovo Thinkpad E480 function keys
 -------------------------------------------------------------------------------
     awful.key({}, "#121",
-    function (c) awful.spawn("amixer -D pulse set Master +1 toggle") end),
+    function (_) awful.spawn("amixer -D pulse set Master +1 toggle") end),
     awful.key({}, "#122",
-    function (c) awful.spawn("amixer -D pulse sset Master 5%-") end),
+    function (_) awful.spawn("amixer -D pulse sset Master 5%-") end),
     awful.key({}, "#123",
-    function (c) awful.spawn("amixer -D pulse sset Master 5%+") end),
+    function (_) awful.spawn("amixer -D pulse sset Master 5%+") end),
     awful.key({}, "#232",
-    function (c) awful.spawn("xbacklight -dec 10") end),
+    function (_) awful.spawn("xbacklight -dec 10") end),
     awful.key({}, "#233",
-    function (c) awful.spawn("xbacklight -inc 10") end),
+    function (_) awful.spawn("xbacklight -inc 10") end),
     awful.key({}, "#198",
-    function (c) awful.spawn("amixer set Capture toggle") end),
+    function (_) awful.spawn("amixer set Capture toggle") end),
     awful.key({}, "#179",
-    function (c) awful.spawn(editor_cmd .. " " .. awesome.conffile) end),
+    function (_) awful.spawn(editor_cmd .. " " .. awesome.conffile) end),
     awful.key({}, "#235",
-    function (c) awful.spawn.with_shell("~/.config/awesome/monitor.sh") end)
+    function (_) awful.spawn.with_shell("~/.config/awesome/monitor.sh") end)
 )
 
 -- Client & Tag Manipulation
@@ -450,17 +447,17 @@ function (c)
     c:raise()
 end,
       {description = "toggle fullscreen", group = "client"}),
-awful.key({ modkey,   "Shift" }, "c",      function (c) c:kill()                         end,
+awful.key({ modkey,   "Shift" }, "c",      function (c) c:kill() end,
       {description = "close", group = "client"}),
-awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
+awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle,
       {description = "toggle floating", group = "client"}),
 awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
       {description = "move to master", group = "client"}),
-awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end,
+awful.key({ modkey,           }, "o",      function (c) c:move_to_screen() end,
       {description = "move to screen", group = "client"}),
-awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
+awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop end,
       {description = "toggle keep on top", group = "client"}),
-awful.key({ modkey,           }, "z",      function (c) c.sticky = not c.sticky            end,
+awful.key({ modkey,           }, "z",      function (c) c.sticky = not c.sticky end,
       {description = "toggle sticky", group = "client"}),
 awful.key({ modkey,           }, "n", function (c) c.minimized = true end,
       {description = "minimize", group = "client"}),
@@ -561,6 +558,10 @@ awful.rules.rules = {
     -- Make dragon sticky for easy drag and drop in ranger
     { rule = { class = "Dragon-drag-and-drop" },
       properties = { ontop = true, sticky = true } },
+
+    -- the password prompt for keepassxc autotype should be floating
+    { rule = { name = "Unlock Database - KeePassXC" },
+      properties = { floating = true } },
 }
 -- }}}
 
@@ -598,7 +599,7 @@ client.connect_signal("request::titlebars", function(c)
     end)
     )
 
-    awful.titlebar(c, {size = 20}) : setup {
+    awful.titlebar(c, {size = 20, position = "bottom"}) : setup {
         {
         { -- Left
         --awful.titlebar.widget.iconwidget(c),
@@ -627,10 +628,11 @@ client.connect_signal("request::titlebars", function(c)
         right = 2,
         widget = wibox.container.margin
     }
-    -- Hide the menubar if we are not floating
+    -- Hide the titlebar if we are not floating
     local l = awful.layout.get(c.screen)
     if not (l.name == "floating" or c.floating) or c.maximized then
-        awful.titlebar.hide(c)
+        awful.titlebar.hide(c, "bottom")
+        c.height = c.height - 20
     end
 end)
 
@@ -688,7 +690,7 @@ end
 -- Update Titlbar Buttons in Wibar on focus / unfocus
 --------------------------------------------------------------------------------
 local should_remove = true
-local function buttons_remove(c)
+local function buttons_remove(_)
     local s = awful.screen.focused()
     should_remove = true
 
@@ -728,15 +730,16 @@ client.connect_signal("unfocus", buttons_remove)
 -------------------------------------------------------------------------------
 client.connect_signal("property::floating", function (c)
     if c.floating and not c.maximized then
-        awful.titlebar.show(c)
+        awful.titlebar.show(c, "bottom")
+        c.height = c.height - 20
     else
-        awful.titlebar.hide(c)
+        awful.titlebar.hide(c, "bottom")
     end
 end)
 
 -- turn tilebars on when layout is floating
 -------------------------------------------------------------------------------
-awful.tag.attached_connect_signal(s, "property::layout", function (t)
+awful.tag.attached_connect_signal(awful.screen.focused(), "property::layout", function (t)
     local float = t.layout.name == "floating"
     for _,c in pairs(t:clients()) do
         c.floating = float
@@ -748,7 +751,20 @@ beautiful.notification_opacity=0.75
 -- }}}
 
 -------------------------------------------------------------------------------
--- {{{ Autostart
+-- {{{ Misc
+-------------------------------------------------------------------------------
+
+-- autostart some applications
 -------------------------------------------------------------------------------
 awful.spawn.with_shell("~/.config/awesome/autorun.sh")
+
+-- memory management
+-------------------------------------------------------------------------------
+gears.timer {
+    timeout   = 60,
+    autostart = true,
+    callback  = function()
+        collectgarbage("collect")
+    end
+}
 -- }}}

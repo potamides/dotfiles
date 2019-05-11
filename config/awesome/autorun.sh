@@ -19,7 +19,7 @@ run setxkbmap -layout "de"
 run udiskie
 run redshift
 run conky
-compton -b --glx-no-stencil --xrender-sync --xrender-sync-fence --vsync opengl-swc --shadow-exclude 'focused || !focused' #to lazy to write a config
+compton -b --glx-no-stencil --xrender-sync-fence --vsync --shadow-exclude 'focused || !focused' #to lazy to write a config
 run blueman-applet
 run indicator-kdeconnect
 fin nm-applet

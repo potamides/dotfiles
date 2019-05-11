@@ -8,6 +8,7 @@
 -- @copyright 2017 Pavel Makhov
 -------------------------------------------------
 
+local naughty = require("naughty")
 local awful = require("awful")
 local wibox = require("wibox")
 local beautiful = require("beautiful")
@@ -38,20 +39,26 @@ local update_graphic = function(widget, stdout, _, _, _)
     local volume_str = string.match(stdout, "(%d?%d?%d)%%")
     local volume = tonumber(string.format("% 3d", volume_str))
     local volume_icon_name
-    if mute == "off" then volume_icon_name="audio-volume-muted-symbolic"
-    elseif (volume >= 0 and volume < 25) then volume_icon_name="audio-volume-off-symbolic"
-    elseif (volume < 50) then volume_icon_name="audio-volume-low-symbolic"
-    elseif (volume < 75) then volume_icon_name="audio-volume-medium-symbolic"
-    elseif (volume <= 100) then volume_icon_name="audio-volume-high-symbolic"
-    end
-    widget.image = path_to_icons .. volume_icon_name .. ".svg"
 
-    -- Update volume text
-    if mute == "off" then
-        text_volume_widget:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, "OFF"))
-    else
-        text_volume_widget:set_markup(string.format("<span color=%q><b>%s%%</b></span>",
-            beautiful.bg_normal, volume_str))
+    -- only update widget when something changes
+    if (mute == "on" and text_volume_widget.text ~= volume_str .. "%") or
+        (mute == "off" and text_volume_widget.text ~= "OFF") then
+        if mute == "off" then volume_icon_name="audio-volume-muted-symbolic"
+        elseif (volume >= 0 and volume < 25) then volume_icon_name="audio-volume-off-symbolic"
+        elseif (volume < 50) then volume_icon_name="audio-volume-low-symbolic"
+        elseif (volume < 75) then volume_icon_name="audio-volume-medium-symbolic"
+        elseif (volume <= 100) then volume_icon_name="audio-volume-high-symbolic"
+        end
+
+        -- Update image
+        widget.image = path_to_icons .. volume_icon_name .. ".svg"
+
+        -- Update volume text
+        if mute == "off" then
+            text_volume_widget:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, "OFF"))
+        else
+            text_volume_widget:set_markup(string.format("<span color=%q><b>%s%%</b></span>", beautiful.bg_normal, volume_str))
+        end
     end
 end
 

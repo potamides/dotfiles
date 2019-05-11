@@ -31,12 +31,12 @@ local final_mpd_widget =
 local state, title = "stop", ""
 local function update_widget()
     local text, left_sep = ""
-    if state ~= "pause" and state ~= "stop" then
-        text = text .. tostring(title or "--")
-        wibarutil.set_last_separator_color(beautiful.gruv_bg1)
-        mpd_container:set_bg(gears.color(beautiful.gruv_bg1))
+    if state ~= "pause" and state ~= "stop" and title then
+        text = text .. tostring(title)
+        wibarutil.set_last_separator_color(beautiful.bg1)
+        mpd_container:set_bg(gears.color(beautiful.bg1))
         left_sep = mpd_separator:get_widgets_at(1,1)[1]
-        left_sep:set_bg(gears.color(beautiful.gruv_bg1))
+        left_sep:set_bg(gears.color(beautiful.bg1))
         final_mpd_widget.visible = true
     else
         wibarutil.set_last_separator_color(beautiful.bg_normal)
@@ -61,7 +61,7 @@ mpc.new(nil, nil, nil, nil,
 mpd_scroll_widget:buttons(awful.button({ }, 1,
 	function()
         mpd_widget:set_markup(string.format("<span color=%q><b>%s</b></span>",
-            beautiful.gruv_lightblue, mpd_widget.text))
+            beautiful.lightblue, mpd_widget.text))
 
         local Playlist=io.open(os.getenv("HOME") .. "/Documents/Playlist", "a+")
 		if not string.find(Playlist:read("*a"), title, 1, true)

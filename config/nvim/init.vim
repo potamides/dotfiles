@@ -21,15 +21,11 @@ set hidden
 " reopening a file
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
-" To use C+{h,j,k,l}` to navigate windows from any mode:
+" To use Control+{h,j,k,l}` to navigate windows:
 tnoremap <silent> <C-h> <C-\><C-N><C-w>h
 tnoremap <silent> <C-j> <C-\><C-N><C-w>j
 tnoremap <silent> <C-k> <C-\><C-N><C-w>k
 tnoremap <silent> <C-l> <C-\><C-N><C-w>l
-inoremap <silent> <C-h> <C-\><C-N><C-w>h
-inoremap <silent> <C-j> <C-\><C-N><C-w>j
-inoremap <silent> <C-k> <C-\><C-N><C-w>k
-inoremap <silent> <C-l> <C-\><C-N><C-w>l
 noremap <silent> <C-h> <C-w>h
 noremap <silent> <C-j> <C-w>j
 noremap <silent> <C-k> <C-w>k
@@ -40,6 +36,12 @@ command! Cnext try | cnext | catch | cfirst | catch | endtry
 command! Cprev try | cprev | catch | clast | catch | endtry
 noremap <silent> <A-n> :Cnext<CR>
 noremap <silent> <A-m> :Cprev<CR>
+
+" j and k shall navigate displayed lines, useful when wrapping is enabled.
+noremap <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
+noremap <expr> k v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
+noremap <expr> <Down> v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
+noremap <expr> <Up> v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
 
 " Enable folding
 set foldmethod=syntax
@@ -82,9 +84,14 @@ Plug 'majutsushi/tagbar'
 Plug 'itchyny/lightline.vim'
 Plug 'maximbaz/lightline-ale'
 Plug 'mgee/lightline-bufferline'
+Plug '/usr/bin/fzf'
+Plug 'junegunn/fzf.vim'
 Plug 'lervag/vimtex'
 Plug 'ryanoasis/vim-devicons'
 Plug 'unblevable/quick-scope'
+Plug 'leafgarland/typescript-vim'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 call plug#end()
 
 " ------------------------------------------------
@@ -109,7 +116,6 @@ autocmd TermOpen term://* set nonumber
 autocmd FileType defx,qf set norelativenumber
 autocmd TermOpen term://* set norelativenumber
 
-
 " ------------------------------------------------
 "               QUICK-SCOPE
 " ------------------------------------------------
@@ -120,6 +126,22 @@ augroup qs_colors
   autocmd ColorScheme * highlight QuickScopePrimary guibg='#504945'
   autocmd ColorScheme * highlight QuickScopeSecondary guibg='#3c3836'
 augroup END
+
+" ------------------------------------------------
+"               FZF.VIM
+" ------------------------------------------------
+
+" allows the usage of the path parameter of ripgrep
+function RgWithPath(bang, ...)
+    let path = get(a:000, 0, ".")
+    let terms = a:000[1:]
+    call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case "
+    \.shellescape(join(terms, " "))." ".path, 1, a:bang)
+endfunction
+command! -bang -nargs=* Rg  call RgWithPath(<bang>0, <f-args>)
+
+" close fzf split with escape
+autocmd FileType fzf tnoremap <silent> <Esc> <C-\><C-N>:close<CR>
 
 " ------------------------------------------------
 "               GRUVBOX
@@ -227,9 +249,9 @@ noremap <silent> <Tab> :bnext<CR>
 noremap <silent> <S-Tab> :bprev<CR>
 
 " close a buffer
-tnoremap <silent> <C-q> <C-\><C-N>:bd<CR>
-inoremap <silent> <C-q> <C-\><C-N>:bd<CR>
-noremap <silent> <C-q> :bd<CR>
+tnoremap <silent> <C-q> <C-\><C-N>:bp\|bd #<CR>
+inoremap <silent> <C-q> <C-\><C-N>:bp\|bd #<CR>
+nnoremap <silent> <C-q> :bp\|bd #<CR>
 
 " navigate tabs
 noremap <silent> tk :tabnext<CR>  
@@ -312,7 +334,7 @@ autocmd TermOpen,BufEnter,BufWinEnter term://* startinsert
 autocmd FileType defx call s:defx_my_settings()
     function! s:defx_my_settings() abort
       nnoremap <silent><buffer><expr> <CR>
-      \ line('.') == 1 ? defx#do_action('cd', ['..']) : defx#do_action('drop')
+      \ defx#is_directory() ? defx#do_action('open_or_close_tree') : defx#do_action('drop')
       nnoremap <silent><buffer><expr> yy
       \ defx#do_action('copy')
       nnoremap <silent><buffer><expr> dd
@@ -354,15 +376,20 @@ autocmd FileType defx call s:defx_my_settings()
     endfunction
 
 call defx#custom#column('mark', {
-      \ 'directory_icon': '',
       \ 'readonly_icon': '✗',
       \ 'selected_icon': '✓',
-      \ 'root_icon': '',})
+      \ })
+
+call defx#custom#column('icon', {
+      \ 'directory_icon': '',
+      \ 'root_icon': '',
+      \ 'opened_icon': '',
+      \ })
 
 " Toggle Defx with F2
-noremap <silent> <F2> :Defx -split="vertical" -toggle -direction="topleft" -winwidth=25<cr>
-inoremap <silent> <F2> <C-\><C-N>:Defx -split="vertical" -toggle -direction="topleft" -winwidth=25<cr>
-tnoremap <silent> <F2> <C-\><C-N>:Defx -split="vertical" -toggle -direction="topleft" -winwidth=25<cr>
+noremap <silent> <F2> :Defx -split="vertical" -toggle -resume -direction="topleft" -winwidth=25<cr>
+inoremap <silent> <F2> <C-\><C-N>:Defx -split="vertical" -toggle -resume -direction="topleft" -winwidth=25<cr>
+tnoremap <silent> <F2> <C-\><C-N>:Defx -split="vertical" -toggle -resume -direction="topleft" -winwidth=25<cr>
 
 " ------------------------------------------------
 "               DEOPLETE
@@ -377,6 +404,8 @@ call deoplete#custom#option('smart_case', v:true)
 set completeopt+=noinsert
 " disable preview window
 set completeopt-=preview
+" disable status messages
+set shortmess+=c
 
 " Disable the candidates in Comment/String syntaxes.
 call deoplete#custom#source('_',
@@ -385,12 +414,44 @@ call deoplete#custom#source('_',
 " automatically close scratchpad
 autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | sil! pclose | endif
 
+" close popup with escape if it is visible
+"inoremap <expr> <esc> pumvisible()? deoplete#mappings#close_popup() : "\<esc>"
+
+" ------------------------------------------------
+"               ULTISNIPS
+" ------------------------------------------------
+
+" Trigger configuration. Because default conflicts with other stuff, set expandtrigger to nop
+let g:UltiSnipsExpandTrigger="<nop>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+
+" expand and jump with tab and s-tab or navigate deoplete when completion
+" window is open
+let g:ulti_expand_or_jump_res = 0 "default value, just set once
+function TabAction()
+   if pumvisible()
+       return "\<down>"
+   endif 
+   call UltiSnips#ExpandSnippetOrJump()
+   if g:ulti_expand_or_jump_res == 0
+       return "\<tab>"
+   endif
+   return ""
+endfunction
+
+inoremap <silent><tab> <C-R>=TabAction()<CR>
+inoremap <silent><expr><s-tab> pumvisible() ? "\<up>" : "\<s-tab>"
+
 " ------------------------------------------------
 "               ALE
 " ------------------------------------------------
 
 " Configure code linters
-"let b:ale_linters = {'python': ['mypy']}
+"let b:ale_linters = {'python': ['flake8']}
 
 " Configure code style fixers
 let g:ale_fixers = {
@@ -439,6 +500,7 @@ let g:signify_sign_delete            = '▁'
 let g:signify_sign_delete_first_line = '▔'
 let g:signify_sign_change            = '▌'
 let g:signify_sign_changedelete      = g:signify_sign_change
+
 " ------------------------------------------------
 "               TAGBAR
 " ------------------------------------------------
@@ -467,7 +529,7 @@ let maplocalleader = '_'
 " don't open the quickfix window automatically
 let g:vimtex_quickfix_mode = 0
 
-let g:vimtex_view_method = 'mupdf'
+let g:vimtex_view_method = 'llpp'
 
   " Close viewers on quit
   function! CloseViewers()

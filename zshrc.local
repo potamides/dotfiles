@@ -1,19 +1,45 @@
-# if not in vim or ranger show greeter
-if [[ -z $VIM ]] && [[ -z $RANGER_LEVEL ]]; then
-    fortune computers linux linuxcookie debian -as | cowsay | lolcat
-fi
-
 # Syntax highlighting
+# -----------------------------------------------------------------------------
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 autoload -Uz compinit
 compinit
 
 # Auto suggestions
+# -----------------------------------------------------------------------------
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Completion for kitty
+# -----------------------------------------------------------------------------
 kitty + complete setup zsh | source /dev/stdin
 
+# FZF config
+# -----------------------------------------------------------------------------
+# FZF Keybindings
+source /usr/share/fzf/key-bindings.zsh
+source /usr/share/fzf/completion.zsh
+# Use rg instead of the default find command for listing path candidates.
+_fzf_compgen_path() {
+  rg --files --hidden --smart-case --glob '!.git/*' --glob '!node_modules/*'
+}
+# Use rg to generate the list for directory completion
+_fzf_compgen_dir() {
+  rg --files --hidden --smart-case --glob '!.git/*' --glob '!node_modules/*' \
+      --null 2>/dev/null | xargs -0 dirname | awk '!h[$0]++'
+}
+# Using highlight (http://www.andre-simon.de/doku/highlight/en/highlight.html)
+export FZF_COMPLETION_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null \
+    || cat {} || tree -C {}) 2> /dev/null | head -200'"
+export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case --glob '!.git/*' \
+    --glob '!node_modules/*'"
+# To apply the command to CTRL-T as well
+export FZF_CTRL_T_OPTS="$FZF_COMPLETION_OPTS"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+# Preview directories with tree
+export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
+export FZF_ALT_C_COMMAND=_fzf_compgen_dir
+
+# Misc
+# -----------------------------------------------------------------------------
 # cat small files and less long files; also works on images
 function inspect(){
     if identify $1 &> /dev/null; then
@@ -22,4 +48,37 @@ function inspect(){
         highlight --stdout --force --out-format=ansi $1 | less -FR
     fi
 }
-alias ins=inspect
+# search for patterns with ripgrep and open results in the editor
+function rg_and_open(){
+    FILES=$(rg -l $@)
+    if [ ${#FILES} -gt 0 ]; then
+        echo $FILES | xargs -d "\n" $EDITOR
+    else
+        return 1
+    fi
+}
+# if not in vim or ranger show greeter
+if [[ -z $VIM ]] && [[ -z $RANGER_LEVEL ]]; then
+    fortune computers linux linuxcookie debian -as | cowsay | lolcat
+fi
+
+# Report execution time when a program takes longer than 60s
+export REPORTTIME=60
+
+# Aliases
+# -----------------------------------------------------------------------------
+alias pac='sudo pacman -S' # install
+alias paca='yay -Sa' # aur install
+alias pacu='sudo pacman -Syu' # update
+alias pacau='yay -Syua' # aur update
+alias pacr='sudo pacman -Rsn' # remove
+alias pacs='pacman -Ss' # search
+alias pacas='yay -Ssa' # aur search
+alias paci='pacman -Qi' # info
+alias paclo='pacman -Qdt' # list orphans
+alias pacro='paclo && sudo pacman -Rns $(pacman -Qtdq)' # remove orphans
+alias pacc='sudo pacman -Scc' # clean cache
+alias pacli='pacman -Q | wc -l' # user installed packages
+alias rgo=rg_and_open
+alias in=inspect
+alias calc='python -ic "from math import *"'
