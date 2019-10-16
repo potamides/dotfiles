@@ -1,0 +1,52 @@
+{
+  // General
+  "diagnostic.errorSign": "▌",
+  "diagnostic.warningSign": "▌",
+  "diagnostic.infoSign": "▌",
+  "diagnostic.hintSign": "▌",
+
+  "languageserver": {
+    // C/C++
+    "ccls": {
+      "command": "ccls",
+      "filetypes": ["c", "cpp", "objc", "objcpp"],
+      "rootPatterns": [".ccls", "compile_commands.json", ".vim/", ".git/", ".hg/"],
+      "initializationOptions": {
+         "cache": {
+           "directory": "/tmp/ccls"
+         }
+       }
+    },
+
+    // Scala
+    "metals": {
+      "command": "metals-vim",
+      "rootPatterns": ["build.sbt"],
+      "filetypes": ["scala", "sbt"]
+    }
+  },
+
+  // Latex
+  "latex.lint.onChange": true,
+  "latex.forwardSearch.executable": "zathura",
+  "latex.forwardSearch.args": ["--synctex-forward", "%l:1:%f", "%p"],
+  "latex.build.args": [
+      "-pdf",
+      "-interaction=nonstopmode",
+      "-synctex=1",
+      "-pvc"
+  ],
+
+  // Git
+  "git.changedSign.text": "▌",
+  "git.changedSign.hlGroup": "GruvboxAquaSign",
+  "git.addedSign.text": "▌",
+  "git.addedSign.hlGroup": "GruvboxGreenSign",
+  "git.removedSign.text": "▁",
+  "git.removedSign.hlGroup": "GruvboxRedSign",
+  "git.topRemovedSign.text": "▔",
+  "git.topRemovedSign.hlGroup": "GruvboxRedSign",
+  "git.changeRemovedSign.text": "━",
+  "git.changeRemovedSign.hlGroup": "GruvboxRedSign"
+
+}

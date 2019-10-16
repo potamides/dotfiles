@@ -11,6 +11,8 @@ export PIPENV_SKIP_LOCK=1
 # to execute local executables
 export PATH="${PATH}:${HOME}/.local/bin"
 
+export LIBVA_DRIVER_NAME=radeonsi
+
 #function check_battery_preexec(){
 #if [[ -z $(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep "state:               discharging") ]]
 #    then
@@ -19,7 +21,6 @@ export PATH="${PATH}:${HOME}/.local/bin"
 #        export DRI_PRIME=0
 #fi
 #}
-
 #autoload -U add-zsh-hook
 #add-zsh-hook -Uz preexec check_battery_preexec
 #check_battery_preexec

@@ -8,7 +8,6 @@
 -- @copyright 2017 Pavel Makhov
 -------------------------------------------------
 
-local naughty = require("naughty")
 local awful = require("awful")
 local wibox = require("wibox")
 local beautiful = require("beautiful")

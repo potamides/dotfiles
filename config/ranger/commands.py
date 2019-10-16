@@ -1,14 +1,14 @@
-
 from __future__ import (absolute_import, division, print_function)
 
 import os
-
+from shlex import quote
 from ranger.api.commands import Command
 from ranger.core.loader import CommandLoader
 
 
 class umount(Command):
-    """:umount <filename>
+    """
+    :umount <device_mount_point>
 
     A command that uitilizes udiskie to unmount removable devices.
     """
@@ -20,8 +20,8 @@ class umount(Command):
 
         if self.arg(1):
             self.fm.run("udiskie-umount " + self.arg(1))
-        elif "/run/media/" + os.environ.get("USER") == self.fm.thisdir.path:
-            self.fm.run("udiskie-umount " + "'" + self.fm.thisfile.path + "'")
+        elif "/run/media/" + self.fm.username == self.fm.thisdir.path:
+            self.fm.run("udiskie-umount " + quote(self.fm.thisfile.path))
         else:
             self.fm.ui.console.ask(
                 "Confirm unmounting of all devices (y/N)",

@@ -51,17 +51,27 @@ function inspect(){
 # search for patterns with ripgrep and open results in the editor
 function rg_and_open(){
     FILES=$(rg -l $@)
-    if [ ${#FILES} -gt 0 ]; then
+    if [[ ${#FILES} -gt 0 ]] then
         echo $FILES | xargs -d "\n" $EDITOR
     else
         return 1
     fi
 }
+# report disk  usage, if file is a folder, then sort files by size
+function disk_usage_sorted(){
+    if [[ -n $1 ]] then PATH_=$1/ fi
+    du -shc $PATH_(.[^.]*|*) | sort -h
+}
+# search for keyword in pdf's in PATH
+function search_pdf(){
+    if [[ -n $2 ]] then PATH_=$2/ fi
+    for file in $PATH_*.pdf; do pdftotext $file - | grep $1 >> /dev/null && echo $file; done
+    return 0
+}
 # if not in vim or ranger show greeter
 if [[ -z $VIM ]] && [[ -z $RANGER_LEVEL ]]; then
     fortune computers linux linuxcookie debian -as | cowsay | lolcat
 fi
-
 # Report execution time when a program takes longer than 60s
 export REPORTTIME=60
 
@@ -80,5 +90,7 @@ alias pacro='paclo && sudo pacman -Rns $(pacman -Qtdq)' # remove orphans
 alias pacc='sudo pacman -Scc' # clean cache
 alias pacli='pacman -Q | wc -l' # user installed packages
 alias rgo=rg_and_open
-alias in=inspect
-alias calc='python -ic "from math import *"'
+alias ins=inspect
+alias calc='ipython --profile=calculate'
+alias dus=disk_usage_sorted
+alias spdf=search_pdf

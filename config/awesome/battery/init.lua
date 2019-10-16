@@ -33,10 +33,10 @@ local should_notify = true
 local text_battery_widget = wibox.widget.textbox()
 text_battery_widget:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, "--"))
 
-watch("acpi", 10,
+watch("acpi", 60,
     function(widget, stdout, stderr, exitreason, exitcode)
         local batteryType
-        local _, status, charge_str, time = string.match(stdout, '(.+): (%a+), (%d?%d?%d)%%,? ?(%d?%d?:?%d?%d?).*')
+        local _, status, charge_str, time = string.match(stdout, '(.-): (%a+), (%d?%d?%d)%%,? ?(%d?%d?:?%d?%d?).*')
         local charge = tonumber(charge_str)
 
         if (charge >= 0 and charge < 15) then
