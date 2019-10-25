@@ -1,3 +1,6 @@
 [submodule "config/awesome/freedesktop"]
 	path = config/awesome/freedesktop
 	url = https://github.com/lcpz/awesome-freedesktop
+[submodule "config/awesome/vimawesome"]
+	path = config/awesome/vimawesome
+	url = git@github.com:DrCracket/vimawesome.git
