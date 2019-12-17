@@ -18,6 +18,12 @@
        }
     },
 
+    // Lua
+    "lua": {
+      "command": "lua-lsp",
+      "filetypes": ["lua"]
+    },
+
     // Scala
     "metals": {
       "command": "metals-vim",
@@ -31,7 +37,7 @@
   "latex.forwardSearch.executable": "qpdfview",
   "latex.forwardSearch.args": ["--unique", "%p#src:%f:%l:1"],
   "latex.build.args": [
-      "-pdf",
+      "-pdflua",
       "-interaction=nonstopmode",
       "-synctex=1",
       "-pvc"

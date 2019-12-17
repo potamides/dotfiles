@@ -11,6 +11,9 @@ set mouse=a
 set ignorecase
 set smartcase
 
+" interactive search and replace
+set inccommand=nosplit
+
 " Set the hidden option so any buffer can be hidden (keeping its changes) without first writing the buffer to a file
 set hidden
 
@@ -93,22 +96,22 @@ call plug#end()
 " ------------------------------------------------
 
 set number relativenumber
-" Display absolute numbers when we lose focus
-autocmd FocusLost * set norelativenumber
-"Display relative numbers when we gain focus
-autocmd FocusGained * set relativenumber
-" Display absolute numbers in insert mode
-autocmd InsertEnter * set norelativenumber
-" Display relative numbers when we leave insert mode
-autocmd InsertLeave * set relativenumber
 
-" Disable numbers for buffers with matching filetypes
-autocmd FileType defx set nonumber
-autocmd TermOpen term://* set nonumber
-
-" Disable relative numbers for buffers with matching filetypes
-autocmd FileType defx,qf set norelativenumber
-autocmd TermOpen term://* set norelativenumber
+augroup numbertoggle
+    autocmd!
+    " Display absolute numbers when we lose focus
+    " Display absolute numbers in insert mode
+    autocmd FocusLost,WinLeave,InsertEnter * setlocal norelativenumber
+    "Display relative numbers when we gain focus
+    " Display relative numbers when we leave insert mode
+    autocmd FocusGained,WinEnter,InsertLeave * if &number==1 | setlocal relativenumber | endif
+    
+    " Disable numbers for buffers with matching filetypes
+    autocmd TermOpen,FileType term://*,defx setlocal nonumber
+    
+    " Disable relative numbers for buffers with matching filetypes
+    autocmd TermOpen,FileType term://*,defx,qf setlocal norelativenumber
+augroup END
 
 " ------------------------------------------------
 "               QUICK-SCOPE
