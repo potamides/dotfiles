@@ -11,6 +11,9 @@ export PIPENV_SKIP_LOCK=1
 # to execute local executables
 export PATH="${PATH}:${HOME}/.local/bin"
 
+# find local executables installed by luarocks
+export PATH="${PATH}:${HOME}/.luarocks/bin"
+
 export LIBVA_DRIVER_NAME=radeonsi
 
 #function check_battery_preexec(){

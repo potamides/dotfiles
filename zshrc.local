@@ -69,7 +69,7 @@ function search_pdf(){
     return 0
 }
 # if not in vim or ranger show greeter
-if [[ -z $VIM ]] && [[ -z $RANGER_LEVEL ]]; then
+if [[ -z $VIMRUNTIME ]] && [[ -z $RANGER_LEVEL ]]; then
     fortune computers linux linuxcookie debian -as | cowsay | lolcat
 fi
 # Report execution time when a program takes longer than 60s
@@ -88,9 +88,10 @@ alias paci='pacman -Qi' # info
 alias paclo='pacman -Qdt' # list orphans
 alias pacro='paclo && sudo pacman -Rns $(pacman -Qtdq)' # remove orphans
 alias pacc='sudo pacman -Scc' # clean cache
-alias pacli='pacman -Q | wc -l' # user installed packages
+alias pacli='pacman -Q | wc -l' # list user installed packages
 alias rgo=rg_and_open
 alias ins=inspect
 alias calc='ipython --profile=calculate'
 alias dus=disk_usage_sorted
 alias spdf=search_pdf
+alias esavpn='sshuttle --dns -r erebor 130.83.161.128/26 10.0.0.0/8 -x 130.83.161.131/32'
