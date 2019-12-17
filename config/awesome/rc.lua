@@ -383,11 +383,6 @@ local globalkeys = gears.table.join(
           {description = "select next layout", group = "layout"}),
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(-1) end,
           {description = "select previous next", group = "layout"}),
-    awful.key({ modkey,           }, "e", function ()
-        awful.spawn(terminal.." -e "..os.getenv("HOME").."/.config/awesome/ncmpcpp.sh",
-        {tag=awful.screen.focused().tags[6]})
-        end,
-          {description = "launch ncmpcpp", group = "launcher"}),
     awful.key({ modkey, "Control" }, "n",
     function ()
         local c = awful.client.restore()
