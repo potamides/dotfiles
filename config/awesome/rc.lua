@@ -19,9 +19,7 @@ local mpd = require("mpd")
 local battery = require("battery")
 local volume = require("volume")
 local revelation = require("revelation")
-
 revelation.init()
-awful.util.shell="/usr/bin/zsh"
 
 -------------------------------------------------------------------------------
 -- {{{ Error handling
@@ -54,6 +52,8 @@ end
 -------------------------------------------------------------------------------
 -- {{{ Variable definitions
 -------------------------------------------------------------------------------
+
+awful.util.shell="/usr/bin/zsh"
 
 -- This is used later as the default terminal and editor to run.
 local terminal = "kitty"
@@ -297,8 +297,7 @@ local globalkeys = gears.table.join(
     awful.key({ "Mod1"--[[Alt]],  }, "Tab",      revelation,
     {description = "show all clients on screen", group = "tag"}),
     awful.key({modkey             }, "Tab", function()
-                revelation({rule={class="conky"}, is_excluded=true,
-                curr_tag_only=true}) end,
+                revelation({curr_tag_only=true}) end,
     {description = "show all clients on current tag", group = "tag"}),
     awful.key({modkey             }, "a", function()
                 local tags = awful.screen.focused().selected_tags
