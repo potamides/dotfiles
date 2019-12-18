@@ -185,17 +185,13 @@ local function list_update(left_color)
             end
         end
 
-        local end_sep = data.end_sep
-        if end_sep then
-            local left_sep = end_sep:get_widgets_at(1,1)[1]
-            left_sep.bg = previous_color
-            w:add(end_sep)
+        if data.end_sep then
+            data.end_sep:get_widgets_at(1,1)[1].bg = previous_color
         else
-            end_sep = separator(previous_color, beautiful.bg_normal, true, true)
-            last_separator = end_sep:get_widgets_at(1,2)[1]
-            w:add(end_sep)
-            data.end_sep = end_sep
+            data.end_sep = separator(previous_color, beautiful.bg_normal, true, true)
         end
+        w:add(data.end_sep)
+        last_separator = data.end_sep:get_widgets_at(1,2)[1]
     end
 end
 
