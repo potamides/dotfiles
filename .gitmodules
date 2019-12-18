@@ -4,3 +4,6 @@
 [submodule "config/awesome/vimawesome"]
 	path = config/awesome/vimawesome
 	url = git@github.com:DrCracket/vimawesome.git
+[submodule "config/awesome/revelation"]
+	path = config/awesome/revelation
+	url = git@github.com:guotsuan/awesome-revelation.git
