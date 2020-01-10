@@ -7,3 +7,6 @@
 [submodule "config/awesome/revelation"]
 	path = config/awesome/revelation
 	url = git@github.com:DrCracket/awesome-revelation.git
+[submodule "config/awesome/net_widgets"]
+	path = config/awesome/net_widgets
+	url = git@github.com:DrCracket/net_widgets.git
