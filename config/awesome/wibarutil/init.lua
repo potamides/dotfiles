@@ -54,25 +54,27 @@ local separator = function(left_color, right_color, draw_space, reverse)
 
     return
         wibox.widget {
-            wibox.widget {{
+            {{
                     widget = wibox.widget.textbox
                 },
+                id = "left",
                 shape              = left_shape,
                 bg                 = left_color,
                 shape_border_color = beautiful.border_color,
                 forced_width       = 13,
                 widget             = wibox.container.background
             },
-            wibox.widget {{
+            {{
                     widget = wibox.widget.textbox
                 },
+                id = "right",
                 shape              = right_shape,
                 bg                 = right_color,
                 shape_border_color = beautiful.border_color,
                 forced_width       = 13,
                 widget             = wibox.container.background
             },
-            spacing = margin,
+            spacing         = margin,
             forced_num_cols = 2,
             forced_num_rows = 1,
             expand          = true,
@@ -85,22 +87,22 @@ end
 local function rectangle(widget, color, lmargin, rmargin)
 return wibox.widget {
         {
-                widget,
+            widget,
             left   = lmargin or 4,
             right  = rmargin or 4,
             top    = 0,
             bottom = 0,
             widget = wibox.container.margin
         },
-        shape              = gears.shape.rectangle,
-        bg                 = color,
-        widget             = wibox.container.background
+        shape  = gears.shape.rectangle,
+        bg     = color,
+        widget = wibox.container.background
     }
 end
 
 -- custom list_update function, adds a seperator after each tag to make them
 -- look like parallelograms
-local last_separator
+local last_separator_color, last_separator = beautiful.bg_normal
 local function list_update(left_color)
     return function(w, buttons, label, data, objects)
         local previous_color = left_color
@@ -174,8 +176,8 @@ local function list_update(left_color)
 
             -- don't add the revelation tags
             if not (tb.text == "Revelation" or tb.text == "Revelation_zoom") then
-                local left_sep = sep:get_widgets_at(1,1)[1]
-                local right_sep = sep:get_widgets_at(1,2)[1]
+                local left_sep = sep:get_children_by_id("left")[1]
+                local right_sep = sep:get_children_by_id("right")[1]
                 left_sep.bg = previous_color
                 right_sep.bg = bg or beautiful.bg_normal
                 w:add(sep)
@@ -186,18 +188,20 @@ local function list_update(left_color)
         end
 
         if data.end_sep then
-            data.end_sep:get_widgets_at(1,1)[1].bg = previous_color
+            data.end_sep:get_children_by_id("left")[1].bg = previous_color
+            data.end_sep:get_children_by_id("right")[1].bg = last_separator_color
         else
-            data.end_sep = separator(previous_color, beautiful.bg_normal, true, true)
+            data.end_sep = separator(previous_color, last_separator_color, true, true)
         end
+        last_separator = data.end_sep
         w:add(data.end_sep)
-        last_separator = data.end_sep:get_widgets_at(1,2)[1]
     end
 end
 
 local function set_last_separator_color(color)
+    last_separator_color = gears.color(color)
     if last_separator then
-        last_separator.bg = gears.color(color)
+        last_separator:get_children_by_id("right")[1].bg = last_separator_color
     end
 end
 

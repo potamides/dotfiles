@@ -28,20 +28,21 @@ local final_mpd_widget =
             layout          = wibox.layout.grid.horizontal
     }
 
-local state, title = "stop", ""
+local state, title, artist = "stop"
 local function update_widget()
     local text, left_sep = ""
     if state ~= "pause" and state ~= "stop" and title then
+        if artist then text = artist .. " - " end
         text = text .. tostring(title)
         wibarutil.set_last_separator_color(beautiful.bg1)
         mpd_container:set_bg(gears.color(beautiful.bg1))
-        left_sep = mpd_separator:get_widgets_at(1,1)[1]
+        left_sep = mpd_separator:get_children_by_id("left")[1]
         left_sep:set_bg(gears.color(beautiful.bg1))
         final_mpd_widget.visible = true
     else
         wibarutil.set_last_separator_color(beautiful.bg_normal)
         mpd_container:set_bg(gears.color(beautiful.bg_normal))
-        left_sep = mpd_separator:get_widgets_at(1,1)[1]
+        left_sep = mpd_separator:get_children_by_id("left")[1]
         left_sep:set_bg(gears.color(beautiful.bg_normal))
         final_mpd_widget.visible = false
     end
@@ -49,30 +50,38 @@ local function update_widget()
         beautiful.fg_normal, text))
 end
 
-mpc.new(nil, nil, nil, nil,
+
+local connection = mpc.new(nil, nil, nil, nil,
     "status", function(_, result)
         state = result.state
     end,
     "currentsong", function(_, result)
         title = result.title
+        artist = result.artist
         update_widget()
     end)
+
+local function reconnect()
+    gears.timer.start_new(10, function()
+        connection:send("ping")
+    end)
+end
 
 mpd_scroll_widget:buttons(awful.button({ }, 1,
 	function()
         mpd_widget:set_markup(string.format("<span color=%q><b>%s</b></span>",
-            beautiful.lightblue, mpd_widget.text))
+        beautiful.lightblue, mpd_widget.text))
 
         local Playlist=io.open(os.getenv("HOME") .. "/Documents/Playlist", "a+")
-		if not string.find(Playlist:read("*a"), title, 1, true)
-			then Playlist:write(title .. "\n")
-		end
-		Playlist:close()
+        if not string.find(Playlist:read("*a"), title, 1, true)
+            then Playlist:write(title .. "\n")
+        end
+        Playlist:close()
     end,
     function()
         mpd_widget:set_markup(string.format("<span color=%q><b>%s</b></span>",
             beautiful.fg_normal, mpd_widget.text))
     end))
 
-local mpd = {widget = final_mpd_widget}
+local mpd = {widget = final_mpd_widget, reconnect = reconnect}
 return mpd

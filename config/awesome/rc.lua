@@ -15,10 +15,11 @@ local freedesktop = require("freedesktop")
 beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua")
 -- import this stuff after theme initialisation for proper colors
 local wibarutil = require("wibarutil")
-local mpd = require("mpd")
 local battery = require("battery")
 local volume = require("volume")
 local revelation = require("revelation")
+local mpd = require("mpd")
+local net_widgets = require("net_widgets")
 revelation.init()
 
 -------------------------------------------------------------------------------
@@ -193,7 +194,6 @@ awful.screen.connect_for_each_screen(function(s)
         awful.widget.taglist.filter.all,
         taglist_buttons,
         nil,
-        -- pass custom list_update function for fancy shapes
         wibarutil.list_update(beautiful.lightblue)
     )
 
@@ -222,6 +222,7 @@ awful.screen.connect_for_each_screen(function(s)
     client.connect_signal("property::name", update_title_text)
     client.connect_signal("unfocus", function (c) s = awful.screen.focused() s.mytitle.markup = "" end)
 
+    local wireless_widgets = net_widgets.indicator({indent = 0, widget = false})
 -- Wibar
 -------------------------------------------------------------------------------
     -- Create the wibar
@@ -254,14 +255,21 @@ awful.screen.connect_for_each_screen(function(s)
         },
         { -- Right widgets
             systray,
+
+            -- Wireless Widget
+            wibarutil.separator(beautiful.bg_normal, beautiful.fg4, true),
+            wibarutil.rectangle(wireless_widgets.textbox, beautiful.fg4),
+            wibarutil.separator(beautiful.fg4, beautiful.bg1),
+            wibarutil.rectangle(wireless_widgets.imagebox, beautiful.bg1),
+
             -- Audio Volume
-            wibarutil.separator(beautiful.bg_normal,beautiful.fg4, true),
+            wibarutil.separator(beautiful.bg1, beautiful.fg4, true),
             wibarutil.rectangle(volume.text, beautiful.fg4),
             wibarutil.separator(beautiful.fg4, beautiful.bg1),
             wibarutil.rectangle(volume.img, beautiful.bg1),
 
             -- Battery Indicator
-            wibarutil.separator(beautiful.bg1,beautiful.fg4, true),
+            wibarutil.separator(beautiful.bg1, beautiful.fg4, true),
             wibarutil.rectangle(battery.text, beautiful.fg4),
             wibarutil.separator(beautiful.fg4, beautiful.bg1),
             wibarutil.rectangle(battery.img, beautiful.bg1),
@@ -294,7 +302,7 @@ local globalkeys = gears.table.join(
     {description = "view next", group = "tag"}),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
     {description = "go back", group = "tag"}),
-    awful.key({ "Mod1"--[[Alt]],  }, "Tab",      revelation,
+    awful.key({ "Mod1",           }, "Tab",      revelation,
     {description = "show all clients on screen", group = "tag"}),
     awful.key({modkey             }, "Tab", function()
                 revelation({curr_tag_only=true}) end,
@@ -358,6 +366,10 @@ local globalkeys = gears.table.join(
           {description = "scrot", group = "launcher"}),
     awful.key({ modkey,           }, "q", function() awful.spawn("firefox") end,
           {description = "firefox", group = "launcher"}),
+    awful.key({ modkey,           }, "l", function() awful.spawn("physlock -s") end,
+          {description = "lock the screen", group = "launcher"}),
+    awful.key({ modkey, "Shift"   }, "m", function() mpd.reconnect() end,
+          {description = "mpd server reconnect", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
           {description = "reload awesome", group = "awesome"}),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit,
@@ -382,6 +394,12 @@ local globalkeys = gears.table.join(
           {description = "select next layout", group = "layout"}),
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(-1) end,
           {description = "select previous next", group = "layout"}),
+    awful.key({ modkey,           }, "e", function ()
+        awful.spawn(terminal.." -e " .. gears.filesystem.get_dir("config") .. "/ncmpcpp.sh",
+            {tag=awful.screen.focused().tags[6]})
+        mpd.reconnect()
+    end,
+          {description = "ncmpcpp", group = "launcher"}),
     awful.key({ modkey, "Control" }, "n",
     function ()
         local c = awful.client.restore()
@@ -396,11 +414,11 @@ local globalkeys = gears.table.join(
 -- Prompt
 -------------------------------------------------------------------------------
     awful.key({ modkey          }, "r", function () awful.spawn("rofi -modi drun,run -show drun -theme gruvbox") end,
-          {description = "run rofi launcher", group = "launcher"}),
+          {description = "rofi launcher", group = "launcher"}),
     awful.key({ modkey, "Shift" }, "r", function ()
             awful.spawn.with_shell("DRI_PRIME=1 rofi -modi drun,run -show drun -theme gruvbox")
         end,
-          {description = "run rofi launcher on dGPU", group = "launcher"}),
+          {description = "rofi launcher on dGPU", group = "launcher"}),
     awful.key({ modkey, "Shift" }, "x",
     function ()
         awful.prompt.run {
@@ -429,7 +447,7 @@ local globalkeys = gears.table.join(
     awful.key({}, "#179",
     function (_) awful.spawn(editor_cmd .. " " .. awesome.conffile) end),
     awful.key({}, "#235",
-    function (_) awful.spawn.with_shell("~/.config/awesome/monitor.sh") end)
+    function (_) awful.spawn.with_shell(gears.filesystem.get_dir("config") .. "/monitor.sh") end)
 )
 
 -- Client & Tag Manipulation
@@ -547,7 +565,7 @@ awful.rules.rules = {
 
     -- Firefox always on tag 1
     { rule = { class = "Firefox" },
-      properties = { tag = awful.screen.focused().tags[1]} },
+      properties = { tag = awful.screen.focused().selected_tags[1]} },
 
     -- Make dragon sticky for easy drag and drop in ranger
     { rule = { class = "Dragon-drag-and-drop" },
@@ -750,7 +768,7 @@ beautiful.notification_opacity=0.75
 
 -- autostart some applications
 -------------------------------------------------------------------------------
-awful.spawn.with_shell("~/.config/awesome/autorun.sh")
+awful.spawn.with_shell(gears.filesystem.get_dir("config") .. "/autorun.sh")
 
 -- memory management
 -------------------------------------------------------------------------------
