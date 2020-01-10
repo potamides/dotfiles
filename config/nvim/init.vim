@@ -45,10 +45,10 @@ noremap <silent> <A-n> :Cnext<CR>
 noremap <silent> <A-m> :Cprev<CR>
 
 " j and k shall navigate displayed lines, useful when wrapping is enabled.
-noremap <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
-noremap <expr> k v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
-noremap <expr> <Down> v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
-noremap <expr> <Up> v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
+"noremap <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
+"noremap <expr> k v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
+"noremap <expr> <Down> v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
+"noremap <expr> <Up> v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
 
 " Enable folding
 set foldmethod=syntax
@@ -88,6 +88,7 @@ Plug 'unblevable/quick-scope'
 Plug 'leafgarland/typescript-vim'
 Plug 'honza/vim-snippets'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'hanw/vim-bluespec'
 " Plug 'universal-ctags/ctags' " installed with pacman
 call plug#end()
 
@@ -337,8 +338,8 @@ tnoremap <silent> <F2> <C-\><C-N>:Defx -split=vertical -toggle -resume -directio
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-let g:coc_snippet_next = '<tab>'
-let g:coc_snippet_prev = '<s-tab>'
+"let g:coc_snippet_next = '<tab>'
+"let g:coc_snippet_prev = '<s-tab>'
 
 " Fancier status signs
 let g:coc_status_warning_sign = "\uf071 "
@@ -435,7 +436,7 @@ command! -nargs=0 Format :call CocAction('format')
 command! -nargs=? Fold :call CocAction('fold', <f-args>)
 
 " use `:OR` for organize import of current buffer
-command! -nargs=0 OR   :call CocAction('runCommand', 'editor.action.organizeImport')
+command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " Correct comment highlighting of config
 autocmd FileType json syntax match Comment +\/\/.\+$+
@@ -448,7 +449,14 @@ nnoremap <silent> <leader>cb :<C-u>CocList --number-select bcommits<cr>
 nnoremap <silent> <leader>cc :<C-u>CocList --number-select commands<cr>
 nnoremap <silent> <leader>co :<C-u>CocList --number-select outline<cr>
 nnoremap <silent> <leader>cs :<C-u>CocList --number-select --interactive symbols<cr>
-nnoremap <silent> <leader>cd :<C-u>CocList --number-select diagnostic<cr>
+nnoremap <silent> <leader>cd :<C-u>CocList --number-select diagnostics<cr>
+
+tnoremap <silent> <C-p> <C-\><C-N>:<C-u>CocList --number-select --no-sort files<cr>
+inoremap <silent> <C-p> <C-\><C-N>:<C-u>CocList --number-select --no-sort files<cr>
+nnoremap <silent> <C-p> :<C-u>CocList --number-select --no-sort files<cr>
+tnoremap <silent> <C-e> <C-\><C-N>:<C-u>CocList --number-select --no-sort --interactive grep -smartcase<cr>
+inoremap <silent> <C-e> <C-\><C-N>:<C-u>CocList --number-select --no-sort --interactive grep -smartcase<cr>
+nnoremap <silent> <C-e> :<C-u>CocList --number-select --no-sort --interactive grep -smartcase<cr>
 
 " TEX
 au BufReadPost,BufNewFile *.tex nnoremap <silent> <leader>bn :<C-u>CocCommand latex.Build<cr>
