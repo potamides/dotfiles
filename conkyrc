@@ -87,5 +87,5 @@ ${if_existing /sys/class/net/enp3s0/operstate up}Total ${totalup enp3s0} ${align
 ${hr}
 ${font SauceCodePro Nerd Font}${font} ${alignr}${if_existing /sys/class/net/enp3s0/operstate up}${addrs enp3s0}${else}${addrs wlp5s0}${endif}
 ${hr}
-${font SauceCodePro Nerd Font}${font} ${alignr}${exec curl ipinfo.io/ip}
+${font SauceCodePro Nerd Font}${font} ${alignr}${exec curl --fail ipinfo.io/ip}
 ]];

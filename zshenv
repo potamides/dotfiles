@@ -14,8 +14,6 @@ export PATH="${PATH}:${HOME}/.local/bin"
 # find local executables installed by luarocks
 export PATH="${PATH}:${HOME}/.luarocks/bin"
 
-export LIBVA_DRIVER_NAME=radeonsi
-
 #function check_battery_preexec(){
 #if [[ -z $(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep "state:               discharging") ]]
 #    then
