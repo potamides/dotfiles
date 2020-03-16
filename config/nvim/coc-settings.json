@@ -45,7 +45,7 @@
 
   // Python
   "python.linting.pylintUseMinimalCheckers": false,
-  "python.jediPath": "/usr/lib/python3.7/site-packages/",
+  "python.jediPath": "/usr/lib/python3.8/site-packages/",
 
   // Git
   "git.changedSign.text": "▌",

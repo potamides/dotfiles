@@ -17,12 +17,11 @@ set inccommand=nosplit
 " Set the hidden option so any buffer can be hidden (keeping its changes) without first writing the buffer to a file
 set hidden
 
+" make 'J' and 'gq' commands use one space after a period
+set nojoinspaces
+
 " turn off automatic line wrapping
 "set nowrap
-
-" hide highlighting of last search
-command Clearpattern :let @/ = ""
-command Cp Clearpattern
 
 " Uncomment the following to have Vim jump to the last position when
 " reopening a file
@@ -58,9 +57,9 @@ set foldlevel=99
 noremap <silent> <space> za
 
 " Tab (\t) stuff
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
 set autoindent
 set expandtab
 set smarttab
@@ -69,7 +68,7 @@ set smarttab
 set colorcolumn=80,120
 
 " Insert line break at column 80 and set spelllang in certain files
-au BufReadPost,BufNewFile *.md,*.txt,*.tex setlocal textwidth=79 | setlocal spell spelllang=en_us,de_de
+au BufReadPost,BufNewFile *.md,*.txt,*.tex setlocal textwidth=79 | setlocal spell spelllang=en_us,de_de,cjk
 
 " highlight current line
 " set cursorline 
@@ -89,6 +88,7 @@ Plug 'leafgarland/typescript-vim'
 Plug 'honza/vim-snippets'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'hanw/vim-bluespec'
+Plug 'DrCracket/painless-digraph'
 " Plug 'universal-ctags/ctags' " installed with pacman
 call plug#end()
 
@@ -370,22 +370,6 @@ let g:lightline.component_function = {'cocstatus': 'coc#status',
 
 " Use auocmd to force lightline update.
 autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
-
-"The highlight used for error text.
-highlight link CocErrorSign GruvboxRedSign
-highlight link CocErrorFloat GruvboxRed
-
-"The highlight used for warning text.
-highlight link CocWarningSign GruvboxYellowSign
-highlight link CocWarningFloat GruvboxYellow
-
-"The highlight used for information text.
-highlight link CocInfoSign GruvboxPurpleSign
-highlight link CocInfoFloat GruvboxPurple
-
-"The highlight used for hint text.
-highlight link CocHintSign GruvboxBlueSign
-highlight link CocHintFloat GruvboxBlue
 
 " You will have bad experience for diagnostic messages when it's default 4000.
 set updatetime=300
