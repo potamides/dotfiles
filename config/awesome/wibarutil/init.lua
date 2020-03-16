@@ -5,7 +5,7 @@ local gears = require("gears")
 local wibox = require("wibox")
 
 
--- a seperator that makes a rectangle look like a parallelogram
+-- a seperator that that can be used to surround a rectangle to create a parallelogram
 local separator = function(left_color, right_color, draw_space, reverse)
     local margin
     if draw_space then
@@ -84,14 +84,14 @@ local separator = function(left_color, right_color, draw_space, reverse)
 end
 
 -- surrounds a widget with a colored rectangle
-local function rectangle(widget, color, lmargin, rmargin)
+local function rectangle(widget, color, lmargin, rmargin, tmargin, bmargin)
 return wibox.widget {
         {
             widget,
-            left   = lmargin or 4,
-            right  = rmargin or 4,
-            top    = 0,
-            bottom = 0,
+            left   = lmargin or 0,
+            right  = rmargin or 0,
+            top    = tmargin or 0,
+            bottom = bmargin or 0,
             widget = wibox.container.margin
         },
         shape  = gears.shape.rectangle,

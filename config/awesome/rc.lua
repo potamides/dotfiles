@@ -182,7 +182,7 @@ awful.screen.connect_for_each_screen(function(s)
     s.mypromptbox = awful.widget.prompt()
     -- Create an imagebox widget which will contain an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
-    s.mylayoutbox = wibox.container.margin(awful.widget.layoutbox(s), 3,3,7,7)
+    s.mylayoutbox = awful.widget.layoutbox(s)
     s.mylayoutbox:buttons(gears.table.join(
     awful.button({ }, 1, function () awful.layout.inc( 1) end),
     awful.button({ }, 3, function () awful.layout.inc(-1) end),
@@ -222,17 +222,17 @@ awful.screen.connect_for_each_screen(function(s)
     client.connect_signal("property::name", update_title_text)
     client.connect_signal("unfocus", function (c) s = awful.screen.focused() s.mytitle.markup = "" end)
 
-    local wireless_widgets = net_widgets.indicator({indent = 0, widget = false})
+    local wireless_widgets = net_widgets.indicator({indent = 0, widget = false, interface="wlp5s0",
+        interfaces={"enp3s0"}})
 -- Wibar
 -------------------------------------------------------------------------------
     -- Create the wibar
     s.mywibox = awful.wibar({position = "top", screen = s, height = 25})
 
     s.titlebar_buttons = wibox.widget {
-        homogeneous     = true,
+        homogeneous     = false,
         expand          = true,
-        orientation     = "horizontal",
-        layout = wibox.layout.grid
+        layout = wibox.layout.grid.horizontal
     }
 
 --local vimawesome = require("vimawesome")
@@ -241,7 +241,7 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.align.horizontal,
         expand = "none",
         { -- Left widgets
-            wibarutil.rectangle(mylauncher, beautiful.lightblue),
+            wibarutil.rectangle(mylauncher, beautiful.lightblue, 4, 4),
             s.mytaglist,
             mpd.widget,
             s.mypromptbox,
@@ -258,31 +258,30 @@ awful.screen.connect_for_each_screen(function(s)
 
             -- Wireless Widget
             wibarutil.separator(beautiful.bg_normal, beautiful.fg4, true),
-            wibarutil.rectangle(wireless_widgets.textbox, beautiful.fg4),
+            wibarutil.rectangle(wireless_widgets.textbox, beautiful.fg4, 2, 2),
             wibarutil.separator(beautiful.fg4, beautiful.bg1),
-            wibarutil.rectangle(wireless_widgets.imagebox, beautiful.bg1),
+            wibarutil.rectangle(wireless_widgets.imagebox, beautiful.bg1, 4, 4, 4, 4),
 
             -- Audio Volume
             wibarutil.separator(beautiful.bg1, beautiful.fg4, true),
-            wibarutil.rectangle(volume.text, beautiful.fg4),
+            wibarutil.rectangle(volume.text, beautiful.fg4, 2, 2),
             wibarutil.separator(beautiful.fg4, beautiful.bg1),
-            wibarutil.rectangle(volume.img, beautiful.bg1),
+            wibarutil.rectangle(volume.img, beautiful.bg1, 4, 4, 4, 4),
 
             -- Battery Indicator
             wibarutil.separator(beautiful.bg1, beautiful.fg4, true),
-            wibarutil.rectangle(battery.text, beautiful.fg4),
+            wibarutil.rectangle(battery.text, beautiful.fg4, 2, 2),
             wibarutil.separator(beautiful.fg4, beautiful.bg1),
-            wibarutil.rectangle(battery.img, beautiful.bg1),
+            wibarutil.rectangle(battery.img, beautiful.bg1, 4, 4, 4 ,4),
 
             -- Clock / Layout
             wibarutil.separator(beautiful.bg1, beautiful.fg4, true),
-            wibarutil.rectangle(mytextclock, beautiful.fg4),
+            wibarutil.rectangle(mytextclock, beautiful.fg4, 2, 2),
             wibarutil.separator(beautiful.fg4, beautiful.bg1),
-            wibarutil.rectangle(s.mylayoutbox,beautiful.bg1),
+            wibarutil.rectangle(s.mylayoutbox,beautiful.bg1, 4, 4, 6, 6),
 
             -- Global Titlebar Buttons
-            wibarutil.separator(beautiful.bg1, beautiful.bg1, true),
-            wibarutil.rectangle(s.titlebar_buttons, beautiful.bg1),
+            wibarutil.rectangle(s.titlebar_buttons, beautiful.bg1, 0, 4, 6, 6),
             layout = wibox.layout.fixed.horizontal,
         },
     }
@@ -613,33 +612,30 @@ client.connect_signal("request::titlebars", function(c)
 
     awful.titlebar(c, {size = 20, position = "bottom"}) : setup {
         {
-        { -- Left
-        --awful.titlebar.widget.iconwidget(c),
-        buttons = buttons,
-        layout  = wibox.layout.fixed.horizontal
-        },
-        { -- Middle
-        --[[{ -- Title
-        align  = "center",
-        widget = awful.titlebar.widget.titlewidget(c)
-        },]]
-        buttons = buttons,
-        layout  = wibox.layout.flex.horizontal
-        },
-        { -- Right
-        --awful.titlebar.widget.stickybutton   (c),
-        --awful.titlebar.widget.maximizedbutton(c),
-        --awful.titlebar.widget.ontopbutton    (c),
-        --awful.titlebar.widget.closebutton    (c),
-        awful.titlebar.widget.floatingbutton (c),
-        layout = wibox.layout.fixed.horizontal()
+            { -- Left
+                --awful.titlebar.widget.iconwidget(c),
+                buttons = buttons,
+                layout  = wibox.layout.fixed.horizontal
             },
+            { -- Middle
+                --[[{ -- Title
+                align  = "center",
+                widget = awful.titlebar.widget.titlewidget(c)
+                },]]
+                buttons = buttons,
+                layout  = wibox.layout.flex.horizontal
+            },
+            { -- Right
+                wibox.container.margin(awful.titlebar.widget.floatingbutton(c), 4, 4, 4, 4),
+                layout = wibox.layout.fixed.horizontal()
+                },
 
             layout = wibox.layout.align.horizontal
         },
         right = 2,
         widget = wibox.container.margin
     }
+
     -- Hide the titlebar if we are not floating
     local l = awful.layout.get(c.screen)
     if not (l.name == "floating" or c.floating) or c.maximized then
@@ -716,19 +712,22 @@ local function buttons_remove(_)
 end
 
 local function buttons_insert(c)
-    local s = awful.screen.focused()
-    local buttons = s.titlebar_buttons:get_widgets_at(1, 1, 1, 3)
+    local s               = awful.screen.focused()
+    local buttons         = s.titlebar_buttons:get_widgets_at(1, 1, 1, 3)
+    local maximizedbutton = wibox.container.margin(awful.titlebar.widget.maximizedbutton(c), 4, 4)
+    local ontopbutton     = wibox.container.margin(awful.titlebar.widget.ontopbutton(c), 4, 4)
+    local stickybutton    = wibox.container.margin(awful.titlebar.widget.stickybutton(c), 4, 4)
     should_remove = false
     s.titlebar_buttons.visible = true
 
     if buttons then
-        s.titlebar_buttons:replace_widget(buttons[1], awful.titlebar.widget.ontopbutton(c))
-        s.titlebar_buttons:replace_widget(buttons[2], awful.titlebar.widget.maximizedbutton(c))
-        s.titlebar_buttons:replace_widget(buttons[3], awful.titlebar.widget.stickybutton(c))
+        s.titlebar_buttons:replace_widget(buttons[3], maximizedbutton)
+        s.titlebar_buttons:replace_widget(buttons[2], ontopbutton)
+        s.titlebar_buttons:replace_widget(buttons[1], stickybutton)
     else
-        s.titlebar_buttons:add_widget_at(awful.titlebar.widget.ontopbutton(c), 1, 1)
-        s.titlebar_buttons:add_widget_at(awful.titlebar.widget.maximizedbutton(c), 1, 2)
-        s.titlebar_buttons:add_widget_at(awful.titlebar.widget.stickybutton(c), 1, 3)
+        s.titlebar_buttons:add_widget_at(maximizedbutton, 1, 1)
+        s.titlebar_buttons:add_widget_at(ontopbutton, 1, 2)
+        s.titlebar_buttons:add_widget_at(stickybutton, 1, 3)
     end
 end
 

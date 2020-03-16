@@ -21,13 +21,10 @@ local wibox = require("wibox")
 local PATH_TO_ICONS = awful.util.getdir("config").."/battery/symbolic/"
 
 local battery_widget = wibox.widget {
-    {
-        id = "icon",
+        image = PATH_TO_ICONS .. "battery-empty%s-symbolic.svg",
+        resize = false,
         widget = wibox.widget.imagebox,
-        resize = false
-    },
-    layout = wibox.container.margin(nil, 0, 0, 4)
-}
+    }
 
 local should_notify = true
 local text_battery_widget = wibox.widget.textbox()
@@ -62,7 +59,7 @@ watch("acpi", 60,
         else
             batteryType = string.format(batteryType, '')
         end
-        widget.icon:set_image(PATH_TO_ICONS .. batteryType .. ".svg")
+        widget.image = PATH_TO_ICONS .. batteryType .. ".svg"
 
         -- Update text battery
         text_battery_widget:set_markup(string.format("<span color=%q><b>%s%%</b></span>",

@@ -133,27 +133,27 @@ theme.layout_cornerse   = themes_path .. "gruvbox/layouts/cornerse.svg"
 -- }}}
 
 -- {{{ Titlebar
-theme.titlebar_ontop_button_focus_active    = themes_path .. "gruvbox/titlebar/select.svg"
-theme.titlebar_ontop_button_normal_active   = themes_path .. "gruvbox/titlebar/select.svg"
-theme.titlebar_ontop_button_focus_inactive  = themes_path .. "gruvbox/titlebar/unselect.svg"
-theme.titlebar_ontop_button_normal_inactive = themes_path .. "gruvbox/titlebar/unselect.svg"
+theme.titlebar_ontop_button_focus_active    = themes_path .. "gruvbox/titlebar/ontop_select.svg"
+theme.titlebar_ontop_button_normal_active   = themes_path .. "gruvbox/titlebar/ontop_select.svg"
+theme.titlebar_ontop_button_focus_inactive  = themes_path .. "gruvbox/titlebar/ontop_unselect.svg"
+theme.titlebar_ontop_button_normal_inactive = themes_path .. "gruvbox/titlebar/ontop_unselect.svg"
 
-theme.titlebar_sticky_button_focus_active    = themes_path .. "gruvbox/titlebar/select.svg"
-theme.titlebar_sticky_button_normal_active   = themes_path .. "gruvbox/titlebar/select.svg"
-theme.titlebar_sticky_button_focus_inactive  = themes_path .. "gruvbox/titlebar/unselect.svg"
-theme.titlebar_sticky_button_normal_inactive = themes_path .. "gruvbox/titlebar/unselect.svg"
-
-
-theme.titlebar_maximized_button_focus_active    = themes_path .. "gruvbox/titlebar/select.svg"
-theme.titlebar_maximized_button_normal_active   = themes_path .. "gruvbox/titlebar/select.svg"
-theme.titlebar_maximized_button_focus_inactive  = themes_path .. "gruvbox/titlebar/unselect.svg"
-theme.titlebar_maximized_button_normal_inactive = themes_path .. "gruvbox/titlebar/unselect.svg"
+theme.titlebar_sticky_button_focus_active    = themes_path .. "gruvbox/titlebar/sticky_select.svg"
+theme.titlebar_sticky_button_normal_active   = themes_path .. "gruvbox/titlebar/sticky_select.svg"
+theme.titlebar_sticky_button_focus_inactive  = themes_path .. "gruvbox/titlebar/sticky_unselect.svg"
+theme.titlebar_sticky_button_normal_inactive = themes_path .. "gruvbox/titlebar/sticky_unselect.svg"
 
 
-theme.titlebar_floating_button_focus_active    = themes_path .. "gruvbox/titlebar/select.svg"
-theme.titlebar_floating_button_normal_active   = themes_path .. "gruvbox/titlebar/select.svg"
-theme.titlebar_floating_button_focus_inactive  = themes_path .. "gruvbox/titlebar/unselect.svg"
-theme.titlebar_floating_button_normal_inactive = themes_path .. "gruvbox/titlebar/unselect.svg"
+theme.titlebar_maximized_button_focus_active    = themes_path .. "gruvbox/titlebar/maximized_select.svg"
+theme.titlebar_maximized_button_normal_active   = themes_path .. "gruvbox/titlebar/maximized_select.svg"
+theme.titlebar_maximized_button_focus_inactive  = themes_path .. "gruvbox/titlebar/maximized_unselect.svg"
+theme.titlebar_maximized_button_normal_inactive = themes_path .. "gruvbox/titlebar/maximized_unselect.svg"
+
+
+theme.titlebar_floating_button_focus_active    = themes_path .. "gruvbox/titlebar/floating_select.svg"
+theme.titlebar_floating_button_normal_active   = themes_path .. "gruvbox/titlebar/floating_select.svg"
+theme.titlebar_floating_button_focus_inactive  = themes_path .. "gruvbox/titlebar/floating_unselect.svg"
+theme.titlebar_floating_button_normal_inactive = themes_path .. "gruvbox/titlebar/floating_unselect.svg"
 -- }}}
 -- }}}
 

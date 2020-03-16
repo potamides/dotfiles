@@ -15,7 +15,7 @@ local mpd_scroll_widget =
        speed = 70,
        mpd_widget
     }
-local mpd_container = wibarutil.rectangle(mpd_scroll_widget, beautiful.bg_normal)
+local mpd_container = wibarutil.rectangle(mpd_scroll_widget, beautiful.bg_normal, 4, 4)
 local mpd_separator = wibarutil.separator(beautiful.bg_normal, beautiful.bg_normal, false, true)
 local final_mpd_widget =
     wibox.widget {

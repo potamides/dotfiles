@@ -14,21 +14,14 @@ local beautiful = require("beautiful")
 local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
 
-local path_to_icons = awful.util.getdir("config").."/volume/symbolic/"
+local PATH_TO_ICONS = awful.util.getdir("config").."/volume/symbolic/"
 local request_command = 'amixer -D pulse sget Master'
 
 local volume_widget = wibox.widget {
-    {
-        id = "icon",
-        image = path_to_icons .. "audio-volume-muted-symbolic.svg",
+        image = PATH_TO_ICONS .. "audio-volume-muted-symbolic.svg",
         resize = false,
         widget = wibox.widget.imagebox,
-    },
-    layout = wibox.container.margin(nil, 0, 0, 4),
-    set_image = function(self, path)
-        self.icon.image = path
-    end
-}
+    }
 
 local text_volume_widget = wibox.widget.textbox()
 text_volume_widget:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, "--"))
@@ -50,7 +43,7 @@ local update_graphic = function(widget, stdout, _, _, _)
         end
 
         -- Update image
-        widget.image = path_to_icons .. volume_icon_name .. ".svg"
+        widget.image = PATH_TO_ICONS .. volume_icon_name .. ".svg"
 
         -- Update volume text
         if mute == "off" then

@@ -11,11 +11,11 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
    id="svg2"
-   width="34.133331"
-   height="34.133331"
-   viewBox="0 0 34.133331 34.133331"
-   sodipodi:docname="unselect.svg"
-   inkscape:version="0.92.2 2405546, 2018-03-11">
+   width="26.901695"
+   height="26.901695"
+   viewBox="0 0 26.901695 26.901695"
+   sodipodi:docname="floating_unselect.svg"
+   inkscape:version="0.92.4 5da689c313, 2019-01-14">
   <metadata
      id="metadata8">
     <rdf:RDF>
@@ -24,7 +24,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -44,22 +44,14 @@
      id="namedview4"
      showgrid="false"
      inkscape:zoom="6.9140629"
-     inkscape:cx="-36.881354"
-     inkscape:cy="17.066666"
+     inkscape:cx="29.432765"
+     inkscape:cy="4.7728819"
      inkscape:window-x="0"
      inkscape:window-y="25"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg2" />
   <path
-     style="opacity:1;fill:#665c54;fill-opacity:1;stroke:#665c54;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     id="path828"
-     sodipodi:type="arc"
-     sodipodi:cx="17.066681"
-     sodipodi:cy="17.066694"
-     sodipodi:rx="7.0146885"
-     sodipodi:ry="7.0146885"
-     sodipodi:start="0"
-     sodipodi:end="6.2415941"
-     sodipodi:open="true"
-     d="m 24.081369,17.066694 a 7.0146885,7.0146885 0 0 1 -6.941752,7.01431 7.0146885,7.0146885 0 0 1 -7.086108,-6.868446 7.0146885,7.0146885 0 0 1 6.794395,-7.15714 7.0146885,7.0146885 0 0 1 7.227399,6.719611" />
+     style="opacity:1;fill:#665c54;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"
+     d="M 0 0 L 0 26.902344 L 26.902344 26.902344 L 26.902344 0 L 0 0 z M 7.7441406 4.9199219 L 19.158203 4.9199219 L 19.158203 8.0957031 L 11.857422 8.0957031 L 11.857422 12.021484 L 18.490234 12.021484 L 18.490234 15.185547 L 11.857422 15.185547 L 11.857422 21.982422 L 7.7441406 21.982422 L 7.7441406 4.9199219 z "
+     id="rect4752" />
 </svg>
