@@ -76,10 +76,15 @@ au BufReadPost,BufNewFile *.md,*.txt,*.tex setlocal textwidth=79 | setlocal spel
 " minimum of 5 lines between cursor and screen end
 " set so=5
 
+" Open init.vim command
+command! VimConfig :e $MYVIMRC
+
+" Run the current line as if it were a command
+nnoremap <leader>e :exe getline(line('.'))<cr>
+
 " Specify a directory for plugins
 call plug#begin('~/.local/share/nvim/plugged')
 Plug 'morhetz/gruvbox'
-Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'itchyny/lightline.vim'
 Plug 'mgee/lightline-bufferline'
 Plug 'ryanoasis/vim-devicons'
@@ -89,6 +94,7 @@ Plug 'honza/vim-snippets'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'hanw/vim-bluespec'
 Plug 'DrCracket/painless-digraph'
+Plug 'kassio/neoterm'
 " Plug 'universal-ctags/ctags' " installed with pacman
 call plug#end()
 
@@ -221,114 +227,33 @@ noremap <silent> tk :tabnext<CR>
 noremap <silent> tj :tabprev<CR>
 
 " ------------------------------------------------
-"               TERMINAL
+"               NEOTERM
 " ------------------------------------------------
 
+let g:neoterm_default_mod = 'botright'
+let g:neoterm_fixedsize = 1
+let g:neoterm_size = 10
+let g:neoterm_autoinsert = 1
 
-" Toggle Terminal at the Bottom of the screen
-let s:termBuf=-1
-let s:winID=-1
-function! ToggleTerm()
-    if bufexists(s:termBuf) && bufwinnr(s:termBuf) != -1
-        execute win_id2win(s:winID).'wincmd c'
-    else
-        botright 10split
-        setlocal winfixheight
-        if bufexists(s:termBuf)
-            execute "edit#". s:termBuf
-        else
-	        terminal
-            let s:termBuf=bufnr('%')
-        endif
-        setlocal bufhidden=hide noswapfile nobuflisted
-        let s:winID=win_getid()
-    endif
-endfunction
-
-function! TermClose()
-    if bufexists(s:termBuf) && bufwinnr(s:termBuf) != -1
-        execute win_id2win(s:winID).'wincmd c'
-    endif
-endfunction
-
-" Toggle Terminal with F3
-noremap <silent> <F3> :call ToggleTerm()<cr>
-inoremap <silent> <F3> <C-\><C-N>:call ToggleTerm()<cr>
-tnoremap <silent> <F3> <C-\><C-N>:call ToggleTerm()<cr>
+" don't show terminals in the bufferlist
+autocmd TermOpen term://* setlocal nobuflisted
 
 " To map <silent> <Esc> to exit terminal-mode:
 tnoremap <silent> <Esc> <C-\><C-n>
 
-" To simulate |i_CTRL-R| in terminal-mode:
-tnoremap <silent> <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
+" Use gx{text-object} in normal mode
+nmap gx <Plug>(neoterm-repl-send)
 
-" Automatically insert Terminal window when entered
-autocmd TermOpen,BufEnter,BufWinEnter term://* startinsert
+" Send selected contents in visual mode.
+xmap gx <Plug>(neoterm-repl-send)
 
-" ------------------------------------------------
-"               DEFX
-" ------------------------------------------------
+" Like <Plug>(neoterm-repl-send), but for lines. For example,
+nmap gxx <Plug>(neoterm-repl-send-line)
 
-" Define mappings
-autocmd FileType defx call s:defx_my_settings()
-    function! s:defx_my_settings() abort
-      nnoremap <silent><buffer><expr> <CR>
-      \ defx#is_directory() ? defx#do_action('open_or_close_tree') : defx#do_action('drop')
-      nnoremap <silent><buffer><expr> yy
-      \ defx#do_action('copy')
-      nnoremap <silent><buffer><expr> dd
-      \ defx#do_action('move')
-      nnoremap <silent><buffer><expr> pp
-      \ defx#do_action('paste')
-      nnoremap <silent><buffer><expr> l
-      \ defx#do_action('open')
-      nnoremap <silent><buffer><expr> E
-      \ defx#do_action('open', 'vsplit')
-      nnoremap <silent><buffer><expr> nd
-      \ defx#do_action('new_directory')
-      nnoremap <silent><buffer><expr> nf
-      \ defx#do_action('new_file')
-      nnoremap <silent><buffer><expr> S
-      \ defx#do_action('toggle_sort', 'Time')
-      nnoremap <silent><buffer><expr> dD
-      \ defx#do_action('remove')
-      nnoremap <silent><buffer><expr> a
-      \ defx#do_action('rename')
-      nnoremap <silent><buffer><expr> zh
-      \ defx#do_action('toggle_ignored_files')
-      nnoremap <silent><buffer><expr> h
-      \ defx#do_action('cd', ['..'])
-      nnoremap <silent><buffer><expr> gh
-      \ defx#do_action('cd')
-      nnoremap <silent><buffer><expr> q
-      \ defx#do_action('quit')
-      nnoremap <silent><buffer><expr> <Space>
-      \ defx#do_action('toggle_select') . 'j'
-      nnoremap <silent><buffer><expr> v
-      \ defx#do_action('toggle_select_all')
-      nnoremap <silent><buffer><expr> j
-      \ line('.') == line('$') ? 'gg' : 'j'
-      nnoremap <silent><buffer><expr> k
-      \ line('.') == 1 ? 'G' : 'k'
-      nnoremap <silent><buffer><expr> cd
-          \ defx#do_action('change_vim_cwd')
-    endfunction
-
-call defx#custom#column('mark', {
-      \ 'readonly_icon': '✗',
-      \ 'selected_icon': '✓',
-      \ })
-
-call defx#custom#column('icon', {
-      \ 'directory_icon': '',
-      \ 'root_icon': '',
-      \ 'opened_icon': '',
-      \ })
-
-" Toggle Defx with F2
-noremap <silent> <F2> :Defx -split=vertical -toggle -resume -direction=topleft -winwidth=25<cr>
-inoremap <silent> <F2> <C-\><C-N>:Defx -split=vertical -toggle -resume -direction=topleft -winwidth=25<cr>
-tnoremap <silent> <F2> <C-\><C-N>:Defx -split=vertical -toggle -resume -direction=topleft -winwidth=25<cr>
+" Toggle Terminal with F3
+noremap <silent> <F2> :1Ttoggle<cr>
+inoremap <silent> <F2> <C-\><C-N>:1Ttoggle<cr>
+tnoremap <silent> <F2> <C-\><C-N>:1Ttoggle<cr>
 
 " ------------------------------------------------
 "               COC
