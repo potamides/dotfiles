@@ -3,10 +3,10 @@ Description=Lock X session
 Before=sleep.target
 
 [Service]
+Type=forking
 User=%I
-ExecStart=/usr/bin/physlock -s
+ExecStart=/usr/bin/physlock -ds
 Restart=on-failure
 
 [Install]
 WantedBy=sleep.target
-
