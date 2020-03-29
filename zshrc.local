@@ -1,16 +1,15 @@
-# Syntax highlighting
+# zsh options
 # -----------------------------------------------------------------------------
+# Syntax highlighting
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 autoload -Uz compinit
 compinit
-
 # Auto suggestions
-# -----------------------------------------------------------------------------
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-
 # Completion for kitty
-# -----------------------------------------------------------------------------
 kitty + complete setup zsh | source /dev/stdin
+# Newline after prompt
+zstyle ':prompt:grml:left:setup' items rc change-root user at host path vcs newline percent
 
 # FZF config
 # -----------------------------------------------------------------------------
@@ -67,6 +66,10 @@ function search_pdf(){
     if [[ -n $2 ]] then PATH_=$2/ fi
     for file in $PATH_*.pdf; do pdftotext $file - | grep $1 >> /dev/null && echo $file; done
     return 0
+}
+# tldr version of man pages
+function tldr(){
+    curl cheat.sh/$@
 }
 # if not in vim or ranger show greeter
 if [[ -z $VIMRUNTIME ]] && [[ -z $RANGER_LEVEL ]]; then
