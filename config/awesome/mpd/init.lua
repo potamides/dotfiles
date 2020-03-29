@@ -6,45 +6,24 @@ local wibox = require("wibox")
 local mpc = require("mpd.mpc")
 
 local mpd_widget = wibox.widget.textbox()
-local mpd_scroll_widget =
-    wibox.widget {
-       layout = wibox.container.scroll.horizontal,
-       max_size = 200,
-       step_function = wibox.container.scroll.step_functions
-                       .waiting_nonlinear_back_and_forth,
-       speed = 70,
-       mpd_widget
-    }
-local mpd_container = wibarutil.rectangle(mpd_scroll_widget, beautiful.bg_normal, 4, 4)
-local mpd_separator = wibarutil.separator(beautiful.bg_normal, beautiful.bg_normal, false, true)
-local final_mpd_widget =
-    wibox.widget {
-            mpd_container,
-            mpd_separator,
-            forced_num_cols = 2,
-            forced_num_rows = 1,
-            expand          = true,
-            homogeneous     = false,
-            layout          = wibox.layout.grid.horizontal
-    }
+local mpd_container = wibarutil.create_parallelogram({
+    mpd_widget,
+    max_size = 200,
+    speed = 70,
+    step_function = wibox.container.scroll.step_functions .waiting_nonlinear_back_and_forth,
+    layout = wibox.container.scroll.horizontal,
+  },
+  wibarutil.left_parallelogram, beautiful.bg_normal)
 
 local state, title, artist = "stop"
 local function update_widget()
-    local text, left_sep = ""
+    local text = ""
     if state ~= "pause" and state ~= "stop" and title then
         if artist then text = artist .. " - " end
         text = text .. tostring(title)
-        wibarutil.set_last_separator_color(beautiful.bg1)
         mpd_container:set_bg(gears.color(beautiful.bg1))
-        left_sep = mpd_separator:get_children_by_id("left")[1]
-        left_sep:set_bg(gears.color(beautiful.bg1))
-        final_mpd_widget.visible = true
     else
-        wibarutil.set_last_separator_color(beautiful.bg_normal)
         mpd_container:set_bg(gears.color(beautiful.bg_normal))
-        left_sep = mpd_separator:get_children_by_id("left")[1]
-        left_sep:set_bg(gears.color(beautiful.bg_normal))
-        final_mpd_widget.visible = false
     end
     mpd_widget:set_markup(string.format("<span color=%q><b>%s</b></span>",
         beautiful.fg_normal, text))
@@ -67,7 +46,7 @@ local function reconnect()
     end)
 end
 
-mpd_scroll_widget:buttons(awful.button({ }, 1,
+mpd_container:buttons(awful.button({ }, 1,
 	function()
         mpd_widget:set_markup(string.format("<span color=%q><b>%s</b></span>",
         beautiful.lightblue, mpd_widget.text))
@@ -83,5 +62,5 @@ mpd_scroll_widget:buttons(awful.button({ }, 1,
             beautiful.fg_normal, mpd_widget.text))
     end))
 
-local mpd = {widget = final_mpd_widget, reconnect = reconnect}
+local mpd = {widget = mpd_container, reconnect = reconnect}
 return mpd

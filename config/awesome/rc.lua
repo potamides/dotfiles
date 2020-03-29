@@ -120,14 +120,13 @@ local mymainmenu = freedesktop.menu.build({
     }
 })
 
-local startmenu = wibox.widget {
-    image  = beautiful.archlinux_icon,
-    resize = true,
-    widget = wibox.widget.imagebox
-}
-
-startmenu:connect_signal("button::press", function(_) mymainmenu:toggle({ coords = { x = 0, y = 0 } }) end)
-local mylauncher = wibox.layout.margin(startmenu, 0,0,2,2)
+local mylauncher = wibarutil.create_parallelogram(
+    awful.widget.launcher {
+        image = beautiful.archlinux_icon,
+        menu = mymainmenu
+    },
+    wibarutil.leftmost_parallelogram,
+    beautiful.lightblue, 2)
 
 -- Clock
 -------------------------------------------------------------------------------
@@ -189,17 +188,52 @@ awful.screen.connect_for_each_screen(function(s)
     awful.button({ }, 4, function () awful.layout.inc( 1) end),
     awful.button({ }, 5, function () awful.layout.inc(-1) end)))
     -- Create a taglist widget
-    s.mytaglist = awful.widget.taglist(
-        s,
-        awful.widget.taglist.filter.all,
-        taglist_buttons,
-        nil,
-        wibarutil.list_update(beautiful.lightblue)
-    )
+    s.mytaglist = awful.widget.taglist {
+    screen  = s,
+    filter  = function(t) return t.name ~= "Revelation" and t.name ~=  "Revelation_zoom" end,
+    style   = {
+        shape = wibarutil.left_parallelogram
+    },
+    layout   = {
+        spacing = -5,
+        layout  = wibox.layout.grid.horizontal
+    },
+    widget_template = {
+        {
+                {
+                    id     = 'text_role',
+                    widget = wibox.widget.textbox,
+                },
+            left  = 14,
+            right = 14,
+            widget = wibox.container.margin
+        },
+        id     = 'background_role',
+        widget = wibox.container.background,
+        -- Add support for hover colors and an index label
+        create_callback = function(self, c3, index, objects) --luacheck: no unused args
+            self:connect_signal('mouse::enter', function()
+                if not c3.selected then
+                    if self.bg ~= beautiful.bg2 then
+                        self.backup     = self.bg
+                        self.has_backup = true
+                    end
+                    self.bg = beautiful.bg2
+                end
+            end)
+            self:connect_signal('mouse::leave', function()
+                if self.has_backup and not c3.selected then
+                  self.bg = self.backup
+                end
+            end)
+        end,
+    },
+    buttons = taglist_buttons
+}
 
 -- Systray
 -------------------------------------------------------------------------------
-    local systray = wibox.layout.margin(wibox.widget.systray(), 0, 0, 5, 5)
+    local systray = wibox.layout.margin(wibox.widget.systray(), 0, 0, 4, 4)
     beautiful.systray_icon_spacing = 7
 
 -- global title bar    ------ holgerschurig.de/en/awesome-4.0-global-titlebar/
@@ -227,11 +261,9 @@ awful.screen.connect_for_each_screen(function(s)
 -- Wibar
 -------------------------------------------------------------------------------
     -- Create the wibar
-    s.mywibox = awful.wibar({position = "top", screen = s, height = 25})
+    s.mywibox = awful.wibar({position = "top", screen = s, height = 22})
 
     s.titlebar_buttons = wibox.widget {
-        homogeneous     = false,
-        expand          = true,
         layout = wibox.layout.grid.horizontal
     }
 
@@ -241,12 +273,13 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.align.horizontal,
         expand = "none",
         { -- Left widgets
-            wibarutil.rectangle(mylauncher, beautiful.lightblue, 4, 4),
+            mylauncher,
             s.mytaglist,
             mpd.widget,
-            s.mypromptbox,
+            --s.mypromptbox,
             --vimawesome.sequence,
             --vimawesome.modename,
+            spacing = -5,
             layout = wibox.layout.fixed.horizontal,
         },
         { -- Middle widgets
@@ -256,32 +289,42 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             systray,
 
-            -- Wireless Widget
-            wibarutil.separator(beautiful.bg_normal, beautiful.fg4, true),
-            wibarutil.rectangle(wireless_widgets.textbox, beautiful.fg4, 2, 2),
-            wibarutil.separator(beautiful.fg4, beautiful.bg1),
-            wibarutil.rectangle(wireless_widgets.imagebox, beautiful.bg1, 4, 4, 4, 4),
+            -- Internet Widget
+            wibarutil.compose_parallelogram(
+                wireless_widgets.textbox,
+                wireless_widgets.imagebox,
+                wibarutil.right_parallelogram,
+                wibarutil.right_parallelogram),
 
             -- Audio Volume
-            wibarutil.separator(beautiful.bg1, beautiful.fg4, true),
-            wibarutil.rectangle(volume.text, beautiful.fg4, 2, 2),
-            wibarutil.separator(beautiful.fg4, beautiful.bg1),
-            wibarutil.rectangle(volume.img, beautiful.bg1, 4, 4, 4, 4),
+            wibarutil.compose_parallelogram(
+                volume.text,
+                volume.img,
+                wibarutil.right_parallelogram,
+                wibarutil.right_parallelogram),
 
             -- Battery Indicator
-            wibarutil.separator(beautiful.bg1, beautiful.fg4, true),
-            wibarutil.rectangle(battery.text, beautiful.fg4, 2, 2),
-            wibarutil.separator(beautiful.fg4, beautiful.bg1),
-            wibarutil.rectangle(battery.img, beautiful.bg1, 4, 4, 4 ,4),
+            wibarutil.compose_parallelogram(
+                battery.text,
+                battery.img,
+                wibarutil.right_parallelogram,
+                wibarutil.right_parallelogram),
 
-            -- Clock / Layout
-            wibarutil.separator(beautiful.bg1, beautiful.fg4, true),
-            wibarutil.rectangle(mytextclock, beautiful.fg4, 2, 2),
-            wibarutil.separator(beautiful.fg4, beautiful.bg1),
-            wibarutil.rectangle(s.mylayoutbox,beautiful.bg1, 4, 4, 6, 6),
+            -- Clock / Layout / Global Titlebar Buttons
+            wibarutil.compose_parallelogram(
+                mytextclock,
+                {
+                    s.mylayoutbox,
+                    s.titlebar_buttons,
+                    spacing = 2,
+                    layout = wibox.layout.fixed.horizontal
+                },
+                wibarutil.right_parallelogram,
+                wibarutil.rightmost_parallelogram,
+                4),
 
-            -- Global Titlebar Buttons
-            wibarutil.rectangle(s.titlebar_buttons, beautiful.bg1, 0, 4, 6, 6),
+            spacing = -5,
+            fill_space = true,
             layout = wibox.layout.fixed.horizontal,
         },
     }
@@ -714,9 +757,9 @@ end
 local function buttons_insert(c)
     local s               = awful.screen.focused()
     local buttons         = s.titlebar_buttons:get_widgets_at(1, 1, 1, 3)
-    local maximizedbutton = wibox.container.margin(awful.titlebar.widget.maximizedbutton(c), 4, 4)
-    local ontopbutton     = wibox.container.margin(awful.titlebar.widget.ontopbutton(c), 4, 4)
-    local stickybutton    = wibox.container.margin(awful.titlebar.widget.stickybutton(c), 4, 4)
+    local maximizedbutton = wibox.container.margin(awful.titlebar.widget.maximizedbutton(c), 2, 2)
+    local ontopbutton     = wibox.container.margin(awful.titlebar.widget.ontopbutton(c), 2, 2)
+    local stickybutton    = wibox.container.margin(awful.titlebar.widget.stickybutton(c), 2, 2)
     should_remove = false
     s.titlebar_buttons.visible = true
 
