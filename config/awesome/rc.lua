@@ -1,3 +1,7 @@
+-- If LuaRocks is installed, make sure that packages installed through it are
+-- found (e.g. lgi). If LuaRocks is not installed, do nothing.
+pcall(require, "luarocks.loader")
+
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
@@ -10,8 +14,12 @@ local beautiful = require("beautiful")
 local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
+-- Enable hotkeys help widget for VIM and other apps
+-- when client with a matching name is opened:
+require("awful.hotkeys_popup.keys")
 -- other stuff
 local freedesktop = require("freedesktop")
+local vimawesome = require("vimawesome")
 beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua")
 -- import this stuff after theme initialisation for proper colors
 local wibarutil = require("wibarutil")
@@ -21,7 +29,6 @@ local revelation = require("revelation")
 local mpd = require("mpd")
 local net_widgets = require("net_widgets")
 local run_shell = require("run_shell")
-local vimawesome = require("vimawesome")
 revelation.init()
 
 -------------------------------------------------------------------------------
@@ -64,14 +71,8 @@ local editor_cmd       = terminal .. " -e " .. editor
 local browser          = "firefox"
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 awful.util.shell       = "/usr/bin/zsh"
--- }}}
-
--------------------------------------------------------------------------------
--- {{{ Menu
--------------------------------------------------------------------------------
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
--------------------------------------------------------------------------------
 awful.layout.layouts = {
    awful.layout.suit.tile,
    awful.layout.suit.fair,
@@ -90,8 +91,13 @@ awful.layout.layouts = {
 -- awful.layout.suit.corner.sw,
 -- awful.layout.suit.corner.se,
 }
+-- }}}
 
--- Launcher
+-------------------------------------------------------------------------------
+-- {{{ Wibar
+-------------------------------------------------------------------------------
+
+-- Menu
 -------------------------------------------------------------------------------
 -- Create a launcher widget and a main menu
 local myawesomemenu = {
@@ -158,67 +164,47 @@ local mytextclock = wibox.widget.textclock(
 local month_calendar = awful.widget.calendar_popup.month()
 month_calendar:attach(mytextclock)
 
-awful.screen.connect_for_each_screen(function(s)
-    -- Wallpaper
-    local wallpaper = awful.util.getdir("config").."/themes/gruvbox/wall.png"
-    gears.wallpaper.maximized(wallpaper, s, true)
-
-    -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
-    screen.connect_signal("property::geometry", function(s)
-        -- Wallpaper
-        if beautiful.wallpaper then
-            wallpaper = beautiful.wallpaper
-            -- If wallpaper is a function, call it with the screen
-            if type(wallpaper) == "function" then
-                wallpaper = wallpaper(s)
-            end
-            gears.wallpaper.maximized(wallpaper, s, true)
-        end
-    end)
-
--- Taglist, Prompt & layoutbox
+-- Wallpaper
 -------------------------------------------------------------------------------
-    -- Assign the buttons for the taglist
-    local taglist_buttons = gears.table.join(
-    awful.button({ }, 1, function(t) t:view_only() end),
-    awful.button({ modkey }, 1, function(t)
-        if client.focus then
-            client.focus:move_to_tag(t)
+local function set_wallpaper(s)
+    -- Wallpaper
+    if beautiful.wallpaper then
+        local wallpaper = beautiful.wallpaper
+        -- If wallpaper is a function, call it with the screen
+        if type(wallpaper) == "function" then
+            wallpaper = wallpaper(s)
         end
-    end),
-    awful.button({ }, 3, awful.tag.viewtoggle),
-    awful.button({ modkey }, 3, function(t)
-        if client.focus then
-            client.focus:toggle_tag(t)
-        end
-    end),
-    awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
-    awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
-    )
+        gears.wallpaper.maximized(wallpaper, s, true)
+    end
+end
 
-    -- Each screen has its own tag table.
-    local tags = { "❶", "❷", "❸", "❹", "❺", "❻"}
-    awful.tag(tags, s, awful.layout.layouts[1])
-    -- Create an imagebox widget which will contain an icon indicating which layout we're using.
-    -- We need one layoutbox per screen.
-    s.mylayoutbox = awful.widget.layoutbox(s)
-    s.mylayoutbox:buttons(gears.table.join(
-    awful.button({ }, 1, function () awful.layout.inc( 1) end),
-    awful.button({ }, 3, function () awful.layout.inc(-1) end),
-    awful.button({ }, 4, function () awful.layout.inc( 1) end),
-    awful.button({ }, 5, function () awful.layout.inc(-1) end)))
-    -- Create a taglist widget
-    s.mytaglist = awful.widget.taglist {
-    screen  = s,
-    filter  = function(t) return t.name ~= "Revelation" and t.name ~=  "Revelation_zoom" end,
-    style   = {
-        shape = wibarutil.left_parallelogram
-    },
-    layout   = {
-        spacing = -5,
-        layout  = wibox.layout.grid.horizontal
-    },
-    widget_template = {
+-- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
+screen.connect_signal("property::geometry", set_wallpaper)
+
+-- Taglist
+-------------------------------------------------------------------------------
+-- Each screen has its own tag table.
+local tags = { "❶", "❷", "❸", "❹", "❺", "❻"}
+
+-- Assign the buttons for the taglist
+local taglist_buttons = gears.table.join(
+awful.button({ }, 1, function(t) t:view_only() end),
+awful.button({ modkey }, 1, function(t)
+    if client.focus then
+        client.focus:move_to_tag(t)
+    end
+end),
+awful.button({ }, 3, awful.tag.viewtoggle),
+awful.button({ modkey }, 3, function(t)
+    if client.focus then
+        client.focus:toggle_tag(t)
+    end
+end),
+awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
+awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
+)
+
+local widget_template = {
         {
                 {
                     id     = 'text_role',
@@ -247,7 +233,34 @@ awful.screen.connect_for_each_screen(function(s)
                 end
             end)
         end,
+    }
+
+awful.screen.connect_for_each_screen(function(s)
+    -- Wallpaper
+    set_wallpaper(s)
+
+    -- Taglist
+    awful.tag(tags, s, awful.layout.layouts[1])
+    -- Create an imagebox widget which will contain an icon indicating which layout we're using.
+    -- We need one layoutbox per screen.
+    s.mylayoutbox = awful.widget.layoutbox(s)
+    s.mylayoutbox:buttons(gears.table.join(
+        awful.button({ }, 1, function () awful.layout.inc( 1) end),
+        awful.button({ }, 3, function () awful.layout.inc(-1) end),
+        awful.button({ }, 4, function () awful.layout.inc( 1) end),
+        awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+    -- Create a taglist widget
+    s.mytaglist = awful.widget.taglist {
+    screen  = s,
+    filter  = function(t) return t.name ~= "Revelation" and t.name ~=  "Revelation_zoom" end,
+    style   = {
+        shape = wibarutil.left_parallelogram
     },
+    layout   = {
+        spacing = -5,
+        layout  = wibox.layout.grid.horizontal
+    },
+    widget_template = widget_template,
     buttons = taglist_buttons
 }
 
@@ -256,7 +269,7 @@ awful.screen.connect_for_each_screen(function(s)
     local systray = wibox.widget.systray()
     beautiful.systray_icon_spacing = 7
 
--- global title bar    ------ holgerschurig.de/en/awesome-4.0-global-titlebar/
+-- global title bar
 -------------------------------------------------------------------------------
     s.mytitle = wibox.widget {
         align = "center",
@@ -276,6 +289,7 @@ awful.screen.connect_for_each_screen(function(s)
 
     local wireless_widgets = net_widgets.indicator({indent = 0, widget = false, interface="wlp5s0",
         interfaces={"enp3s0"}})
+
 -- Wibar
 -------------------------------------------------------------------------------
     -- Create the wibar
@@ -351,9 +365,18 @@ end)
 local modkey = "Mod4"
 
 local clientbuttons = gears.table.join(
-awful.button({ }, 1, function (c) client.focus = c; c:raise() end),
-awful.button({ modkey }, 1, awful.mouse.client.move),
-awful.button({ modkey }, 3, awful.mouse.client.resize))
+    awful.button({ }, 1, function (c)
+        c:emit_signal("request::activate", "mouse_click", {raise = true})
+    end),
+    awful.button({ modkey }, 1, function (c)
+        c:emit_signal("request::activate", "mouse_click", {raise = true})
+        awful.mouse.client.move(c)
+    end),
+    awful.button({ modkey }, 3, function (c)
+        c:emit_signal("request::activate", "mouse_click", {raise = true})
+        awful.mouse.client.resize(c)
+    end)
+)
 
 -- Initialize vimawesome & customize modes
 -------------------------------------------------------------------------------
@@ -522,17 +545,17 @@ vimawesome.init{
 awful.rules.rules = {
     -- All clients will match this rule.
     { rule = { },
-    properties = { border_width = beautiful.border_width,
-    border_color = beautiful.border_normal,
-    focus = awful.client.focus.filter,
-    raise = true,
-    buttons = clientbuttons,
-    screen = awful.screen.preferred,
-    placement = awful.placement.no_overlap+awful.placement.no_offscreen,
-    size_hints_honor = false,
-    titlebars_enabled = true
-    }
-       },
+        properties = { 
+            border_width = beautiful.border_width,
+            border_color = beautiful.border_normal,
+            focus = awful.client.focus.filter,
+            raise = true,
+            buttons = clientbuttons,
+            screen = awful.screen.preferred,
+            placement = awful.placement.no_overlap+awful.placement.no_offscreen,
+            size_hints_honor = false,
+        }
+    },
 
     -- Browser always on tag 1
     { rule = { class = browser},
@@ -570,16 +593,14 @@ end)
 client.connect_signal("request::titlebars", function(c)
     -- buttons for the titlebar
     local buttons = gears.table.join(
-    awful.button({ }, 1, function()
-        client.focus = c
-        c:raise()
-        awful.mouse.client.move(c)
-    end),
-    awful.button({ }, 3, function()
-        client.focus = c
-        c:raise()
-        awful.mouse.client.resize(c)
-    end)
+        awful.button({ }, 1, function()
+            c:emit_signal("request::activate", "titlebar", {raise = true})
+            awful.mouse.client.move(c)
+        end),
+        awful.button({ }, 3, function()
+            c:emit_signal("request::activate", "titlebar", {raise = true})
+            awful.mouse.client.resize(c)
+        end)
     )
 
     awful.titlebar(c, {size = 20, position = "bottom"}) : setup {
@@ -619,21 +640,7 @@ end)
 
 -- Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
-    if awful.layout.get(c.screen) ~= awful.layout.suit.magnifier
-        and awful.client.focus.filter(c) then
-        client.focus = c
-    end
-end)
-
-
-client.connect_signal("property::fullscreen", function(c)
-    if c.fullscreen then
-        gears.timer.delayed_call(function()
-            if c.valid then
-                c:geometry(c.screen.geometry)
-            end
-        end)
-    end
+    c:emit_signal("request::activate", "mouse_enter", {raise = false})
 end)
 
 -- awesome-copycats smart border
@@ -662,10 +669,6 @@ local function border_unadjust(c)
         c.border_width = 0
     end
 end
-
---------------------------------------------------------------------------------
--- titlebar buttons in taskbar
---------------------------------------------------------------------------------
 
 -- Update Titlbar Buttons in Wibar on focus / unfocus
 --------------------------------------------------------------------------------
@@ -736,10 +739,6 @@ beautiful.notification_opacity=0.75
 -------------------------------------------------------------------------------
 -- {{{ Misc
 -------------------------------------------------------------------------------
-
--- autostart some applications
--------------------------------------------------------------------------------
-awful.spawn.with_shell(gears.filesystem.get_dir("config") .. "/autorun.sh")
 
 -- memory management
 -------------------------------------------------------------------------------
