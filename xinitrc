@@ -48,7 +48,7 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
  unset f
 fi
 
-setxkbmap de
+setxkbmap eu
 awesome &
 udiskie -q &
 (sleep 5 && conky -q) &
