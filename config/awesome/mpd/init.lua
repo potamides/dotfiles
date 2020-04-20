@@ -49,7 +49,7 @@ end
 mpd_container:buttons(awful.button({ }, 1,
 	function()
         mpd_widget:set_markup(string.format("<span color=%q><b>%s</b></span>",
-        beautiful.lightblue, mpd_widget.text))
+        beautiful.lightaqua, mpd_widget.text))
 
         local Playlist=io.open(os.getenv("HOME") .. "/Documents/Playlist", "a+")
         if not string.find(Playlist:read("*a"), title, 1, true)

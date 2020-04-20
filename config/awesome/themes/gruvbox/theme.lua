@@ -11,7 +11,7 @@ local theme = {}
 
 theme.archlinux_icon              = themes_path .. "gruvbox/bar/archlinux.svg"
 theme.wallpaper                   = themes_path .. "gruvbox/wall.png"
-theme.font                        = "FontAwesome Medium 11"
+theme.font                        = "sans 11"
 
 -- Gruvbox Colors
 theme.red         = "#cc241d"
@@ -85,12 +85,12 @@ theme.taglist_fg_occupied = theme.fg4
 theme.taglist_fg_focus    = theme.bg0
 theme.taglist_fg_urgent   = theme.bg0
 theme.taglist_fg_volatile = theme.bg0
-theme.taglist_bg_focus    = theme.lightblue
+theme.taglist_bg_focus    = theme.lightaqua
 theme.taglist_bg_urgent   = theme.lightorange
 theme.taglist_bg_occupied = theme.bg1
 theme.taglist_bg_volatile = theme.lightpurple
 theme.taglist_bg_empty    = theme.bg1
-theme.taglist_font        = "FontAwesome Bold 18"
+theme.taglist_font        = "sans bold 18"
 -- }}}
 
 -- {{{ Menu
@@ -102,7 +102,7 @@ theme.menu_width        = dpi(140)
 theme.menu_border_width = dpi(10)
 theme.menu_fg_normal    = theme.fg0
 theme.menu_fg_focus     = theme.bg0_h
-theme.menu_bg_focus     = theme.lightblue
+theme.menu_bg_focus     = theme.lightaqua
 theme.menu_border_color = theme.bg0_h
 -- }}}
 

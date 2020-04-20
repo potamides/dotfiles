@@ -19,7 +19,7 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 require("awful.hotkeys_popup.keys")
 -- other stuff
 local freedesktop = require("freedesktop")
-local vimawesome = require("vimawesome")
+local modalawesome = require("modalawesome")
 beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua")
 -- import this stuff after theme initialisation for proper colors
 local wibarutil = require("wibarutil")
@@ -123,7 +123,7 @@ local mymainmenu = freedesktop.menu.build({
 })
 
 
-local status_box = wibox.widget.textbox(vimawesome.active_mode.text)
+local status_box = wibox.widget.textbox(modalawesome.active_mode.text)
 local mylauncher = wibarutil.create_parallelogram(
     {
         awful.widget.launcher {
@@ -135,11 +135,11 @@ local mylauncher = wibarutil.create_parallelogram(
         layout = wibox.layout.fixed.horizontal,
     },
     wibarutil.leftmost_parallelogram,
-    beautiful.lightblue, 2)
+    beautiful.lightaqua, 2)
 
-vimawesome.active_mode:connect_signal("widget::redraw_needed",
-  function()
-    local text = vimawesome.active_mode.text
+modalawesome.active_mode:connect_signal("widget::redraw_needed",
+  function(s)
+    local text = modalawesome.active_mode.text
     status_box:set_markup(
       string.format(
         "<span color=%q><b>%s</b></span>",
@@ -148,11 +148,20 @@ vimawesome.active_mode:connect_signal("widget::redraw_needed",
       )
     )
 
-    if     text == 'tag'      then mylauncher:set_bg(beautiful.lightblue)
-    elseif text == 'layout'   then mylauncher:set_bg(beautiful.lightgreen)
-    elseif text == 'client'   then mylauncher:set_bg(beautiful.lightpurple)
-    elseif text == 'launcher' then mylauncher:set_bg(beautiful.lightyellow)
+    if     text == 'tag'      then
+      mylauncher:set_bg(beautiful.lightaqua)
+      beautiful.taglist_bg_focus = beautiful.lightaqua
+    elseif text == 'layout'   then
+      mylauncher:set_bg(beautiful.lightgreen)
+      beautiful.taglist_bg_focus = beautiful.lightgreen
+    elseif text == 'client'   then
+      mylauncher:set_bg(beautiful.lightblue)
+      beautiful.taglist_bg_focus = beautiful.lightblue
+    elseif text == 'launcher' then
+      mylauncher:set_bg(beautiful.lightyellow)
+      beautiful.taglist_bg_focus = beautiful.lightyellow
     end
+    awful.screen.focused().mytaglist._do_taglist_update()
 end
 )
 
@@ -315,7 +324,7 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.align.horizontal,
         },
         { -- Right widgets
-            wibox.layout.margin(vimawesome.sequence, 5, 5, 2, 2),
+            wibox.layout.margin(modalawesome.sequence, 5, 5, 2, 2),
             wibox.layout.margin(systray, 5, 5, 2, 2),
 
             -- Internet Widget
@@ -378,7 +387,7 @@ local clientbuttons = gears.table.join(
     end)
 )
 
--- Initialize vimawesome & customize modes
+-- Initialize modalawesome & customize modes
 -------------------------------------------------------------------------------
 local keybindings = {
   -- Lenovo Thinkpad E480 function keys
@@ -392,7 +401,7 @@ local keybindings = {
   {{}, "XF86Tools", function () awful.spawn(editor_cmd .. " " .. awesome.conffile) end},
 }
 
-local modes = require("vimawesome.modes")
+local modes = require("modalawesome.modes")
 modes.tag = gears.table.join(
   {
     {
@@ -530,9 +539,9 @@ modes.launcher = gears.table.join(
 )
 
 
-vimawesome.init{
-  modkeys = {'Super_L', 'Alt_R'},
-  modes = modes,
+modalawesome.init{
+  modkey      = modkey,
+  modes       = modes,
   keybindings = keybindings,
 }
 -- }}}
