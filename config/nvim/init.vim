@@ -351,21 +351,21 @@ command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport
 autocmd FileType json syntax match Comment +\/\/.\+$+
 
 " Do CocList stuff
-nnoremap <silent> <leader>cl :<C-u>CocList --number-select<cr>
-nnoremap <silent> <leader>cg :<C-u>CocList --number-select --no-sort --interactive grep -smartcase<cr>
-nnoremap <silent> <leader>cf :<C-u>CocList --number-select --no-sort files<cr>
-nnoremap <silent> <leader>cb :<C-u>CocList --number-select bcommits<cr>
-nnoremap <silent> <leader>cc :<C-u>CocList --number-select commands<cr>
-nnoremap <silent> <leader>co :<C-u>CocList --number-select outline<cr>
-nnoremap <silent> <leader>cs :<C-u>CocList --number-select --interactive symbols<cr>
-nnoremap <silent> <leader>cd :<C-u>CocList --number-select diagnostics<cr>
+noremap <silent> <leader>cl :<C-u>CocList --number-select<cr>
+noremap <silent> <leader>cg :<C-u>CocList --number-select --no-sort --interactive grep -smartcase<cr>
+noremap <silent> <leader>cf :<C-u>CocList --number-select --no-sort files<cr>
+noremap <silent> <leader>cb :<C-u>CocList --number-select bcommits<cr>
+noremap <silent> <leader>cc :<C-u>CocList --number-select commands<cr>
+noremap <silent> <leader>co :<C-u>CocList --number-select outline<cr>
+noremap <silent> <leader>cs :<C-u>CocList --number-select --interactive symbols<cr>
+noremap <silent> <leader>cd :<C-u>CocList --number-select diagnostics<cr>
 
 tnoremap <silent> <C-p> <C-\><C-N>:<C-u>CocList --number-select --no-sort files<cr>
 inoremap <silent> <C-p> <C-\><C-N>:<C-u>CocList --number-select --no-sort files<cr>
-nnoremap <silent> <C-p> :<C-u>CocList --number-select --no-sort files<cr>
-tnoremap <silent> <C-e> <C-\><C-N>:<C-u>CocList --number-select --no-sort --interactive grep -smartcase<cr>
-inoremap <silent> <C-e> <C-\><C-N>:<C-u>CocList --number-select --no-sort --interactive grep -smartcase<cr>
-nnoremap <silent> <C-e> :<C-u>CocList --number-select --no-sort --interactive grep -smartcase<cr>
+noremap <silent> <C-p> :<C-u>CocList --number-select --no-sort files<cr>
+tnoremap <silent> <C-e> <C-\><C-N>:<C-u>CocList --number-select --no-sort --interactive grep -smartcase -workspace<cr>
+inoremap <silent> <C-e> <C-\><C-N>:<C-u>CocList --number-select --no-sort --interactive grep -smartcase -workspace<cr>
+noremap <silent> <C-e> :<C-u>CocList --number-select --no-sort --interactive grep -smartcase<cr>
 
 " TEX
 au BufReadPost,BufNewFile *.tex nnoremap <silent> <leader>bn :<C-u>CocCommand latex.Build<cr>
