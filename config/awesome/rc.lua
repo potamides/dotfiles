@@ -1,7 +1,6 @@
 -- If LuaRocks is installed, make sure that packages installed through it are
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
-
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
@@ -11,24 +10,24 @@ local wibox = require("wibox")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
-local naughty = require("naughty")
-local menubar = require("menubar")
+local naughty       = require("naughty")
+local menubar       = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 -- other stuff
-local freedesktop = require("freedesktop")
+local freedesktop  = require("freedesktop")
 local modalawesome = require("modalawesome")
 beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua")
 -- import this stuff after theme initialisation for proper colors
-local wibarutil = require("wibarutil")
-local battery = require("battery")
-local volume = require("volume")
-local revelation = require("revelation")
-local mpd = require("mpd")
+local wibarutil   = require("wibarutil")
+local battery     = require("awesome-wm-widgets.battery-widget.battery")
+local volume      = require("awesome-wm-widgets.volume-widget.volume")
+local run_shell   = require("awesome-wm-widgets.run-shell.run-shell")
+local revelation  = require("revelation")
+local mpd         = require("mpd")
 local net_widgets = require("net_widgets")
-local run_shell = require("run_shell")
 revelation.init()
 
 -------------------------------------------------------------------------------
@@ -170,6 +169,11 @@ local mytextclock = wibox.widget.textclock(
     string.format("<span color=%q><b>%%H:%%M</b></span>", beautiful.bg_normal), 60)
 local month_calendar = awful.widget.calendar_popup.month()
 month_calendar:attach(mytextclock)
+
+-- Volume widget
+-------------------------------------------------------------------------------
+local volume_text, volume_image   = volume()
+local battery_text, battery_image = battery{show_current_level = true}
 
 -- Wallpaper
 -------------------------------------------------------------------------------
@@ -335,15 +339,15 @@ awful.screen.connect_for_each_screen(function(s)
 
             -- Audio Volume
             wibarutil.compose_parallelogram(
-                volume.text,
-                volume.img,
+                volume_text,
+                volume_image,
                 wibarutil.right_parallelogram,
                 wibarutil.right_parallelogram),
 
             -- Battery Indicator
             wibarutil.compose_parallelogram(
-                battery.text,
-                battery.img,
+                battery_text,
+                battery_image,
                 wibarutil.right_parallelogram,
                 wibarutil.right_parallelogram),
 
@@ -390,9 +394,9 @@ local clientbuttons = gears.table.join(
 -------------------------------------------------------------------------------
 local keybindings = {
   -- Lenovo Thinkpad E480 function keys
-  {{}, "XF86AudioMute",  volume.mute},
-  {{}, "XF86AudioLowerVolume", volume.decrease},
-  {{}, "XF86AudioRaiseVolume", volume.increase},
+  {{}, "XF86AudioMute",  volume.toggle},
+  {{}, "XF86AudioLowerVolume", volume.raise},
+  {{}, "XF86AudioRaiseVolume", volume.lower},
   {{}, "XF86AudioMicMute", function () awful.spawn("amixer set Capture toggle") end},
   {{}, "XF86MonBrightnessDown", function () awful.spawn("xbacklight -dec 10") end},
   {{}, "XF86MonBrightnessUp", function () awful.spawn("xbacklight -inc 10") end},

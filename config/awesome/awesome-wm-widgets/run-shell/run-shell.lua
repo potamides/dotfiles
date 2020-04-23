@@ -7,18 +7,12 @@
 -- @copyright 2019 Pavel Makhov
 -------------------------------------------------
 
-local awful = require("awful")
-local gfs = require("gears.filesystem")
-local wibox = require("wibox")
-local gears = require("gears")
-local completion = require("awful.completion")
-local naughty = require("naughty")
+local awful     = require("awful")
+local wibox     = require("wibox")
+local beautiful = require("beautiful")
 
-local HOME = os.getenv("HOME")
-
-local run_shell = awful.widget.prompt()
-
-local widget = {}
+local run_shell = wibox.widget.textbox()
+local widget    = {}
 
 function widget.new()
 
@@ -26,105 +20,27 @@ function widget.new()
         _cached_wiboxes = {}
     }
 
-    function widget_instance:_create_wibox()
+    function widget_instance._create_wibox()
         local w = wibox {
-            visible = false,
-            ontop = true,
-            height = 1060,
-            width = 1920,
-            opacity = 0.9,
-            bg = 'radial:960,540,20:960,540,700:0,#00000022:0.2,#33333388:1,#000000ff'
+            visible      = false,
+            ontop        = true,
+            height       = 50  + 2 * beautiful.border_width,
+            width        = 200 + 2 * beautiful.border_width,
+            bg           = beautiful.bg_normal,
+            border_color = beautiful.border_focus,
+            border_width = beautiful.border_width,
         }
-
-        local suspend_button = wibox.widget {
-            image  = '/usr/share/icons/Arc/actions/symbolic/system-shutdown-symbolic.svg',
-            widget = wibox.widget.imagebox,
-            resize = false,
-            opacity = 0.2,
-            set_hover = function(self, opacity)
-                self.opacity = opacity
-                self.image = '/usr/share/icons/Arc/actions/symbolic/system-shutdown-symbolic.svg'
-            end
-        }
-
-        local turnoff_notification
-
-        suspend_button:connect_signal("mouse::enter", function()
-            turnoff_notification = naughty.notify{
-            icon = HOME .. "/.config/awesome/nichosi.png",
-            icon_size=100,
-            title = "Huston, we have a problem",
-            text = "You're about to turn off your computer",
-            timeout = 5, hover_timeout = 0.5,
-            position = "bottom_right",
-            bg = "#F06060",
-            fg = "#EEE9EF",
-            width = 300,
-        }
-            suspend_button:set_hover(1)
-        end)
-
-        suspend_button:connect_signal("mouse::leave", function()
-            naughty.destroy(turnoff_notification)
-            suspend_button:set_hover(0.2)
-        end)
-
-        suspend_button:connect_signal("button::press", function(_,_,_,button)
-            if (button == 1) then
-                awful.spawn("shutdown now")
-            end
-        end)
-
         w:setup {
-            {
-                {
-                    {
-                        {
-                            {
-                                markup = '<span font="awesomewm-font 14" color="#ffffff">a</span>',
-                                widget = wibox.widget.textbox,
-                            },
-                            id = 'icon',
-                            left = 10,
-                            layout = wibox.container.margin
-                        },
-                        {
-                            run_shell,
-                            left = 10,
-                            layout = wibox.container.margin,
-                        },
-                        id = 'left',
-                        layout = wibox.layout.fixed.horizontal
-                    },
-                    bg = '#333333',
-                    shape = function(cr, width, height)
-                        gears.shape.rounded_rect(cr, width, height, 3)
-                    end,
-                    shape_border_color = '#74aeab',
-                    shape_border_width = 1,
-                    forced_width = 200,
-                    forced_height = 50,
-                    widget = wibox.container.background
-                },
-                valign = 'center',
-                layout = wibox.container.place
-            },
-            {
-                {
-                    suspend_button,
-                    layout = wibox.layout.fixed.horizontal
-                },
-                valign = 'bottom',
-                layout = wibox.container.place,
-            },
-            layout = wibox.layout.stack
+            run_shell,
+            left   = 10,
+            layout = wibox.container.margin,
         }
 
         return w
     end
 
-    function widget_instance:launch()
-        local s = mouse.screen
+    function widget_instance:launch(opts)
+        local s = awful.screen.focused()
         if not self._cached_wiboxes[s] then
             self._cached_wiboxes[s] = {}
         end
@@ -132,19 +48,25 @@ function widget.new()
             self._cached_wiboxes[s][1] = self:_create_wibox()
         end
         local w = self._cached_wiboxes[s][1]
+        local old_width = w.width
         w.visible = true
-        awful.placement.top(w, { margins = { top = 20 }, parent = awful.screen.focused() })
-        awful.prompt.run {
-            prompt = 'Run: ',
-            bg_cursor = '#74aeab',
-            textbox = run_shell.widget,
-            completion_callback = completion.shell,
-            exe_callback = function(...)
-                run_shell:spawn_and_handle_error(...)
-            end,
-            history_path = gfs.get_cache_dir() .. "/history",
-            done_callback = function() w.visible = false end
-        }
+        awful.placement.centered(w, {parent = awful.screen.focused()})
+
+        opts.textbox = run_shell
+        opts.bg_cursor = beautiful.border_focus
+        opts.done_callback = function()
+          w.visible = false
+          w.width = old_width
+        end
+        opts.changed_callback = function()
+          local width = run_shell:get_preferred_size()
+          local empty_area = w.width - 2 * beautiful.border_width - 10 - width
+          if empty_area < 10 then
+            w.width = w.width + 10 - empty_area
+            awful.placement.centered(w, {parent = awful.screen.focused()})
+          end
+        end
+        awful.prompt.run(opts)
     end
 
     return widget_instance
@@ -157,8 +79,8 @@ local function get_default_widget()
     return widget.default_widget
 end
 
-function widget.launch(...)
-    return get_default_widget():launch(...)
+function widget.launch(opts)
+    return get_default_widget():launch(opts or {})
 end
 
 return widget

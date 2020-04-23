@@ -8,27 +8,28 @@
 -- @copyright 2018 Pavel Makhov
 -------------------------------------------------
 
+local awful = require("awful")
+local beautiful = require("beautiful")
 local wibox = require("wibox")
-local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
 local naughty = require("naughty")
 local gfs = require("gears.filesystem")
 local dpi = require('beautiful').xresources.apply_dpi
 
-local PATH_TO_ICONS = "/usr/share/icons/Arc/status/symbolic/"
+local PATH_TO_ICONS = awful.util.getdir("config").."themes/gruvbox/widgets/volume/"
 local volume_icon_name="audio-volume-high-symbolic"
 local GET_VOLUME_CMD = 'amixer sget Master'
 
 local volume = {device = '', display_notification = false, notification = nil}
 
-function volume:toggle()
+function volume.toggle()
     volume:_cmd('amixer ' .. volume.device .. ' sset Master toggle')
 end
 
-function volume:raise()
+function volume.raise()
     volume:_cmd('amixer ' .. volume.device .. ' sset Master 5%+')
 end
-function volume:lower()
+function volume.lower()
     volume:_cmd('amixer ' .. volume.device .. ' sset Master 5%-')
 end
 
@@ -41,13 +42,13 @@ end
 local function parse_output(stdout)
     local level = string.match(stdout, "(%d?%d?%d)%%")
     if stdout:find("%[off%]") then
-        volume_icon_name="audio-volume-muted-symbolic_red"
-        return level.."% <span color=\"red\"><b>Mute</b></span>"
+        volume_icon_name="audio-volume-muted-symbolic"
+        return "OFF"
     end
     level = tonumber(string.format("% 3d", level))
 
     if (level >= 0 and level < 25) then
-        volume_icon_name="audio-volume-muted-symbolic"
+        volume_icon_name="audio-volume-off-symbolic"
     elseif (level < 50) then
         volume_icon_name="audio-volume-low-symbolic"
     elseif (level < 75) then
@@ -61,9 +62,10 @@ end
 --------------------------------------------------------
 --Update the icon and the notification if needed
 --------------------------------------------------------
-local function update_graphic(widget, stdout, _, _, _)
+local function update_widget(widget, stdout, _, _, _)
     local txt = parse_output(stdout)
-    widget.image = PATH_TO_ICONS .. volume_icon_name .. ".svg"
+    widget.image.image = PATH_TO_ICONS .. volume_icon_name .. ".svg"
+    widget.text:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, txt))
     if volume.display_notification then
         volume.notification.iconbox.image = PATH_TO_ICONS .. volume_icon_name .. ".svg"
         naughty.replace_text(volume.notification, "Volume", txt)
@@ -90,7 +92,7 @@ end
 
 local function worker(args)
 --{{{ Args
-    local args = args or {}
+    args = args or {}
 
     local volume_audio_controller = args.volume_audio_controller or 'pulse'
     volume.display_notification = args.display_notification or false
@@ -111,31 +113,27 @@ local function worker(args)
     end
 --}}}
 --{{{ Widget creation
-    volume.widget = wibox.widget {
-        {
-            id = "icon",
-            image = PATH_TO_ICONS .. "audio-volume-muted-symbolic.svg",
-            resize = false,
-            widget = wibox.widget.imagebox,
-        },
-        layout = wibox.container.margin(_, _, _, 3),
-        set_image = function(self, path)
-            self.icon.image = path
-        end
+    volume.image = wibox.widget {
+        image = PATH_TO_ICONS .. "audio-volume-muted-symbolic.svg",
+        resize = false,
+        widget = wibox.widget.imagebox,
     }
+    volume.text = wibox.widget.textbox()
+    volume.text:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, "OFF"))
 --}}}
 --{{{ Spawn functions
-    function volume:_cmd(cmd)
+    function volume._cmd(cmd)
         notif("")
         spawn.easy_async(cmd, function(stdout, stderr, exitreason, exitcode)
-            update_graphic(volume.widget, stdout, stderr, exitreason, exitcode)
+            update_widget(volume, stdout, stderr, exitreason, exitcode)
         end)
     end
 
+    volume:_cmd(GET_VOLUME_CMD)
     local function show()
         spawn.easy_async(GET_VOLUME_CMD,
         function(stdout, _, _, _)
-        txt = parse_output(stdout)
+        local txt = parse_output(stdout)
         notif(txt, true)
         end
         )
@@ -146,18 +144,18 @@ local function worker(args)
     - clicking on the widget to mute/unmute
     - scrolling when cursor is over the widget
     ]]
-    volume.widget:connect_signal("button::press", function(_,_,_,button)
+    volume.image:connect_signal("button::press", function(_,_,_,button)
         if (button == 4)     then volume.raise()
         elseif (button == 5) then volume.lower()
         elseif (button == 1) then volume.toggle()
         end
     end)
     if volume.display_notification then
-        volume.widget:connect_signal("mouse::enter", function() show() end)
-        volume.widget:connect_signal("mouse::leave", function() naughty.destroy(volume.notification) end)
+        volume.image:connect_signal("mouse::enter", function() show() end)
+        volume.image:connect_signal("mouse::leave", function() naughty.destroy(volume.notification) end)
     end
 --}}}
-    return volume.widget
+    return volume.text, volume.image
 end
 
 return setmetatable(volume, { __call = function(_, ...) return worker(...) end })
