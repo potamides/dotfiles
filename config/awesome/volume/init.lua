@@ -15,14 +15,11 @@ local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
 
 local PATH_TO_ICONS = awful.util.getdir("config").."/volume/symbolic/"
-local request_command = 'amixer -D pulse sget Master'
-
 local volume_widget = wibox.widget {
         image = PATH_TO_ICONS .. "audio-volume-muted-symbolic.svg",
         resize = false,
         widget = wibox.widget.imagebox,
     }
-
 local text_volume_widget = wibox.widget.textbox()
 text_volume_widget:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, "--"))
 
@@ -54,24 +51,42 @@ local update_graphic = function(widget, stdout, _, _, _)
     end
 end
 
+local function increase()
+  spawn.easy_async("amixer -D pulse sset Master 5%+",
+    function(stdout, stderr, exitreason, exitcode)
+      update_graphic(volume_widget, stdout, stderr, exitreason, exitcode)
+    end)
+end
+
+local function decrease()
+  spawn.easy_async("amixer -D pulse sset Master 5%-",
+    function(stdout, stderr, exitreason, exitcode)
+      update_graphic(volume_widget, stdout, stderr, exitreason, exitcode)
+    end)
+end
+
+local function mute()
+  spawn.easy_async("amixer -D pulse sset Master toggle",
+    function(stdout, stderr, exitreason, exitcode)
+      update_graphic(volume_widget, stdout, stderr, exitreason, exitcode)
+    end)
+end
+
 --[[ allows control volume level by:
 - clicking on the widget to mute/unmute
 - scrolling when cursor is over the widget
 ]]
 volume_widget:connect_signal("button::press", function(_,_,_,button)
-    if (button == 4)     then awful.spawn("amixer -D pulse sset Master 5%+", false)
-    elseif (button == 5) then awful.spawn("amixer -D pulse sset Master 5%-", false)
-    elseif (button == 1) then awful.spawn("amixer -D pulse sset Master toggle", false)
+    if (button == 4)     then increase()
+    elseif (button == 5) then decrease()
+    elseif (button == 1) then mute()
     end
-
-    spawn.easy_async(request_command, function(stdout, stderr, exitreason, exitcode)
-        update_graphic(volume_widget, stdout, stderr, exitreason, exitcode)
-    end)
 end)
 
-watch(request_command, 1, update_graphic, volume_widget)
+watch( "amixer -D pulse sget Master", 30, update_graphic, volume_widget)
 
 
-local volume = {text = text_volume_widget, img = volume_widget}
+local volume = {text = text_volume_widget, img = volume_widget,
+                increase = increase, decrease = decrease, mute = mute}
 
 return volume
