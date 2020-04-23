@@ -173,7 +173,7 @@ month_calendar:attach(mytextclock)
 -- Volume widget
 -------------------------------------------------------------------------------
 local volume_text, volume_image   = volume()
-local battery_text, battery_image = battery{show_current_level = true}
+local battery_text, battery_image = battery()
 
 -- Wallpaper
 -------------------------------------------------------------------------------

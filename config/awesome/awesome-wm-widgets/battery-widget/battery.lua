@@ -25,7 +25,6 @@ local function worker(args)
     args = args or {}
 
     local path_to_icons = args.path_to_icons or awful.util.getdir("config").."themes/gruvbox/widgets/battery/"
-    local show_current_level = args.show_current_level or false
 
     local display_notification = args.display_notification or false
     local position = args.notification_position or "top_right"
@@ -118,10 +117,8 @@ local function worker(args)
         end
         charge = charge / capacity
 
-        if show_current_level then
-            level_widget:set_markup(string.format("<span color=%q><b>%s%%</b></span>",
-                beautiful.bg_normal, math.floor(charge)))
-        end
+        level_widget:set_markup(string.format("<span color=%q><b>%s%%</b></span>",
+            beautiful.bg_normal, math.floor(charge)))
 
         if (charge >= 0 and charge < 15) then
             batteryType = "battery-empty%s-symbolic"
