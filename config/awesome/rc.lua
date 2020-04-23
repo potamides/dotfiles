@@ -138,8 +138,10 @@ local mylauncher = wibarutil.create_parallelogram(
     beautiful.lightaqua, 2)
 
 modalawesome.active_mode:connect_signal("widget::redraw_needed",
-  function(s)
+  function()
+    local color
     local text = modalawesome.active_mode.text
+
     status_box:set_markup(
       string.format(
         "<span color=%q><b>%s</b></span>",
@@ -148,20 +150,16 @@ modalawesome.active_mode:connect_signal("widget::redraw_needed",
       )
     )
 
-    if     text == 'tag'      then
-      mylauncher:set_bg(beautiful.lightaqua)
-      beautiful.taglist_bg_focus = beautiful.lightaqua
-    elseif text == 'layout'   then
-      mylauncher:set_bg(beautiful.lightgreen)
-      beautiful.taglist_bg_focus = beautiful.lightgreen
-    elseif text == 'client'   then
-      mylauncher:set_bg(beautiful.lightblue)
-      beautiful.taglist_bg_focus = beautiful.lightblue
-    elseif text == 'launcher' then
-      mylauncher:set_bg(beautiful.lightyellow)
-      beautiful.taglist_bg_focus = beautiful.lightyellow
+    if     text == 'tag'      then color = beautiful.lightaqua
+    elseif text == 'layout'   then color = beautiful.lightgreen
+    elseif text == 'client'   then color = beautiful.lightblue
+    elseif text == 'launcher' then color = beautiful.lightyellow
     end
-    awful.screen.focused().mytaglist._do_taglist_update()
+
+    mylauncher:set_bg(color)
+    beautiful.taglist_bg_focus = color
+
+    for s in screen do s.mytaglist._do_taglist_update() end
 end
 )
 
@@ -294,7 +292,8 @@ awful.screen.connect_for_each_screen(function(s)
     end
     client.connect_signal("focus", update_title_text)
     client.connect_signal("property::name", update_title_text)
-    client.connect_signal("unfocus", function (c) s = awful.screen.focused() s.mytitle:set_text("") end)
+    client.connect_signal("unfocus", function () s = awful.screen.focused() s.mytitle:set_text("") end)
+    client.connect_signal("property::screen", function () s = awful.screen.focused() s.mytitle:set_text("") end)
 
     local wireless_widgets = net_widgets.indicator({indent = 0, widget = false, interface="wlp5s0",
         interfaces={"enp3s0"}})
@@ -391,9 +390,9 @@ local clientbuttons = gears.table.join(
 -------------------------------------------------------------------------------
 local keybindings = {
   -- Lenovo Thinkpad E480 function keys
-  {{}, "XF86AudioMute", function () awful.spawn("amixer -D pulse set Master +1 toggle") end},
-  {{}, "XF86AudioLowerVolume", function () awful.spawn("amixer -D pulse sset Master 5%-") end},
-  {{}, "XF86AudioRaiseVolume", function () awful.spawn("amixer -D pulse sset Master 5%+") end},
+  {{}, "XF86AudioMute",  volume.mute},
+  {{}, "XF86AudioLowerVolume", volume.decrease},
+  {{}, "XF86AudioRaiseVolume", volume.increase},
   {{}, "XF86AudioMicMute", function () awful.spawn("amixer set Capture toggle") end},
   {{}, "XF86MonBrightnessDown", function () awful.spawn("xbacklight -dec 10") end},
   {{}, "XF86MonBrightnessUp", function () awful.spawn("xbacklight -inc 10") end},
@@ -509,7 +508,7 @@ modes.launcher = gears.table.join(
   {
     description = "execute duckduckgo search",
     pattern = {'d'},
-    handler = function()
+    handler = function(self)
       run_shell.launch{
         prompt = 'DuckDuckGo: ',
         exe_callback = function(command)
@@ -518,6 +517,7 @@ modes.launcher = gears.table.join(
             local find_browser = function(c) return awful.rules.match(c, {class = browser}) end
             local browser_instance = awful.client.iterate(find_browser)()
             browser_instance:jump_to()
+            self.startinsert()
           end)
         end,
       }
@@ -637,13 +637,6 @@ client.connect_signal("request::titlebars", function(c)
         right = 2,
         widget = wibox.container.margin
     }
-
-    -- Hide the titlebar if we are not floating
-    local l = awful.layout.get(c.screen)
-    if not (l.name == "floating" or c.floating) or c.maximized then
-        awful.titlebar.hide(c, "bottom")
-        c.height = c.height - 20
-    end
 end)
 
 
@@ -652,32 +645,46 @@ client.connect_signal("mouse::enter", function(c)
     c:emit_signal("request::activate", "mouse_enter", {raise = false})
 end)
 
--- awesome-copycats smart border
+-- smart border
 -------------------------------------------------------------------------------
-
--- No border for maximized clients
+---- No border for maximized clients or if only one tiled client
 local function border_adjust(c)
-    if c.maximized then -- no borders if only 1 client visible
+    if c.maximized or (not c.floating and #awful.screen.focused().clients == 1) then
         c.border_width = 0
-    elseif #awful.screen.focused().clients > 1 then
-        c.border_width = beautiful.border_width
-        c.border_color = beautiful.border_focus
     else
-        c.border_width = 0
+        c.border_width = beautiful.border_width
     end
 end
 
--- No border for maximized clients
-local function border_unadjust(c)
-    if c.maximized then -- no borders if only 1 client visible
-        c.border_width = 0
-    elseif #awful.screen.focused().clients > 1 then
-        c.border_width = beautiful.border_width
-        c.border_color = beautiful.border_normal
+client.connect_signal("focus", function(c)
+  border_adjust(c)
+  c.border_color = beautiful.border_focus
+end)
+client.connect_signal("unfocus", function(c)
+  border_adjust(c)
+  c.border_color = beautiful.border_normal
+end)
+
+-- turn titlebar on when client is floating
+-------------------------------------------------------------------------------
+client.connect_signal("property::floating", function (c)
+    if c.floating and not c.maximized then
+        awful.titlebar.show(c, "bottom")
+        c.height = c.height - 20
     else
-        c.border_width = 0
+        awful.titlebar.hide(c, "bottom")
     end
-end
+    border_adjust(c)
+end)
+
+-- turn tilebars on when layout is floating
+-------------------------------------------------------------------------------
+awful.tag.attached_connect_signal(awful.screen.focused(), "property::layout", function (t)
+    local float = t.layout.name == "floating"
+    for _,c in pairs(t:clients()) do
+        c.floating = float
+    end
+end)
 
 -- Update Titlbar Buttons in Wibar on focus / unfocus
 --------------------------------------------------------------------------------
@@ -696,58 +703,43 @@ local function buttons_remove(_)
 end
 
 local function buttons_insert(c)
-    local s               = awful.screen.focused()
-    local buttons         = s.titlebar_buttons:get_widgets_at(1, 1, 1, 3)
-    local maximizedbutton = wibox.container.margin(awful.titlebar.widget.maximizedbutton(c), 2, 2)
-    local ontopbutton     = wibox.container.margin(awful.titlebar.widget.ontopbutton(c), 2, 2)
-    local stickybutton    = wibox.container.margin(awful.titlebar.widget.stickybutton(c), 2, 2)
+    local s       = awful.screen.focused()
+    local buttons = s.titlebar_buttons:get_widgets_at(1, 1, 1, 3)
+
+    if not c.maximizedbutton then
+      c.maximizedbutton = wibox.container.margin(awful.titlebar.widget.maximizedbutton(c), 2, 2)
+    end
+    if not c.ontopbutton then
+      c.ontopbutton = wibox.container.margin(awful.titlebar.widget.ontopbutton(c), 2, 2)
+    end
+    if not c.stickybutton then
+      c.stickybutton = wibox.container.margin(awful.titlebar.widget.stickybutton(c), 2, 2)
+    end
+
     should_remove = false
     s.titlebar_buttons.visible = true
 
     if buttons then
-        s.titlebar_buttons:replace_widget(buttons[3], maximizedbutton)
-        s.titlebar_buttons:replace_widget(buttons[2], ontopbutton)
-        s.titlebar_buttons:replace_widget(buttons[1], stickybutton)
+        s.titlebar_buttons:replace_widget(buttons[3], c.maximizedbutton)
+        s.titlebar_buttons:replace_widget(buttons[2], c.ontopbutton)
+        s.titlebar_buttons:replace_widget(buttons[1], c.stickybutton)
     else
-        s.titlebar_buttons:add_widget_at(maximizedbutton, 1, 1)
-        s.titlebar_buttons:add_widget_at(ontopbutton, 1, 2)
-        s.titlebar_buttons:add_widget_at(stickybutton, 1, 3)
+        s.titlebar_buttons:add_widget_at(c.maximizedbutton, 1, 1)
+        s.titlebar_buttons:add_widget_at(c.ontopbutton, 1, 2)
+        s.titlebar_buttons:add_widget_at(c.stickybutton, 1, 3)
     end
 end
 
-client.connect_signal("focus", border_adjust)
 client.connect_signal("focus", buttons_insert)
-client.connect_signal("property::maximized", border_adjust)
-client.connect_signal("unfocus", border_unadjust)
 client.connect_signal("unfocus", buttons_remove)
 
--- turn titlebar on when client is floating
--------------------------------------------------------------------------------
-client.connect_signal("property::floating", function (c)
-    if c.floating and not c.maximized then
-        awful.titlebar.show(c, "bottom")
-        c.height = c.height - 20
-    else
-        awful.titlebar.hide(c, "bottom")
-    end
-end)
-
--- turn tilebars on when layout is floating
--------------------------------------------------------------------------------
-awful.tag.attached_connect_signal(awful.screen.focused(), "property::layout", function (t)
-    local float = t.layout.name == "floating"
-    for _,c in pairs(t:clients()) do
-        c.floating = float
-    end
-end)
-
-
-beautiful.notification_opacity=0.75
 -- }}}
 
 -------------------------------------------------------------------------------
 -- {{{ Misc
 -------------------------------------------------------------------------------
+
+beautiful.notification_opacity=0.75
 
 -- memory management
 -------------------------------------------------------------------------------
@@ -755,7 +747,7 @@ gears.timer {
     timeout   = 60,
     autostart = true,
     callback  = function()
-        collectgarbage("collect")
+        collectgarbage("step", 20000)
     end
 }
 -- }}}
