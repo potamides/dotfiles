@@ -50,15 +50,16 @@ theme.bg_urgent  = theme.bg_normal
 theme.bg_systray = theme.bg_normal
 
 theme.fg_normal  = theme.fg4
-theme.fg_focus   = theme.fg_normal
+theme.fg_focus   = theme.fg1
 theme.fg_urgent  = theme.lightorange
 
 --  Borders
-theme.useless_gap   = dpi(0)
-theme.border_width  = dpi(2)
-theme.border_normal = theme.bg0_h
-theme.border_focus  = theme.bg4
-theme.border_marked = theme.lightpurple
+theme.useless_gap       = dpi(0)
+theme.gap_single_client = false
+theme.border_width      = dpi(2)
+theme.border_normal     = theme.bg0_h
+theme.border_focus      = theme.bg4
+theme.border_marked     = theme.lightpurple
 
 -- Titlebars
 theme.titlebar_bg_focus  = theme.bg0_s
@@ -91,29 +92,42 @@ theme.taglist_bg_occupied = theme.bg1
 theme.taglist_bg_volatile = theme.lightpurple
 theme.taglist_bg_empty    = theme.bg1
 theme.taglist_font        = "sans bold 18"
--- }}}
 
--- {{{ Menu
 -- Variables set for theming the menu:
 -- menu_[bg|fg]_[normal|focus]
 -- menu_[border_color|border_width]
 theme.menu_height       = dpi(16)
 theme.menu_width        = dpi(140)
 theme.menu_border_width = dpi(10)
-theme.menu_fg_normal    = theme.fg0
-theme.menu_fg_focus     = theme.bg0_h
+theme.menu_fg_normal    = theme.fg_focus
+theme.menu_fg_focus     = theme.bg_normal
 theme.menu_bg_focus     = theme.lightaqua
-theme.menu_border_color = theme.bg0_h
--- }}}
+theme.menu_border_color = theme.bg_normal
 
--- {{{ Icons
--- {{{ Taglist
+-- Taglist
 --theme.taglist_squares_sel   = themes_path .. "gruvbox/taglist/squarefz.png"
 --theme.taglist_squares_unsel = themes_path .. "gruvbox/taglist/squarez.png"
 --theme.taglist_squares_resize = "false"
--- }}}
 
--- {{{ Layout
+-- Calendar
+theme.calendar_year_fg_color        = theme.fg_focus
+theme.calendar_month_fg_color       = theme.fg_focus
+theme.calendar_year_header_fg_color = theme.fg_focus
+theme.calendar_header_fg_color      = theme.fg_focus
+theme.calendar_weekday_fg_color     = theme.fg_focus
+theme.calendar_weeknumber_fg_color  = theme.fg_focus
+theme.calendar_normal_fg_color      = theme.fg_focus
+theme.calendar_focus_fg_color       = theme.fg_focus
+
+-- custom sizes
+theme.small_gap        = dpi(2)
+theme.gap              = dpi(4)
+theme.big_gap          = dpi(14)
+theme.negative_gap     = dpi(-5)
+theme.wibar_height     = dpi(22)
+theme.titlebar_height  = dpi(20)
+
+-- Layout
 theme.layout_tile       = themes_path .. "gruvbox/layouts/tile.svg"
 theme.layout_tileleft   = themes_path .. "gruvbox/layouts/tileleft.svg"
 theme.layout_tilebottom = themes_path .. "gruvbox/layouts/tilebottom.svg"
@@ -130,9 +144,8 @@ theme.layout_cornernw   = themes_path .. "gruvbox/layouts/cornernw.svg"
 theme.layout_cornerne   = themes_path .. "gruvbox/layouts/cornerne.svg"
 theme.layout_cornersw   = themes_path .. "gruvbox/layouts/cornersw.svg"
 theme.layout_cornerse   = themes_path .. "gruvbox/layouts/cornerse.svg"
--- }}}
 
--- {{{ Titlebar
+-- Titlebar
 theme.titlebar_ontop_button_focus_active    = themes_path .. "gruvbox/titlebar/ontop_select.svg"
 theme.titlebar_ontop_button_normal_active   = themes_path .. "gruvbox/titlebar/ontop_select.svg"
 theme.titlebar_ontop_button_focus_inactive  = themes_path .. "gruvbox/titlebar/ontop_unselect.svg"
@@ -154,8 +167,6 @@ theme.titlebar_floating_button_focus_active    = themes_path .. "gruvbox/titleba
 theme.titlebar_floating_button_normal_active   = themes_path .. "gruvbox/titlebar/floating_select.svg"
 theme.titlebar_floating_button_focus_inactive  = themes_path .. "gruvbox/titlebar/floating_unselect.svg"
 theme.titlebar_floating_button_normal_inactive = themes_path .. "gruvbox/titlebar/floating_unselect.svg"
--- }}}
--- }}}
 
 return theme
 

@@ -9,7 +9,7 @@ local function read_wireless(stdout, interface)
 
   if match then
     local signal_strength = math.floor(match / 70 * 100)
-    local index           = signal_strength // 20
+    local index           = math.min(4, signal_strength // 20)
 
     return {signal_strength, "wireless_" .. index .. ".svg"}
   end

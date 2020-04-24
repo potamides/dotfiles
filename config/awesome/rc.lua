@@ -9,7 +9,6 @@ require("awful.autofocus")
 local wibox = require("wibox")
 -- Theme handling library
 local beautiful = require("beautiful")
-local dpi       = require("beautiful.xresources").apply_dpi
 -- Notification library
 local naughty       = require("naughty")
 local menubar       = require("menubar")
@@ -75,6 +74,9 @@ local browser          = "firefox"
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 awful.util.shell       = "/usr/bin/zsh"
 
+-- Default modkey.
+local modkey = "Mod4"
+
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
   awful.layout.suit.tile,
@@ -116,7 +118,7 @@ local myawesomemenu = {
 }
 
 local mymainmenu = freedesktop.menu.build({
-  icon_size = beautiful.menu_height or dpi(10),
+  icon_size = beautiful.menu_height,
   before = {
     { "Awesome", myawesomemenu, beautiful.awesome_icon },
     -- other triads can be put here
@@ -131,14 +133,21 @@ local mylauncher = wibarutil.create_parallelogram(
 {
   awful.widget.launcher {
     image = beautiful.archlinux_icon,
-    menu = mymainmenu
+    menu  = { toggle = function() mymainmenu:toggle {
+                coords = {
+                  x = beautiful.gap,
+                  y = beautiful.wibar_height + beautiful.small_gap
+                }
+              }
+            end
+          }
   },
   status_box,
-  spacing = dpi(4),
-  layout = wibox.layout.fixed.horizontal,
+  spacing = beautiful.gap,
+  layout  = wibox.layout.fixed.horizontal,
 },
 wibarutil.leftmost_parallelogram,
-beautiful.lightaqua, dpi(2))
+beautiful.lightaqua, beautiful.small_gap)
 
 modalawesome.active_mode:connect_signal("widget::redraw_needed",
 function()
@@ -171,7 +180,10 @@ end
 -- Create a textclock widget and attach a calendar to it
 local mytextclock = wibox.widget.textclock(
 string.format("<span color=%q><b>%%H:%%M</b></span>", beautiful.bg_normal), 60)
-local month_calendar = awful.widget.calendar_popup.month()
+local month_calendar = awful.widget.calendar_popup.month {
+        long_weekdays = true,
+        margin = beautiful.gap
+    }
 month_calendar:attach(mytextclock)
 
 -- Wallpaper
@@ -194,7 +206,7 @@ screen.connect_signal("property::geometry", set_wallpaper)
 -- Taglist
 -------------------------------------------------------------------------------
 -- Each screen has its own tag table.
-local tags = { "❶", "❷", "❸", "❹", "❺", "❻"}
+local tags   = { "❶", "❷", "❸", "❹", "❺", "❻"}
 
 -- Assign the buttons for the taglist
 local taglist_buttons = gears.table.join(
@@ -220,8 +232,8 @@ local widget_template = {
       id     = 'text_role',
       widget = wibox.widget.textbox,
     },
-    left  = dpi(14),
-    right = dpi(14),
+    left  = beautiful.big_gap,
+    right = beautiful.big_gap,
     widget = wibox.container.margin
   },
   id     = 'background_role',
@@ -267,7 +279,7 @@ awful.screen.connect_for_each_screen(function(s)
       shape = wibarutil.left_parallelogram
     },
     layout   = {
-      spacing = -5,
+      spacing = beautiful.negative_gap,
       layout  = wibox.layout.grid.horizontal
     },
     widget_template = widget_template,
@@ -277,7 +289,7 @@ awful.screen.connect_for_each_screen(function(s)
   -- Systray
   -------------------------------------------------------------------------------
   local systray = wibox.widget.systray()
-  beautiful.systray_icon_spacing = dpi(7)
+  beautiful.systray_icon_spacing = beautiful.gap
 
   -- global title bar
   -------------------------------------------------------------------------------
@@ -301,7 +313,7 @@ awful.screen.connect_for_each_screen(function(s)
 -- Wibar
 -------------------------------------------------------------------------------
     -- Create the wibar
-    s.mywibox = awful.wibar({position = "top", screen = s, height = dpi(22)})
+    s.mywibox = awful.wibar({position = "top", screen = s, height = beautiful.wibar_height})
 
     s.titlebar_buttons = wibox.widget {
         layout = wibox.layout.grid.horizontal
@@ -315,7 +327,7 @@ awful.screen.connect_for_each_screen(function(s)
             mylauncher,
             s.mytaglist,
             mpd.widget,
-            spacing = dpi(-5),
+            spacing = beautiful.negative_gap,
             layout = wibox.layout.fixed.horizontal,
         },
         { -- Middle widgets
@@ -323,8 +335,8 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.align.horizontal,
         },
         { -- Right widgets
-            wibox.layout.margin(modalawesome.sequence, dpi(5), dpi(5), dpi(2), dpi(2)),
-            wibox.layout.margin(systray, dpi(5), dpi(5), dpi(2), dpi(2)),
+            wibox.layout.margin(modalawesome.sequence, beautiful.gap, beautiful.big_gap),
+            wibox.layout.margin(systray, beautiful.gap, beautiful.gap, beautiful.small_gap, beautiful.small_gap),
 
             -- Internet Widget
             wibarutil.compose_parallelogram(
@@ -353,14 +365,14 @@ awful.screen.connect_for_each_screen(function(s)
                 {
                     s.mylayoutbox,
                     s.titlebar_buttons,
-                    spacing = dpi(2),
+                    spacing = beautiful.small_gap,
                     layout = wibox.layout.fixed.horizontal
                 },
                 wibarutil.right_parallelogram,
                 wibarutil.rightmost_parallelogram,
-                dpi(4)),
+                beautiful.gap),
 
-            spacing = dpi(-5),
+            spacing = beautiful.negative_gap,
             fill_space = true,
             layout = wibox.layout.fixed.horizontal,
         },
@@ -370,8 +382,6 @@ end)
 --------------------------------------------------------------------------------
 -- {{{ Mouse bindings & Key bindings
 --------------------------------------------------------------------------------
-local modkey = "Mod4"
-
 local clientbuttons = gears.table.join(
     awful.button({ }, 1, function (c)
         c:emit_signal("request::activate", "mouse_click", {raise = true})
@@ -417,7 +427,7 @@ modes.tag = gears.table.join(
       description = "hide all visible clients until keypress",
       pattern = {'N'},
       handler = function(self)
-        local tags = awful.screen.focused().selected_tags
+        local tags_ = awful.screen.focused().selected_tags
         local grabber
 
         awful.tag.viewnone(awful.screen.focused())
@@ -426,7 +436,7 @@ modes.tag = gears.table.join(
         grabber = awful.keygrabber {
           autostart = true,
           keypressed_callback = function()
-            awful.tag.viewmore(tags)
+            awful.tag.viewmore(tags_)
             grabber:stop()
             self.grabber:start()
           end
@@ -528,8 +538,8 @@ modes.launcher = gears.table.join(
     pattern = {'m'},
     handler = function()
       local s                 = awful.screen.focused()
-      menubar.geometry.y      = s.geometry.y + s.geometry.height - dpi(40)
-      menubar.geometry.height = dpi(20)
+      menubar.geometry.y      = s.geometry.y + s.geometry.height - 2 * beautiful.titlebar_height
+      menubar.geometry.height = beautiful.titlebar_height
       menubar.show_categories = false
       menubar.show(s)
     end
@@ -554,7 +564,7 @@ modalawesome.init{
 awful.rules.rules = {
     -- All clients will match this rule.
     { rule = { },
-        properties = { 
+        properties = {
             border_width = beautiful.border_width,
             border_color = beautiful.border_normal,
             focus = awful.client.focus.filter,
@@ -612,7 +622,7 @@ client.connect_signal("request::titlebars", function(c)
         end)
     )
 
-    awful.titlebar(c, {size = dpi(20), position = "bottom"}) : setup {
+    awful.titlebar(c, {size = beautiful.titlebar_height, position = "bottom"}) : setup {
         {
             { -- Left
                 --awful.titlebar.widget.iconwidget(c),
@@ -628,7 +638,9 @@ client.connect_signal("request::titlebars", function(c)
                 layout  = wibox.layout.flex.horizontal
             },
             { -- Right
-                wibox.container.margin(awful.titlebar.widget.floatingbutton(c), dpi(4), dpi(4), dpi(4), dpi(4)),
+                wibox.container.margin(
+                  awful.titlebar.widget.floatingbutton(c), beautiful.gap, beautiful.gap, beautiful.gap, beautiful.gap
+                ),
                 layout = wibox.layout.fixed.horizontal()
                 },
 
@@ -670,7 +682,7 @@ end)
 client.connect_signal("property::floating", function (c)
     if c.floating and not c.maximized then
         awful.titlebar.show(c, "bottom")
-        c.height = c.height - dpi(20)
+        c.height = c.height - beautiful.titlebar_height
     else
         awful.titlebar.hide(c, "bottom")
     end
@@ -707,13 +719,16 @@ local function buttons_insert(c)
     local buttons = s.titlebar_buttons:get_widgets_at(1, 1, 1, 3)
 
     if not c.maximizedbutton then
-      c.maximizedbutton = wibox.container.margin(awful.titlebar.widget.maximizedbutton(c), dpi(2), dpi(2))
+      c.maximizedbutton =
+        wibox.container.margin(awful.titlebar.widget.maximizedbutton(c), beautiful.small_gap, beautiful.small_gap)
     end
     if not c.ontopbutton then
-      c.ontopbutton = wibox.container.margin(awful.titlebar.widget.ontopbutton(c), dpi(2), dpi(2))
+      c.ontopbutton =
+        wibox.container.margin(awful.titlebar.widget.ontopbutton(c), beautiful.small_gap, beautiful.small_gap)
     end
     if not c.stickybutton then
-      c.stickybutton = wibox.container.margin(awful.titlebar.widget.stickybutton(c), dpi(2), dpi(2))
+      c.stickybutton =
+        wibox.container.margin(awful.titlebar.widget.stickybutton(c), beautiful.small_gap, beautiful.small_gap)
     end
 
     should_remove = false
@@ -743,11 +758,11 @@ beautiful.notification_opacity=0.75
 
 -- memory management
 -------------------------------------------------------------------------------
-gears.timer {
-    timeout   = 60,
-    autostart = true,
-    callback  = function()
-        collectgarbage("step", 20000)
-    end
-}
+--gears.timer {
+--    timeout   = 60,
+--    autostart = true,
+--    callback  = function()
+--        collectgarbage("step", 20000)
+--    end
+--}
 -- }}}

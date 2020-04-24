@@ -1,6 +1,5 @@
 local beautiful = require("beautiful")
 local wibox     = require("wibox")
-local dpi       = require("beautiful.xresources").apply_dpi
 
 
 local function right_parallelogram(cr, width, height, degree)
@@ -43,10 +42,10 @@ local function create_parallelogram(widget, parallelogram, color, margin)
     return wibox.widget {
         {
             widget,
-            top = margin or dpi(2),
-            bottom = margin or dpi(2),
-            left  = parallelogram == leftmost_parallelogram and dpi(4) or dpi(14),
-            right = parallelogram == rightmost_parallelogram and dpi(4) or dpi(14),
+            top = margin or beautiful.small_gap,
+            bottom = margin or beautiful.small_gap,
+            left  = parallelogram == leftmost_parallelogram and beautiful.gap or beautiful.big_gap,
+            right = parallelogram == rightmost_parallelogram and beautiful.gap or beautiful.big_gap,
             widget = wibox.container.margin
         },
         shape = parallelogram,
@@ -61,8 +60,8 @@ local function compose_parallelogram(left_widget, right_widget, left_shape, righ
         {
             {
                 left_widget,
-                left = left_shape == right_parallelogram and dpi(14) or dpi(4),
-                right = dpi(14),
+                left = left_shape == right_parallelogram and beautiful.big_gap or beautiful.gap,
+                right = beautiful.big_gap,
                 widget = wibox.container.margin
             },
             shape = left_shape,
@@ -73,10 +72,10 @@ local function compose_parallelogram(left_widget, right_widget, left_shape, righ
             {
                 {
                     right_widget,
-                    top = margin or dpi(2),
-                    bottom = margin or dpi(2),
-                    left = dpi(14),
-                    right = right_shape == right_parallelogram and dpi(14) or dpi(4),
+                    top = margin or beautiful.small_gap,
+                    bottom = margin or beautiful.small_gap,
+                    left = beautiful.big_gap,
+                    right = right_shape == right_parallelogram and beautiful.big_gap or beautiful.gap,
                     widget = wibox.container.margin
                 },
                 widget = wibox.container.place
@@ -85,7 +84,7 @@ local function compose_parallelogram(left_widget, right_widget, left_shape, righ
             bg = beautiful.bg1,
             widget = wibox.container.background
         },
-        spacing = dpi(-10),
+        spacing = 2 * beautiful.negative_gap,
         layout = wibox.layout.fixed.horizontal
     }
 end
