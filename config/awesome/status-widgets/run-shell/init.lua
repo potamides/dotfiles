@@ -10,6 +10,7 @@
 local awful     = require("awful")
 local wibox     = require("wibox")
 local beautiful = require("beautiful")
+local dpi       = require("beautiful.xresources").apply_dpi
 
 local run_shell = wibox.widget.textbox()
 local widget    = {}
@@ -24,15 +25,15 @@ function widget.new()
         local w = wibox {
             visible      = false,
             ontop        = true,
-            height       = 50  + 2 * beautiful.border_width,
-            width        = 200 + 2 * beautiful.border_width,
+            height       = dpi(50)  + 2 * beautiful.border_width,
+            width        = dpi(200) + 2 * beautiful.border_width,
             bg           = beautiful.bg_normal,
             border_color = beautiful.border_focus,
             border_width = beautiful.border_width,
         }
         w:setup {
             run_shell,
-            left   = 10,
+            left   = dpi(10),
             layout = wibox.container.margin,
         }
 
@@ -60,9 +61,9 @@ function widget.new()
         end
         opts.changed_callback = function()
           local width = run_shell:get_preferred_size()
-          local empty_area = w.width - 2 * beautiful.border_width - 10 - width
-          if empty_area < 10 then
-            w.width = w.width + 10 - empty_area
+          local empty_area = w.width - 2 * beautiful.border_width - dpi(10) - width
+          if empty_area < dpi(10) then
+            w.width = w.width + dpi(10) - empty_area
             awful.placement.centered(w, {parent = awful.screen.focused()})
           end
         end

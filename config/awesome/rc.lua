@@ -9,6 +9,7 @@ require("awful.autofocus")
 local wibox = require("wibox")
 -- Theme handling library
 local beautiful = require("beautiful")
+local dpi       = require("beautiful.xresources").apply_dpi
 -- Notification library
 local naughty       = require("naughty")
 local menubar       = require("menubar")
@@ -115,7 +116,7 @@ local myawesomemenu = {
 }
 
 local mymainmenu = freedesktop.menu.build({
-  icon_size = beautiful.menu_height or 10,
+  icon_size = beautiful.menu_height or dpi(10),
   before = {
     { "Awesome", myawesomemenu, beautiful.awesome_icon },
     -- other triads can be put here
@@ -133,11 +134,11 @@ local mylauncher = wibarutil.create_parallelogram(
     menu = mymainmenu
   },
   status_box,
-  spacing = 4,
+  spacing = dpi(4),
   layout = wibox.layout.fixed.horizontal,
 },
 wibarutil.leftmost_parallelogram,
-beautiful.lightaqua, 2)
+beautiful.lightaqua, dpi(2))
 
 modalawesome.active_mode:connect_signal("widget::redraw_needed",
 function()
@@ -219,8 +220,8 @@ local widget_template = {
       id     = 'text_role',
       widget = wibox.widget.textbox,
     },
-    left  = 14,
-    right = 14,
+    left  = dpi(14),
+    right = dpi(14),
     widget = wibox.container.margin
   },
   id     = 'background_role',
@@ -276,7 +277,7 @@ awful.screen.connect_for_each_screen(function(s)
   -- Systray
   -------------------------------------------------------------------------------
   local systray = wibox.widget.systray()
-  beautiful.systray_icon_spacing = 7
+  beautiful.systray_icon_spacing = dpi(7)
 
   -- global title bar
   -------------------------------------------------------------------------------
@@ -300,7 +301,7 @@ awful.screen.connect_for_each_screen(function(s)
 -- Wibar
 -------------------------------------------------------------------------------
     -- Create the wibar
-    s.mywibox = awful.wibar({position = "top", screen = s, height = 22})
+    s.mywibox = awful.wibar({position = "top", screen = s, height = dpi(22)})
 
     s.titlebar_buttons = wibox.widget {
         layout = wibox.layout.grid.horizontal
@@ -314,7 +315,7 @@ awful.screen.connect_for_each_screen(function(s)
             mylauncher,
             s.mytaglist,
             mpd.widget,
-            spacing = -5,
+            spacing = dpi(-5),
             layout = wibox.layout.fixed.horizontal,
         },
         { -- Middle widgets
@@ -322,8 +323,8 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.align.horizontal,
         },
         { -- Right widgets
-            wibox.layout.margin(modalawesome.sequence, 5, 5, 2, 2),
-            wibox.layout.margin(systray, 5, 5, 2, 2),
+            wibox.layout.margin(modalawesome.sequence, dpi(5), dpi(5), dpi(2), dpi(2)),
+            wibox.layout.margin(systray, dpi(5), dpi(5), dpi(2), dpi(2)),
 
             -- Internet Widget
             wibarutil.compose_parallelogram(
@@ -352,14 +353,14 @@ awful.screen.connect_for_each_screen(function(s)
                 {
                     s.mylayoutbox,
                     s.titlebar_buttons,
-                    spacing = 2,
+                    spacing = dpi(2),
                     layout = wibox.layout.fixed.horizontal
                 },
                 wibarutil.right_parallelogram,
                 wibarutil.rightmost_parallelogram,
-                4),
+                dpi(4)),
 
-            spacing = -5,
+            spacing = dpi(-5),
             fill_space = true,
             layout = wibox.layout.fixed.horizontal,
         },
@@ -527,8 +528,8 @@ modes.launcher = gears.table.join(
     pattern = {'m'},
     handler = function()
       local s                 = awful.screen.focused()
-      menubar.geometry.y      = s.geometry.y + s.geometry.height - 40
-      menubar.geometry.height = 20
+      menubar.geometry.y      = s.geometry.y + s.geometry.height - dpi(40)
+      menubar.geometry.height = dpi(20)
       menubar.show_categories = false
       menubar.show(s)
     end
@@ -611,7 +612,7 @@ client.connect_signal("request::titlebars", function(c)
         end)
     )
 
-    awful.titlebar(c, {size = 20, position = "bottom"}) : setup {
+    awful.titlebar(c, {size = dpi(20), position = "bottom"}) : setup {
         {
             { -- Left
                 --awful.titlebar.widget.iconwidget(c),
@@ -627,7 +628,7 @@ client.connect_signal("request::titlebars", function(c)
                 layout  = wibox.layout.flex.horizontal
             },
             { -- Right
-                wibox.container.margin(awful.titlebar.widget.floatingbutton(c), 4, 4, 4, 4),
+                wibox.container.margin(awful.titlebar.widget.floatingbutton(c), dpi(4), dpi(4), dpi(4), dpi(4)),
                 layout = wibox.layout.fixed.horizontal()
                 },
 
@@ -669,7 +670,7 @@ end)
 client.connect_signal("property::floating", function (c)
     if c.floating and not c.maximized then
         awful.titlebar.show(c, "bottom")
-        c.height = c.height - 20
+        c.height = c.height - dpi(20)
     else
         awful.titlebar.hide(c, "bottom")
     end
@@ -706,13 +707,13 @@ local function buttons_insert(c)
     local buttons = s.titlebar_buttons:get_widgets_at(1, 1, 1, 3)
 
     if not c.maximizedbutton then
-      c.maximizedbutton = wibox.container.margin(awful.titlebar.widget.maximizedbutton(c), 2, 2)
+      c.maximizedbutton = wibox.container.margin(awful.titlebar.widget.maximizedbutton(c), dpi(2), dpi(2))
     end
     if not c.ontopbutton then
-      c.ontopbutton = wibox.container.margin(awful.titlebar.widget.ontopbutton(c), 2, 2)
+      c.ontopbutton = wibox.container.margin(awful.titlebar.widget.ontopbutton(c), dpi(2), dpi(2))
     end
     if not c.stickybutton then
-      c.stickybutton = wibox.container.margin(awful.titlebar.widget.stickybutton(c), 2, 2)
+      c.stickybutton = wibox.container.margin(awful.titlebar.widget.stickybutton(c), dpi(2), dpi(2))
     end
 
     should_remove = false
