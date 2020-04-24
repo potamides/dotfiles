@@ -23,14 +23,14 @@ local GET_VOLUME_CMD = 'amixer sget Master'
 local volume = {device = '', display_notification = false, notification = nil}
 
 function volume.toggle()
-    volume:_cmd('amixer ' .. volume.device .. ' sset Master toggle')
+    volume._cmd('amixer ' .. volume.device .. ' sset Master toggle')
 end
 
 function volume.raise()
-    volume:_cmd('amixer ' .. volume.device .. ' sset Master 5%+')
+    volume._cmd('amixer ' .. volume.device .. ' sset Master 5%+')
 end
 function volume.lower()
-    volume:_cmd('amixer ' .. volume.device .. ' sset Master 5%-')
+    volume._cmd('amixer ' .. volume.device .. ' sset Master 5%-')
 end
 
 --{{{ Icon and notification update
@@ -90,7 +90,7 @@ end
 
 --}}}
 
-local function worker(args)
+function volume.init(args)
 --{{{ Args
     args = args or {}
 
@@ -129,7 +129,7 @@ local function worker(args)
         end)
     end
 
-    volume:_cmd(GET_VOLUME_CMD)
+    volume._cmd(GET_VOLUME_CMD)
     local function show()
         spawn.easy_async(GET_VOLUME_CMD,
         function(stdout, _, _, _)
@@ -155,7 +155,6 @@ local function worker(args)
         volume.image:connect_signal("mouse::leave", function() naughty.destroy(volume.notification) end)
     end
 --}}}
-    return volume.text, volume.image
 end
 
-return setmetatable(volume, { __call = function(_, ...) return worker(...) end })
+return volume

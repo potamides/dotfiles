@@ -21,7 +21,7 @@ local dpi = require('beautiful').xresources.apply_dpi
 -- Battery 0: Charging, 53%, 00:57:43 until charged
 
 local battery_widget = {}
-local function worker(args)
+function battery_widget.init(args)
     args = args or {}
 
     local path_to_icons = args.path_to_icons or awful.util.getdir("config").."themes/gruvbox/widgets/battery/"
@@ -41,13 +41,13 @@ local function worker(args)
         }
     end
 
-    local icon_widget = wibox.widget {
-            image = path_to_icons .. "battery-empty%s-symbolic.svg",
-            resize = false,
-            widget = wibox.widget.imagebox,
+    battery_widget.image = wibox.widget {
+        image = path_to_icons .. "battery-empty%s-symbolic.svg",
+        resize = false,
+        widget = wibox.widget.imagebox,
     }
-    local level_widget = wibox.widget.textbox()
-    level_widget:set_markup(string.format("<span color=%q><b>%s%%</b></span>", beautiful.bg_normal, 0))
+    battery_widget.text = wibox.widget.textbox()
+    battery_widget.text:set_markup(string.format("<span color=%q><b>%s%%</b></span>", beautiful.bg_normal, 0))
 
     -- Popup with battery info
     -- One way of creating a pop-up notification - naughty.notify
@@ -86,7 +86,7 @@ local function worker(args)
     local last_battery_check = os.time()
     local batteryType = "battery-good-symbolic"
 
-    watch("acpi -i", 10,
+    watch("acpi -i", 15,
     function(widget, stdout, _, _, _)
         local battery_info = {}
         local capacities = {}
@@ -117,7 +117,7 @@ local function worker(args)
         end
         charge = charge / capacity
 
-        level_widget:set_markup(string.format("<span color=%q><b>%s%%</b></span>",
+        battery_widget.text:set_markup(string.format("<span color=%q><b>%s%%</b></span>",
             beautiful.bg_normal, math.floor(charge)))
 
         if (charge >= 0 and charge < 15) then
@@ -145,13 +145,12 @@ local function worker(args)
         -- Update popup text
         -- battery_popup.text = string.gsub(stdout, "\n$", "")
     end,
-    icon_widget)
+    battery_widget.image)
 
     if display_notification then
-        icon_widget:connect_signal("mouse::enter", function() show_battery_status(batteryType) end)
-        icon_widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
+        battery_widget.image:connect_signal("mouse::enter", function() show_battery_status(batteryType) end)
+        battery_widget.image:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
     end
-    return level_widget, icon_widget
 end
 
-return setmetatable(battery_widget, { __call = function(_, ...) return worker(...) end })
+return battery_widget

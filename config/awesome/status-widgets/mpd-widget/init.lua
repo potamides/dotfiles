@@ -3,7 +3,7 @@ local awful = require("awful")
 local beautiful = require("beautiful")
 local wibarutil = require("wibarutil")
 local wibox = require("wibox")
-local mpc = require("mpd.mpc")
+local mpc = require("status-widgets.mpd-widget.mpc")
 
 local mpd_widget = wibox.widget.textbox()
 local mpd_container = wibarutil.create_parallelogram({
