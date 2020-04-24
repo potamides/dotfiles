@@ -22,13 +22,16 @@ local modalawesome = require("modalawesome")
 beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua")
 -- import this stuff after theme initialisation for proper colors
 local wibarutil   = require("wibarutil")
-local battery     = require("awesome-wm-widgets.battery-widget.battery")
-local volume      = require("awesome-wm-widgets.volume-widget.volume")
-local run_shell   = require("awesome-wm-widgets.run-shell.run-shell")
+local battery     = require("status-widgets.battery-widget")
+local volume      = require("status-widgets.volume-widget")
+local mpd         = require("status-widgets.mpd-widget")
+local net_widget  = require("status-widgets.net-widget")
+local run_shell   = require("status-widgets.run-shell")
 local revelation  = require("revelation")
-local mpd         = require("mpd")
-local net_widgets = require("net_widgets")
 revelation.init()
+volume.init()
+battery.init()
+net_widget.init()
 
 -------------------------------------------------------------------------------
 -- {{{ Error handling
@@ -37,24 +40,24 @@ revelation.init()
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
 if awesome.startup_errors then
-   naughty.notify({ preset = naughty.config.presets.critical,
-               title = "Oops, there were errors during startup!",
-            text = awesome.startup_errors })
+  naughty.notify({ preset = naughty.config.presets.critical,
+  title = "Oops, there were errors during startup!",
+  text = awesome.startup_errors })
 end
 
 -- Handle runtime errors after startup
 do
-    local in_error = false
-    awesome.connect_signal("debug::error", function (err)
-        -- Make sure we don't go into an endless error loop
-        if in_error then return end
-        in_error = true
+  local in_error = false
+  awesome.connect_signal("debug::error", function (err)
+    -- Make sure we don't go into an endless error loop
+    if in_error then return end
+    in_error = true
 
-        naughty.notify({ preset = naughty.config.presets.critical,
-                 title = "Oops, an error happened!",
-                 text = tostring(err) })
-        in_error = false
-    end)
+    naughty.notify({ preset = naughty.config.presets.critical,
+    title = "Oops, an error happened!",
+    text = tostring(err) })
+    in_error = false
+  end)
 end
 -- }}}
 
@@ -73,22 +76,22 @@ awful.util.shell       = "/usr/bin/zsh"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
-   awful.layout.suit.tile,
-   awful.layout.suit.fair,
--- awful.layout.suit.tile.left,
-   awful.layout.suit.tile.bottom,
--- awful.layout.suit.tile.top,
--- awful.layout.suit.fair.horizontal,
-   awful.layout.suit.spiral,
--- awful.layout.suit.spiral.dwindle,
--- awful.layout.suit.max,
-   awful.layout.suit.max.fullscreen,
-   awful.layout.suit.floating,
--- awful.layout.suit.magnifier,
--- awful.layout.suit.corner.nw,
--- awful.layout.suit.corner.ne,
--- awful.layout.suit.corner.sw,
--- awful.layout.suit.corner.se,
+  awful.layout.suit.tile,
+  awful.layout.suit.fair,
+  -- awful.layout.suit.tile.left,
+  awful.layout.suit.tile.bottom,
+  -- awful.layout.suit.tile.top,
+  -- awful.layout.suit.fair.horizontal,
+  awful.layout.suit.spiral,
+  -- awful.layout.suit.spiral.dwindle,
+  -- awful.layout.suit.max,
+  awful.layout.suit.max.fullscreen,
+  awful.layout.suit.floating,
+  -- awful.layout.suit.magnifier,
+  -- awful.layout.suit.corner.nw,
+  -- awful.layout.suit.corner.ne,
+  -- awful.layout.suit.corner.sw,
+  -- awful.layout.suit.corner.se,
 }
 -- }}}
 
@@ -100,65 +103,65 @@ awful.layout.layouts = {
 -------------------------------------------------------------------------------
 -- Create a launcher widget and a main menu
 local myawesomemenu = {
-    { "hotkeys", function() return false, hotkeys_popup.show_help end},
-    { "manual", terminal .. " -e man awesome" },
-    { "edit config", editor_cmd .. " " .. awesome.conffile },
-    { "restart", awesome.restart },
-    { "quit", function() awesome.quit() end},
-    { "open terminal", terminal },
-    { "lock", function() awesome.spawn("physlock -s") end },
-    { "reboot", function() awesome.spawn("systemctl reboot") end },
-    { "shutdown", function() awesome.spawn("systemctl poweroff") end },
+  { "hotkeys", function() return false, hotkeys_popup.show_help end},
+  { "manual", terminal .. " -e man awesome" },
+  { "edit config", editor_cmd .. " " .. awesome.conffile },
+  { "restart", awesome.restart },
+  { "quit", function() awesome.quit() end},
+  { "open terminal", terminal },
+  { "lock", function() awesome.spawn("physlock -s") end },
+  { "reboot", function() awesome.spawn("systemctl reboot") end },
+  { "shutdown", function() awesome.spawn("systemctl poweroff") end },
 }
 
 local mymainmenu = freedesktop.menu.build({
-    icon_size = beautiful.menu_height or 10,
-    before = {
-        { "Awesome", myawesomemenu, beautiful.awesome_icon },
-        -- other triads can be put here
-    },
-    after = {
-    }
+  icon_size = beautiful.menu_height or 10,
+  before = {
+    { "Awesome", myawesomemenu, beautiful.awesome_icon },
+    -- other triads can be put here
+  },
+  after = {
+  }
 })
 
 
 local status_box = wibox.widget.textbox(modalawesome.active_mode.text)
 local mylauncher = wibarutil.create_parallelogram(
-    {
-        awful.widget.launcher {
-            image = beautiful.archlinux_icon,
-            menu = mymainmenu
-        },
-        status_box,
-        spacing = 4,
-        layout = wibox.layout.fixed.horizontal,
-    },
-    wibarutil.leftmost_parallelogram,
-    beautiful.lightaqua, 2)
+{
+  awful.widget.launcher {
+    image = beautiful.archlinux_icon,
+    menu = mymainmenu
+  },
+  status_box,
+  spacing = 4,
+  layout = wibox.layout.fixed.horizontal,
+},
+wibarutil.leftmost_parallelogram,
+beautiful.lightaqua, 2)
 
 modalawesome.active_mode:connect_signal("widget::redraw_needed",
-  function()
-    local color
-    local text = modalawesome.active_mode.text
+function()
+  local color
+  local text = modalawesome.active_mode.text
 
-    status_box:set_markup(
-      string.format(
-        "<span color=%q><b>%s</b></span>",
-        beautiful.bg_normal,
-        string.upper(text)
-      )
-    )
+  status_box:set_markup(
+  string.format(
+  "<span color=%q><b>%s</b></span>",
+  beautiful.bg_normal,
+  string.upper(text)
+  )
+  )
 
-    if     text == 'tag'      then color = beautiful.lightaqua
-    elseif text == 'layout'   then color = beautiful.lightgreen
-    elseif text == 'client'   then color = beautiful.lightblue
-    elseif text == 'launcher' then color = beautiful.lightyellow
-    end
+  if     text == 'tag'      then color = beautiful.lightaqua
+  elseif text == 'layout'   then color = beautiful.lightgreen
+  elseif text == 'client'   then color = beautiful.lightblue
+  elseif text == 'launcher' then color = beautiful.lightyellow
+  end
 
-    mylauncher:set_bg(color)
-    beautiful.taglist_bg_focus = color
+  mylauncher:set_bg(color)
+  beautiful.taglist_bg_focus = color
 
-    for s in screen do s.mytaglist._do_taglist_update() end
+  for s in screen do s.mytaglist._do_taglist_update() end
 end
 )
 
@@ -166,27 +169,22 @@ end
 -------------------------------------------------------------------------------
 -- Create a textclock widget and attach a calendar to it
 local mytextclock = wibox.widget.textclock(
-    string.format("<span color=%q><b>%%H:%%M</b></span>", beautiful.bg_normal), 60)
+string.format("<span color=%q><b>%%H:%%M</b></span>", beautiful.bg_normal), 60)
 local month_calendar = awful.widget.calendar_popup.month()
 month_calendar:attach(mytextclock)
-
--- Volume widget
--------------------------------------------------------------------------------
-local volume_text, volume_image   = volume()
-local battery_text, battery_image = battery()
 
 -- Wallpaper
 -------------------------------------------------------------------------------
 local function set_wallpaper(s)
-    -- Wallpaper
-    if beautiful.wallpaper then
-        local wallpaper = beautiful.wallpaper
-        -- If wallpaper is a function, call it with the screen
-        if type(wallpaper) == "function" then
-            wallpaper = wallpaper(s)
-        end
-        gears.wallpaper.maximized(wallpaper, s, true)
+  -- Wallpaper
+  if beautiful.wallpaper then
+    local wallpaper = beautiful.wallpaper
+    -- If wallpaper is a function, call it with the screen
+    if type(wallpaper) == "function" then
+      wallpaper = wallpaper(s)
     end
+    gears.wallpaper.maximized(wallpaper, s, true)
+  end
 end
 
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
@@ -201,106 +199,103 @@ local tags = { "❶", "❷", "❸", "❹", "❺", "❻"}
 local taglist_buttons = gears.table.join(
 awful.button({ }, 1, function(t) t:view_only() end),
 awful.button({ modkey }, 1, function(t)
-    if client.focus then
-        client.focus:move_to_tag(t)
-    end
+  if client.focus then
+    client.focus:move_to_tag(t)
+  end
 end),
 awful.button({ }, 3, awful.tag.viewtoggle),
 awful.button({ modkey }, 3, function(t)
-    if client.focus then
-        client.focus:toggle_tag(t)
-    end
+  if client.focus then
+    client.focus:toggle_tag(t)
+  end
 end),
 awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
 awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
 )
 
 local widget_template = {
-        {
-                {
-                    id     = 'text_role',
-                    widget = wibox.widget.textbox,
-                },
-            left  = 14,
-            right = 14,
-            widget = wibox.container.margin
-        },
-        id     = 'background_role',
-        widget = wibox.container.background,
-        -- Add support for hover colors and an index label
-        create_callback = function(self, c3, index, objects) --luacheck: no unused args
-            self:connect_signal('mouse::enter', function()
-                if not c3.selected then
-                    if self.bg ~= beautiful.bg2 then
-                        self.backup     = self.bg
-                        self.has_backup = true
-                    end
-                    self.bg = beautiful.bg2
-                end
-            end)
-            self:connect_signal('mouse::leave', function()
-                if self.has_backup and not c3.selected then
-                  self.bg = self.backup
-                end
-            end)
-        end,
-    }
+  {
+    {
+      id     = 'text_role',
+      widget = wibox.widget.textbox,
+    },
+    left  = 14,
+    right = 14,
+    widget = wibox.container.margin
+  },
+  id     = 'background_role',
+  widget = wibox.container.background,
+  -- Add support for hover colors and an index label
+  create_callback = function(self, c3, index, objects) --luacheck: no unused args
+    self:connect_signal('mouse::enter', function()
+      if not c3.selected then
+        if self.bg ~= beautiful.bg2 then
+          self.backup     = self.bg
+          self.has_backup = true
+        end
+        self.bg = beautiful.bg2
+      end
+    end)
+    self:connect_signal('mouse::leave', function()
+      if self.has_backup and not c3.selected then
+        self.bg = self.backup
+      end
+    end)
+  end,
+}
 
 awful.screen.connect_for_each_screen(function(s)
-    -- Wallpaper
-    set_wallpaper(s)
+  -- Wallpaper
+  set_wallpaper(s)
 
-    -- Taglist
-    awful.tag(tags, s, awful.layout.layouts[1])
-    -- Create an imagebox widget which will contain an icon indicating which layout we're using.
-    -- We need one layoutbox per screen.
-    s.mylayoutbox = awful.widget.layoutbox(s)
-    s.mylayoutbox:buttons(gears.table.join(
-        awful.button({ }, 1, function () awful.layout.inc( 1) end),
-        awful.button({ }, 3, function () awful.layout.inc(-1) end),
-        awful.button({ }, 4, function () awful.layout.inc( 1) end),
-        awful.button({ }, 5, function () awful.layout.inc(-1) end)))
-    -- Create a taglist widget
-    s.mytaglist = awful.widget.taglist {
+  -- Taglist
+  awful.tag(tags, s, awful.layout.layouts[1])
+  -- Create an imagebox widget which will contain an icon indicating which layout we're using.
+  -- We need one layoutbox per screen.
+  s.mylayoutbox = awful.widget.layoutbox(s)
+  s.mylayoutbox:buttons(gears.table.join(
+  awful.button({ }, 1, function () awful.layout.inc( 1) end),
+  awful.button({ }, 3, function () awful.layout.inc(-1) end),
+  awful.button({ }, 4, function () awful.layout.inc( 1) end),
+  awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+  -- Create a taglist widget
+  s.mytaglist = awful.widget.taglist {
     screen  = s,
     filter  = function(t) return t.name ~= "Revelation" and t.name ~=  "Revelation_zoom" end,
     style   = {
-        shape = wibarutil.left_parallelogram
+      shape = wibarutil.left_parallelogram
     },
     layout   = {
-        spacing = -5,
-        layout  = wibox.layout.grid.horizontal
+      spacing = -5,
+      layout  = wibox.layout.grid.horizontal
     },
     widget_template = widget_template,
     buttons = taglist_buttons
-}
+  }
 
--- Systray
--------------------------------------------------------------------------------
-    local systray = wibox.widget.systray()
-    beautiful.systray_icon_spacing = 7
+  -- Systray
+  -------------------------------------------------------------------------------
+  local systray = wibox.widget.systray()
+  beautiful.systray_icon_spacing = 7
 
--- global title bar
--------------------------------------------------------------------------------
-    s.mytitle = wibox.widget {
-        align = "center",
-        widget = wibox.widget.textbox,
-    }
-    local function update_title_text(c)
-        s = awful.screen.focused()
-        if c == client.focus then
-            if c.class then
-                s.mytitle:set_markup("<b>" .. c.class .. "</b>")
-            end
-        end
+  -- global title bar
+  -------------------------------------------------------------------------------
+  s.mytitle = wibox.widget {
+    align = "center",
+    widget = wibox.widget.textbox,
+  }
+  local function update_title_text(c)
+    s = awful.screen.focused()
+    if c == client.focus then
+      if c.class then
+        s.mytitle:set_markup("<b>" .. c.class .. "</b>")
+      end
     end
-    client.connect_signal("focus", update_title_text)
-    client.connect_signal("property::name", update_title_text)
-    client.connect_signal("unfocus", function () s = awful.screen.focused() s.mytitle:set_text("") end)
-    client.connect_signal("property::screen", function () s = awful.screen.focused() s.mytitle:set_text("") end)
-
-    local wireless_widgets = net_widgets.indicator({indent = 0, widget = false, interface="wlp5s0",
-        interfaces={"enp3s0"}})
+  end
+  client.connect_signal("focus", update_title_text)
+  client.connect_signal("property::name", update_title_text)
+  client.connect_signal("unfocus", function () s = awful.screen.focused() s.mytitle:set_text("") end)
+  client.connect_signal("property::screen", function () s = awful.screen.focused() s.mytitle:set_text("") end)
 
 -- Wibar
 -------------------------------------------------------------------------------
@@ -332,22 +327,22 @@ awful.screen.connect_for_each_screen(function(s)
 
             -- Internet Widget
             wibarutil.compose_parallelogram(
-                wireless_widgets.textbox,
-                wireless_widgets.imagebox,
+                net_widget.text,
+                net_widget.image,
                 wibarutil.right_parallelogram,
                 wibarutil.right_parallelogram),
 
             -- Audio Volume
             wibarutil.compose_parallelogram(
-                volume_text,
-                volume_image,
+                volume.text,
+                volume.image,
                 wibarutil.right_parallelogram,
                 wibarutil.right_parallelogram),
 
             -- Battery Indicator
             wibarutil.compose_parallelogram(
-                battery_text,
-                battery_image,
+                battery.text,
+                battery.image,
                 wibarutil.right_parallelogram,
                 wibarutil.right_parallelogram),
 
