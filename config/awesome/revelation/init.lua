@@ -16,6 +16,7 @@ local beautiful    = require("beautiful")
 local wibox        = require("wibox")
 local awful        = require('awful')
 local aw_rules     = require('awful.rules')
+local gears        = require("gears")
 local pairs        = pairs
 local setmetatable = setmetatable
 local naughty      = require("naughty")
@@ -26,7 +27,6 @@ local capi         = {
     awesome        = awesome,
     tag            = tag,
     client         = client,
-    keygrabber     = keygrabber,
     mousegrabber   = mousegrabber,
     mouse          = mouse,
     screen         = screen
@@ -45,6 +45,7 @@ local delayed_call = (type(timer) ~= 'table' and  require("gears.timer").delayed
 local view_only_func
 local toggle_tag_func
 local jump_to_func
+local grabber
 
 
 if type(awful.client.object) == 'table' then
@@ -84,6 +85,7 @@ local revelation = {
         fullscreen           = false,
         maximized_horizontal = false,
         maximized_vertical   = false,
+        maximized            = false,
         sticky               = false,
         ontop                = false,
         above                = false,
@@ -93,6 +95,7 @@ local revelation = {
     is_excluded = false,
     curr_tag_only = false,
     font = "monospace 20",
+    gap = 15,
     fg = beautiful.revelation_fg_normal or beautiful.fg_normal or "#DCDCCC",
     bg = beautiful.revelation_bg_normal or beautiful.bg_normal or "#000000",
     border_color = beautiful.revelation_border_color or beautiful.border_focus or "#DCDCCC",
@@ -172,24 +175,28 @@ function revelation.expose(args)
 
     local t={}
     local zt={}
+    local scr = awful.screen.focused().index
 
     clients = {}
     clientData = {}
 
-    for scr=1,capi.screen.count() do
-        t[scr] = awful.tag.new({revelation.tag_name},
-            scr, awful.layout.suit.fair)[1]
-        zt[scr] = awful.tag.new({revelation.tag_name.."_zoom"},
-            scr, awful.layout.suit.fair)[1]
+    t[scr] = awful.tag.new({revelation.tag_name},
+        scr, awful.layout.suit.fair)[1]
+    t[scr].gap = revelation.gap
+    zt[scr] = awful.tag.new({revelation.tag_name.."_zoom"},
+        scr, awful.layout.suit.fair)[1]
 
-        if curr_tag_only then
-            match_clients(rule, awful.client.visible(scr), t[scr], is_excluded)
-        else
-            match_clients(rule, capi.client.get(scr), t[scr], is_excluded)
+    if curr_tag_only then
+        local all_clients = {}
+        for _, tag in pairs(awful.screen.focused().selected_tags) do
+            gears.table.merge(all_clients, tag:clients())
         end
-
-        view_only_func(t[scr])
+        match_clients(rule, all_clients, t[scr], is_excluded)
+    else
+        match_clients(rule, capi.client.get(scr), t[scr], is_excluded)
     end
+
+    view_only_func(t[scr])
 
     if type(delayed_call) == 'function' then
         capi.awesome.emit_signal("refresh")
@@ -201,6 +208,7 @@ function revelation.expose(args)
     --revelation.expose_callback(t, zt)
     if not status then
         debuginfo('Oops!, something is wrong in revelation.expose_callback!')
+        debuginfo(gears.debug.dump_return(err))
 
         if err.msg then 
             debuginfo(err.msg) 
@@ -217,12 +225,11 @@ end
 
 
 function revelation.restore(t, zt)
-    for scr=1, capi.screen.count() do
-        awful.tag.history.restore(scr)
-        t[scr].screen = nil
-    end
+    local scr = awful.screen.focused().index
+    awful.tag.history.restore(scr)
+    t[scr].screen = nil
 
-    capi.keygrabber.stop()
+    awful.keygrabber.stop(grabber)
     capi.mousegrabber.stop()
     
      for _, c in pairs(clients) do
@@ -241,13 +248,12 @@ function revelation.restore(t, zt)
             end
       end
     
-    for scr=1, capi.screen.count() do
-        t[scr].activated = false
-        zt[scr].activated = false
-    end
+    t[scr].activated = false
+    zt[scr].activated = false
 
-    for i,j in pairs(hintindex) do
-        hintbox[i].visible = false
+    local letterbox = {}
+    for char,_ in pairs(hintindex) do
+        hintbox[char].visible = false
     end
 end
 
@@ -283,7 +289,6 @@ function revelation.expose_callback(t, zt, clientlist)
             hintindex[char] = thisclient
             hintbox_pos(char)
             hintbox[char].visible = true
-            hintbox[char].screen = thisclient.screen
         end
     end
 
@@ -291,7 +296,7 @@ function revelation.expose_callback(t, zt, clientlist)
     local zoomedClient = nil
     local key_char_zoomed = nil
 
-    capi.keygrabber.run(function (mod, key, event) 
+    grabber = awful.keygrabber.run(function (mod, key, event) 
         local c
         if event == "release" then return true end
 
