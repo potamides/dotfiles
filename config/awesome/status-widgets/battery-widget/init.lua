@@ -144,6 +144,7 @@ function battery_widget.init(args)
 
         -- Update popup text
         -- battery_popup.text = string.gsub(stdout, "\n$", "")
+        collectgarbage("step", 128)
     end,
     battery_widget.image)
 

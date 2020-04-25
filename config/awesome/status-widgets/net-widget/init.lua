@@ -49,6 +49,7 @@ function net_widget.init(args)
 
     widget:set_markup(string.format("<span color=%q><b>%s%%</b></span>", beautiful.bg_normal, strength))
     net_widget.image:set_image(args.path_to_icons .. image)
+    collectgarbage("step", 64)
   end)
 
 end
