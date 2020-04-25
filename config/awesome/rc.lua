@@ -136,7 +136,7 @@ local mylauncher = wibarutil.create_parallelogram(
     menu  = { toggle = function() mymainmenu:toggle {
                 coords = {
                   x = beautiful.gap,
-                  y = beautiful.wibar_height + beautiful.small_gap
+                  y = beautiful.wibar_height + beautiful.gap
                 }
               }
             end
@@ -748,21 +748,4 @@ end
 client.connect_signal("focus", buttons_insert)
 client.connect_signal("unfocus", buttons_remove)
 
--- }}}
-
--------------------------------------------------------------------------------
--- {{{ Misc
--------------------------------------------------------------------------------
-
-beautiful.notification_opacity=0.75
-
--- memory management
--------------------------------------------------------------------------------
---gears.timer {
---    timeout   = 60,
---    autostart = true,
---    callback  = function()
---        collectgarbage("step", 20000)
---    end
---}
 -- }}}

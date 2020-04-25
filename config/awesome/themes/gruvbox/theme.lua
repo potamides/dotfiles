@@ -109,6 +109,9 @@ theme.menu_border_color = theme.bg_normal
 --theme.taglist_squares_unsel = themes_path .. "gruvbox/taglist/squarez.png"
 --theme.taglist_squares_resize = "false"
 
+-- notifications
+theme.notification_opacity = 0.75
+
 -- Calendar
 theme.calendar_year_fg_color        = theme.fg_focus
 theme.calendar_month_fg_color       = theme.fg_focus
