@@ -128,6 +128,7 @@ theme.small_gap        = dpi(2)
 theme.gap              = dpi(4)
 theme.big_gap          = dpi(14)
 theme.negative_gap     = dpi(-6)
+theme.big_negative_gap = dpi(-10)
 theme.wibar_height     = dpi(21)
 theme.titlebar_height  = dpi(20)
 

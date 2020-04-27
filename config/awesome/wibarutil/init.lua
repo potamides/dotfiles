@@ -84,7 +84,7 @@ local function compose_parallelogram(left_widget, right_widget, left_shape, righ
             bg = beautiful.bg1,
             widget = wibox.container.background
         },
-        spacing = 2 * beautiful.negative_gap,
+        spacing = beautiful.big_negative_gap,
         layout = wibox.layout.fixed.horizontal
     }
 end
