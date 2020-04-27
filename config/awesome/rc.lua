@@ -399,7 +399,7 @@ local clientbuttons = gears.table.join(
 -- Initialize modalawesome & customize modes
 -------------------------------------------------------------------------------
 local keybindings = {
-  -- Lenovo Thinkpad E480 function keys
+  -- Media keys
   {{}, "XF86AudioMute",  volume.toggle},
   {{}, "XF86AudioLowerVolume", volume.raise},
   {{}, "XF86AudioRaiseVolume", volume.lower},
@@ -426,19 +426,19 @@ modes.tag = gears.table.join(
     {
       description = "hide all visible clients until keypress",
       pattern = {'N'},
-      handler = function(self)
+      handler = function(mode)
         local tags_ = awful.screen.focused().selected_tags
         local grabber
 
         awful.tag.viewnone(awful.screen.focused())
-        self.grabber:stop()
+        mode.grabber:stop()
 
         grabber = awful.keygrabber {
           autostart = true,
           keypressed_callback = function()
             awful.tag.viewmore(tags_)
             grabber:stop()
-            self.grabber:start()
+            mode.grabber:start()
           end
         }
       end,
@@ -518,7 +518,7 @@ modes.launcher = gears.table.join(
   {
     description = "execute duckduckgo search",
     pattern = {'d'},
-    handler = function(self)
+    handler = function(mode)
       run_shell.launch{
         prompt = 'DuckDuckGo: ',
         exe_callback = function(command)
@@ -527,7 +527,7 @@ modes.launcher = gears.table.join(
             local find_browser = function(c) return awful.rules.match(c, {class = browser}) end
             local browser_instance = awful.client.iterate(find_browser)()
             browser_instance:jump_to()
-            self.startinsert()
+            mode.stop()
           end)
         end,
       }
@@ -578,7 +578,7 @@ awful.rules.rules = {
 
     -- Browser always on tag 1
     { rule = { class = browser},
-      properties = { tag = awful.screen.focused().selected_tags[1]} },
+      properties = { tag = awful.screen.focused().tags[1]} },
 
     -- Make dragon sticky for easy drag and drop in ranger
     { rule = { class = "Dragon-drag-and-drop" },
