@@ -107,13 +107,14 @@ function battery_widget.init(args)
         end
 
         local charge = 0
-        for i, batt in ipairs(battery_info) do
+        for i, cap in ipairs(capacities) do
+            local batt = battery_info[i]
             if batt.charge >= charge then
                 status = batt.status -- use most charged battery status
                 -- this is arbitrary, and maybe another metric should be used
             end
 
-            charge = charge + batt.charge * capacities[i]
+            charge = charge + batt.charge * cap
         end
         charge = charge / capacity
 
