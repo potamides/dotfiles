@@ -1,5 +1,8 @@
 # My dotfiles
 
+> Ohne Fleiß kein Rice.
+> - DrCracket
+
 ![](.rice.png)
 
 ## Contents
