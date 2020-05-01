@@ -23,6 +23,9 @@ set nojoinspaces
 " turn off automatic line wrapping
 "set nowrap
 
+" use system python 3 for virtualenvs
+let g:python3_host_prog = '/usr/bin/python3'
+
 " Uncomment the following to have Vim jump to the last position when
 " reopening a file
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -233,7 +236,11 @@ noremap <silent> tj :tabprev<CR>
 let g:neoterm_default_mod = 'botright'
 let g:neoterm_fixedsize = 1
 let g:neoterm_size = 10
+let g:neoterm_repl_python = ['source .venv/bin/activate &> /dev/null', 'clear', 'ipython']
+
+" Automatically insert Terminal window when entered
 let g:neoterm_autoinsert = 1
+autocmd BufEnter,BufWinEnter term://* startinsert
 
 " don't show terminals in the bufferlist
 autocmd TermOpen term://* setlocal nobuflisted
@@ -247,10 +254,10 @@ nmap gx <Plug>(neoterm-repl-send)
 " Send selected contents in visual mode.
 xmap gx <Plug>(neoterm-repl-send)
 
-" Like <Plug>(neoterm-repl-send), but for lines. For example,
+" Like <Plug>(neoterm-repl-send), but for lines.
 nmap gxx <Plug>(neoterm-repl-send-line)
 
-" Toggle Terminal with F3
+" Toggle Terminal with F2
 noremap <silent> <F2> :1Ttoggle<cr>
 inoremap <silent> <F2> <C-\><C-N>:1Ttoggle<cr>
 tnoremap <silent> <F2> <C-\><C-N>:1Ttoggle<cr>
