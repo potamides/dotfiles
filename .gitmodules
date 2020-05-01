@@ -4,3 +4,6 @@
 [submodule "config/awesome/modalawesome"]
 	path = config/awesome/modalawesome
 	url = git@github.com:DrCracket/modalawesome.git
+[submodule "config/ranger/plugins/ranger_devicons"]
+	path = config/ranger/plugins/ranger_devicons
+	url = https://github.com/alexanderjeurissen/ranger_devicons
