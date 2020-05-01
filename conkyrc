@@ -23,7 +23,7 @@ conky.config = {
 	uppercase = false,
 	cpu_avg_samples = 3,
 	override_utf8_locale = true,
-	gap_y = 12,
+	gap_y = 30,
 	gap_x = 8,
 	border_inner_margin = 6,
 	border_outer_margin = 6,
@@ -37,28 +37,27 @@ conky.config = {
 conky.text = [[
 $color1${font DejaVu Sans:size=14:bold}System $font${hr 2}$color
 ${voffset 2}#
-${voffset 2}#
 Uptime: $alignr$uptime
 Temp: $alignr#
 ${if_match $acpitemp>=60}$color3$endif#
 ${if_match $acpitemp>=75}$color4$endif#
 ${acpitemp}$color°C
-CPU: $alignr$freq MHz
+Frequency: $alignr$freq MHz
 Processes: $alignr$processes
 Disk IO: $alignr$diskio
-${voffset 5}#
 $color1${cpubar cpu1 20,90}$alignc${offset 5}${cpubar cpu2 20,90}#
-$color${goto 20}${voffset 8}CPU 1${offset 15}${cpu cpu1}%${goto 115}CPU 2${offset 15}${cpu cpu2}%$color
-${voffset -15}#
+$color${goto 17}${voffset 9}CPU 1${alignr 103}${cpu cpu1}%$color
+${voffset -37}${goto 112}CPU 2${alignr 8}${cpu cpu2}%
 $color1${cpubar cpu3 20,90}$alignc${offset 5}${cpubar cpu4 20,90}#
-$color${goto 20}${voffset 8}CPU 3${offset 15}${cpu cpu3}%${goto 115}CPU 4${offset 15}${cpu cpu4}%$color
-${voffset -15}#
+$color${goto 17}${voffset 9}CPU 3${alignr 103}${cpu cpu3}%$color
+${voffset -37}${goto 112}CPU 4${alignr 8}${cpu cpu4}%
 $color1${cpubar cpu5 20,90}$alignc${offset 5}${cpubar cpu6 20,90}#
-$color${goto 20}${voffset 8}CPU 5${offset 15}${cpu cpu5}%${goto 115}CPU 6${offset 15}${cpu cpu6}%$color
-${voffset -15}#
+$color${goto 17}${voffset 9}CPU 5${alignr 103}${cpu cpu5}%$color
+${voffset -37}${goto 112}CPU 6${alignr 8}${cpu cpu6}%
 $color1${cpubar cpu7 20,90}$alignc${offset 5}${cpubar cpu8 20,90}#
-$color${goto 20}${voffset 8}CPU 7${offset 15}${cpu cpu7}%${goto 115}CPU 8${offset 15}${cpu cpu8}%$color
-${voffset -10}#
+$color${goto 17}${voffset 9}CPU 7${alignr 103}${cpu cpu7}%$color
+${voffset -37}${goto 112}CPU 8${alignr 8}${cpu cpu8}%
+${voffset 10}#
 RAM ${alignr}$mem / $memmax
 ${alignc}${memgraph 40,190  -lt}
 $color1${font DejaVu Sans:size=14:bold}Activity $font ${hr 2}$color
@@ -82,7 +81,7 @@ $color1${font DejaVu Sans:size=14:bold}Network $font ${hr 2}$color
 ${voffset 2}#
 ${if_existing /sys/class/net/enp3s0/operstate up}Up: ${upspeed enp3s0}${alignr}Down: ${downspeed enp3s0}${else}Up: ${upspeed wlp5s0}${alignr}Down: ${downspeed wlp5s0}${endif}
 ${if_existing /sys/class/net/enp3s0/operstate up}${upspeedgraph enp3s0 20,90}${alignr}${downspeedgraph enp3s0 20,90}${else}${upspeedgraph wlp5s0 20,90}${alignr}${downspeedgraph wlp5s0 20,90}${endif}
-${if_existing /sys/class/net/enp3s0/operstate up}Total ${totalup enp3s0} ${alignr}Total ${totaldown enp3s0}${else}Total ${totalup wlp5s0} ${alignr}Total ${totaldown wlp5s0}${endif}
+${if_existing /sys/class/net/enp3s0/operstate up}Σ ${totalup enp3s0} ${alignr}Σ ${totaldown enp3s0}${else}Σ ${totalup wlp5s0} ${alignr}Σ ${totaldown wlp5s0}${endif}
 ${hr}
 ${font SauceCodePro Nerd Font}${font} ${alignr}${if_existing /sys/class/net/enp3s0/operstate up}${addrs enp3s0}${else}${addrs wlp5s0}${endif}
 ${hr}
