@@ -12,7 +12,7 @@ local theme = {}
 theme.archlinux_icon  = themes_path .. "gruvbox/bar/archlinux.svg"
 theme.wallpaper       = themes_path .. "gruvbox/wall.png"
 theme.font            = "DejaVu Sans 11"
-theme.revelation_font = "DejaVu Sans Mono 20"
+theme.revelation_font = "SauceCodePro Nerd Font 20"
 
 -- Gruvbox Colors
 theme.red         = "#cc241d"
