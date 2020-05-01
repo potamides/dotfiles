@@ -92,6 +92,7 @@ alias paclo='pacman -Qdt' # list orphans
 alias pacro='paclo && sudo pacman -Rns $(pacman -Qtdq)' # remove orphans
 alias pacc='sudo pacman -Scc' # clean cache
 alias pacli='pacman -Q | wc -l' # list user installed packages
+alias whoowns='pacman -Qo' # list package which owns command
 alias rgo=rg_and_open
 alias ins=inspect
 alias calc='ipython --profile=calculate'
