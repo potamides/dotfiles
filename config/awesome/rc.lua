@@ -336,7 +336,7 @@ awful.screen.connect_for_each_screen(function(s)
         },
         { -- Right widgets
             wibox.layout.margin(modalawesome.sequence, beautiful.gap, beautiful.big_gap),
-            wibox.layout.margin(systray, beautiful.gap, beautiful.gap, beautiful.small_gap, beautiful.small_gap),
+            --wibox.layout.margin(systray, beautiful.gap, beautiful.gap, beautiful.small_gap, beautiful.small_gap),
 
             -- Internet Widget
             wibarutil.compose_parallelogram(
@@ -442,6 +442,19 @@ modes.tag = gears.table.join(
           end
         }
       end,
+    },
+    {
+      description = "focus client by index",
+      pattern = {'%d*', '[,.]'},
+      handler = function(_, count, direction)
+        count = count == '' and 1 or tonumber(count)
+
+        if direction == '>' then
+          awful.client.focus.byidx(count)
+        else
+          awful.client.focus.byidx(-count)
+        end
+      end
     },
   },
   modes.tag
