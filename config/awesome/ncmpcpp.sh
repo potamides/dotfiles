@@ -6,10 +6,7 @@ MPD_STREAM_PORT=${MPD_STREAM_PORT-8000}
 
 ssh -nTNL $MPD_PORT:$MPD_HOST:$MPD_PORT -L $MPD_STREAM_PORT:$MPD_HOST:$MPD_STREAM_PORT NAS &
 while true; do
-    if mpv --profile=low-latency --no-terminal http://$MPD_HOST:$MPD_STREAM_PORT; then
-        break
-    else
-        sleep 1
-    fi
+    ffplay -flags low_delay -nodisp -loglevel quiet http://$MPD_HOST:$MPD_STREAM_PORT
+    sleep 1
 done &
 ncmpcpp --host $MPD_HOST --port $MPD_PORT
