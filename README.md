@@ -53,7 +53,7 @@ Additionally I use the plugins
 [zsh-completions](https://github.com/zsh-users/zsh-completions). On Archlinux
 all mentioned packages can be installed with pacman.
 
-### Awesome, Conky, Kitty, Ranger, Tmux
+### Awesome, Conky, Termite, Ranger, Tmux
 
 Some of these applications don't have dependencies and if they have, they are
 integrated as git submodules or git subtrees so no additional steps are

@@ -6,8 +6,6 @@ autoload -Uz compinit
 compinit
 # Auto suggestions
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-# Completion for kitty
-kitty + complete setup zsh | source /dev/stdin
 # Newline after prompt
 zstyle ':prompt:grml:left:setup' items rc change-root user at host path vcs newline percent
 
@@ -39,14 +37,6 @@ export FZF_ALT_C_COMMAND=_fzf_compgen_dir
 
 # Misc
 # -----------------------------------------------------------------------------
-# cat small files and less long files; also works on images
-function inspect(){
-    if identify $1 &> /dev/null; then
-        kitty +kitten icat $1
-    else 
-        highlight --stdout --force --out-format=ansi $1 | less -FR
-    fi
-}
 # search for patterns with ripgrep and open results in the editor
 function rg_and_open(){
     FILES=$(rg -l $@)
@@ -94,7 +84,6 @@ alias pacc='sudo pacman -Scc' # clean cache
 alias pacli='pacman -Q | wc -l' # list user installed packages
 alias whoowns='pacman -Qo' # list package which owns command
 alias rgo=rg_and_open
-alias ins=inspect
 alias calc='ipython --profile=calculate'
 alias dus=disk_usage_sorted
 alias spdf=search_pdf
