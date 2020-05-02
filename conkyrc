@@ -10,6 +10,7 @@ conky.config = {
 	own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
   own_window_transparent = true,
 	double_buffer = true,
+  top_name_width = 10,
 	minimum_width = 190,
 	maximum_width = 190,
 	draw_shades = false,
@@ -45,16 +46,16 @@ ${acpitemp}$color°C
 Frequency: $alignr$freq MHz
 Processes: $alignr$processes
 Disk IO: $alignr$diskio
-$color1${cpubar cpu1 20,90}$alignc${offset 5}${cpubar cpu2 20,90}#
+$color1${cpubar cpu1 20,90}${offset 5}${cpubar cpu2 20,90}#
 $color${goto 17}${voffset 9}CPU 1${alignr 103}${cpu cpu1}%$color
 ${voffset -37}${goto 112}CPU 2${alignr 8}${cpu cpu2}%
-$color1${cpubar cpu3 20,90}$alignc${offset 5}${cpubar cpu4 20,90}#
+$color1${cpubar cpu3 20,90}${offset 5}${cpubar cpu4 20,90}#
 $color${goto 17}${voffset 9}CPU 3${alignr 103}${cpu cpu3}%$color
 ${voffset -37}${goto 112}CPU 4${alignr 8}${cpu cpu4}%
-$color1${cpubar cpu5 20,90}$alignc${offset 5}${cpubar cpu6 20,90}#
+$color1${cpubar cpu5 20,90}${offset 5}${cpubar cpu6 20,90}#
 $color${goto 17}${voffset 9}CPU 5${alignr 103}${cpu cpu5}%$color
 ${voffset -37}${goto 112}CPU 6${alignr 8}${cpu cpu6}%
-$color1${cpubar cpu7 20,90}$alignc${offset 5}${cpubar cpu8 20,90}#
+$color1${cpubar cpu7 20,90}${offset 5}${cpubar cpu8 20,90}#
 $color${goto 17}${voffset 9}CPU 7${alignr 103}${cpu cpu7}%$color
 ${voffset -37}${goto 112}CPU 8${alignr 8}${cpu cpu8}%
 ${voffset 10}#
@@ -62,15 +63,15 @@ RAM ${alignr}$mem / $memmax
 ${alignc}${memgraph 40,190  -lt}
 $color1${font DejaVu Sans:size=14:bold}Activity $font ${hr 2}$color
 ${voffset 2}#
-${font DejaVu Sans:size=10:bold}Top CPU$font ${goto 105}${font DejaVu Sans:size=9:italic}CPU%${goto 155}MEM%$font
-${top name 1}${goto 100}${top cpu 1}${goto 150}${top mem 1}
-${top name 2}${goto 100}${top cpu 2}${goto 150}${top mem 2}
-${top name 3}${goto 100}${top cpu 3}${goto 150}${top mem 3}
+${font DejaVu Sans:size=10:bold}Top CPU$font ${goto 110}${font DejaVu Sans:size=9:italic}CPU%${goto 160}MEM%$font
+${top name 1}${goto 105}${top cpu 1}${goto 155}${top mem 1}
+${top name 2}${goto 105}${top cpu 2}${goto 155}${top mem 2}
+${top name 3}${goto 105}${top cpu 3}${goto 155}${top mem 3}
 ${voffset 4}#
-${font DejaVu Sans:size=10:bold}Top RAM$font${goto 105}${font DejaVu Sans:size=9:italic}CPU%${goto 155}MEM%$font
-${top_mem name 1}${goto 100}${top_mem cpu 1}${goto 150}${top_mem mem 1}
-${top_mem name 2}${goto 100}${top_mem cpu 2}${goto 150}${top_mem mem 2}
-${top_mem name 3}${goto 100}${top_mem cpu 3}${goto 150}${top_mem mem 3}
+${font DejaVu Sans:size=10:bold}Top RAM$font${goto 110}${font DejaVu Sans:size=9:italic}CPU%${goto 160}MEM%$font
+${top_mem name 1}${goto 105}${top_mem cpu 1}${goto 155}${top_mem mem 1}
+${top_mem name 2}${goto 105}${top_mem cpu 2}${goto 155}${top_mem mem 2}
+${top_mem name 3}${goto 105}${top_mem cpu 3}${goto 155}${top_mem mem 3}
 ${voffset 2}#
 $color1${font DejaVu Sans:size=14:bold}Filesystem $font ${hr 2}$color
 ${voffset 2}#
