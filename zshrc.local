@@ -88,3 +88,4 @@ alias calc='ipython --profile=calculate'
 alias dus=disk_usage_sorted
 alias spdf=search_pdf
 alias esavpn='sshuttle --dns -r erebor 130.83.161.128/26 10.0.0.0/8 -x 130.83.161.131/32'
+alias htop='htop -t'
