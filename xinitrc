@@ -52,5 +52,4 @@ setxkbmap eu
 awesome &
 udiskie -q &
 (sleep 5 && conky -q) &
-picom --backend glx --vsync --glx-no-stencil --glx-no-rebind-pixmap --daemon
 exec redshift
