@@ -98,7 +98,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'hanw/vim-bluespec'
 Plug 'DrCracket/painless-digraph'
 Plug 'kassio/neoterm'
-" Plug 'universal-ctags/ctags' " installed with pacman
+Plug 'norcalli/nvim-colorizer.lua'
 call plug#end()
 
 " ------------------------------------------------
@@ -130,13 +130,19 @@ augroup END
 " use gruvbox bg colors to distinguish marked characters
 augroup qs_colors
   autocmd!
-  autocmd ColorScheme * highlight QuickScopePrimary guibg='#504945'
-  autocmd ColorScheme * highlight QuickScopeSecondary guibg='#3c3836'
+  autocmd ColorScheme * highlight QuickScopePrimary guibg='#7c6f64'
+  autocmd ColorScheme * highlight QuickScopeSecondary guibg='#504945' 
 augroup END
+
+" Trigger a highlight in the appropriate direction when pressing these keys
+let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
 " ------------------------------------------------
 "               GRUVBOX
 " ------------------------------------------------
+
+" True Colors
+set termguicolors
 
 " Choose and configure a theme for vim
 let g:gruvbox_contrast_dark='medium'
@@ -144,8 +150,11 @@ set background=dark    " Setting dark mode
 let g:gruvbox_italic=1
 colorscheme gruvbox
 
-" True Colors
-set termguicolors
+" ------------------------------------------------
+"               HEX-COLORIZER
+" ------------------------------------------------
+
+lua require'colorizer'.setup()
 
 " ------------------------------------------------
 "               LIGHTLINE
