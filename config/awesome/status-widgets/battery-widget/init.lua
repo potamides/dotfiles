@@ -90,7 +90,7 @@ function battery_widget.init(args)
     function(widget, stdout, _, _, _)
         local battery_info = {}
         local capacities = {}
-            local status, charge_str, time
+        local status, charge_str, time
         for s in stdout:gmatch("[^\r\n]+") do
             status, charge_str, time = string.match(s, '.+: (%a+), (%d?%d?%d)%%,?(.*)')
             if status ~= nil then
