@@ -61,6 +61,10 @@ function search_pdf(){
 function tldr(){
     curl cheat.sh/$@
 }
+# list package which owns command
+function whoowns(){
+  pacman -Qo $@ || { echo "Provided by:" && pacman -F $@ }
+}
 # if not in vim or ranger show greeter
 if [[ -z $VIMRUNTIME ]] && [[ -z $RANGER_LEVEL ]]; then
     fortune computers linux linuxcookie debian -as | cowsay | lolcat
@@ -82,7 +86,6 @@ alias paclo='pacman -Qdt' # list orphans
 alias pacro='paclo && sudo pacman -Rns $(pacman -Qtdq)' # remove orphans
 alias pacc='sudo pacman -Scc' # clean cache
 alias pacli='pacman -Q | wc -l' # list user installed packages
-alias whoowns='pacman -Qo' # list package which owns command
 alias rgo=rg_and_open
 alias calc='ipython --profile=calculate'
 alias dus=disk_usage_sorted
