@@ -7,7 +7,8 @@ compinit
 # Auto suggestions
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 # Newline after prompt
-zstyle ':prompt:grml:left:setup' items rc change-root user at host path vcs newline percent
+grml_theme_add_token long-path '%69<..<%~%<< '
+zstyle ':prompt:grml:left:setup' items rc change-root user at host long-path vcs newline percent
 
 # FZF config
 # -----------------------------------------------------------------------------
@@ -51,10 +52,10 @@ function disk_usage_sorted(){
     if [[ -n $1 ]] then PATH_=$1/ fi
     du -shc $PATH_(.[^.]*|*) | sort -h
 }
-# search for keyword in pdf's in PATH
+# search for keyword in pdf's in directory
 function search_pdf(){
-    if [[ -n $2 ]] then PATH_=$2/ fi
-    for file in $PATH_*.pdf; do pdftotext $file - | grep $1 >> /dev/null && echo $file; done
+    if [[ -n $2 ]] then DIR=$2/ fi
+    for file in $DIR*.pdf; do pdftotext $file - | grep $1 >> /dev/null && echo $file; done
     return 0
 }
 # tldr version of man pages
@@ -67,7 +68,7 @@ function whoowns(){
 }
 # if not in vim or ranger show greeter
 if [[ -z $VIMRUNTIME ]] && [[ -z $RANGER_LEVEL ]]; then
-    fortune computers linux linuxcookie debian -as | cowsay | lolcat
+    neofetch
 fi
 # Report execution time when a program takes longer than 60s
 export REPORTTIME=60
