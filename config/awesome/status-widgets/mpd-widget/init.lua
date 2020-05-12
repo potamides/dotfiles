@@ -29,10 +29,28 @@ local function update_widget()
         beautiful.fg_normal, text))
 end
 
+local function update_stream()
+	local host = os.getenv("MPD_HOST") or "localhost"
+	local port = os.getenv("MPD_STREAM_PORT") or 8000
+
+  if state ~= "pause" and state ~= "stop" then
+    awful.spawn.easy_async("socat /dev/null /tmp/mpvsocket", function(_, _, _, exitcode)
+      if exitcode == 0 then
+        awful.spawn.with_shell("echo '{ \"command\": [\"set_property\", \"mute\", false] }' | socat - /tmp/mpvsocket")
+      else
+        awful.spawn("mpv --profile=low-latency --no-terminal --input-ipc-server=/tmp/mpvsocket http://" ..
+          host .. ":" .. port)
+      end
+    end)
+  else
+    awful.spawn.with_shell("echo '{ \"command\": [\"set_property\", \"mute\", true] }' | socat - /tmp/mpvsocket")
+  end
+end
 
 local connection = mpc.new(nil, nil, nil, nil,
     "status", function(_, result)
         state = result.state
+        update_stream()
     end,
     "currentsong", function(_, result)
         title = result.title

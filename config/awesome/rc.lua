@@ -19,6 +19,7 @@ require("awful.hotkeys_popup.keys")
 -- other stuff
 local freedesktop  = require("freedesktop")
 local modalawesome = require("modalawesome")
+local xrandr       = require("xrandr")
 beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua")
 -- import this stuff after theme initialisation for proper colors
 local wibarutil   = require("wibarutil")
@@ -286,13 +287,13 @@ awful.screen.connect_for_each_screen(function(s)
     buttons = taglist_buttons
   }
 
-  -- Systray
-  -------------------------------------------------------------------------------
+-- Systray
+-------------------------------------------------------------------------------
   local systray = wibox.widget.systray()
   beautiful.systray_icon_spacing = beautiful.gap
 
-  -- global title bar
-  -------------------------------------------------------------------------------
+-- global title bar
+-------------------------------------------------------------------------------
   s.mytitle = wibox.widget {
     align = "center",
     widget = wibox.widget.textbox,
@@ -307,8 +308,8 @@ awful.screen.connect_for_each_screen(function(s)
   end
   client.connect_signal("focus", update_title_text)
   client.connect_signal("property::name", update_title_text)
-  client.connect_signal("unfocus", function () s = awful.screen.focused() s.mytitle:set_text("") end)
-  client.connect_signal("property::screen", function () s = awful.screen.focused() s.mytitle:set_text("") end)
+  client.connect_signal("unfocus", function () awful.screen.focused().mytitle:set_text("") end)
+  client.connect_signal("property::screen", function () awful.screen.focused().mytitle:set_text("") end)
 
 -- Wibar
 -------------------------------------------------------------------------------
@@ -406,7 +407,7 @@ local keybindings = {
   {{}, "XF86AudioMicMute", function () awful.spawn("amixer set Capture toggle") end},
   {{}, "XF86MonBrightnessDown", function () awful.spawn("xbacklight -dec 10") end},
   {{}, "XF86MonBrightnessUp", function () awful.spawn("xbacklight -inc 10") end},
-  {{}, "XF86Display", function () awful.spawn.with_shell(gears.filesystem.get_dir("config") .. "/monitor.sh") end},
+  {{}, "XF86Display", xrandr.xrandr},
   {{}, "XF86Tools", function () awful.spawn(editor_cmd .. " " .. awesome.conffile) end},
 }
 
@@ -489,8 +490,14 @@ modes.launcher = gears.table.join(
       description = "launch ncmpcpp",
       pattern = {'n'},
       handler = function()
-        awful.spawn(terminal.." -e " .. gears.filesystem.get_dir("config") .. "/ncmpcpp.sh",
-            {tag=awful.screen.focused().tags[6]})
+        local host        = os.getenv("MPD_HOST") or "localhost"
+        local port        = os.getenv("MPD_PORT") or 6600
+        local stream_port = os.getenv("MPD_STREAM_PORT") or 8000
+
+        awful.spawn(terminal.." --class ncmpcpp,ncmpcpp -e " .. awful.util.shell .. " -c '" ..
+          string.format("ssh -nTNL %s:%s:%s -L %s:%s:%s NAS & ncmpcpp --host %s --port %s'",
+            port, host, port, stream_port, host, stream_port, host, port))
+
         mpd.reconnect()
       end
     },
@@ -600,6 +607,10 @@ awful.rules.rules = {
     -- the password prompt for keepassxc autotype should be floating
     { rule = { name = "Unlock Database - KeePassXC" },
       properties = { floating = true } },
+
+    -- always put ncmpcpp on last tag
+    { rule = { class = "ncmpcpp"},
+      properties = { tag = awful.screen.focused().tags[#awful.screen.focused().tags]} },
 }
 -- }}}
 
@@ -760,5 +771,31 @@ end
 
 client.connect_signal("focus", buttons_insert)
 client.connect_signal("unfocus", buttons_remove)
+
+-- When a screen disconnects move clients to tag of same name on other screen
+-- https://github.com/awesomeWM/awesome/issues/1382
+-------------------------------------------------------------------------------
+tag.connect_signal("request::screen",
+  function(t)
+    local fallback_tag = nil
+
+    -- find tag with same name on any other screen
+    for other_screen in screen do
+      if other_screen ~= t.screen then
+        fallback_tag = awful.tag.find_by_name(other_screen, t.name)
+        if fallback_tag ~= nil then
+          break
+        end
+      end
+    end
+
+    -- no tag with same name exists, chose random one
+    if fallback_tag == nil then
+      fallback_tag = awful.tag.find_fallback()
+    end
+
+    -- delete the tag and move it to other screen
+    t:delete(fallback_tag, true)
+  end)
 
 -- }}}
