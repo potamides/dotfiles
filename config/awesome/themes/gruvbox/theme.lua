@@ -11,9 +11,17 @@ local dpi = require("beautiful.xresources").apply_dpi
 local theme = {}
 
 theme.archlinux_icon  = themes_path .. "gruvbox/bar/archlinux.svg"
-theme.wallpaper       = themes_path .. "gruvbox/wall.png"
 theme.font            = "DejaVu Sans 11"
 theme.revelation_font = "SauceCodePro Nerd Font 20"
+
+function theme.wallpaper(s)
+  -- the screen where conky is on
+  if s.geometry.x == 0 and s.geometry.y == 0 then
+    return themes_path .. "gruvbox/wall_primary.png"
+  else
+    return themes_path .. "gruvbox/wall_secondary.png"
+  end
+end
 
 -- Dark Gruvbox Colors
 theme.lightred    = "#fb4934"
