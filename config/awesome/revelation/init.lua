@@ -90,6 +90,7 @@ local revelation = {
         ontop                = false,
         above                = false,
         below                = false,
+        floating             = false,
     },
     tags_status = {},
     is_excluded = false,
