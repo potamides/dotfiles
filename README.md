@@ -4,7 +4,7 @@
 > - DrCracket
 
 A repository for more sophisticated configurations of applications I use on a
-daily basis. For a pleasant and integrated appearance I use the
+daily basis. I use the
 [gruvbox](https://github.com/morhetz/gruvbox) colorscheme for everything.
 
 ![](.rice.png)
@@ -28,6 +28,7 @@ Make sure that the fonts [DejaVu Sans](https://dejavu-fonts.github.io/) and
 [Sauce Code Pro Nerd
 Font](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/SourceCodePro)
 are installed.
+[Boxes](https://boxes.thomasjensen.com/) is required for the terminal greeter.
 
 ### Neovim
 
@@ -53,9 +54,9 @@ Additionally I use the plugins
 [zsh-completions](https://github.com/zsh-users/zsh-completions). On Archlinux
 all mentioned packages can be installed with pacman.
 
-### Awesome, Conky, Alacritty, Ranger, Tmux
+### Awesome, Conky, Alacritty, Ranger, Tmux, Neofetch
 
-Some of these applications don't have dependencies and if they have, they are
-integrated as git submodules or git subtrees so no additional steps are
-required. To understand how to control my awesome configuration take a look at
-[modalawesome](https://github.com/DrCracket/modalawesome).
+Some of these applications don't have additional dependencies and if they have,
+they are integrated as git submodules or git subtrees so no additional steps
+are required. To understand how to control my awesome configuration take a look
+at [modalawesome](https://github.com/DrCracket/modalawesome).
