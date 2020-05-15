@@ -62,7 +62,7 @@ local function menu()
       for i, o in pairs(choice) do
          cmd = cmd .. " --output " .. o .. " --auto"
          if i > 1 then
-            cmd = cmd .. " --above " .. choice[i-1]
+            cmd = cmd .. " --right-of " .. choice[i-1]
          end
       end
       -- Disabled outputs
