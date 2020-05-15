@@ -34,7 +34,7 @@ local function update_stream()
 	local port = os.getenv("MPD_STREAM_PORT") or 8000
 
   if state ~= "pause" and state ~= "stop" then
-    awful.spawn.easy_async("socat /dev/null /tmp/mpvsocket", function(_, _, _, exitcode)
+    awful.spawn.easy_async("socat -u OPEN:/dev/null UNIX-CONNECT:/tmp/mpvsocket", function(_, _, _, exitcode)
       if exitcode == 0 then
         awful.spawn.with_shell("echo '{ \"command\": [\"set_property\", \"mute\", false] }' | socat - /tmp/mpvsocket")
       else
