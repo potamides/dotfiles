@@ -92,7 +92,7 @@ awful.layout.layouts = {
   awful.layout.suit.max.fullscreen,
   awful.layout.suit.floating,
   -- awful.layout.suit.magnifier,
-  -- awful.layout.suit.corner.nw,
+  awful.layout.suit.corner.nw,
   -- awful.layout.suit.corner.ne,
   -- awful.layout.suit.corner.sw,
   -- awful.layout.suit.corner.se,
@@ -336,8 +336,8 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.align.horizontal,
         },
         { -- Right widgets
-            wibox.layout.margin(modalawesome.sequence, beautiful.gap, beautiful.big_gap),
-            --wibox.layout.margin(systray, beautiful.gap, beautiful.gap, beautiful.small_gap, beautiful.small_gap),
+            wibox.container.margin(modalawesome.sequence, beautiful.gap, beautiful.big_gap),
+            --wibox.container.margin(systray, beautiful.gap, beautiful.gap, beautiful.small_gap, beautiful.small_gap),
 
             -- Internet Widget
             wibarutil.compose_parallelogram(
@@ -401,9 +401,9 @@ local clientbuttons = gears.table.join(
 -------------------------------------------------------------------------------
 local keybindings = {
   -- Media keys
-  {{}, "XF86AudioMute",  volume.toggle},
-  {{}, "XF86AudioLowerVolume", volume.raise},
-  {{}, "XF86AudioRaiseVolume", volume.lower},
+  {{}, "XF86AudioMute", volume.toggle},
+  {{}, "XF86AudioLowerVolume", volume.lower},
+  {{}, "XF86AudioRaiseVolume", volume.raise},
   {{}, "XF86AudioMicMute", function () awful.spawn("amixer set Capture toggle") end},
   {{}, "XF86MonBrightnessDown", function () awful.spawn("xbacklight -dec 10") end},
   {{}, "XF86MonBrightnessUp", function () awful.spawn("xbacklight -inc 10") end},
@@ -464,6 +464,41 @@ modes.tag = gears.table.join(
 modes.launcher = gears.table.join(
   {
     {
+      description = "lower volume",
+      pattern = { "F1" },
+      handler = volume.lower
+    },
+    {
+      description = "raise volume",
+      pattern = { "F2" },
+      handler = volume.raise
+    },
+    {
+      description = "toggle volume",
+      pattern = { "F3" },
+      handler = volume.toggle
+    },
+    {
+      description = "toggle mic",
+      pattern = { "F4" },
+      handler = function () awful.spawn("amixer set Capture toggle") end
+    },
+    {
+      description = "decrease backlight",
+      pattern = { "F5" },
+      handler = function () awful.spawn("xbacklight -dec 10") end
+    },
+    {
+      description = "increase backlight",
+      pattern = { "F6" },
+      handler = function () awful.spawn("xbacklight -inc 10") end
+    },
+    {
+      description = "switch monitor setup",
+      pattern = { "F7" },
+      handler = xrandr.xrandr
+    },
+    {
       description = "launch ranger",
       pattern = {'f'},
       handler = function() awful.spawn(terminal.." -e ranger") end
@@ -506,64 +541,64 @@ modes.launcher = gears.table.join(
       pattern = {'N'},
       handler = function() mpd.reconnect() end
     },
-  {
-    description = "lua execute prompt",
-    pattern = {'x'},
-    handler = function()
+    {
+      description = "lua execute prompt",
+      pattern = {'x'},
+      handler = function()
+          run_shell.launch{
+            prompt = 'Lua: ',
+            exe_callback = awful.util.eval,
+            history_path = awful.util.get_cache_dir() .. "/history_eval"
+          }
+      end,
+    },
+    {
+      description = "run prompt",
+      pattern = {'s'},
+      handler = function()
         run_shell.launch{
-          prompt = 'Lua: ',
-          exe_callback = awful.util.eval,
-          history_path = awful.util.get_cache_dir() .. "/history_eval"
+          prompt = 'Run: ',
+          completion_callback = awful.completion.shell,
+          history_path = awful.util.get_cache_dir() .. "/history",
+          exe_callback = function(...) awful.spawn.with_shell(...) end,
+          hooks = {
+            -- Launch command on dedicated GPU
+            {{'Shift'}, 'Return', function(command)
+              return  "DRI_PRIME=1 " .. command
+            end},
+          }
         }
-    end,
-  },
-  {
-    description = "run prompt",
-    pattern = {'s'},
-    handler = function()
-      run_shell.launch{
-        prompt = 'Run: ',
-        completion_callback = awful.completion.shell,
-        history_path = awful.util.get_cache_dir() .. "/history",
-        exe_callback = function(...) awful.spawn.with_shell(...) end,
-        hooks = {
-          -- Launch command on dedicated GPU
-          {{'Shift'}, 'Return', function(command)
-            return  "DRI_PRIME=1 " .. command
-          end},
+      end
+    },
+    {
+      description = "execute duckduckgo search",
+      pattern = {'d'},
+      handler = function(mode)
+        run_shell.launch{
+          prompt = 'DuckDuckGo: ',
+          exe_callback = function(command)
+            local search = "https://duckduckgo.com/?q=" .. command:gsub('%s', '+')
+            awful.spawn.easy_async("xdg-open " .. search, function()
+              local find_browser = function(c) return awful.rules.match(c, {class = browser}) end
+              local browser_instance = awful.client.iterate(find_browser)()
+              browser_instance:jump_to()
+              mode.stop()
+            end)
+          end,
         }
-      }
-    end
-  },
-  {
-    description = "execute duckduckgo search",
-    pattern = {'d'},
-    handler = function(mode)
-      run_shell.launch{
-        prompt = 'DuckDuckGo: ',
-        exe_callback = function(command)
-          local search = "https://duckduckgo.com/?q=" .. command:gsub('%s', '+')
-          awful.spawn.easy_async("xdg-open " .. search, function()
-            local find_browser = function(c) return awful.rules.match(c, {class = browser}) end
-            local browser_instance = awful.client.iterate(find_browser)()
-            browser_instance:jump_to()
-            mode.stop()
-          end)
-        end,
-      }
-    end
-  },
-  {
-    description = "show the menubar",
-    pattern = {'m'},
-    handler = function()
-      local s                 = awful.screen.focused()
-      menubar.geometry.y      = s.geometry.y + s.geometry.height - 2 * beautiful.titlebar_height
-      menubar.geometry.height = beautiful.titlebar_height
-      menubar.show_categories = false
-      menubar.show(s)
-    end
-  },
+      end
+    },
+    {
+      description = "show the menubar",
+      pattern = {'m'},
+      handler = function()
+        local s                 = awful.screen.focused()
+        menubar.geometry.y      = s.geometry.y + s.geometry.height - 2 * beautiful.titlebar_height
+        menubar.geometry.height = beautiful.titlebar_height
+        menubar.show_categories = false
+        menubar.show(s)
+      end
+    },
   },
   modes.launcher
 )
@@ -598,7 +633,7 @@ awful.rules.rules = {
 
     -- Browser always on tag 1
     { rule = { class = browser},
-      properties = { tag = awful.screen.focused().tags[1]} },
+      properties = { tag = tags[1]} },
 
     -- Make dragon sticky for easy drag and drop in ranger
     { rule = { class = "Dragon-drag-and-drop" },
@@ -610,7 +645,7 @@ awful.rules.rules = {
 
     -- always put ncmpcpp on last tag
     { rule = { class = "ncmpcpp"},
-      properties = { tag = awful.screen.focused().tags[#awful.screen.focused().tags]} },
+      properties = { tag = tags[#tags]} },
 }
 -- }}}
 
