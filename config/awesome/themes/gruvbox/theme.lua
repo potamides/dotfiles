@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------
 -- gruvbox awesome theme
 -------------------------------------------------------------------------------
+
 local awful = require("awful")
 local themes_path = awful.util.getdir("config").."/themes/"
 local dpi = require("beautiful.xresources").apply_dpi
@@ -14,35 +15,34 @@ theme.wallpaper       = themes_path .. "gruvbox/wall.png"
 theme.font            = "DejaVu Sans 11"
 theme.revelation_font = "SauceCodePro Nerd Font 20"
 
--- Gruvbox Colors
-theme.red         = "#cc241d"
+-- Dark Gruvbox Colors
 theme.lightred    = "#fb4934"
-theme.green       = "#98971a"
-theme.lightgreen  = "#b8bb26"
-theme.yellow      = "#d79921"
-theme.lightyellow = "#fabd2f"
-theme.blue        = "#458588"
-theme.lightblue   = "#83a598"
-theme.purple      = "#b16286"
-theme.lightpurple = "#d3869b"
-theme.aqua        = "#689d6a"
-theme.lightaqua   = "#8ec07c"
-theme.orange      = "#d65d0e"
+theme.red         = "#cc241d"
 theme.lightorange = "#fe8019"
-theme.gray_0      = "#a89984"
-theme.gra_1       = "#928374"
-theme.bg0_h       = "#1d2021"
+theme.orange      = "#d65d0e"
+theme.lightyellow = "#fabd2f"
+theme.yellow      = "#d79921"
+theme.lightgreen  = "#b8bb26"
+theme.green       = "#98971a"
+theme.lightaqua   = "#8ec07c"
+theme.aqua        = "#689d6a"
+theme.lightblue   = "#83a598"
+theme.blue        = "#458588"
+theme.lightpurple = "#d3869b"
+theme.purple      = "#b16286"
+theme.fg0         = "#fbf1c7"
+theme.fg1         = "#ebdbb2"
+theme.fg2         = "#d5c4a1"
+theme.fg3         = "#bdae93"
+theme.fg4         = "#a89984"
+theme.gray        = "#928374"
+theme.bg4         = "#7c6f64"
+theme.bg3         = "#665c54"
+theme.bg2         = "#504945"
+theme.bg1         = "#3c3836"
 theme.bg0_s       = "#32302f"
 theme.bg0         = "#282828"
-theme.bg1         = "#3c3836"
-theme.bg2         = "#504945"
-theme.bg3         = "#665c54"
-theme.bg4         = "#7c6f64"
-theme.fg4         = "#a89984"
-theme.fg3         = "#bdae93"
-theme.fg2         = "#d5c4a1"
-theme.fg1         = "#ebdbb2"
-theme.fg0         = "#fbf1c7"
+theme.bg0_h       = "#1d2021"
 
 -- Colors
 theme.bg_normal  = theme.bg0_h
