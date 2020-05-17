@@ -89,7 +89,7 @@ local function menu()
 end
 
 -- Display xrandr notifications from choices
-local state = { cid = nil }
+local state = {}
 
 local function naughty_destroy_callback(reason)
   if reason == naughty.notificationClosedReason.expired or
@@ -120,12 +120,15 @@ local function xrandr()
    else
       label, action = next[1], next[2]
    end
-   state.cid = naughty.notify({ text = label,
-                                icon = icon_path,
-                                timeout = 4,
-                                screen = mouse.screen,
-                                replaces_id = state.cid,
-                                destroy = naughty_destroy_callback}).id
+   if state.notification then
+     state.notification.message = label
+   else
+     state.notification = naughty.notification{
+        text    = label,
+        icon    = icon_path,
+        timeout = 4,
+        destroy = naughty_destroy_callback}
+   end
 end
 
 return {

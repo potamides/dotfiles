@@ -9,7 +9,7 @@ local function read_wireless(stdout, interface)
 
   if match then
     local signal_strength = math.floor(match / 70 * 100)
-    local index           = math.min(4, signal_strength // 20)
+    local index           = math.floor(math.min(4, signal_strength / 20))
 
     return {signal_strength .. "%", "wireless_" .. index .. ".svg"}
   end
@@ -45,10 +45,9 @@ function net_widget.init(args)
 
   net_widget.text = awful.widget.watch(cmd, args.timeout, function(widget, stdout)
     local result          = read_wireless(stdout, args.wireless_interface) or read_wired(stdout)
-    local strength, image = table.unpack(result)
 
-    widget:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, strength))
-    net_widget.image:set_image(args.path_to_icons .. image)
+    widget:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, result[1]))
+    net_widget.image:set_image(args.path_to_icons .. result[2])
     collectgarbage("step", 64)
   end)
 
