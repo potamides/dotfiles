@@ -3,6 +3,7 @@
 -------------------------------------------------------------------------------
 
 local awful = require("awful")
+local theme_assets = require("beautiful.theme_assets")
 local themes_path = awful.util.getdir("config").."/themes/"
 local dpi = require("beautiful.xresources").apply_dpi
 
@@ -13,6 +14,7 @@ local theme = {}
 theme.archlinux_icon  = themes_path .. "gruvbox/bar/archlinux.svg"
 theme.font            = "DejaVu Sans 11"
 theme.revelation_font = "SauceCodePro Nerd Font 20"
+theme.icon_theme      = "gruvbox-dark-icons-gtk"
 
 function theme.wallpaper(s)
   -- the screen where conky is on
@@ -169,17 +171,20 @@ theme.titlebar_sticky_button_normal_active   = themes_path .. "gruvbox/titlebar/
 theme.titlebar_sticky_button_focus_inactive  = themes_path .. "gruvbox/titlebar/sticky_unselect.svg"
 theme.titlebar_sticky_button_normal_inactive = themes_path .. "gruvbox/titlebar/sticky_unselect.svg"
 
-
 theme.titlebar_maximized_button_focus_active    = themes_path .. "gruvbox/titlebar/maximized_select.svg"
 theme.titlebar_maximized_button_normal_active   = themes_path .. "gruvbox/titlebar/maximized_select.svg"
 theme.titlebar_maximized_button_focus_inactive  = themes_path .. "gruvbox/titlebar/maximized_unselect.svg"
 theme.titlebar_maximized_button_normal_inactive = themes_path .. "gruvbox/titlebar/maximized_unselect.svg"
 
-
 theme.titlebar_floating_button_focus_active    = themes_path .. "gruvbox/titlebar/floating_select.svg"
 theme.titlebar_floating_button_normal_active   = themes_path .. "gruvbox/titlebar/floating_select.svg"
 theme.titlebar_floating_button_focus_inactive  = themes_path .. "gruvbox/titlebar/floating_unselect.svg"
 theme.titlebar_floating_button_normal_inactive = themes_path .. "gruvbox/titlebar/floating_unselect.svg"
+
+-- Generate Awesome icon
+theme.awesome_icon = theme_assets.awesome_icon(
+    theme.menu_height, theme.bg_focus, theme.fg_focus
+)
 
 return theme
 

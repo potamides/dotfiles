@@ -314,6 +314,7 @@ awful.screen.connect_for_each_screen(function(s)
     s.mywibox = awful.wibar({position = "top", screen = s, height = beautiful.wibar_height})
 
     s.titlebar_buttons = wibox.widget {
+        homogeneous = false,
         layout = wibox.layout.grid.horizontal
     }
 
@@ -504,14 +505,19 @@ modes.launcher = gears.table.join(
       description = "take screenshot",
       pattern = {'p'},
       handler = function()
-        awful.spawn.with_shell(
-          "scrot 'Screenshot-%Y%m%d-%H%M%S.png' -e 'mv $f ~/Pictures/' && notify-send 'Screenshot taken.'")
+        awful.spawn( "scrot 'Pictures/Screenshot-%Y%m%d-%H%M%S.png'")
+        naughty.notify({ text = "Took screenshot." })
         end
     },
     {
       description = "launch browser",
       pattern = {'b'},
       handler = function() awful.spawn(browser) end
+    },
+    {
+      description = "launch keepassxc",
+      pattern = {'k'},
+      handler = function() awful.spawn("keepassxc") end
     },
     {
       description = "lock screen",
@@ -628,9 +634,13 @@ awful.rules.rules = {
         }
     },
 
-    -- Browser always on tag 1
-    { rule = { class = browser},
+    -- Browser & keepassxc always on tag 1
+    { rule_any = { class = {browser, "KeePassXC"}},
       properties = { tag = tags[1]} },
+
+    -- dirty hack to preven Ctrl-q from closing firefox
+    { rule = { class = browser},
+      properties = { keys = awful.key({"Control"}, "q", function () end)} },
 
     -- Make dragon sticky for easy drag and drop in ranger
     { rule = { class = "Dragon-drag-and-drop" },
@@ -702,7 +712,7 @@ client.connect_signal("request::titlebars", function(c)
 
             layout = wibox.layout.align.horizontal
         },
-        right = 2,
+        right = beautiful.small_gap,
         widget = wibox.container.margin
     }
 end)
@@ -756,23 +766,21 @@ end)
 
 -- Update Titlbar Buttons in Wibar on focus / unfocus
 --------------------------------------------------------------------------------
-local should_remove = true
-local function buttons_remove(_)
-    local s = awful.screen.focused()
-    should_remove = true
+local timer = gears.timer{timeout = 0.05, callback = function()
+  awful.screen.focused().titlebar_buttons.visible = false
+end}
 
+local function buttons_remove(_)
     -- delay the resizing for smoother transition
-    gears.timer.weak_start_new(0.05,
-        function ()
-            if should_remove then
-                s.titlebar_buttons.visible = false
-            end
-         end)
+    timer:start()
 end
 
 local function buttons_insert(c)
     local s       = awful.screen.focused()
     local buttons = s.titlebar_buttons:get_widgets_at(1, 1, 1, 3)
+
+    timer:stop()
+    s.titlebar_buttons.visible = true
 
     if not c.maximizedbutton then
       c.maximizedbutton =
@@ -786,9 +794,6 @@ local function buttons_insert(c)
       c.stickybutton =
         wibox.container.margin(awful.titlebar.widget.stickybutton(c), beautiful.small_gap, beautiful.small_gap)
     end
-
-    should_remove = false
-    s.titlebar_buttons.visible = true
 
     if buttons then
         s.titlebar_buttons:replace_widget(buttons[3], c.maximizedbutton)
