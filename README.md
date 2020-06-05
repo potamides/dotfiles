@@ -18,17 +18,13 @@ git clone --recurse-submodules https://github.com/DrCracket/dotfiles
 ```
 
 Files in the root folder should be symlinked to `$HOME` and everything in the
-config folder should be symlinked to `$HOME/.config/`. It is assumed that the
+config folder should be symlinked to `$HOME/.config/`. I assume that the
 following applications are already installed. I just explain how to get my
 particular configurations running.
-
-### Prerequesites
-
-Make sure that the fonts [DejaVu Sans](https://dejavu-fonts.github.io/) and
-[Sauce Code Pro Nerd
+Also make sure that the fonts [DejaVu Sans](https://dejavu-fonts.github.io/)
+and [Sauce Code Pro Nerd
 Font](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/SourceCodePro)
 are installed.
-[Boxes](https://boxes.thomasjensen.com/) is required for the terminal greeter.
 
 ### Neovim
 
@@ -54,9 +50,25 @@ Additionally I use the plugins
 [zsh-completions](https://github.com/zsh-users/zsh-completions). On Archlinux
 all mentioned packages can be installed with pacman.
 
-### Awesome, Conky, Alacritty, Ranger, Tmux, Neofetch
+### Neofetch
+Neofetch is configured to be used as a terminal greeter. It displays [fortune
+cookies](https://www.shlomifish.org/open-source/projects/fortune-mod/), so make
+sure the package is installed (available with pacman).
+[Boxes](https://boxes.thomasjensen.com/) is also required for the terminal
+greeter (an AUR package exists).
 
+### Awesome
+Awesome needs [socat](http://www.dest-unreach.org/socat/) and
+[mpv](https://mpv.io/) internally to play remote mpd streams. All other
+required applications should be obvious when looking at the
+[rc.lua](config/awesome/rc.lua) config file. To match GTK applications to the
+gruvbox colorscheme install
+[gruvbox-gtk](https://github.com/3ximus/gruvbox-gtk) and
+[gruvbox-dark-icons-gtk](https://github.com/jmattheis/gruvbox-dark-icons-gtk).
+To understand how to control my awesome configuration take a look at
+[modalawesome](https://github.com/DrCracket/modalawesome).
+
+### Conky, Alacritty, Ranger, Tmux
 Some of these applications don't have additional dependencies and if they have,
 they are integrated as git submodules or git subtrees so no additional steps
-are required. To understand how to control my awesome configuration take a look
-at [modalawesome](https://github.com/DrCracket/modalawesome).
+are required.
