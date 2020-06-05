@@ -38,7 +38,7 @@ local function update_stream()
       if exitcode == 0 then
         awful.spawn.with_shell("echo '{ \"command\": [\"set_property\", \"mute\", false] }' | socat - /tmp/mpvsocket")
       else
-        awful.spawn("mpv --profile=low-latency --no-terminal --input-ipc-server=/tmp/mpvsocket http://" ..
+        awful.spawn("mpv --no-terminal --input-ipc-server=/tmp/mpvsocket http://" ..
           host .. ":" .. port)
       end
     end)

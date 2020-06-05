@@ -152,13 +152,8 @@ function()
   local color
   local text = modalawesome.active_mode.text
 
-  status_box:set_markup(
-  string.format(
-  "<span color=%q><b>%s</b></span>",
-  beautiful.bg_normal,
-  string.upper(text)
-  )
-  )
+  status_box:set_markup( string.format( "<span color=%q><b>%s</b></span>",
+    beautiful.bg_normal, string.upper(text)))
 
   if     text == 'tag'      then color = beautiful.lightaqua
   elseif text == 'layout'   then color = beautiful.lightgreen
@@ -448,7 +443,7 @@ modes.tag = gears.table.join(
       handler = function(_, count, direction)
         count = count == '' and 1 or tonumber(count)
 
-        if direction == '>' then
+        if direction == '.' then
           awful.client.focus.byidx(count)
         else
           awful.client.focus.byidx(-count)
@@ -531,12 +526,21 @@ modes.launcher = gears.table.join(
         local host        = os.getenv("MPD_HOST") or "localhost"
         local port        = os.getenv("MPD_PORT") or 6600
         local stream_port = os.getenv("MPD_STREAM_PORT") or 8000
+        local name        = "ncmpcpp"
 
-        awful.spawn(terminal.." --class ncmpcpp,ncmpcpp -e " .. awful.util.shell .. " -c '" ..
-          string.format("ssh -nTNL %s:%s:%s -L %s:%s:%s NAS & ncmpcpp --host %s --port %s'",
-            port, host, port, stream_port, host, stream_port, host, port))
+        -- This is unfortunately a bit hacky, but Alacritty doesn't implement the startup notification protocol
+        -- https://github.com/alacritty/alacritty/issues/2824
+        local find_instance = function(c) return awful.rules.match(c, {instance = name}) end
+        local ncmpcpp_instance = awful.client.iterate(find_instance)()
 
-        mpd.reconnect()
+        if ncmpcpp_instance then
+          ncmpcpp_instance:jump_to()
+        else
+          awful.spawn(terminal.." --class " .. name .. " -e " .. awful.util.shell .. " -c '" ..
+            string.format("ssh -nTNL %s:%s:%s -L %s:%s:%s NAS & ncmpcpp --host %s --port %s'",
+              port, host, port, stream_port, host, stream_port, host, port))
+          mpd.reconnect()
+        end
       end
     },
     {
@@ -563,7 +567,18 @@ modes.launcher = gears.table.join(
           prompt = 'Run: ',
           completion_callback = awful.completion.shell,
           history_path = awful.util.get_cache_dir() .. "/history",
-          exe_callback = function(...) awful.spawn.with_shell(...) end,
+          exe_callback = function(cmd)
+            awful.spawn.easy_async_with_shell(cmd, function(stdout, stderr, _, code)
+              if code ~= 0 then
+                naughty.notify({ preset = naughty.config.presets.critical,
+                  timeout = naughty.config.defaults.timeout,
+                  text = stderr ~= "" and stderr:gsub("%s$", "") or
+                    "Command terminated with exit code " .. code .. "!"})
+              elseif stdout ~= "" then
+                naughty.notify({ text = stdout:gsub("%s$", "")})
+              end
+            end)
+          end,
           hooks = {
             -- Launch command on dedicated GPU
             {{'Shift'}, 'Return', function(command)
@@ -582,7 +597,7 @@ modes.launcher = gears.table.join(
           exe_callback = function(command)
             local search = "https://duckduckgo.com/?q=" .. command:gsub('%s', '+')
             awful.spawn.easy_async("xdg-open " .. search, function()
-              local find_browser = function(c) return awful.rules.match(c, {class = browser}) end
+              local find_browser = function(c) return awful.rules.match(c, {class = browser, urgent = true}) end
               local browser_instance = awful.client.iterate(find_browser)()
               browser_instance:jump_to()
               mode.stop()
@@ -636,6 +651,7 @@ awful.rules.rules = {
 
     -- Browser & keepassxc always on tag 1
     { rule_any = { class = {browser, "KeePassXC"}},
+      except_any = { name = {"Unlock Database - KeePassXC", "Auto-Type - KeePassXC"} },
       properties = { tag = tags[1]} },
 
     -- dirty hack to preven Ctrl-q from closing firefox
@@ -651,7 +667,7 @@ awful.rules.rules = {
       properties = { floating = true } },
 
     -- always put ncmpcpp on last tag
-    { rule = { class = "ncmpcpp"},
+    { rule = { instance = "ncmpcpp"},
       properties = { tag = tags[#tags]} },
 }
 -- }}}
