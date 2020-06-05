@@ -14,14 +14,8 @@ export PATH="${PATH}:${HOME}/.local/bin"
 # find local executables installed by luarocks
 export PATH="${PATH}:${HOME}/.luarocks/bin"
 
-#function check_battery_preexec(){
-#if [[ -z $(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep "state:               discharging") ]]
-#    then
-#        export DRI_PRIME=1
-#    else
-#        export DRI_PRIME=0
-#fi
-#}
-#autoload -U add-zsh-hook
-#add-zsh-hook -Uz preexec check_battery_preexec
-#check_battery_preexec
+# get qt5 apps to use native gtk style (with qt5ct)
+export QT_QPA_PLATFORMTHEME=qt5ct
+
+# Report execution time when a program takes longer than 60s
+export REPORTTIME=60

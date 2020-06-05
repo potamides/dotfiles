@@ -70,8 +70,6 @@ function whoowns(){
 if [[ -z $VIMRUNTIME ]] && [[ -z $RANGER_LEVEL ]]; then
     neofetch
 fi
-# Report execution time when a program takes longer than 60s
-export REPORTTIME=60
 
 # Aliases
 # -----------------------------------------------------------------------------
