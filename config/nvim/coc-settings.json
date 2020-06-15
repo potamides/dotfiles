@@ -21,6 +21,7 @@
     // Lua
     "lua": {
       "command": "lua-lsp",
+      "rootPatterns": [".luacheckrc"],
       "filetypes": ["lua"]
     },
 
