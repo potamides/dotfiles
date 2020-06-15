@@ -70,7 +70,7 @@ local editor           = os.getenv("EDITOR") or "nvim"
 local editor_cmd       = terminal .. " -e " .. editor
 local browser          = "firefox"
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
-awful.util.shell       = "/usr/bin/zsh"
+awful.util.shell       = "/usr/bin/bash"
 
 -- Default modkey.
 local modkey = "Mod4"
@@ -281,8 +281,7 @@ awful.screen.connect_for_each_screen(function(s)
 
 -- Systray
 -------------------------------------------------------------------------------
-  local systray = wibox.widget.systray()
-  beautiful.systray_icon_spacing = beautiful.gap
+  --local systray = wibox.widget.systray()
 
 -- global title bar
 -------------------------------------------------------------------------------
@@ -516,7 +515,7 @@ modes.launcher = gears.table.join(
     },
     {
       description = "lock screen",
-      pattern = {'L'},
+      pattern = {'l'},
       handler = function() awful.spawn("physlock -s") end
     },
     {
@@ -536,7 +535,7 @@ modes.launcher = gears.table.join(
         if ncmpcpp_instance then
           ncmpcpp_instance:jump_to()
         else
-          awful.spawn(terminal.." --class " .. name .. " -e " .. awful.util.shell .. " -c '" ..
+          awful.spawn(terminal .. " --class " .. name .. " -e " .. awful.util.shell .. " -c '" ..
             string.format("ssh -nTNL %s:%s:%s -L %s:%s:%s NAS & ncmpcpp --host %s --port %s'",
               port, host, port, stream_port, host, stream_port, host, port))
           mpd.reconnect()
@@ -787,7 +786,7 @@ local timer = gears.timer{timeout = 0.05, callback = function()
 end}
 
 local function buttons_remove(_)
-    -- delay the resizing for smoother transition
+    -- delay hiding of titlebar buttons for smoother transition
     timer:start()
 end
 
@@ -796,7 +795,6 @@ local function buttons_insert(c)
     local buttons = s.titlebar_buttons:get_widgets_at(1, 1, 1, 3)
 
     timer:stop()
-    s.titlebar_buttons.visible = true
 
     if not c.maximizedbutton then
       c.maximizedbutton =
@@ -820,6 +818,8 @@ local function buttons_insert(c)
         s.titlebar_buttons:add_widget_at(c.ontopbutton, 1, 2)
         s.titlebar_buttons:add_widget_at(c.stickybutton, 1, 3)
     end
+
+    s.titlebar_buttons.visible = true
 end
 
 client.connect_signal("focus", buttons_insert)

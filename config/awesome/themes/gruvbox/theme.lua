@@ -142,6 +142,9 @@ theme.big_negative_gap = dpi(-10)
 theme.wibar_height     = dpi(21)
 theme.titlebar_height  = dpi(20)
 
+-- systray
+theme.systray_icon_spacing = theme.gap
+
 -- Layout
 theme.layout_tile       = themes_path .. "gruvbox/layouts/tile.svg"
 theme.layout_tileleft   = themes_path .. "gruvbox/layouts/tileleft.svg"
