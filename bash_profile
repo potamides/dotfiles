@@ -13,6 +13,10 @@ export HISTCONTROL=ignoreboth:erasedups
 
 export EDITOR=nvim
 
+# run askpass to enter password when not launched from a terminal
+export SUDO_ASKPASS=/usr/lib/git-core/git-gui--askpass
+export SSH_ASKPASS=$SUDO_ASKPASS
+
 # local virtualenv with pipenv
 export PIPENV_VENV_IN_PROJECT=1
 
@@ -28,11 +32,20 @@ export PATH="${PATH}:${HOME}/.luarocks/bin"
 # get qt5 apps to use native gtk style (with qt5ct)
 export QT_QPA_PLATFORMTHEME=qt5ct
 
+# always use ripgrep with fzf
+export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case \
+  --glob '!.git/*' --glob '!node_modules/*' 2> /dev/null"
+# also use gruvbox colors
+export FZF_DEFAULT_OPTS='
+  --color fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
+  --color info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54
+'
+
 ## Start session
 # -----------------------------------------------------------------------------
 
 if [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
   exec startx
-elif [[ -f ~/.bashrc ]]; then
+elif [[ -r ~/.bashrc ]]; then
   source ~/.bashrc
 fi

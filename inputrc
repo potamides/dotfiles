@@ -1,0 +1,64 @@
+## general options
+# -----------------------------------------------------------------------------
+
+# partially complete the word and show all possible completions
+set show-all-if-ambiguous on
+# insert the common prefix in menu-complete
+set menu-complete-display-prefix on 
+# skip characters from completion that match characters after cursor position
+set skip-completed-text on
+# don't match files starting with .
+set match-hidden-files off
+
+## colorized completion
+# -----------------------------------------------------------------------------
+
+# Note that this may cause completion text blink in some terminals (e.g. xterm)
+set colored-stats on
+# Mark symlinked directories
+set mark-symlinked-directories on
+# Color the common prefix
+set colored-completion-prefix on
+
+## vi mode related stuff
+# -----------------------------------------------------------------------------
+
+# use vi keybindings (activated only for bash through .bashrc)
+#set editing-mode vi
+
+$if mode=vi
+  # reduce input delay on e.g. Escape
+  set keyseq-timeout 50
+  # show editing mode in prompt
+  set show-mode-in-prompt on
+$endif
+
+# different cursor shapes for each mode
+$if term=linux
+	set vi-ins-mode-string (ins)\1\e[?0c\2
+	set vi-cmd-mode-string (cmd)\1\e[?8c\2
+$else
+	set vi-ins-mode-string (ins)\1\e[6 q\2
+	set vi-cmd-mode-string (cmd)\1\e[2 q\2
+$endif
+
+## keybindings
+# -----------------------------------------------------------------------------
+
+# keybindings for either vi-insert or emacs keymap
+# Up: search history starting with chars up to cursor position
+"\e[A": history-search-backward
+# Down: similar but other direction
+"\e[B": history-search-forward
+# step through list of completions
+TAB: menu-complete                  
+# Shift-Tab: step in other direction
+"\e[Z": menu-complete-backward      
+
+set keymap vi-command
+"\e[A": history-search-backward
+j: history-search-forward
+"\e[B": history-search-forward
+k: history-search-backward
+TAB: menu-complete                  
+"\e[Z": menu-complete-backward      
