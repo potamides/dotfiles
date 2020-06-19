@@ -2,12 +2,11 @@ conky.config = {
 	background = true,
 	use_xft = true,
 	font = 'DejaVu Sans:size=10',
-	xftalpha = 1,
 	update_interval = 3,
+  update_interval_on_battery = 5,
 	total_run_times = 0,
   own_window = true,
 	own_window_type = 'override',
-	own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
   own_window_transparent = true,
 	double_buffer = true,
   top_name_width = 10,
@@ -80,11 +79,19 @@ ${fs_bar 4 /}
 ${voffset 2}#
 $color1${font DejaVu Sans:size=14:bold}Network $font ${hr 2}$color
 ${voffset 2}#
-${if_existing /sys/class/net/enp3s0/operstate up}Up: ${upspeed enp3s0}${alignr}Down: ${downspeed enp3s0}${else}Up: ${upspeed wlp5s0}${alignr}Down: ${downspeed wlp5s0}${endif}
-${if_existing /sys/class/net/enp3s0/operstate up}${upspeedgraph enp3s0 20,90}${alignr}${downspeedgraph enp3s0 20,90}${else}${upspeedgraph wlp5s0 20,90}${alignr}${downspeedgraph wlp5s0 20,90}${endif}
-${if_existing /sys/class/net/enp3s0/operstate up}Σ ${totalup enp3s0} ${alignr}Σ ${totaldown enp3s0}${else}Σ ${totalup wlp5s0} ${alignr}Σ ${totaldown wlp5s0}${endif}
+${if_existing /sys/class/net/enp3s0/operstate up}#
+Up: ${upspeed enp3s0}${alignr}Down: ${downspeed enp3s0}
+${upspeedgraph enp3s0 20,90}${alignr}${downspeedgraph enp3s0 20,90}
+Σ ${totalup enp3s0} ${alignr}Σ ${totaldown enp3s0}
 ${hr}
-${font SauceCodePro Nerd Font}${font} ${alignr}${if_existing /sys/class/net/enp3s0/operstate up}${addrs enp3s0}${else}${addrs wlp5s0}${endif}
+${font SauceCodePro Nerd Font}${font} ${alignr}${addrs enp3s0}
+${else}#
+Up: ${upspeed wlp5s0}${alignr}Down: ${downspeed wlp5s0}
+${upspeedgraph wlp5s0 20,90}${alignr}${downspeedgraph wlp5s0 20,90}
+Σ ${totalup wlp5s0} ${alignr}Σ ${totaldown wlp5s0}
 ${hr}
-${font SauceCodePro Nerd Font}${font} ${alignr}${exec curl --fail ipinfo.io/ip}
+${font SauceCodePro Nerd Font}${font} ${alignr}${addrs wlp5s0}
+${endif}#
+${hr}
+${font SauceCodePro Nerd Font}${font} ${alignr}${execi 60 curl --fail ipinfo.io/ip}
 ]];
