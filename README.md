@@ -17,17 +17,16 @@ First clone the repository with all submodules.
 git clone --recurse-submodules https://github.com/DrCracket/dotfiles
 ```
 
-Files in the root folder should be symlinked to `$HOME` and everything in the
-config folder should be symlinked to `$HOME/.config/`. I assume that the
-following applications are already installed. I just explain how to get my
-particular configurations running.
-Also make sure that the fonts [DejaVu Sans](https://dejavu-fonts.github.io/)
-and [Sauce Code Pro Nerd
+Files in the root folder should be symlinked into `$HOME` (prepend a `.` to the
+symlink names) and directories in the config folder should be symlinked into
+`$HOME/.config/`. I assume that the following applications are already
+installed. I just explain how to get my particular configurations running. Also
+make sure that the fonts [DejaVu Sans](https://dejavu-fonts.github.io/) and
+[Sauce Code Pro Nerd
 Font](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/SourceCodePro)
 are installed.
 
-### Neovim
-
+### Neovim ([config/nvim](config/nvim/))
 To set up my neovim configuration the
 [vim-plug](https://github.com/junegunn/vim-plug) plugin manager is required. To
 install it simply run the following command.
@@ -40,36 +39,40 @@ curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
 After setting it up launch neovim and run the command `:PlugInstall` to install
 all other plugins. Now restart neovim and everything should be working.
 
-### Bash
+### Bash ([inputrc](inputrc), [bashrc](bashrc), [bash\_profile](bash_profile))
 If available, the bash configuration sources
-[bash-completions](https://github.com/scop/bash-completion) to get command line
-completions and
-[git-completion](https://github.com/git/git/blob/master/contrib/completion/git-completion.bash)
-to integrate git into the prompt. The former is available as a package in
-Archlinux and the latter should already be installed along with git. It also
-makes use of neofetch. Stylistically the prompt is inspired by the
-[grml-zsh-config](https://github.com/grml/grml-etc-core/tree/master/usr_share_grml/zsh).
+[bash-completions](https://github.com/scop/bash-completion) and
+[complete-alias](https://github.com/cykerway/complete-alias) to get command
+line completions. The former is available as an official package in Archlinux
+and the latter can be found in the AUR. To integrate git into the prompt
+[git-prompt](https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh)
+is used, it should already be installed along with git.
+The configuration also makes use of neofetch.
 
-### Neofetch
+### Neofetch ([config/neofetch](config/neofetch))
 Neofetch is configured to be used as a terminal greeter. It displays [fortune
 cookies](https://www.shlomifish.org/open-source/projects/fortune-mod/), so make
 sure the package is installed (available with pacman).
 [Boxes](https://boxes.thomasjensen.com/) is also required for the terminal
 greeter (an AUR package exists).
 
-### Awesome
+### Awesome ([config/awesome](config/awesome), [xinitrc](xinitrc), [Xresources](Xresources))
 Awesome needs [socat](http://www.dest-unreach.org/socat/) and
 [mpv](https://mpv.io/) internally to play remote mpd streams.
 Other integrated applications are only used in some keybindings and are
 thus more or less optional or easily replaced. Take a look at the
 [rc.lua](config/awesome/rc.lua) config file, it should be rather obvious. To
-match GTK applications to the gruvbox colorscheme install
+get GTK applications to use the gruvbox colorscheme install
 [gruvbox-gtk](https://github.com/3ximus/gruvbox-gtk) and
 [gruvbox-dark-icons-gtk](https://github.com/jmattheis/gruvbox-dark-icons-gtk).
 To understand how to control my awesome configuration take a look at
 [modalawesome](https://github.com/DrCracket/modalawesome).
 
-### Conky, Alacritty, Ranger, Tmux
+### Conky ([conkyrc](conkyrc)), Alacritty ([config/alacritty](config/alacritty)), Ranger ([config/ranger](config/ranger)), Tmux ([tmux.conf](tmux.conf))
 Some of these applications don't have additional dependencies and if they have,
 they are integrated as git submodules or git subtrees so no additional steps
 are required.
+
+### Misc ([misc](misc))
+The misc folder contains some useful shell scripts and systemd service files,
+which don't necessarily belong to any of the aforementioned programs.
