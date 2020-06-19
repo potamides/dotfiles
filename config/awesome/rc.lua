@@ -362,8 +362,7 @@ awful.screen.connect_for_each_screen(function(s)
                     layout = wibox.layout.fixed.horizontal
                 },
                 wibarutil.right_parallelogram,
-                wibarutil.rightmost_parallelogram,
-                beautiful.gap),
+                wibarutil.rightmost_parallelogram),
 
             spacing = beautiful.negative_gap,
             fill_space = true,
@@ -499,7 +498,7 @@ modes.launcher = gears.table.join(
       description = "take screenshot",
       pattern = {'p'},
       handler = function()
-        awful.spawn( "scrot 'Pictures/Screenshot-%Y%m%d-%H%M%S.png'")
+        awful.spawn( "scrot 'Pictures/Screenshots/Screenshot-%Y%m%d-%H%M%S.png'")
         naughty.notify({ text = "Took screenshot." })
         end
     },
@@ -535,6 +534,7 @@ modes.launcher = gears.table.join(
         if ncmpcpp_instance then
           ncmpcpp_instance:jump_to()
         else
+          -- termporal solution, openvpn is probably a better solution
           awful.spawn(terminal .. " --class " .. name .. " -e " .. awful.util.shell .. " -c '" ..
             string.format("ssh -nTNL %s:%s:%s -L %s:%s:%s NAS & ncmpcpp --host %s --port %s'",
               port, host, port, stream_port, host, stream_port, host, port))
@@ -644,30 +644,35 @@ awful.rules.rules = {
             buttons = clientbuttons,
             screen = awful.screen.preferred,
             placement = awful.placement.no_overlap+awful.placement.no_offscreen,
-            size_hints_honor = false,
+            --size_hints_honor = false,
         }
     },
 
     -- Browser & keepassxc always on tag 1
     { rule_any = { class = {browser, "KeePassXC"}},
-      except_any = { name = {"Unlock Database - KeePassXC", "Auto-Type - KeePassXC"} },
-      properties = { tag = tags[1]} },
+      except_any = { name = {"Unlock Database - KeePassXC", "Auto-Type - KeePassXC"}},
+      properties = { tag = tags[1]}},
 
     -- dirty hack to preven Ctrl-q from closing firefox
     { rule = { class = browser},
-      properties = { keys = awful.key({"Control"}, "q", function () end)} },
+      properties = { keys = awful.key({"Control"}, "q", function () end)}},
 
     -- Make dragon sticky for easy drag and drop in ranger
     { rule = { class = "Dragon-drag-and-drop" },
-      properties = { ontop = true, sticky = true } },
+      properties = { ontop = true, sticky = true }},
 
-    -- the password prompt for keepassxc autotype should be floating
-    { rule = { name = "Unlock Database - KeePassXC" },
-      properties = { floating = true } },
+    -- askpass has wrong height on multi-screen setups somehow
+    { rule = { instance = "git-gui--askpass" },
+      properties = { height = 173 }},
+
+    -- some applications like password prompt for keepassxc autotype should be floating and centered
+    { rule_any = { name = {"Unlock Database - KeePassXC"}, instance = {"git-gui--askpass"}},
+      properties = { floating = true, placement = awful.placement.centered }},
 
     -- always put ncmpcpp on last tag
     { rule = { instance = "ncmpcpp"},
-      properties = { tag = tags[#tags]} },
+      properties = { tag = tags[#tags]}},
+
 }
 -- }}}
 
@@ -704,31 +709,27 @@ client.connect_signal("request::titlebars", function(c)
     )
 
     awful.titlebar(c, {size = beautiful.titlebar_height, position = "bottom"}) : setup {
-        {
-            { -- Left
-                --awful.titlebar.widget.iconwidget(c),
-                buttons = buttons,
-                layout  = wibox.layout.fixed.horizontal
-            },
-            { -- Middle
-                --[[{ -- Title
-                align  = "center",
-                widget = awful.titlebar.widget.titlewidget(c)
-                },]]
-                buttons = buttons,
-                layout  = wibox.layout.flex.horizontal
-            },
-            { -- Right
-                wibox.container.margin(
-                  awful.titlebar.widget.floatingbutton(c), beautiful.gap, beautiful.gap, beautiful.gap, beautiful.gap
-                ),
-                layout = wibox.layout.fixed.horizontal()
-                },
-
-            layout = wibox.layout.align.horizontal
+        { -- Left
+            --awful.titlebar.widget.iconwidget(c),
+            buttons = buttons,
+            layout  = wibox.layout.fixed.horizontal
         },
-        right = beautiful.small_gap,
-        widget = wibox.container.margin
+        { -- Middle
+            --[[{ -- Title
+            align  = "center",
+            widget = awful.titlebar.widget.titlewidget(c)
+            },]]
+            buttons = buttons,
+            layout  = wibox.layout.flex.horizontal
+        },
+        { -- Right
+            wibox.container.margin(
+              awful.titlebar.widget.floatingbutton(c),
+              beautiful.gap, beautiful.gap + beautiful.small_gap, beautiful.gap, beautiful.gap),
+            layout = wibox.layout.fixed.horizontal()
+            },
+
+        layout = wibox.layout.align.horizontal
     }
 end)
 
@@ -761,13 +762,13 @@ end)
 -- turn titlebar on when client is floating
 -------------------------------------------------------------------------------
 client.connect_signal("property::floating", function (c)
-    if c.floating and not c.maximized then
-        awful.titlebar.show(c, "bottom")
-        c.height = c.height - beautiful.titlebar_height
-    else
-        awful.titlebar.hide(c, "bottom")
-    end
-    border_adjust(c)
+  if c.floating and not c.maximized then
+    awful.titlebar.show(c, "bottom")
+    c.height = math.min(c.height, awful.screen.focused().geometry.height - c.y)
+  else
+    awful.titlebar.hide(c, "bottom")
+  end
+  border_adjust(c)
 end)
 
 -- turn tilebars on when layout is floating

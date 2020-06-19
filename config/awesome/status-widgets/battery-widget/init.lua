@@ -36,7 +36,6 @@ function battery_widget.init(args)
 
     battery_widget.image = wibox.widget {
         image = path_to_icons .. "battery-empty-symbolic.svg",
-        resize = false,
         widget = wibox.widget.imagebox,
     }
     battery_widget.text = wibox.widget.textbox()

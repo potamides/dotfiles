@@ -70,13 +70,6 @@ function mpc:_connect()
 	local input, output = conn:get_input_stream(), conn:get_output_stream()
 	self._conn, self._output, self._input = conn, output, Gio.DataInputStream.new(input)
 
-	-- Read the welcome message
-	self._input:read_line()
-
-	if self._password and self._password ~= "" then
-		self:_send("password " .. self._password)
-	end
-
 	-- Set up the reading loop. This will asynchronously read lines by
 	-- calling itself.
 	local do_read
@@ -116,11 +109,22 @@ function mpc:_connect()
 			end
 		end)
 	end
-	do_read()
 
-	-- To synchronize the state on startup, send the idle commands now. As a
-	-- side effect, this will enable idle state.
-	self:_send_idle_commands(true)
+
+	self._input:read_line_async(GLib.PRIORITY_DEFAULT, nil, function(obj, res)
+    -- Read the welcome message
+    obj:read_line_finish(res)
+
+    if self._password and self._password ~= "" then
+      self:_send("password " .. self._password)
+    end
+
+    do_read()
+
+    -- To synchronize the state on startup, send the idle commands now. As a
+    -- side effect, this will enable idle state.
+    self:_send_idle_commands(true)
+  end)
 
 	return self
 end

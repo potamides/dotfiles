@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -10,11 +8,11 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
-   height="16"
-   viewBox="0 0 16 16"
+   height="14.012994"
+   viewBox="0 0 16 14.012994"
    id="svg4149"
    version="1.1"
-   inkscape:version="0.92.4 5da689c313, 2019-01-14"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
    sodipodi:docname="wired.svg">
   <defs
      id="defs4151" />
@@ -26,8 +24,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="16"
-     inkscape:cx="16.65218"
-     inkscape:cy="9.579934"
+     inkscape:cx="1.96468"
+     inkscape:cy="16.273928"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -36,13 +34,16 @@
      inkscape:object-paths="false"
      inkscape:object-nodes="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1055"
+     inkscape:window-height="1059"
      inkscape:window-x="0"
-     inkscape:window-y="25"
-     inkscape:window-maximized="1">
+     inkscape:window-y="21"
+     inkscape:window-maximized="1"
+     inkscape:document-rotation="0">
     <inkscape:grid
        type="xygrid"
-       id="grid4697" />
+       id="grid4697"
+       originx="-14.6875"
+       originy="6.6939943" />
   </sodipodi:namedview>
   <metadata
      id="metadata4154">
@@ -60,13 +61,18 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-1036.3622)">
+     transform="translate(-14.6875,-1029.6682)">
     <path
        style="opacity:1;fill:#a89984;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       d="M 3,2 C 1.892,2 1,2.8919904 1,4 l 0,7 c 0,1.10801 0.892,2 2,2 l 1,0 1,1 6,0 1,-1 1,0 c 1.108,0 2,-0.89199 2,-2 L 15,4 C 15,2.8919904 14.108,2 13,2 Z m 0,2 10,0 0,7 -2,0 -1,1 -4,0 -1,-1 -2,0 z"
-       transform="translate(0,1036.3622)"
+       d="m 17.1875,1029.6752 c -1.108,0 -2,0.892 -2,2 v 7 c 0,1.108 0.892,2 2,2 h 1 l 1,1 h 6 l 1,-1 h 1 c 1.108,0 2,-0.892 2,-2 v -7 c 0,-1.108 -0.892,-2 -2,-2 z m 0,2 h 10 v 7 h -2 l -1,1 h -4 l -1,-1 h -2 z"
        id="rect4699"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ssssccccsssssccccccccc" />
+    <path
+       sodipodi:nodetypes="ssssccccsssssccccccccc"
+       inkscape:connector-curvature="0"
+       id="path876"
+       d="m 17.1875,1029.6752 c -1.108,0 -2,0.892 -2,2 v 7 c 0,1.108 0.892,2 2,2 h 1 l 1,1 h 6 l 1,-1 h 1 c 1.108,0 2,-0.892 2,-2 v -7 c 0,-1.108 -0.892,-2 -2,-2 z m 0,2 h 10 v 7 h -2 l -1,1 h -4 l -1,-1 h -2 z"
+       style="opacity:1;fill:#a89984;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
   </g>
 </svg>

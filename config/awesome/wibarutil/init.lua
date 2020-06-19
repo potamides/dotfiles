@@ -42,8 +42,8 @@ local function create_parallelogram(widget, parallelogram, color, margin)
     return wibox.widget {
         {
             widget,
-            top = margin or beautiful.small_gap,
-            bottom = margin or beautiful.small_gap,
+            top = margin or beautiful.gap,
+            bottom = margin or beautiful.gap,
             left  = parallelogram == leftmost_parallelogram and beautiful.gap or beautiful.big_gap,
             right = parallelogram == rightmost_parallelogram and beautiful.gap or beautiful.big_gap,
             widget = wibox.container.margin
@@ -70,15 +70,12 @@ local function compose_parallelogram(left_widget, right_widget, left_shape, righ
         },
         {
             {
-                {
-                    right_widget,
-                    top = margin or beautiful.small_gap,
-                    bottom = margin or beautiful.small_gap,
-                    left = beautiful.big_gap,
-                    right = right_shape == right_parallelogram and beautiful.big_gap or beautiful.gap,
-                    widget = wibox.container.margin
-                },
-                widget = wibox.container.place
+                right_widget,
+                top = margin or beautiful.gap,
+                bottom = margin or beautiful.gap,
+                left = beautiful.big_gap,
+                right = right_shape == right_parallelogram and beautiful.big_gap or beautiful.gap,
+                widget = wibox.container.margin
             },
             shape = right_shape,
             bg = beautiful.bg1,

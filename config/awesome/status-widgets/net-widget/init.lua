@@ -37,7 +37,6 @@ function net_widget.init(args)
 
   net_widget.image = wibox.widget {
     image  = args.path_to_icons .. "wired_na.svg",
-    resize = false,
     widget = wibox.widget.imagebox,
   }
   net_widget.text = wibox.widget.textbox()

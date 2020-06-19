@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -9,70 +7,73 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="16"
-   id="svg2"
-   sodipodi:version="0.32"
-   inkscape:version="0.92.2 2405546, 2018-03-11"
-   version="1.0"
-   sodipodi:docname="battery-empty-symbolic.svg"
+   style="display:inline"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   style="display:inline">
+   sodipodi:docname="battery-empty-symbolic.svg"
+   version="1.0"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:version="0.32"
+   id="svg2"
+   height="14"
+   width="10">
   <defs
      id="defs4" />
   <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#fd0000"
-     borderopacity="1"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="15.810166"
-     inkscape:cx="-19.64004"
-     inkscape:cy="6.1064285"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:showpageshadow="false"
-     showguides="false"
-     inkscape:guide-bbox="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1053"
+     inkscape:document-rotation="0"
+     inkscape:window-maximized="1"
+     inkscape:window-y="21"
      inkscape:window-x="0"
-     inkscape:window-y="27"
-     inkscape:window-maximized="1">
+     inkscape:window-height="1059"
+     inkscape:window-width="1920"
+     inkscape:guide-bbox="true"
+     showguides="false"
+     inkscape:showpageshadow="false"
+     showgrid="true"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="px"
+     inkscape:cy="5.1064285"
+     inkscape:cx="-22.64004"
+     inkscape:zoom="15.810166"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1"
+     bordercolor="#fd0000"
+     pagecolor="#ffffff"
+     id="base">
     <sodipodi:guide
-       orientation="1,0"
-       position="0,112"
+       inkscape:locked="false"
        id="guide2383"
-       inkscape:locked="false" />
+       position="-3,111"
+       orientation="1,0" />
     <sodipodi:guide
-       orientation="0,1"
-       position="26.278146,128"
+       inkscape:locked="false"
        id="guide2385"
-       inkscape:locked="false" />
+       position="23.278146,127"
+       orientation="0,1" />
     <sodipodi:guide
-       orientation="1,0"
-       position="128,54.082119"
+       inkscape:locked="false"
        id="guide2387"
-       inkscape:locked="false" />
+       position="125,53.082119"
+       orientation="1,0" />
     <sodipodi:guide
-       orientation="0,1"
-       position="78.156291,0"
+       inkscape:locked="false"
        id="guide2389"
-       inkscape:locked="false" />
+       position="75.156291,-1"
+       orientation="0,1" />
     <sodipodi:guide
-       orientation="0,1"
-       position="60.863576,64.084768"
+       inkscape:locked="false"
        id="guide2391"
-       inkscape:locked="false" />
+       position="57.863576,63.084768"
+       orientation="0,1" />
     <inkscape:grid
-       type="xygrid"
-       id="grid3672"
-       visible="true"
-       enabled="true"
+       originy="-1"
+       originx="-3"
+       snapvisiblegridlinesonly="true"
        empspacing="8"
-       snapvisiblegridlinesonly="true" />
+       enabled="true"
+       visible="true"
+       id="grid3672"
+       type="xygrid" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -87,16 +88,16 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Icon"
-     inkscape:groupmode="layer"
-     id="layer1"
+     transform="translate(-3,-7)"
      style="display:inline"
-     transform="translate(0,-6)">
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Icon">
     <path
-       inkscape:connector-curvature="0"
-       style="color:#000000;fill:#665c54;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:8;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;opacity:1"
-       d="M 6.5,7 C 6.223,7 6,7.223 6,7.5 L 6,8 4,8 C 3.446,8 3,8.446 3,9 l 0,1 0,10 c 0,0.554 0.446,1 1,1 l 8,0 c 0.554,0 1,-0.446 1,-1 L 13,10 13,9 C 13,8.446 12.554,8 12,8 L 10,8 10,7.5 C 10,7.223 9.777,7 9.5,7 l -3,0 z"
+       class="error"
        id="path3000"
-       class="error" />
+       d="M 6.5,7 C 6.223,7 6,7.223 6,7.5 V 8 H 4 C 3.446,8 3,8.446 3,9 v 1 10 c 0,0.554 0.446,1 1,1 h 8 c 0.554,0 1,-0.446 1,-1 V 10 9 C 13,8.446 12.554,8 12,8 H 10 V 7.5 C 10,7.223 9.777,7 9.5,7 Z"
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#665c54;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:8;marker:none;enable-background:accumulate"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>

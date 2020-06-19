@@ -115,7 +115,6 @@ function volume.init(args)
 --{{{ Widget creation
     volume.image = wibox.widget {
         image = PATH_TO_ICONS .. "audio-volume-muted-symbolic.svg",
-        resize = false,
         widget = wibox.widget.imagebox,
     }
     volume.text = wibox.widget.textbox()
