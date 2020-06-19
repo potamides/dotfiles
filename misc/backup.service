@@ -2,5 +2,6 @@
 Description=Create a snap-sync backup
 
 [Service]
+# its super hacky but it works...
 ExecStartPre=/bin/bash -c "while true; do if mountpoint /run/media/amnifilius/940761e2-7d84-4025-8972-89276e53bdc4 &> /dev/null; then break; else sleep 1; fi; done"
 ExecStart=/usr/bin/snap-sync --UUID 940761e2-7d84-4025-8972-89276e53bdc4 --subvolid 5 --config home --noconfirm
