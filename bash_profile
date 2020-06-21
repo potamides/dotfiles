@@ -44,7 +44,7 @@ export FZF_DEFAULT_OPTS='
 ## Start session
 # -----------------------------------------------------------------------------
 
-if [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
+if systemctl -q is-active graphical.target && [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
   exec startx
 elif [[ -r ~/.bashrc ]]; then
   source ~/.bashrc

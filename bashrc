@@ -8,7 +8,7 @@ if [[ $- != *i* ]]; then
 fi
 
 # if not in vim or ranger show greeter
-if [[ -z $VIMRUNTIME ]] && [[ -z $RANGER_LEVEL ]]; then
+if [[ -z $VIMRUNTIME && -z $RANGER_LEVEL &&  $(type -t neofetch) ]]; then
     neofetch
 fi
 
@@ -152,7 +152,8 @@ function search_pdf(){
 
 # tldr version of man pages
 function tldr(){
-    curl cheat.sh/$*
+    local IFS=-
+    curl cheat.sh/"$*"
 }
 
 # list package which owns command
@@ -171,6 +172,8 @@ alias lh='ls --color=auto -vhAl'
 alias diff='diff --color=auto'
 alias grep='grep --color=auto'
 alias ip='ip -color=auto'
+alias info="info --vi-keys -v match-style=underline,bold,nocolor \
+  -v link-style=yellow -v active-link-style=yellow,bold"
 
 # other useful aliases
 alias pac='sudo pacman -S' # install
