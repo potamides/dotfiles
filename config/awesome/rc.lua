@@ -534,7 +534,7 @@ modes.launcher = gears.table.join(
         if ncmpcpp_instance then
           ncmpcpp_instance:jump_to()
         else
-          -- termporal solution, openvpn is probably a better solution
+          -- temporal solution, openvpn is probably a better option than ondemand ssh forwarding
           awful.spawn(terminal .. " --class " .. name .. " -e " .. awful.util.shell .. " -c '" ..
             string.format("ssh -nTNL %s:%s:%s -L %s:%s:%s NAS & ncmpcpp --host %s --port %s'",
               port, host, port, stream_port, host, stream_port, host, port))
