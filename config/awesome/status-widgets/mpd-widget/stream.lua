@@ -15,16 +15,13 @@ end
 
 function stream:play()
   -- flush buffers when mpd changes song to start new song immediately
-  -- not noticable when issuing after each song, but delay would accumulate over time
   Gst.Event.new_flush_start()
-  Gst.Event.new_flush_stop()
-
   Gst.Element.set_state(self._pipeline, Gst.State.PLAYING)
 end
 
-function stream.pause()
+function stream:pause()
   -- flush buffers and reject further data
-  Gst.Event.new_flush_start()
+  Gst.Element.set_state(self._pipeline, Gst.State.READY)
 end
 
 function stream:stop()
