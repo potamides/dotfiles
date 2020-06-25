@@ -14,7 +14,7 @@ local theme = {}
 theme.archlinux_icon  = themes_path .. "gruvbox/bar/archlinux.svg"
 theme.font            = "DejaVu Sans 11"
 theme.revelation_font = "SauceCodePro Nerd Font 20"
-theme.icon_theme      = "Newaita-dark"
+theme.icon_theme      = "Papirus-Dark"
 
 function theme.wallpaper(s)
   -- the screen where conky is on

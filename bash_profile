@@ -29,7 +29,7 @@ export PATH="${PATH}:${HOME}/.local/bin"
 # find local executables installed by luarocks
 export PATH="${PATH}:${HOME}/.luarocks/bin"
 
-# get qt5 apps to use native gtk style (with qt5ct)
+# get qt5 apps to use native gtk style (through qt5ct & qt5-styleplugins)
 export QT_QPA_PLATFORMTHEME=qt5ct
 
 # always use ripgrep with fzf

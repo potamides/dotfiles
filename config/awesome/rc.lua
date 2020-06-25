@@ -498,7 +498,7 @@ modes.launcher = gears.table.join(
       description = "take screenshot",
       pattern = {'p'},
       handler = function()
-        awful.spawn( "scrot 'Pictures/Screenshots/Screenshot-%Y%m%d-%H%M%S.png'")
+        awful.spawn( "scrot 'Pictures/Screenshots/Screenshot-%Y%m%d-%H%M%S.png'", false)
         naughty.notify({ text = "Took screenshot." })
         end
     },
