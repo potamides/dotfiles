@@ -77,7 +77,13 @@ in the AUR) and
 configuration take a look at
 [modalawesome](https://github.com/DrCracket/modalawesome).
 
-### Conky ([conkyrc](conkyrc)), Alacritty ([config/alacritty](config/alacritty)), Ranger ([config/ranger](config/ranger)), Tmux ([tmux.conf](tmux.conf))
+### Conky ([conkyrc](conkyrc))
+Conky makes use of
+[absolutely-proprietray](https://github.com/vmavromatis/absolutely-proprietary)
+to display the current Stallman Freedom Index. This package can be found in the
+AUR.
+
+### Alacritty ([config/alacritty](config/alacritty)), Ranger ([config/ranger](config/ranger)), Tmux ([tmux.conf](tmux.conf))
 Some of these applications don't have additional dependencies and if they have,
 they are integrated as git submodules or git subtrees so no additional steps
 are required.

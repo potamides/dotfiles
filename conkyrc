@@ -23,7 +23,7 @@ conky.config = {
 	uppercase = false,
 	cpu_avg_samples = 3,
 	override_utf8_locale = true,
-	gap_y = 30,
+	gap_y = 25,
 	gap_x = 8,
 	border_inner_margin = 6,
 	border_outer_margin = 6,
@@ -43,8 +43,8 @@ ${if_match $acpitemp>=60}$color3$endif#
 ${if_match $acpitemp>=75}$color4$endif#
 ${acpitemp}$color°C
 Frequency: $alignr$freq MHz
-Processes: $alignr$processes
-Disk IO: $alignr$diskio
+Processes: $alignr${processes}(total)
+Freedom Idx: $alignr${texeci 3600 absolutely-proprietary <<< no | grep -Po '(?<=Your Stallman Freedom Index is )\d\d\.\d\d' || echo 0.0}%
 $color1${cpubar cpu1 20,90}${offset 5}${cpubar cpu2 20,90}#
 $color${goto 17}${voffset 9}CPU 1${alignr 103}${cpu cpu1}%$color
 ${voffset -37}${goto 112}CPU 2${alignr 8}${cpu cpu2}%
@@ -62,12 +62,12 @@ RAM ${alignr}$mem / $memmax
 ${alignc}${memgraph 40,190  -lt}
 $color1${font DejaVu Sans:size=14:bold}Activity $font ${hr 2}$color
 ${voffset 2}#
-${font DejaVu Sans:size=10:bold}Top CPU$font ${goto 110}${font DejaVu Sans:size=9:italic}CPU%${goto 160}MEM%$font
+${font DejaVu Sans:size=10:bold}Top CPU$font ${goto 110}${font DejaVu Sans:size=9}CPU%${goto 160}MEM%$font
 ${top name 1}${goto 105}${top cpu 1}${goto 155}${top mem 1}
 ${top name 2}${goto 105}${top cpu 2}${goto 155}${top mem 2}
 ${top name 3}${goto 105}${top cpu 3}${goto 155}${top mem 3}
 ${voffset 4}#
-${font DejaVu Sans:size=10:bold}Top RAM$font${goto 110}${font DejaVu Sans:size=9:italic}CPU%${goto 160}MEM%$font
+${font DejaVu Sans:size=10:bold}Top RAM$font${goto 110}${font DejaVu Sans:size=9}CPU%${goto 160}MEM%$font
 ${top_mem name 1}${goto 105}${top_mem cpu 1}${goto 155}${top_mem mem 1}
 ${top_mem name 2}${goto 105}${top_mem cpu 2}${goto 155}${top_mem mem 2}
 ${top_mem name 3}${goto 105}${top_mem cpu 3}${goto 155}${top_mem mem 3}
@@ -93,5 +93,5 @@ ${hr}
 ${font SauceCodePro Nerd Font}${font} ${alignr}${addrs wlp5s0}
 ${endif}#
 ${hr}
-${font SauceCodePro Nerd Font}${font} ${alignr}${execi 60 curl --fail ipinfo.io/ip}
+${font SauceCodePro Nerd Font}${font} ${alignr}${curl ipinfo.io/ip 2}
 ]];
