@@ -15,13 +15,13 @@ fi
 # build prompt
 # -----------------------------------------------------------------------------
 
-lightblue='\e[1;94m'
-lightred='\e[1;91m'
+boldblue='\e[1;34m'
+boldred='\e[1;31m'
 reset='\e[m'
 # echo return code on failure
-returncode="\`exit=\$?; [ \$exit -ne 0 ] && echo \"$lightred\$exit \";\`"
+returncode="\`exit=\$?; [ \$exit -ne 0 ] && echo \"$boldred\$exit \"\`"
 # root user is red, other users are blue
-user="\`[ \$EUID -eq 0 ] && echo ${lightred@Q}\u || echo ${lightblue@Q}\u\`"
+user="\`[ \$EUID -eq 0 ] && echo ${boldred@Q}\u || echo ${boldblue@Q}\u\`"
 dir="\[$reset\]@\h \w"
 
 # prompt stuff that should come before and after git integration
@@ -38,7 +38,7 @@ else
   export PS1="$firstline$secondline"
 fi
 
-unset lightblue lightred reset returncode user dir firstline secondline
+unset boldblue boldred reset returncode user dir firstline secondline
 
 # general shell behavior
 # -----------------------------------------------------------------------------
@@ -106,12 +106,12 @@ fi
 
 # colored manpages
 man() {
-    LESS_TERMCAP_md=$'\e[01;91m' \
+    LESS_TERMCAP_md=$'\e[01;31m' \
     LESS_TERMCAP_me=$'\e[0m' \
     LESS_TERMCAP_se=$'\e[0m' \
-    LESS_TERMCAP_so=$'\e[01;104;93m' \
+    LESS_TERMCAP_so=$'\e[01;44;33m' \
     LESS_TERMCAP_ue=$'\e[0m' \
-    LESS_TERMCAP_us=$'\e[01;92m' \
+    LESS_TERMCAP_us=$'\e[01;32m' \
     command man "$@"
 }
 
