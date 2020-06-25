@@ -16,8 +16,8 @@ conky.config = {
 	draw_borders = false,
 	draw_graph_borders = true,
 	default_color = '#d5c4a1',
-	default_shade_color = '#1d2021',
-	default_outline_color = '#1d2021',
+	default_shade_color = '#282828',
+	default_outline_color = '#282828',
 	alignment = 'middle_right',
 	no_buffers = true,
 	uppercase = false,
@@ -29,9 +29,7 @@ conky.config = {
 	border_outer_margin = 6,
 	use_spacer = 'right',
 	color1 = '#fe8019',
-	color2 = '#b8bb26',
-	color3 = '#fe8019',
-	color4 = '#fb4934',
+	color2 = '#fb4934',
 };
 
 conky.text = [[
@@ -39,27 +37,27 @@ $color1${font DejaVu Sans:size=14:bold}System $font${hr 2}$color
 ${voffset 2}#
 Uptime: $alignr$uptime
 Temp: $alignr#
-${if_match $acpitemp>=60}$color3$endif#
-${if_match $acpitemp>=75}$color4$endif#
+${if_match $acpitemp>=60}$color1$endif#
+${if_match $acpitemp>=75}$color2$endif#
 ${acpitemp}$color°C
 Frequency: $alignr$freq MHz
 Processes: $alignr${processes}(total)
 Freedom Idx: $alignr${texeci 3600 absolutely-proprietary <<< no | grep -Po '(?<=Your Stallman Freedom Index is )\d\d\.\d\d' || echo 0.0}%
-$color1${cpubar cpu1 20,90}${offset 5}${cpubar cpu2 20,90}#
+$color1${cpubar cpu1 20,90}${offset 10}${cpubar cpu2 20,90}#
 $color${goto 17}${voffset 9}CPU 1${alignr 103}${cpu cpu1}%$color
-${voffset -37}${goto 112}CPU 2${alignr 8}${cpu cpu2}%
-$color1${cpubar cpu3 20,90}${offset 5}${cpubar cpu4 20,90}#
+${voffset -37}${goto 117}CPU 2${alignr 3}${cpu cpu2}%
+$color1${cpubar cpu3 20,90}${offset 10}${cpubar cpu4 20,90}#
 $color${goto 17}${voffset 9}CPU 3${alignr 103}${cpu cpu3}%$color
-${voffset -37}${goto 112}CPU 4${alignr 8}${cpu cpu4}%
-$color1${cpubar cpu5 20,90}${offset 5}${cpubar cpu6 20,90}#
+${voffset -37}${goto 117}CPU 4${alignr 3}${cpu cpu4}%
+$color1${cpubar cpu5 20,90}${offset 10}${cpubar cpu6 20,90}#
 $color${goto 17}${voffset 9}CPU 5${alignr 103}${cpu cpu5}%$color
-${voffset -37}${goto 112}CPU 6${alignr 8}${cpu cpu6}%
-$color1${cpubar cpu7 20,90}${offset 5}${cpubar cpu8 20,90}#
+${voffset -37}${goto 117}CPU 6${alignr 3}${cpu cpu6}%
+$color1${cpubar cpu7 20,90}${offset 10}${cpubar cpu8 20,90}#
 $color${goto 17}${voffset 9}CPU 7${alignr 103}${cpu cpu7}%$color
-${voffset -37}${goto 112}CPU 8${alignr 8}${cpu cpu8}%
+${voffset -37}${goto 117}CPU 8${alignr 3}${cpu cpu8}%
 ${voffset 10}#
 RAM ${alignr}$mem / $memmax
-${alignc}${memgraph 40,190  -lt}
+${memgraph 40,190 -l}
 $color1${font DejaVu Sans:size=14:bold}Activity $font ${hr 2}$color
 ${voffset 2}#
 ${font DejaVu Sans:size=10:bold}Top CPU$font ${goto 110}${font DejaVu Sans:size=9}CPU%${goto 160}MEM%$font
@@ -75,20 +73,20 @@ ${voffset 2}#
 $color1${font DejaVu Sans:size=14:bold}Filesystem $font ${hr 2}$color
 ${voffset 2}#
 Root: ${alignr}${fs_free /} / ${fs_size /}
-${fs_bar 4 /}
+${fs_bar 4,190 /}
 ${voffset 2}#
 $color1${font DejaVu Sans:size=14:bold}Network $font ${hr 2}$color
 ${voffset 2}#
 ${if_existing /sys/class/net/enp3s0/operstate up}#
-Up: ${upspeed enp3s0}${alignr}Down: ${downspeed enp3s0}
-${upspeedgraph enp3s0 20,90}${alignr}${downspeedgraph enp3s0 20,90}
-Σ ${totalup enp3s0} ${alignr}Σ ${totaldown enp3s0}
+${font SauceCodePro Nerd Font} $font${upspeed enp3s0}${goto 113}${voffset -3}${font SauceCodePro Nerd Font} $font${downspeed enp3s0}
+${upspeedgraph enp3s0 20,90 -l}${offset 10}${downspeedgraph enp3s0 20,90 -l}
+${font DejaVu Sans:size=10:bold}Σ$font ${totalup enp3s0} ${goto 113}${font DejaVu Sans:size=10:bold}Σ$font ${totaldown enp3s0}
 ${hr}
 ${font SauceCodePro Nerd Font}${font} ${alignr}${addrs enp3s0}
 ${else}#
-Up: ${upspeed wlp5s0}${alignr}Down: ${downspeed wlp5s0}
-${upspeedgraph wlp5s0 20,90}${alignr}${downspeedgraph wlp5s0 20,90}
-Σ ${totalup wlp5s0} ${alignr}Σ ${totaldown wlp5s0}
+${font SauceCodePro Nerd Font} $font${upspeed wlp5s0}${goto 113}${voffset -3}${font SauceCodePro Nerd Font} $font${downspeed wlp5s0}
+${upspeedgraph wlp5s0 20,90 -l}${offset 10}${downspeedgraph wlp5s0 20,90 -l}
+${font DejaVu Sans:size=10:bold}Σ$font ${totalup wlp5s0} ${goto 113}${font DejaVu Sans:size=10:bold}Σ$font ${totaldown wlp5s0}
 ${hr}
 ${font SauceCodePro Nerd Font}${font} ${alignr}${addrs wlp5s0}
 ${endif}#
