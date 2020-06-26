@@ -42,7 +42,7 @@ ${if_match $acpitemp>=75}$color2$endif#
 ${acpitemp}$color°C
 Frequency: $alignr$freq MHz
 Processes: $alignr${processes}(total)
-Freedom Idx: $alignr${texeci 3600 absolutely-proprietary <<< no | grep -Po '(?<=Your Stallman Freedom Index is )\d\d\.\d\d' || echo 0.0}%
+Freedom Idx: $alignr${texeci 7200 absolutely-proprietary <<< no | grep -Po '(?<=Your Stallman Freedom Index is )\d+\.\d+' || echo 0.00}%
 $color1${cpubar cpu1 20,90}${offset 10}${cpubar cpu2 20,90}#
 $color${goto 17}${voffset 9}CPU 1${alignr 103}${cpu cpu1}%$color
 ${voffset -37}${goto 117}CPU 2${alignr 3}${cpu cpu2}%
