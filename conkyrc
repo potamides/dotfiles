@@ -35,14 +35,15 @@ conky.config = {
 conky.text = [[
 $color1${font DejaVu Sans:size=14:bold}System $font${hr 2}$color
 ${voffset 2}#
-Uptime: $alignr$uptime
-Temp: $alignr#
+${font DejaVu Sans:size=10:bold}Uptime$font$alignr$uptime_short
+${font DejaVu Sans:size=10:bold}Temp$font$alignr#
 ${if_match $acpitemp>=60}$color1$endif#
 ${if_match $acpitemp>=75}$color2$endif#
 ${acpitemp}$color°C
-Frequency: $alignr$freq MHz
-Processes: $alignr${processes}(total)
-Freedom Idx: $alignr${texeci 7200 absolutely-proprietary <<< no | grep -Po '(?<=Your Stallman Freedom Index is )\d+\.\d+' || echo 0.00}%
+${font DejaVu Sans:size=10:bold}Frequency$font$alignr$freq MHz
+${font DejaVu Sans:size=10:bold}Processes$font$alignr${processes}(total)
+${font DejaVu Sans:size=10:bold}Freedom Idx$font$alignr#
+${texeci 7200 absolutely-proprietary <<< no | grep -Po '(?<=Your Stallman Freedom Index is )\d+\.\d+' || echo 0.00}%
 $color1${cpubar cpu1 20,90}${offset 10}${cpubar cpu2 20,90}#
 $color${goto 17}${voffset 9}CPU 1${alignr 103}${cpu cpu1}%$color
 ${voffset -37}${goto 117}CPU 2${alignr 3}${cpu cpu2}%
@@ -56,7 +57,7 @@ $color1${cpubar cpu7 20,90}${offset 10}${cpubar cpu8 20,90}#
 $color${goto 17}${voffset 9}CPU 7${alignr 103}${cpu cpu7}%$color
 ${voffset -37}${goto 117}CPU 8${alignr 3}${cpu cpu8}%
 ${voffset 10}#
-RAM ${alignr}$mem / $memmax
+${font DejaVu Sans:size=10:bold}RAM$font${alignr}$mem / $memmax
 ${memgraph 40,190 -l}
 $color1${font DejaVu Sans:size=14:bold}Activity $font ${hr 2}$color
 ${voffset 2}#
@@ -72,21 +73,25 @@ ${top_mem name 3}${goto 105}${top_mem cpu 3}${goto 155}${top_mem mem 3}
 ${voffset 2}#
 $color1${font DejaVu Sans:size=14:bold}Filesystem $font ${hr 2}$color
 ${voffset 2}#
-Root: ${alignr}${fs_free /} / ${fs_size /}
+${font DejaVu Sans:size=10:bold}Root$font${alignr}${fs_free /} / ${fs_size /}
 ${fs_bar 4,190 /}
 ${voffset 2}#
 $color1${font DejaVu Sans:size=14:bold}Network $font ${hr 2}$color
 ${voffset 2}#
 ${if_existing /sys/class/net/enp3s0/operstate up}#
-${font SauceCodePro Nerd Font} $font${upspeed enp3s0}${goto 113}${voffset -3}${font SauceCodePro Nerd Font} $font${downspeed enp3s0}
+${font SauceCodePro Nerd Font} $font${upspeed enp3s0}${goto 113}${voffset -3}#
+${font SauceCodePro Nerd Font} $font${downspeed enp3s0}
 ${upspeedgraph enp3s0 20,90 -l}${offset 10}${downspeedgraph enp3s0 20,90 -l}
-${font DejaVu Sans:size=10:bold}Σ$font ${totalup enp3s0} ${goto 113}${font DejaVu Sans:size=10:bold}Σ$font ${totaldown enp3s0}
+${font DejaVu Sans:size=10:bold}Σ$font ${totalup enp3s0} ${goto 113}#
+${font DejaVu Sans:size=10:bold}Σ$font ${totaldown enp3s0}
 ${hr}
 ${font SauceCodePro Nerd Font}${font} ${alignr}${addrs enp3s0}
 ${else}#
-${font SauceCodePro Nerd Font} $font${upspeed wlp5s0}${goto 113}${voffset -3}${font SauceCodePro Nerd Font} $font${downspeed wlp5s0}
+${font SauceCodePro Nerd Font} $font${upspeed wlp5s0}${goto 113}${voffset -3}#
+${font SauceCodePro Nerd Font} $font${downspeed wlp5s0}
 ${upspeedgraph wlp5s0 20,90 -l}${offset 10}${downspeedgraph wlp5s0 20,90 -l}
-${font DejaVu Sans:size=10:bold}Σ$font ${totalup wlp5s0} ${goto 113}${font DejaVu Sans:size=10:bold}Σ$font ${totaldown wlp5s0}
+${font DejaVu Sans:size=10:bold}Σ$font ${totalup wlp5s0} ${goto 113}#
+${font DejaVu Sans:size=10:bold}Σ$font ${totaldown wlp5s0}
 ${hr}
 ${font SauceCodePro Nerd Font}${font} ${alignr}${addrs wlp5s0}
 ${endif}#
