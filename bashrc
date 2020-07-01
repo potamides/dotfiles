@@ -197,6 +197,7 @@ alias htop='htop -t'
 alias serve="python3 -m http.server"
 alias debug="set -o nounset; set -o xtrace"
 alias nodebug="set +o nounset; set +o xtrace"
+alias backup="sudo snap-sync --UUID 940761e2-7d84-4025-8972-89276e53bdc4 --config home --noconfirm"
 
 # fun stuff
 alias starwars='telnet towel.blinkenlights.nl'

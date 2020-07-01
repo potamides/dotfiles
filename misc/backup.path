@@ -1,8 +1,0 @@
-[Unit]
-Description=Detect encrypted storage for snap-sync backups
-
-[Path]
-PathExists=/run/media/amnifilius/940761e2-7d84-4025-8972-89276e53bdc4
-
-[Install]
-WantedBy=multi-user.target
