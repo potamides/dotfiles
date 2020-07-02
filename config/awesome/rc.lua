@@ -523,7 +523,6 @@ modes.launcher = gears.table.join(
       handler = function()
         local host        = os.getenv("MPD_HOST") or "localhost"
         local port        = os.getenv("MPD_PORT") or 6600
-        local stream_port = os.getenv("MPD_STREAM_PORT") or 8000
         local name        = "ncmpcpp"
 
         -- This is unfortunately a bit hacky, but Alacritty doesn't implement the startup notification protocol
@@ -534,18 +533,14 @@ modes.launcher = gears.table.join(
         if ncmpcpp_instance then
           ncmpcpp_instance:jump_to()
         else
-          -- temporal solution, openvpn is probably a better option than ondemand ssh forwarding
-          awful.spawn(terminal .. " --class " .. name .. " -e " .. awful.util.shell .. " -c '" ..
-            string.format("ssh -nTNL %s:%s:%s -L %s:%s:%s NAS & ncmpcpp --host %s --port %s'",
-              port, host, port, stream_port, host, stream_port, host, port))
-          mpd.reconnect()
+          awful.spawn(string.format("%s --class %s -e %s --host %s --port %s", terminal, name, name, host, port))
         end
       end
     },
     {
-      description = "mpd server reconnect",
+      description = "toggle mpd playback",
       pattern = {'N'},
-      handler = function() mpd.reconnect() end
+      handler = function() mpd.toggle() end
     },
     {
       description = "lua execute prompt",

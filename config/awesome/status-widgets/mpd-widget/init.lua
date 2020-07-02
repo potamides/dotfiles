@@ -42,7 +42,15 @@ local function update_stream()
   end
 end
 
-local connection = mpc.new(nil, nil, nil, nil,
+local connection
+local function error_handler()
+  -- Try a reconnect soon-ish
+  gears.timer.start_new(10, function()
+    connection:send("ping")
+  end)
+end
+
+connection = mpc.new(nil, nil, nil, error_handler,
     "status", function(_, result)
         state = result.state
         update_stream()
@@ -52,12 +60,6 @@ local connection = mpc.new(nil, nil, nil, nil,
         artist = result.artist
         update_widget()
     end)
-
-local function reconnect()
-    gears.timer.start_new(10, function()
-        connection:send("ping")
-    end)
-end
 
 mpd_container:buttons(awful.button({ }, 1,
 	function()
@@ -78,5 +80,5 @@ mpd_container:buttons(awful.button({ }, 1,
       beautiful.fg_normal, mpd_widget.text))
   end))
 
-local mpd = {widget = mpd_container, reconnect = reconnect}
+local mpd = {widget = mpd_container, toggle = function() connection:toggle_play() end}
 return mpd

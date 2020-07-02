@@ -1,0 +1,17 @@
+[Unit]
+Description=SSH tunnel to MPD server & music stream
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=10
+RestartForceExitStatus=255
+Environment=MPD_HOST=localhost MPD_PORT=6600 MPD_STREAM_PORT=8000
+ExecStart=ssh -nTN \
+ -o ServerAliveInterval=300 \
+ -o ExitOnForwardFailure=yes \
+ -L ${MPD_HOST}:${MPD_PORT}:localhost:${MPD_PORT} \
+ -L ${MPD_HOST}:${MPD_STREAM_PORT}:localhost:${MPD_STREAM_PORT} NAS
+
+[Install]
+WantedBy=default.target
