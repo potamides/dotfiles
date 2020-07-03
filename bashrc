@@ -8,7 +8,7 @@ if [[ $- != *i* ]]; then
 fi
 
 # if not in vim or ranger show greeter
-if [[ -z $VIMRUNTIME && -z $RANGER_LEVEL &&  $(type -t neofetch) ]]; then
+if [[ -z $VIMRUNTIME && -z $RANGER_LEVEL && $(type -t neofetch) ]]; then
     neofetch
 fi
 
@@ -78,13 +78,13 @@ if [[ -r /usr/share/fzf/key-bindings.bash && \
   source /usr/share/fzf/completion.bash
 
   # Use rg instead of the default find command for listing path candidates.
-  _fzf_compgen_path() {
+  function _fzf_compgen_path() {
     rg --files --hidden --smart-case --glob '!.git/*' --glob \
       '!node_modules/*' 2> /dev/null
   }
 
   # Use rg to generate the list for directory completion
-  _fzf_compgen_dir() {
+  function _fzf_compgen_dir() {
     rg --files --hidden --smart-case --glob '!.git/*'--glob \
       '!node_modules/*' --null 2> /dev/null | xargs -0 dirname | awk '!h[$0]++'
   }
@@ -105,7 +105,7 @@ fi
 # -----------------------------------------------------------------------------
 
 # colored manpages
-man() {
+function man() {
     LESS_TERMCAP_md=$'\e[01;31m' \
     LESS_TERMCAP_me=$'\e[0m' \
     LESS_TERMCAP_se=$'\e[0m' \
@@ -197,7 +197,8 @@ alias htop='htop -t'
 alias serve="python3 -m http.server"
 alias debug="set -o nounset; set -o xtrace"
 alias nodebug="set +o nounset; set +o xtrace"
-alias backup="sudo snap-sync --UUID 940761e2-7d84-4025-8972-89276e53bdc4 --config home --noconfirm"
+alias backup="sudo snap-sync --UUID 940761e2-7d84-4025-8972-89276e53bdc4 \
+  --config home --noconfirm"
 
 # fun stuff
 alias starwars='telnet towel.blinkenlights.nl'

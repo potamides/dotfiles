@@ -7,9 +7,9 @@
 ###############################################################################
 
 user=steam
-block_device=/dev/sda1
 container_name=garbage
 mount_path=/mnt/$container_name
+block_device=$(findfs UUID=d5a47e6b-1dd2-47f2-a224-90472cd0be9e)
 export SUDO_ASKPASS=/usr/lib/git-core/git-gui--askpass
 
 function unlock_device(){
@@ -46,9 +46,9 @@ function is_running(){
 
 function notify_status(){
   if is_running; then
-    message="The garbage container is still running!"
+    local message="The garbage container is still running!"
   else
-    message="The garbage container is offline!"
+    local message="The garbage container is offline!"
   fi
   if [[ -t 1 ]]; then
     echo $message
