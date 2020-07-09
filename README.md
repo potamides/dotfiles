@@ -59,14 +59,9 @@ sure the package is installed (available with pacman).
 greeter (an AUR package exists).
 
 ### Awesome ([config/awesome](config/awesome), [xinitrc](xinitrc), [Xresources](Xresources))
-The awesome configuration uses [gstreamer](https://gstreamer.freedesktop.org/)
-internally (through [lua-lgi](https://github.com/pavouk/lgi/) which already is
-a dependency of awesome) to play remote mpd streams. In order to play the
-stream via PulseAudio, an additional package will probably have to be
-installed. The [ArchWiki page](https://wiki.archlinux.org/index.php/GStreamer)
-provides the necessary information to set everything up. Other integrated
-applications are only used in some keybindings and are thus more or less
-optional or easily replaced. Take a look at calls to
+Awesome uses [mpv](https://mpv.io/) internally to play remote mpd streams.
+Other integrated applications are only used in some keybindings and are thus
+more or less optional or easily replaced. Take a look at calls to
 [awful.spawn](https://awesomewm.org/doc/api/libraries/awful.spawn.html) in the
 [rc.lua](config/awesome/rc.lua) config file, it should be rather obvious. To
 get GTK applications to match the colorscheme as close as possible install
