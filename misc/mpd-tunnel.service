@@ -4,7 +4,7 @@ Description=SSH tunnel to MPD server & music stream
 [Service]
 Type=simple
 Restart=always
-RestartSec=10
+RestartSec=60
 RestartForceExitStatus=255
 Environment=MPD_HOST=localhost MPD_PORT=6600 MPD_STREAM_PORT=8000
 ExecStart=ssh -nTN \
