@@ -777,13 +777,13 @@ end)
 
 -- Update Titlbar Buttons in Wibar on focus / unfocus
 --------------------------------------------------------------------------------
-local timer = gears.timer{timeout = 0.05, callback = function()
+local timer = gears.timer{timeout = 0.05, single_shot = true, callback = function()
   awful.screen.focused().titlebar_buttons.visible = false
 end}
 
 local function buttons_remove(_)
     -- delay hiding of titlebar buttons for smoother transition
-    timer:start()
+    timer:again()
 end
 
 local function buttons_insert(c)

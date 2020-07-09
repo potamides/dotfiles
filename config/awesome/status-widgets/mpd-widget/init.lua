@@ -45,7 +45,7 @@ end
 local connection
 local function error_handler()
   -- Try a reconnect soon-ish
-  gears.timer.start_new(10, function()
+  gears.timer.start_new(60, function()
     connection:send("ping")
   end)
 end

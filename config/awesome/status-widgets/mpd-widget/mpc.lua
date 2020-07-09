@@ -25,7 +25,6 @@ function mpc.new(host, port, password, error_handler, ...)
 		_password = password,
 		_error_handler = error_handler or function() end,
 		_connected = false,
-		_try_reconnect = false,
 		_idle_commands = { ... }
 	}, { __index = mpc })
 	self:_connect()
@@ -35,10 +34,6 @@ end
 function mpc:_error(err)
 	self._connected = false
 	self._error_handler(err)
-	self._try_reconnect = not self._try_reconnect
-	if self._try_reconnect then
-		self:_connect()
-	end
 end
 
 function mpc:_connect()
