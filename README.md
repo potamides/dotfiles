@@ -21,12 +21,15 @@ git clone --recurse-submodules https://github.com/DrCracket/dotfiles
 
 Alternatively it can be installed as a bare git repository, inspired by [this
 Hacker News comment](https://news.ycombinator.com/item?id=11070797). The
-following script places administrative files in `$HOME/.dotfiles` and updates
-configurations in `$HOME` with the content of the repository (**warning:**
-this overwrites existing files).
+following
+[script](https://gist.github.com/potamides/385866f8380ec65f40de734c53147040)
+places administrative files in `$HOME/.dotfiles` and updates configurations in
+`$HOME` with the content of the repository (**warning:** this overwrites
+existing files).
 ```sh
 #!/bin/bash
 
+set -o errexit
 export GIT_WORK_TREE=$HOME
 export GIT_DIR=$GIT_WORK_TREE/.dotfiles
 
