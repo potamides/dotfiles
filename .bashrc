@@ -172,8 +172,8 @@ alias lh='ls --color=auto -vhAl'
 alias diff='diff --color=auto'
 alias grep='grep --color=auto'
 alias ip='ip -color=auto'
-alias info="info --vi-keys -v match-style=underline,bold,nocolor \
-  -v link-style=yellow -v active-link-style=yellow,bold"
+alias info='info --vi-keys -v match-style=underline,bold,nocolor \
+  -v link-style=yellow -v active-link-style=yellow,bold'
 
 # other useful aliases
 alias pac='sudo pacman -S' # install
@@ -194,11 +194,12 @@ alias calc='ipython --profile=calculate'
 alias dus=disk_usage_sorted
 alias spdf=search_pdf
 alias htop='htop -t'
-alias serve="python3 -m http.server"
-alias debug="set -o nounset; set -o xtrace"
-alias nodebug="set +o nounset; set +o xtrace"
-alias backup="sudo snap-sync --UUID 940761e2-7d84-4025-8972-89276e53bdc4 \
-  --config home --noconfirm"
+alias serve='python3 -m http.server'
+alias debug='set -o nounset; set -o xtrace'
+alias nodebug='set +o nounset; set +o xtrace'
+alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias backup='sudo snap-sync --UUID 940761e2-7d84-4025-8972-89276e53bdc4 \
+  --config home --noconfirm'
 
 # fun stuff
 alias starwars='telnet towel.blinkenlights.nl'
@@ -209,5 +210,5 @@ alias weather='curl wttr.in'
 if [[ -r /usr/share/bash-complete-alias/complete_alias ]]; then
   source /usr/share/bash-complete-alias/complete_alias
   complete -F _complete_alias la ll lh pac paca pacu pacau pacr pacs pacas \
-    paci pacl paclo pacro pacc pacli calc
+    paci pacl paclo pacro pacc pacli calc dotfiles
 fi
