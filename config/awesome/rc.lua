@@ -152,7 +152,7 @@ function()
   local color
   local text = modalawesome.active_mode.text
 
-  status_box:set_markup( string.format( "<span color=%q><b>%s</b></span>",
+  status_box:set_markup(string.format("<span color=%q><b>%s</b></span>",
     beautiful.bg_normal, string.upper(text)))
 
   if     text == 'tag'      then color = beautiful.lightaqua
@@ -164,6 +164,7 @@ function()
   mylauncher:set_bg(color)
   beautiful.taglist_bg_focus = color
 
+  -- use of undocumented function :(
   for s in screen do s.mytaglist._do_taglist_update() end
 end
 )
@@ -177,7 +178,18 @@ local month_calendar = awful.widget.calendar_popup.month {
         long_weekdays = true,
         margin = beautiful.gap
     }
-month_calendar:attach(mytextclock)
+
+mytextclock:connect_signal("mouse::enter", function ()
+    month_calendar:call_calendar(0, "tr", awful.screen.focused())
+    month_calendar.visible = true
+end)
+mytextclock:connect_signal("mouse::leave", function ()
+    month_calendar.visible = false
+end)
+mytextclock:buttons(gears.table.join(
+    awful.button({ }, 1, function () month_calendar:call_calendar(-1) end),
+    awful.button({ }, 3, function () month_calendar:call_calendar( 1) end)
+))
 
 -- Wallpaper
 -------------------------------------------------------------------------------
@@ -289,18 +301,6 @@ awful.screen.connect_for_each_screen(function(s)
     align = "center",
     widget = wibox.widget.textbox,
   }
-  local function update_title_text(c)
-    s = awful.screen.focused()
-    if c == client.focus then
-      if c.class then
-        s.mytitle:set_markup("<b>" .. c.class .. "</b>")
-      end
-    end
-  end
-  client.connect_signal("focus", update_title_text)
-  client.connect_signal("property::name", update_title_text)
-  client.connect_signal("unfocus", function () awful.screen.focused().mytitle:set_text("") end)
-  client.connect_signal("property::screen", function () awful.screen.focused().mytitle:set_text("") end)
 
 -- Wibar
 -------------------------------------------------------------------------------
@@ -738,7 +738,7 @@ end)
 -------------------------------------------------------------------------------
 ---- No border for maximized clients or if only one tiled client
 local function border_adjust(c)
-    if c.maximized or (not c.floating and #awful.screen.focused().clients == 1) then
+    if c.maximized or (not c.floating and #c.screen.clients == 1) then
         c.border_width = 0
     else
         c.border_width = beautiful.border_width
@@ -753,6 +753,21 @@ client.connect_signal("unfocus", function(c)
   border_adjust(c)
   c.border_color = beautiful.border_normal
 end)
+
+-- global titlebar
+-------------------------------------------------------------------------------
+local function update_title_text(c)
+  local scr = awful.screen.focused()
+  if c == client.focus then
+    if c.class then
+      scr.mytitle:set_markup("<b>" .. c.class .. "</b>")
+    end
+  end
+end
+client.connect_signal("focus", update_title_text)
+client.connect_signal("property::name", update_title_text)
+client.connect_signal("unfocus", function () awful.screen.focused().mytitle:set_text("") end)
+client.connect_signal("property::screen", function () awful.screen.focused().mytitle:set_text("") end)
 
 -- turn titlebar on when client is floating
 -------------------------------------------------------------------------------

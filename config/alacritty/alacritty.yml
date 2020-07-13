@@ -148,9 +148,9 @@ font:
   # Glyph offset determines the locations of the glyphs within their cells with
   # the default being at the bottom. Increasing `x` moves the glyph to the right,
   # increasing `y` moves the glyph upwards.
-  #glyph_offset:
+  glyph_offset:
   #  x: 0
-  #  y: 0
+    y: -1
 
   # Thin stroke font rendering (macOS only)
   #

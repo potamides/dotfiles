@@ -96,7 +96,7 @@ Plug 'leafgarland/typescript-vim'
 Plug 'honza/vim-snippets'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'hanw/vim-bluespec'
-Plug 'DrCracket/painless-digraph'
+Plug 'potamides/painless-digraph'
 Plug 'kassio/neoterm'
 Plug 'norcalli/nvim-colorizer.lua'
 call plug#end()
