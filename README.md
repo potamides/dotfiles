@@ -25,7 +25,7 @@ following
 [script](https://gist.github.com/potamides/385866f8380ec65f40de734c53147040)
 places administrative files in `$HOME/.dotfiles` and updates configurations in
 `$HOME` with the content of the repository (**warning:** this overwrites
-existing files).
+existing files):
 ```sh
 #!/bin/bash
 
