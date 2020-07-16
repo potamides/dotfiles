@@ -1,5 +1,4 @@
 conky.config = {
-	background = true,
 	use_xft = true,
 	font = 'DejaVu Sans:size=10',
 	update_interval = 3,
