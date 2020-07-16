@@ -31,12 +31,13 @@ secondline='\n\$ '
 # integrate git into prompt with PROMPT_COMMAND
 if [[ -r /usr/share/git/git-prompt.sh ]]; then
   source /usr/share/git/git-prompt.sh
-  export GIT_PS1_SHOWCOLORHINTS=1
-  export PROMPT_COMMAND="__git_ps1 ${firstline@Q} ${secondline@Q};"
+  GIT_PS1_SHOWCOLORHINTS=1
+  PROMPT_COMMAND="__git_ps1 ${firstline@Q} ${secondline@Q};"
 else
   # if the file doesn't exist create prompt directly with PS1
-  export PS1="$firstline$secondline"
+  PS1="$firstline$secondline"
 fi
+
 
 unset boldblue boldred reset returncode user dir firstline secondline
 
@@ -44,7 +45,7 @@ unset boldblue boldred reset returncode user dir firstline secondline
 # -----------------------------------------------------------------------------
 
 # append terminal session command history with every command
-export PROMPT_COMMAND+="history -a;" # history -n;"
+PROMPT_COMMAND+="history -a;" # history -n;"
 
 shopt -s histappend                 # Appends hist on exit
 shopt -s cmdhist                    # Save multi-line hist as one line
@@ -60,6 +61,13 @@ shopt -s globstar                   # pattern ** also searches subdirectories
 # enable vi like keybindings, when not in vim
 if [[ -z $VIMRUNTIME ]]; then
   shopt -so vi
+
+  # reset cursor shape before executing a command
+  if [[ $TERM = linux ]]; then
+    PS0="\e[?8c"
+  else
+    PS0="\e[2 q"
+  fi
 fi
 
 ## Bash-completions
@@ -89,8 +97,8 @@ if [[ -r /usr/share/fzf/key-bindings.bash && \
       '!node_modules/*' --null 2> /dev/null | xargs -0 dirname | awk '!h[$0]++'
   }
 
-  # Use highlight (http://www.andre-simon.de/doku/highlight/en/highlight.html)
-  FZF_COMPLETION_OPTS="--preview '(highlight -O ansi -l {} \
+  # syntax highlight matches and preview directories
+  FZF_COMPLETION_OPTS="--preview '(pygmentize -f terminal {} \
     2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
 
   # To apply the command to CTRL-T as well
@@ -117,14 +125,14 @@ function man() {
 
 # cd to directory and list files
 function cl() {
-    cd "$1" && ls -a
+    cd "$@" && ls -a
 }
 
 # search for patterns with ripgrep and open results in the editor
 function rg_and_open(){
-    FILES=$(rg -l "$@")
-    if [[ ${#FILES} -gt 0 ]]; then
-        echo $FILES | xargs -d "\n" $EDITOR
+    local files=$(rg -l "$@")
+    if [[ ${#files} -gt 0 ]]; then
+        echo $files | xargs -d "\n" $EDITOR
     else
         return 1
     fi
@@ -172,8 +180,8 @@ alias lh='ls --color=auto -vhAl'
 alias diff='diff --color=auto'
 alias grep='grep --color=auto'
 alias ip='ip -color=auto'
-alias info='info --vi-keys -v match-style=underline,bold,nocolor \
-  -v link-style=yellow -v active-link-style=yellow,bold'
+alias info="info --vi-keys -v match-style=underline,bold,nocolor \
+  -v link-style=yellow -v active-link-style=yellow,bold"
 
 # other useful aliases
 alias pac='sudo pacman -S' # install
@@ -194,17 +202,20 @@ alias calc='ipython --profile=calculate'
 alias dus=disk_usage_sorted
 alias spdf=search_pdf
 alias htop='htop -t'
-alias serve='python3 -m http.server'
-alias debug='set -o nounset; set -o xtrace'
-alias nodebug='set +o nounset; set +o xtrace'
+alias serve='python3 -m http.server 9999'
+alias debug='set -o nounset && set -o verbose && set -o xtrace'
+alias nodebug='set +o nounset && set +o verbose && set +o xtrace'
 alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-alias backup='sudo snap-sync --UUID 940761e2-7d84-4025-8972-89276e53bdc4 \
-  --config home --noconfirm'
+alias backup="sudo snap-sync --UUID 940761e2-7d84-4025-8972-89276e53bdc4 \
+  --config home --noconfirm"
 
 # fun stuff
 alias starwars='telnet towel.blinkenlights.nl'
 alias maps='telnet mapscii.me'
 alias weather='curl wttr.in'
+alias incognito='unset HISTFILE'
+alias tmpv="mpv --no-config --really-quiet --vo=tct --keep-open=yes \
+  --profile=sw-fast"
 
 # Enable completions for aliases
 if [[ -r /usr/share/bash-complete-alias/complete_alias ]]; then

@@ -5,13 +5,13 @@
 ## Set Environment Variables
 # -----------------------------------------------------------------------------
 
+export EDITOR=nvim
+
 # bash history stuff
 export HISTSIZE=5000
 export HISTFILESIZE=10000
 export HISTTIMEFORMAT="%d/%m/%y %T"
 export HISTCONTROL=ignoreboth:erasedups
-
-export EDITOR=nvim
 
 # run askpass to enter password when not launched from a terminal
 export SUDO_ASKPASS=/usr/lib/git-core/git-gui--askpass
@@ -19,27 +19,25 @@ export SSH_ASKPASS=$SUDO_ASKPASS
 
 # local virtualenv with pipenv
 export PIPENV_VENV_IN_PROJECT=1
-
 # disable automated lockfile generation / update
 export PIPENV_SKIP_LOCK=1
 
 # to execute local executables
 export PATH="${PATH}:${HOME}/.local/bin"
-
 # find local executables installed by luarocks
 export PATH="${PATH}:${HOME}/.luarocks/bin"
 
-# get qt5 apps to use native gtk style (through qt5ct & qt5-styleplugins)
-export QT_QPA_PLATFORMTHEME=qt5ct
+# get qt5 apps to use native gtk style (through qt5-styleplugins)
+export QT_QPA_PLATFORMTHEME=gtk2
+export DESKTOP_SESSION=gnome
 
 # always use ripgrep with fzf
 export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case \
   --glob '!.git/*' --glob '!node_modules/*' 2> /dev/null"
-# also use gruvbox colors
-export FZF_DEFAULT_OPTS='
-  --color fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
-  --color info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54
-'
+# also use custom color configuration
+export FZF_DEFAULT_OPTS="--color 16,fg:15,bg:0,hl:11,fg+:15,bg+:237,hl+:11 \
+  --color info:12,prompt:248,spinner:11,pointer:12,marker:208,header:241 \
+  --color border:7"
 
 ## Start session
 # -----------------------------------------------------------------------------
