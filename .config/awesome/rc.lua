@@ -291,26 +291,16 @@ awful.screen.connect_for_each_screen(function(s)
     buttons = taglist_buttons
   }
 
--- Systray
--------------------------------------------------------------------------------
-  --local systray = wibox.widget.systray()
-
--- global title bar
--------------------------------------------------------------------------------
-  s.mytitle = wibox.widget {
-    align = "center",
-    widget = wibox.widget.textbox,
-  }
-
 -- Wibar
 -------------------------------------------------------------------------------
     -- Create the wibar
     s.mywibox = awful.wibar({position = "top", screen = s, height = beautiful.wibar_height})
-
-    s.titlebar_buttons = wibox.widget {
-        homogeneous = false,
-        layout = wibox.layout.grid.horizontal
-    }
+    --global titlebar title container
+    s.title_container = wibox.container.margin()
+    -- global titlebar buttons contianer
+    s.buttonsbox_container = wibox.container.margin()
+    -- systray
+    --local systray = wibox.widget.systray()
 
     -- add widgets to the wibar
     s.mywibox:setup {
@@ -324,7 +314,7 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
         },
         { -- Middle widgets
-            s.mytitle,
+            s.title_container,
             layout = wibox.layout.align.horizontal,
         },
         { -- Right widgets
@@ -357,7 +347,7 @@ awful.screen.connect_for_each_screen(function(s)
                 mytextclock,
                 {
                     s.mylayoutbox,
-                    s.titlebar_buttons,
+                    s.buttonsbox_container,
                     spacing = beautiful.small_gap,
                     layout = wibox.layout.fixed.horizontal
                 },
@@ -668,6 +658,11 @@ awful.rules.rules = {
     { rule = { instance = "ncmpcpp"},
       properties = { tag = tags[#tags]}},
 
+    -- display keyboard (and mouse) status nicely
+    { rule = { class = "Key-mon" },
+      properties = {placement = awful.placement.bottom, sticky = true, floating = true, focusable = false},
+      callback = function(c) c.border_width = 0 end},
+
 }
 -- }}}
 
@@ -721,7 +716,7 @@ client.connect_signal("request::titlebars", function(c)
             wibox.container.margin(
               awful.titlebar.widget.floatingbutton(c),
               beautiful.gap, beautiful.gap + beautiful.small_gap, beautiful.gap, beautiful.gap),
-            layout = wibox.layout.fixed.horizontal()
+            layout = wibox.layout.fixed.horizontal
             },
 
         layout = wibox.layout.align.horizontal
@@ -736,13 +731,24 @@ end)
 
 -- smart border
 -------------------------------------------------------------------------------
----- No border for maximized clients or if only one tiled client
-local function border_adjust(c)
-    if c.maximized or (not c.floating and #c.screen.clients == 1) then
-        c.border_width = 0
-    else
-        c.border_width = beautiful.border_width
+local function num_candidates(clients)
+  local count = 0
+  for _, c in pairs(clients) do
+    if c.focusable and not c.maximized then
+      count = count + 1
     end
+  end
+  return count
+end
+
+-- No border for maximized clients or if only one tiled client (excluding
+-- maximized clients and clients that can't be focused
+local function border_adjust(c)
+  if c.maximized or (not c.floating and num_candidates(c.screen.clients) <= 1) then
+    c.border_width = 0
+  else
+    c.border_width = beautiful.border_width
+  end
 end
 
 client.connect_signal("focus", function(c)
@@ -756,25 +762,47 @@ end)
 
 -- global titlebar
 -------------------------------------------------------------------------------
-local function update_title_text(c)
-  local scr = awful.screen.focused()
-  if c == client.focus then
-    if c.class then
-      scr.mytitle:set_markup("<b>" .. c.class .. "</b>")
-    end
+local function title_create(c)
+  return wibox.widget {
+    markup = "<b>" .. (c.class or "") .. "</b>",
+    align = "center",
+    widget = wibox.widget.textbox,
+  }
+end
+
+local function title_insert(c)
+  if not c.title then
+    c.title = title_create(c)
+  end
+  c.screen.title_container.widget = c.title
+  c.title_container = c.screen.title_container
+end
+
+local function title_update(c)
+  if c.title then
+    c.title:set_markup("<b>" .. (c.class or "") .. "</b>")
   end
 end
-client.connect_signal("focus", update_title_text)
-client.connect_signal("property::name", update_title_text)
-client.connect_signal("unfocus", function () awful.screen.focused().mytitle:set_text("") end)
-client.connect_signal("property::screen", function () awful.screen.focused().mytitle:set_text("") end)
+
+local function title_remove(c)
+  -- delay unsetting of titlebar text to remove flickering on change
+  gears.timer.delayed_call(function(title, container)
+    if title and container and container.widget == title then
+      container.widget = nil
+    end
+  end, c.title, c.title_container)
+end
+
+client.connect_signal("property::name", title_update)
+client.connect_signal("focus", title_insert)
+client.connect_signal("unfocus", title_remove)
 
 -- turn titlebar on when client is floating
 -------------------------------------------------------------------------------
-client.connect_signal("property::floating", function (c)
-  if c.floating and not c.maximized then
+client.connect_signal("property::floating", function(c)
+  if c.floating and not c.maximized and not c.requests_no_titlebar then
     awful.titlebar.show(c, "bottom")
-    c.height = math.min(c.height, awful.screen.focused().geometry.height - c.y)
+    c.height = math.min(c.height, c.screen.geometry.height - c.y)
   else
     awful.titlebar.hide(c, "bottom")
   end
@@ -784,53 +812,38 @@ end)
 -- turn tilebars on when layout is floating
 -------------------------------------------------------------------------------
 awful.tag.attached_connect_signal(awful.screen.focused(), "property::layout", function (t)
-    local float = t.layout.name == "floating"
-    for _,c in pairs(t:clients()) do
-        c.floating = float
-    end
+  local float = t.layout.name == "floating"
+  for _,c in pairs(t:clients()) do
+    c.floating = float
+  end
 end)
 
 -- Update Titlbar Buttons in Wibar on focus / unfocus
 --------------------------------------------------------------------------------
-local timer = gears.timer{timeout = 0.05, single_shot = true, callback = function()
-  awful.screen.focused().titlebar_buttons.visible = false
-end}
-
-local function buttons_remove(_)
-    -- delay hiding of titlebar buttons for smoother transition
-    timer:again()
+local function buttons_create(c)
+  return wibox.widget {
+    wibox.container.margin(awful.titlebar.widget.maximizedbutton(c), beautiful.small_gap, beautiful.small_gap),
+    wibox.container.margin(awful.titlebar.widget.ontopbutton(c), beautiful.small_gap, beautiful.small_gap),
+    wibox.container.margin(awful.titlebar.widget.stickybutton(c), beautiful.small_gap, beautiful.small_gap),
+    layout = wibox.layout.fixed.horizontal
+  }
 end
 
 local function buttons_insert(c)
-    local s       = awful.screen.focused()
-    local buttons = s.titlebar_buttons:get_widgets_at(1, 1, 1, 3)
+  if not c.buttonsbox then
+    c.buttonsbox = buttons_create(c)
+  end
+  c.screen.buttonsbox_container.widget = c.buttonsbox
+  c.container = c.screen.buttonsbox_container
+end
 
-    timer:stop()
-
-    if not c.maximizedbutton then
-      c.maximizedbutton =
-        wibox.container.margin(awful.titlebar.widget.maximizedbutton(c), beautiful.small_gap, beautiful.small_gap)
+local function buttons_remove(c)
+  -- delay removal for smoother transitions
+  gears.timer.delayed_call(function(buttonsbox, container)
+    if buttonsbox and container and container.widget == buttonsbox then
+      container.widget = nil
     end
-    if not c.ontopbutton then
-      c.ontopbutton =
-        wibox.container.margin(awful.titlebar.widget.ontopbutton(c), beautiful.small_gap, beautiful.small_gap)
-    end
-    if not c.stickybutton then
-      c.stickybutton =
-        wibox.container.margin(awful.titlebar.widget.stickybutton(c), beautiful.small_gap, beautiful.small_gap)
-    end
-
-    if buttons then
-        s.titlebar_buttons:replace_widget(buttons[3], c.maximizedbutton)
-        s.titlebar_buttons:replace_widget(buttons[2], c.ontopbutton)
-        s.titlebar_buttons:replace_widget(buttons[1], c.stickybutton)
-    else
-        s.titlebar_buttons:add_widget_at(c.maximizedbutton, 1, 1)
-        s.titlebar_buttons:add_widget_at(c.ontopbutton, 1, 2)
-        s.titlebar_buttons:add_widget_at(c.stickybutton, 1, 3)
-    end
-
-    s.titlebar_buttons.visible = true
+  end, c.buttonsbox, c.container)
 end
 
 client.connect_signal("focus", buttons_insert)
