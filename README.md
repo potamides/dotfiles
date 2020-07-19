@@ -1,7 +1,7 @@
 # Dotfiles
 
 > Ohne Fleiß kein Rice.
-> - DrCracket
+> - potamides
 
 A repository for more sophisticated configurations of applications I use on a
 daily basis. My philosophy is to find a good balance between functionality and
