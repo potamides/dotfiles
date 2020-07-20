@@ -763,7 +763,7 @@ end)
 
 tag.connect_signal("property::selected", update_borders_by_tag)
 tag.connect_signal("property::activated", update_borders_by_tag)
-tag.connect_signal("property::tagged", update_borders_by_tag)
+tag.connect_signal("tagged", update_borders_by_tag)
 
 client.connect_signal("focus", function(c)
   c.border_color = beautiful.border_focus
