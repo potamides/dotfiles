@@ -11,7 +11,7 @@ local mpd_container = wibarutil.create_parallelogram({
     mpd_widget,
     max_size = 200,
     speed = 70,
-    step_function = wibox.container.scroll.step_functions .waiting_nonlinear_back_and_forth,
+    step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
     layout = wibox.container.scroll.horizontal,
   },
   wibarutil.left_parallelogram, beautiful.bg_normal)
@@ -50,16 +50,25 @@ local function error_handler()
   end)
 end
 
+local should_update = true
 connection = mpc.new(nil, nil, nil, error_handler,
-    "status", function(_, result)
-        state = result.state
-        update_stream()
-    end,
-    "currentsong", function(_, result)
-        title = result.title
-        artist = result.artist
-        update_widget()
-    end)
+  "status", function(_, result)
+    state = result.state
+    -- duration is nil on live streams. Since many live streams are continuous,
+    -- don't hit play again when a song changes to avoid interruptions
+    if result.duration or should_update then
+      update_stream()
+      should_update = result.duration ~= nil
+    elseif state ~= "play" then
+      update_stream()
+      should_update = true
+    end
+  end,
+  "currentsong", function(_, result)
+    title = result.title
+    artist = result.artist
+    update_widget()
+  end)
 
 mpd_container:buttons(awful.button({ }, 1,
 	function()
