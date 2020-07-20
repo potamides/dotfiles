@@ -65,9 +65,9 @@ theme.fg_focus   = theme.fg1
 theme.fg_urgent  = theme.lightorange
 
 --  Borders
-theme.useless_gap       = dpi(0)
+theme.useless_gap       = 0
 theme.gap_single_client = false
-theme.border_width      = dpi(2)
+theme.border_width      = dpi(3)
 theme.border_normal     = theme.bg0_h
 theme.border_focus      = theme.bg4
 theme.border_marked     = theme.lightpurple

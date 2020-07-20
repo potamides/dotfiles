@@ -78,21 +78,11 @@ local modkey = "Mod4"
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
   awful.layout.suit.tile,
-  awful.layout.suit.fair,
-  -- awful.layout.suit.tile.left,
   awful.layout.suit.tile.bottom,
-  -- awful.layout.suit.tile.top,
-  -- awful.layout.suit.fair.horizontal,
+  awful.layout.suit.fair,
   awful.layout.suit.spiral,
-  -- awful.layout.suit.spiral.dwindle,
-  -- awful.layout.suit.max,
-  awful.layout.suit.max.fullscreen,
-  awful.layout.suit.floating,
-  -- awful.layout.suit.magnifier,
   awful.layout.suit.corner.nw,
-  -- awful.layout.suit.corner.ne,
-  -- awful.layout.suit.corner.sw,
-  -- awful.layout.suit.corner.se,
+  awful.layout.suit.max.fullscreen,
 }
 -- }}}
 
@@ -243,7 +233,7 @@ local widget_template = {
   },
   id     = 'background_role',
   widget = wibox.container.background,
-  -- Add support for hover colors and an index label
+  -- Add support for hover colors
   create_callback = function(self, c3, index, objects) --luacheck: no unused args
     self:connect_signal('mouse::enter', function()
       if not c3.selected then
@@ -662,7 +652,6 @@ awful.rules.rules = {
     { rule = { class = "Key-mon" },
       properties = {placement = awful.placement.bottom, sticky = true, floating = true, focusable = false},
       callback = function(c) c.border_width = 0 end},
-
 }
 -- }}}
 
@@ -731,32 +720,55 @@ end)
 
 -- smart border
 -------------------------------------------------------------------------------
-local function num_candidates(clients)
-  local count = 0
-  for _, c in pairs(clients) do
-    if c.focusable and not c.maximized then
-      count = count + 1
+local function update_borders(s, layout_name)
+  local max = layout_name == "max"
+  local only_one = #s.tiled_clients == 1 -- use tiled_clients so that other floating windows don't affect the count
+  -- but iterate over clients instead of tiled_clients as tiled_clients doesn't include maximized windows
+  for _, c in pairs(s.clients) do
+    if (max or only_one) and not c.floating or c.maximized then
+      c.border_width = 0
+    else
+      c.border_width = beautiful.border_width
     end
   end
-  return count
 end
 
--- No border for maximized clients or if only one tiled client (excluding
--- maximized clients and clients that can't be focused
-local function border_adjust(c)
-  if c.maximized or (not c.floating and num_candidates(c.screen.clients) <= 1) then
-    c.border_width = 0
-  else
-    c.border_width = beautiful.border_width
+local function update_borders_by_client(c)
+  if c.screen then
+    update_borders(c.screen, c.screen.selected_tag.layout.name)
   end
 end
 
+local function update_borders_by_tag(t)
+  if t.screen then
+    update_borders(t.screen, t.layout.name)
+  end
+end
+
+-- this is definitely not optimal, but as good as it gets https://github.com/awesomeWM/awesome/issues/2518
+client.connect_signal("property::floating", update_borders_by_client)
+client.connect_signal("property::fullscreen", update_borders_by_client)
+client.connect_signal("property::maximized_vertical", update_borders_by_client)
+client.connect_signal("property::maximized_horizontal", update_borders_by_client)
+client.connect_signal("property::minimized", update_borders_by_client)
+client.connect_signal("property::hidden", update_borders_by_client)
+client.connect_signal("manage", update_borders_by_client)
+client.connect_signal("unmanage", update_borders_by_client)
+client.connect_signal("property::screen", function(c, old_screen)
+  update_borders_by_client(c)
+  if old_screen and old_screen.selected_tag then
+    update_borders(old_screen, old_screen.selected_tag.layout.name)
+  end
+end)
+
+tag.connect_signal("property::selected", update_borders_by_tag)
+tag.connect_signal("property::activated", update_borders_by_tag)
+tag.connect_signal("property::tagged", update_borders_by_tag)
+
 client.connect_signal("focus", function(c)
-  border_adjust(c)
   c.border_color = beautiful.border_focus
 end)
 client.connect_signal("unfocus", function(c)
-  border_adjust(c)
   c.border_color = beautiful.border_normal
 end)
 
@@ -800,13 +812,13 @@ client.connect_signal("unfocus", title_remove)
 -- turn titlebar on when client is floating
 -------------------------------------------------------------------------------
 client.connect_signal("property::floating", function(c)
-  if c.floating and not c.maximized and not c.requests_no_titlebar then
+  if c.floating and not c.requests_no_titlebar then
     awful.titlebar.show(c, "bottom")
-    c.height = math.min(c.height, c.screen.geometry.height - c.y)
+    -- ensure that the titlebar is inside the screen
+    c.height = math.min(c.height, c.screen.geometry.height - c.y % c.screen.geometry.height)
   else
     awful.titlebar.hide(c, "bottom")
   end
-  border_adjust(c)
 end)
 
 -- turn tilebars on when layout is floating
