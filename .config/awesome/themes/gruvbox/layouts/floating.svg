@@ -7,12 +7,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   height="48"
-   width="48"
-   version="1.1"
-   id="svg4"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
    sodipodi:docname="floating.svg"
-   inkscape:version="0.92.2 2405546, 2018-03-11">
+   id="svg4"
+   version="1.1"
+   width="48"
+   height="48">
   <metadata
      id="metadata10">
     <rdf:RDF>
@@ -27,29 +27,37 @@
   <defs
      id="defs8" />
   <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1053"
-     id="namedview6"
-     showgrid="false"
-     inkscape:zoom="4.9166667"
-     inkscape:cx="-10.983051"
-     inkscape:cy="24"
-     inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="svg4"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg4" />
-  <path
-     d="m50.709 94.781l.979-1.957-18.588-18.587c0 0 0-8.346 0-11.25 0-2.904-3.424-5.87-3.424-5.87 0 0-3.424 2.965-3.424 5.87 0 2.905 0 11.25 0 11.25l-18.586 18.587.979 1.957 17.607-8.315v9.783l-5.869 5.87h9.293 9.293l-5.869-5.87v-9.783z"
-     fill="#a0a0a0"
-     transform="matrix(1.0666193 0 0 1.0666193 -7.654061 -60.922095)"
-     id="path2"
-     style="fill:#a89984;fill-opacity:1" />
+     inkscape:window-y="21"
+     inkscape:window-x="0"
+     inkscape:cy="71.424707"
+     inkscape:cx="36"
+     inkscape:zoom="4.9166667"
+     showgrid="false"
+     id="namedview6"
+     inkscape:window-height="1039"
+     inkscape:window-width="1920"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <g
+     transform="rotate(180,24,24)"
+     id="g914">
+    <path
+       id="path6"
+       style="fill:#a89984;fill-opacity:1;stroke-width:1.99999"
+       d="M 0,0 V 40 H 8 V 8 H 40 V 0 Z" />
+    <path
+       d="M 16,48 H 48 V 16 H 16 Z"
+       fill="#a0a0a0"
+       id="path4-6"
+       style="fill:#a89984;fill-opacity:1;stroke-width:1.6" />
+  </g>
 </svg>
