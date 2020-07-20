@@ -20,15 +20,44 @@ set hidden
 " make 'J' and 'gq' commands use one space after a period
 set nojoinspaces
 
+" Enable folding
+set foldmethod=syntax
+set foldlevel=99
+
+" Tab (\t) stuff
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+set autoindent
+set expandtab
+set smarttab
+
+" Highlight 80th and 120th column
+set colorcolumn=80,120
+
 " turn off automatic line wrapping
 "set nowrap
+
+" highlight current line
+" set cursorline 
+
+" minimum of 5 lines between cursor and screen end
+" set so=5
 
 " use system python 3 for virtualenvs
 let g:python3_host_prog = '/usr/bin/python3'
 
-" Uncomment the following to have Vim jump to the last position when
-" reopening a file
-au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+" jump to the last position when reopening a file
+autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+" Insert line break at column 80 and set spelllang in certain files
+autocmd BufReadPost,BufNewFile *.md,*.txt,*.tex setlocal textwidth=79 | setlocal spell spelllang=en_us,de_de,cjk
+
+" Open new terminals directly in insert mode
+autocmd TermOpen term://* startinsert
+
+" Open init.vim command
+command! VimConfig :e $MYVIMRC
 
 " To use Control+{h,j,k,l}` to navigate windows:
 tnoremap <silent> <C-h> <C-\><C-N><C-w>h
@@ -40,47 +69,11 @@ noremap <silent> <C-j> <C-w>j
 noremap <silent> <C-k> <C-w>k
 noremap <silent> <C-l> <C-w>l
 
-" Quickfix cycling
-command! Cnext try | cnext | catch | cfirst | catch | endtry
-command! Cprev try | cprev | catch | clast | catch | endtry
-noremap <silent> <A-n> :Cnext<CR>
-noremap <silent> <A-m> :Cprev<CR>
-
-" j and k shall navigate displayed lines, useful when wrapping is enabled.
-"noremap <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
-"noremap <expr> k v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
-"noremap <expr> <Down> v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
-"noremap <expr> <Up> v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
-
-" Enable folding
-set foldmethod=syntax
-set foldlevel=99
+" To map <silent> <Esc> to exit terminal-mode:
+tnoremap <silent> <Esc> <C-\><C-n>
 
 " Toggle folding with the spacebar
 noremap <silent> <space> za
-
-" Tab (\t) stuff
-set tabstop=2
-set softtabstop=2
-set shiftwidth=2
-set autoindent
-set expandtab
-set smarttab
-
-" Highlight 80th line
-set colorcolumn=80,120
-
-" Insert line break at column 80 and set spelllang in certain files
-au BufReadPost,BufNewFile *.md,*.txt,*.tex setlocal textwidth=79 | setlocal spell spelllang=en_us,de_de,cjk
-
-" highlight current line
-" set cursorline 
-
-" minimum of 5 lines between cursor and screen end
-" set so=5
-
-" Open init.vim command
-command! VimConfig :e $MYVIMRC
 
 " Run the current line as if it were a command
 nnoremap <leader>e :exe getline(line('.'))<cr>
@@ -92,12 +85,10 @@ Plug 'itchyny/lightline.vim'
 Plug 'mgee/lightline-bufferline'
 Plug 'ryanoasis/vim-devicons'
 Plug 'unblevable/quick-scope'
-Plug 'leafgarland/typescript-vim'
 Plug 'honza/vim-snippets'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'hanw/vim-bluespec'
 Plug 'potamides/painless-digraph'
-Plug 'kassio/neoterm'
 Plug 'norcalli/nvim-colorizer.lua'
 call plug#end()
 
@@ -109,9 +100,11 @@ set number relativenumber
 
 augroup numbertoggle
     autocmd!
+
     " Display absolute numbers when we lose focus
     " Display absolute numbers in insert mode
     autocmd FocusLost,WinLeave,InsertEnter * setlocal norelativenumber
+
     "Display relative numbers when we gain focus
     " Display relative numbers when we leave insert mode
     autocmd FocusGained,WinEnter,InsertLeave * if &number==1 | setlocal relativenumber | endif
@@ -171,8 +164,8 @@ function! DevFiletype()
   return winwidth(0) > 70 ? WebDevIconsGetFileTypeSymbol() . ' ' . (strlen(&filetype) ? &filetype : 'no ft') : ''
 endfunction
 
-function! DevFileencoding()
-  return winwidth(0) > 70 ? (' ' . (strlen(&fileencoding) ? &fileencoding : 'utf-8')) : ''
+function! Fileencoding()
+  return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
 endfunction
 
 function! DevFileformat()
@@ -185,9 +178,9 @@ let g:lightline = {
 	\   'lineinfo': ' %3l:%-2v',
 	\ },
 	\ 'component_function': {
-	\   'readonly': 'LightlineReadonly',
+    \   'readonly': 'LightlineReadonly',
     \   'filetype': 'DevFiletype',
-    \   'fileencoding': 'DevFileencoding',
+    \   'fileencoding': 'Fileencoding',
     \   'fileformat': 'DevFileformat',
 	\ },
     \ 'active': {
@@ -234,43 +227,6 @@ tnoremap <silent> <C-q> <C-\><C-N>:bp\|bd #<CR>
 inoremap <silent> <C-q> <C-\><C-N>:bp\|bd #<CR>
 nnoremap <silent> <C-q> :bp\|bd #<CR>
 
-" navigate tabs
-noremap <silent> tk :tabnext<CR>  
-noremap <silent> tj :tabprev<CR>
-
-" ------------------------------------------------
-"               NEOTERM
-" ------------------------------------------------
-
-let g:neoterm_default_mod = 'botright'
-let g:neoterm_fixedsize = 1
-let g:neoterm_size = 10
-let g:neoterm_repl_python = ['source .venv/bin/activate &> /dev/null', 'clear', 'ipython']
-
-" Automatically insert Terminal window when entered
-let g:neoterm_autoinsert = 1
-autocmd BufEnter,BufWinEnter term://* startinsert
-
-" don't show terminals in the bufferlist
-autocmd TermOpen term://* setlocal nobuflisted
-
-" To map <silent> <Esc> to exit terminal-mode:
-tnoremap <silent> <Esc> <C-\><C-n>
-
-" Use gx{text-object} in normal mode
-nmap gx <Plug>(neoterm-repl-send)
-
-" Send selected contents in visual mode.
-xmap gx <Plug>(neoterm-repl-send)
-
-" Like <Plug>(neoterm-repl-send), but for lines.
-nmap gxx <Plug>(neoterm-repl-send-line)
-
-" Toggle Terminal with F2
-noremap <silent> <F2> :1Ttoggle<cr>
-inoremap <silent> <F2> <C-\><C-N>:1Ttoggle<cr>
-tnoremap <silent> <F2> <C-\><C-N>:1Ttoggle<cr>
-
 " ------------------------------------------------
 "               COC
 " ------------------------------------------------
@@ -305,7 +261,7 @@ let g:lightline.active.left = [ [ 'mode', 'paste' ], [ 'cocstatus', 'readonly', 
 let g:lightline.component_function = {'cocstatus': 'coc#status',
                                   \   'readonly': 'LightlineReadonly',
                                   \   'filetype': 'DevFiletype',
-                                  \   'fileencoding': 'DevFileencoding',
+                                  \   'fileencoding': 'Fileencoding',
                                   \   'fileformat': 'DevFileformat',
 	                              \ }
 
@@ -404,32 +360,3 @@ au BufReadPost,BufNewFile *.scala,*.sbt nnoremap <silent> <leader>bc
 " watch the build import progress.
 au BufReadPost,BufNewFile *.scala,*.sbt nnoremap <silent> <leader>bw
             \ :<C-u>execute "!tail -f " . g:WorkspaceFolders[0] . "/.metals/metals.log"<cr>
-
-" ------------------------------------------------
-"               MISC
-" ------------------------------------------------
-
-" Close vim automatically if the remaining buffers belong to that stuff
-function! CheckLeftBuffers()
-  if tabpagenr('$') == 1
-    let i = 1
-    while i <= winnr('$')
-      if getbufvar(winbufnr(i), '&buftype') == 'help' ||
-          \ getbufvar(winbufnr(i), "&filetype")=="netrw" ||
-          \ getbufvar(winbufnr(i), "&filetype")=="tagbar" ||
-          \ getbufvar(winbufnr(i), "&buftype")=="terminal" ||
-          \ getbufvar(winbufnr(i), '&buftype') == 'quickfix' ||
-          \ getbufvar(winbufnr(i), "&filetype")=="defx"
-        let i += 1
-      else
-        break
-      endif
-    endwhile
-    if i == winnr('$') + 1
-      qall
-    endif
-    unlet i
-  endif
-endfunction
-
-autocmd BufEnter * call CheckLeftBuffers()
