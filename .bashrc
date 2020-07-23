@@ -136,7 +136,7 @@ function cl() {
 
 #Searching file contents with fzf and ripgrep
 fif() {
-  if [ ! "$#" -gt 0 ]; then
+  if [[ "$#" -eq 0 ]]; then
     echo "Need a string to search for!"
     return 1
   fi
@@ -156,11 +156,14 @@ function dus(){
   fi
 }
 
-# search for keyword in pdf's in directory
+# search for keyword in pdf's in current directory
 function spdf(){
-  local file dir="${2-.}/"
-  for file in "$dir"*.pdf; do
-    pdftotext "$file" - | grep "$1" --quiet && echo "$file"
+  if [[ "$#" -eq 0 ]]; then
+    echo "Need a string to search for!"
+    return 1
+  fi
+  for file in *.pdf; do
+    pdftotext "$file" - | grep "$@" --quiet && echo "$file"
   done
 }
 
