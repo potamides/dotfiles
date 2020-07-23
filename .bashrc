@@ -88,13 +88,14 @@ if [[ -r /usr/share/fzf/key-bindings.bash && \
   # Use rg instead of the default find command for listing path candidates.
   function _fzf_compgen_path() {
     rg --files --hidden --smart-case --glob '!.git/*' --glob \
-      '!node_modules/*' 2> /dev/null
+      '!node_modules/*' 2> /dev/null "${1-.}"
   }
 
   # Use rg to generate the list for directory completion
   function _fzf_compgen_dir() {
-    rg --files --hidden --smart-case --glob '!.git/*'--glob \
-      '!node_modules/*' --null 2> /dev/null | xargs -0 dirname | awk '!h[$0]++'
+    rg --files --hidden --smart-case --null --glob '!.git/*' --glob \
+      '!node_modules/*' "${1-.}" 2> /dev/null \
+      | xargs -0 dirname | awk '!h[$0]++'
   }
 
   # syntax highlight matches and preview directories
@@ -103,10 +104,15 @@ if [[ -r /usr/share/fzf/key-bindings.bash && \
 
   # To apply the command to CTRL-T as well
   FZF_CTRL_T_OPTS="$FZF_COMPLETION_OPTS"
-  FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  FZF_CTRL_T_COMMAND=_fzf_compgen_path
 
   # Preview directories with tree
   FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
+  FZF_ALT_C_COMMAND=_fzf_compgen_dir
+
+  # preview long commands with "?"
+  FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap \
+    --bind '?:toggle-preview'"
 fi
 
 ## Functions
@@ -114,54 +120,54 @@ fi
 
 # colored manpages
 function man() {
-    LESS_TERMCAP_md=$'\e[01;31m' \
-    LESS_TERMCAP_me=$'\e[0m' \
-    LESS_TERMCAP_se=$'\e[0m' \
-    LESS_TERMCAP_so=$'\e[01;44;33m' \
-    LESS_TERMCAP_ue=$'\e[0m' \
-    LESS_TERMCAP_us=$'\e[01;32m' \
-    command man "$@"
+  LESS_TERMCAP_md=$'\e[01;31m' \
+  LESS_TERMCAP_me=$'\e[0m' \
+  LESS_TERMCAP_se=$'\e[0m' \
+  LESS_TERMCAP_so=$'\e[01;44;33m' \
+  LESS_TERMCAP_ue=$'\e[0m' \
+  LESS_TERMCAP_us=$'\e[01;32m' \
+  command man "$@"
 }
 
 # cd to directory and list files
 function cl() {
-    cd "$@" && ls -a
+  cd "$@" && ls -a
 }
 
-# search for patterns with ripgrep and open results in the editor
-function rg_and_open(){
-    local files=$(rg -l "$@")
-    if [[ ${#files} -gt 0 ]]; then
-        echo $files | xargs -d "\n" $EDITOR
-    else
-        return 1
-    fi
+#Searching file contents with fzf and ripgrep
+fif() {
+  if [ ! "$#" -gt 0 ]; then
+    echo "Need a string to search for!"
+    return 1
+  fi
+  rg --files-with-matches --no-messages "$@" \
+    | fzf --multi --preview "highlight -O \ansi -l {} 2> /dev/null \
+    | rg --colors match:bg:yellow --ignore-case --pretty --context 10 '${!#}' \
+    || rg --ignore-case --pretty --context 10 '${!#}' {}"
 }
 
-# report disk  usage, if file is a folder, sort files by size
-function disk_usage_sorted(){
-    local path
-    if [[ -n $1 ]]; then
-      path=$1/
-    fi
-    du -shc "$path".[^.]* "$path"* | sort -h
+# report disk usage of directory and sort files by size
+function dus(){
+  local dir="${1-.}/"
+  if [[ -d $dir ]]; then
+    du -shc "$dir".[^.]* "$dir"* | sort -h
+  else
+    return 1
+  fi
 }
 
 # search for keyword in pdf's in directory
-function search_pdf(){
-    local dir file
-    if [[ -n $2 ]]; then
-      dir=$2/
-    fi
-    for file in "$dir"*.pdf; do
-      pdftotext "$file" - | grep "$1" >> /dev/null && echo "$file"
-    done
+function spdf(){
+  local file dir="${2-.}/"
+  for file in "$dir"*.pdf; do
+    pdftotext "$file" - | grep "$1" --quiet && echo "$file"
+  done
 }
 
 # tldr version of man pages
 function tldr(){
-    local IFS=-
-    curl cheat.sh/"$*"
+  local IFS=-
+  curl cheat.sh/"$*"
 }
 
 # list package which owns command
@@ -199,8 +205,6 @@ alias pacc='sudo pacman -Scc' # clean cache
 alias pacli='pacman -Q | wc -l' # list user installed packages
 alias rgo=rg_and_open
 alias calc='ipython --profile=calculate'
-alias dus=disk_usage_sorted
-alias spdf=search_pdf
 alias htop='htop -t'
 alias serve='python3 -m http.server 9999'
 alias debug='set -o nounset && set -o verbose && set -o xtrace'
