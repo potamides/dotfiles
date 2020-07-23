@@ -41,10 +41,7 @@ FILE_EXTENSION_LOWER="$(printf "%s" "${FILE_EXTENSION}" | tr '[:upper:]' '[:lowe
 ## Settings
 HIGHLIGHT_SIZE_MAX=262143  # 256KiB
 ARCHIVE_SIZE_MAX=10485760 # 10MiB
-HIGHLIGHT_TABWIDTH=${HIGHLIGHT_TABWIDTH:-8}
-HIGHLIGHT_STYLE=${HIGHLIGHT_STYLE:-pablo}
-HIGHLIGHT_OPTIONS="--replace-tabs=${HIGHLIGHT_TABWIDTH} --style=${HIGHLIGHT_STYLE} ${HIGHLIGHT_OPTIONS:-}"
-PYGMENTIZE_STYLE=${PYGMENTIZE_STYLE:-autumn}
+HIGHLIGHT_TABWIDTH=${HIGHLIGHT_TABWIDTH:-2}
 OPENSCAD_IMGSIZE=${RNGR_OPENSCAD_IMGSIZE:-1000,1000}
 OPENSCAD_COLORSCHEME=${RNGR_OPENSCAD_COLORSCHEME:-Tomorrow Night}
 
@@ -53,11 +50,11 @@ handle_extension() {
         ## Archive
         a|ace|alz|arc|arj|bz|bz2|cab|cpio|deb|gz|jar|lha|lz|lzh|lzma|lzo|\
         rpm|rz|t7z|tar|tbz|tbz2|tgz|tlz|txz|tZ|tzo|war|xpi|xz|Z|zip)
-            size=$(stat -c%s "${FILE_PATH}") # file size in bytes
-            if [ $size -le $ARCHIVE_SIZE_MAX ]; then # 10mb
-                atool --list -- "${FILE_PATH}" && exit 5
-                bsdtar --list --file "${FILE_PATH}" && exit 5
+            if [[ "$( stat --printf='%s' -- "${FILE_PATH}" )" -gt "${FILE_PATH}" ]]; then
+                exit 2
             fi
+            atool --list -- "${FILE_PATH}" && exit 5
+            bsdtar --list --file "${FILE_PATH}" && exit 5
             exit 1;;
         rar)
             ## Avoid password prompt by providing empty password
@@ -132,9 +129,9 @@ handle_image() {
     local mimetype="${1}"
     case "${mimetype}" in
         ## SVG
-         image/svg+xml|image/svg)
-             convert -- "${FILE_PATH}" "${IMAGE_CACHE_PATH}" && exit 6
-             exit 1;;
+        #image/svg+xml|image/svg)
+        #    convert -- "${FILE_PATH}" "${IMAGE_CACHE_PATH}" && exit 6
+        #    exit 1;;
 
         ## DjVu
         # image/vnd.djvu)
@@ -299,13 +296,11 @@ handle_mime() {
             if [[ "$( stat --printf='%s' -- "${FILE_PATH}" )" -gt "${HIGHLIGHT_SIZE_MAX}" ]]; then
                 exit 2
             fi
-            env HIGHLIGHT_OPTIONS="${HIGHLIGHT_OPTIONS}" highlight \
-                --out-format='ansi' \
+            highlight --out-format='ansi' --replace-tabs=${HIGHLIGHT_TABWIDTH} \
                 --force -- "${FILE_PATH}" && exit 5
             env COLORTERM=8bit bat --color=always --style="plain" \
                 -- "${FILE_PATH}" && exit 5
-            pygmentize -f 'terminal' -O "style=${PYGMENTIZE_STYLE}"\
-                -- "${FILE_PATH}" && exit 5
+            pygmentize -f 'terminal' -- "${FILE_PATH}" && exit 5
             exit 2;;
 
         ## DjVu

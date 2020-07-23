@@ -5,30 +5,19 @@ from shlex import quote
 from ranger.api.commands import Command
 from ranger.core.loader import CommandLoader
 
-
 class umount(Command):
     """
-    :umount <device_mount_point>
+    :umount [device_mount_point]
 
-    A command that uitilizes udiskie to unmount removable devices.
+    unmount removable devices with udiskie
     """
 
     def execute(self):
-        def callback(answer):
-            if answer in ['y', 'Y']:
-                self.fm.run("udiskie-umount -a")
-
+        cmd = "udiskie-umount "
         if self.arg(1):
-            self.fm.run("udiskie-umount " + self.arg(1))
-        elif "/run/media/" + self.fm.username == self.fm.thisdir.path:
-            self.fm.run("udiskie-umount " + quote(self.fm.thisfile.path))
+            self.fm.run(cmd + quote(self.arg(1)))
         else:
-            self.fm.ui.console.ask(
-                "Confirm unmounting of all devices (y/N)",
-                callback,
-                ('n', 'N', 'y', 'Y'),
-            )
-
+            self.fm.run(cmd + quote(self.fm.thisfile.path))
 
 class toggle_flat(Command):
     """
@@ -47,10 +36,44 @@ class toggle_flat(Command):
             self.fm.thisdir.flat = 0
             self.fm.thisdir.load_content()
 
+class fzf_select(Command):
+    """
+    :fzf_select
+
+    Find a file using fzf.
+
+    With a prefix argument select only directories.
+
+    See: https://github.com/junegunn/fzf
+    """
+    def execute(self):
+        import subprocess
+        import os.path
+        if self.quantifier:
+            # match only directories
+            command="find -L . \( -path '*/\.*' -o -fstype 'dev' -o -fstype 'proc' \) -prune \
+            -o -type d -print 2> /dev/null | sed 1d | cut -b3- | fzf +m"
+        else:
+            # match files and directories
+            command="find -L . \( -path '*/\.*' -o -fstype 'dev' -o -fstype 'proc' \) -prune \
+            -o -print 2> /dev/null | sed 1d | cut -b3- | fzf +m"
+        fzf = self.fm.execute_command(command, universal_newlines=True, stdout=subprocess.PIPE)
+        stdout, stderr = fzf.communicate()
+        if fzf.returncode == 0:
+            fzf_file = os.path.abspath(stdout.rstrip('\n'))
+            if os.path.isdir(fzf_file):
+                self.fm.cd(fzf_file)
+            else:
+                self.fm.select_file(fzf_file)
+
 
 class extracthere(Command):
     def execute(self):
-        """ Extract copied files to current directory """
+        """
+        :extracthere
+
+        Extract copied files to current directory
+        """
         copied_files = tuple(self.fm.copy_buffer)
 
         if not copied_files:
