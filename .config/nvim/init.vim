@@ -54,7 +54,7 @@ autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "norm
 autocmd BufReadPost,BufNewFile *.md,*.txt,*.tex setlocal textwidth=79 | setlocal spell spelllang=en_us,de_de,cjk
 
 " Open new terminals directly in insert mode
-autocmd TermOpen term://* startinsert
+autocmd TermOpen * startinsert
 
 " Open init.vim command
 command! VimConfig :e $MYVIMRC
@@ -139,7 +139,7 @@ set termguicolors
 
 " Choose and configure a theme for vim
 let g:gruvbox_contrast_dark='medium'
-set background=dark    " Setting dark mode
+set background=dark
 let g:gruvbox_italic=1
 colorscheme gruvbox
 
