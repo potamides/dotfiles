@@ -56,7 +56,7 @@ connection = mpc.new(nil, nil, nil, error_handler,
     state = result.state
     -- duration is nil on live streams. Since many live streams are continuous,
     -- don't hit play again when a song changes to avoid interruptions
-    if result.duration or should_update then
+    if state == "play" and (result.duration or should_update) then
       update_stream()
       should_update = result.duration ~= nil
     elseif state ~= "play" then

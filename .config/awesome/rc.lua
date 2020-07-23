@@ -46,7 +46,7 @@ end
 -- Handle runtime errors after startup
 do
   local in_error = false
-  awesome.connect_signal("debug::error", function (err)
+  awesome.connect_signal("debug::error", function(err)
     -- Make sure we don't go into an endless error loop
     if in_error then return end
     in_error = true
@@ -169,16 +169,16 @@ local month_calendar = awful.widget.calendar_popup.month {
         margin = beautiful.gap
     }
 
-mytextclock:connect_signal("mouse::enter", function ()
+mytextclock:connect_signal("mouse::enter", function()
     month_calendar:call_calendar(0, "tr", awful.screen.focused())
     month_calendar.visible = true
 end)
-mytextclock:connect_signal("mouse::leave", function ()
+mytextclock:connect_signal("mouse::leave", function()
     month_calendar.visible = false
 end)
 mytextclock:buttons(gears.table.join(
-    awful.button({ }, 1, function () month_calendar:call_calendar(-1) end),
-    awful.button({ }, 3, function () month_calendar:call_calendar( 1) end)
+    awful.button({ }, 1, function() month_calendar:call_calendar(-1) end),
+    awful.button({ }, 3, function() month_calendar:call_calendar( 1) end)
 ))
 
 -- Wallpaper
@@ -262,10 +262,10 @@ awful.screen.connect_for_each_screen(function(s)
   -- We need one layoutbox per screen.
   s.mylayoutbox = awful.widget.layoutbox(s)
   s.mylayoutbox:buttons(gears.table.join(
-  awful.button({ }, 1, function () awful.layout.inc( 1) end),
-  awful.button({ }, 3, function () awful.layout.inc(-1) end),
-  awful.button({ }, 4, function () awful.layout.inc( 1) end),
-  awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+  awful.button({ }, 1, function() awful.layout.inc( 1) end),
+  awful.button({ }, 3, function() awful.layout.inc(-1) end),
+  awful.button({ }, 4, function() awful.layout.inc( 1) end),
+  awful.button({ }, 5, function() awful.layout.inc(-1) end)))
   -- Create a taglist widget
   s.mytaglist = awful.widget.taglist {
     screen  = s,
@@ -294,8 +294,6 @@ awful.screen.connect_for_each_screen(function(s)
 
     -- add widgets to the wibar
     s.mywibox:setup {
-        layout = wibox.layout.align.horizontal,
-        expand = "none",
         { -- Left widgets
             mylauncher,
             s.mytaglist,
@@ -348,6 +346,8 @@ awful.screen.connect_for_each_screen(function(s)
             fill_space = true,
             layout = wibox.layout.fixed.horizontal,
         },
+        expand = "none",
+        layout = wibox.layout.align.horizontal,
     }
 end)
 -- }}}
@@ -355,14 +355,14 @@ end)
 -- {{{ Mouse bindings & Key bindings
 --------------------------------------------------------------------------------
 local clientbuttons = gears.table.join(
-    awful.button({ }, 1, function (c)
+    awful.button({ }, 1, function(c)
         c:emit_signal("request::activate", "mouse_click", {raise = true})
     end),
-    awful.button({ modkey }, 1, function (c)
+    awful.button({ modkey }, 1, function(c)
         c:emit_signal("request::activate", "mouse_click", {raise = true})
         awful.mouse.client.move(c)
     end),
-    awful.button({ modkey }, 3, function (c)
+    awful.button({ modkey }, 3, function(c)
         c:emit_signal("request::activate", "mouse_click", {raise = true})
         awful.mouse.client.resize(c)
     end)
@@ -375,11 +375,11 @@ local keybindings = {
   {{}, "XF86AudioMute", volume.toggle},
   {{}, "XF86AudioLowerVolume", volume.lower},
   {{}, "XF86AudioRaiseVolume", volume.raise},
-  {{}, "XF86AudioMicMute", function () awful.spawn("amixer set Capture toggle") end},
-  {{}, "XF86MonBrightnessDown", function () awful.spawn("xbacklight -dec 10") end},
-  {{}, "XF86MonBrightnessUp", function () awful.spawn("xbacklight -inc 10") end},
+  {{}, "XF86AudioMicMute", function() awful.spawn("amixer set Capture toggle") end},
+  {{}, "XF86MonBrightnessDown", function() awful.spawn("xbacklight -dec 10") end},
+  {{}, "XF86MonBrightnessUp", function() awful.spawn("xbacklight -inc 10") end},
   {{}, "XF86Display", xrandr.xrandr},
-  {{}, "XF86Tools", function () awful.spawn(editor_cmd .. " " .. awesome.conffile) end},
+  {{}, "XF86Tools", function() awful.spawn(editor_cmd .. " " .. awesome.conffile) end},
 }
 
 local modes = require("modalawesome.modes")
@@ -452,17 +452,17 @@ modes.launcher = gears.table.join(
     {
       description = "toggle mic",
       pattern = { "F4" },
-      handler = function () awful.spawn("amixer set Capture toggle") end
+      handler = function() awful.spawn("amixer set Capture toggle") end
     },
     {
       description = "decrease backlight",
       pattern = { "F5" },
-      handler = function () awful.spawn("xbacklight -dec 10") end
+      handler = function() awful.spawn("xbacklight -dec 10") end
     },
     {
       description = "increase backlight",
       pattern = { "F6" },
-      handler = function () awful.spawn("xbacklight -inc 10") end
+      handler = function() awful.spawn("xbacklight -inc 10") end
     },
     {
       description = "switch monitor setup",
@@ -630,7 +630,7 @@ awful.rules.rules = {
 
     -- dirty hack to preven Ctrl-q from closing firefox
     { rule = { class = browser},
-      properties = { keys = awful.key({"Control"}, "q", function () end)}},
+      properties = { keys = awful.key({"Control"}, "q", function() end)}},
 
     -- Make dragon sticky for easy drag and drop in ranger
     { rule = { class = "Dragon-drag-and-drop" },
@@ -660,7 +660,7 @@ awful.rules.rules = {
 -------------------------------------------------------------------------------
 
 -- Signal function to execute when a new client appears.
-client.connect_signal("manage", function (c)
+client.connect_signal("manage", function(c)
     -- Set the windows at the slave,
     -- i.e. put it at the end of others instead of setting it master.
     -- if not awesome.startup then awful.client.setslave(c) end
@@ -694,19 +694,16 @@ client.connect_signal("request::titlebars", function(c)
             layout  = wibox.layout.fixed.horizontal
         },
         { -- Middle
-            --[[{ -- Title
-            align  = "center",
-            widget = awful.titlebar.widget.titlewidget(c)
-            },]]
+            --{ -- Title
+            --    align  = "center",
+            --    widget = awful.titlebar.widget.titlewidget(c)
+            --},
             buttons = buttons,
             layout  = wibox.layout.flex.horizontal
         },
-        { -- Right
-            wibox.container.margin(
-              awful.titlebar.widget.floatingbutton(c),
-              beautiful.gap, beautiful.gap + beautiful.small_gap, beautiful.gap, beautiful.gap),
-            layout = wibox.layout.fixed.horizontal
-            },
+        wibox.container.margin(
+          awful.titlebar.widget.floatingbutton(c),
+          beautiful.gap, beautiful.gap + beautiful.small_gap, beautiful.gap, beautiful.gap),
 
         layout = wibox.layout.align.horizontal
     }
@@ -818,15 +815,6 @@ client.connect_signal("property::floating", function(c)
     c.height = math.min(c.height, c.screen.geometry.height - c.y % c.screen.geometry.height)
   else
     awful.titlebar.hide(c, "bottom")
-  end
-end)
-
--- turn tilebars on when layout is floating
--------------------------------------------------------------------------------
-awful.tag.attached_connect_signal(awful.screen.focused(), "property::layout", function (t)
-  local float = t.layout.name == "floating"
-  for _,c in pairs(t:clients()) do
-    c.floating = float
   end
 end)
 
