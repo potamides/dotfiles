@@ -16,7 +16,7 @@ into a consistent and appealing look and try to use the
 For tinkering this repository and its submodules can be cloned with the
 following command:
 ```sh
-git clone --recurse-submodules https://github.com/DrCracket/dotfiles
+git clone --recurse-submodules https://github.com/potamides/dotfiles
 ```
 
 Alternatively it can be installed as a bare git repository, inspired by [this
@@ -90,7 +90,7 @@ in the AUR) and
 [Papirus-Dark](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme)
 (official Archlinux package exists). To understand how to control my awesome
 configuration take a look at
-[modalawesome](https://github.com/DrCracket/modalawesome).
+[modalawesome](https://github.com/potamides/modalawesome).
 
 ### Conky ([.conkyrc](.conkyrc))
 Conky makes use of
