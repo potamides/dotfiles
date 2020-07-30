@@ -3,7 +3,7 @@
 	url = https://github.com/lcpz/awesome-freedesktop
 [submodule "config/awesome/modalawesome"]
 	path = .config/awesome/modalawesome
-	url = git@github.com:DrCracket/modalawesome.git
+	url = https://github.com/potamides/modalawesome
 [submodule "config/ranger/plugins/ranger_devicons"]
 	path = .config/ranger/plugins/ranger_devicons
 	url = https://github.com/alexanderjeurissen/ranger_devicons
