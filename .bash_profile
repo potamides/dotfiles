@@ -34,7 +34,7 @@ export DESKTOP_SESSION=gnome
 # always use ripgrep with fzf
 export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case \
   --glob '!.git/*' --glob '!node_modules/*' 2> /dev/null"
-# also use custom color configuration
+# also use custom color configuration and keybindings
 export FZF_DEFAULT_OPTS="--color 16,fg:15,bg:0,hl:11,fg+:15,bg+:237,hl+:11 \
   --color info:12,prompt:248,spinner:11,pointer:12,marker:208,header:241 \
   --color border:7 \

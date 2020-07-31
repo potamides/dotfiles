@@ -38,7 +38,6 @@ else
   PS1="$firstline$secondline"
 fi
 
-
 unset boldblue boldred reset returncode user dir firstline secondline
 
 # general shell behavior
@@ -47,15 +46,14 @@ unset boldblue boldred reset returncode user dir firstline secondline
 # append terminal session command history with every command
 PROMPT_COMMAND+="history -a;" # history -n;"
 
-shopt -s histappend                 # Appends hist on exit
-shopt -s cmdhist                    # Save multi-line hist as one line
+shopt -s histappend                 # append history on exit, don't overwrite
+shopt -s lithist                    # Save multi-line cmd with embedded newline
 shopt -s checkwinsize               # Update col/lines after commands
 shopt -s checkjobs                  # deferr exit if jobs are running
 shopt -s autocd                     # Can change dir without `cd`
 shopt -s cdspell                    # Fixes minor spelling errors in cd paths
 shopt -s no_empty_cmd_completion    # Stops empty line tab comp
 shopt -s dirspell                   # Tab comp can fix dir name typos
-shopt -s histappend                 # append to history, don't overwrite it
 shopt -s globstar                   # pattern ** also searches subdirectories
 
 # enable vi like keybindings, when not in vim
@@ -68,13 +66,6 @@ if [[ -z $VIMRUNTIME ]]; then
   else
     PS0="\e[2 q"
   fi
-fi
-
-## Bash-completions
-# -----------------------------------------------------------------------------
-
-if [[ -r /usr/share/bash-completion/bash_completion ]]; then
-  source /usr/share/bash-completion/bash_completion
 fi
 
 # FZF config for interactive use
@@ -134,8 +125,8 @@ function cl() {
   cd "$@" && ls -a
 }
 
-#Searching file contents with fzf and ripgrep
-fif() {
+# Searching file contents with fzf and ripgrep
+function fif() {
   if [[ "$#" -eq 0 ]]; then
     echo "Need a string to search for!"
     return 1
@@ -146,10 +137,15 @@ fif() {
     || rg --ignore-case --pretty --context 10 '${!#}' {}"
 }
 
+# Edit files found with fif with editor
+function fifo() {
+  fif "$@" | xargs -rd "\n" "$EDITOR"
+}
+
 # report disk usage of directory and sort files by size
 function dus(){
   local dir="${1-.}/"
-  if [[ -d $dir ]]; then
+  if [[ -d "$dir" ]]; then
     du -shc "$dir".[^.]* "$dir"* | sort -h
   else
     return 1
@@ -206,13 +202,12 @@ alias paclo='pacman -Qdt' # list orphans
 alias pacro='paclo && sudo pacman -Rns $(pacman -Qtdq)' # remove orphans
 alias pacc='sudo pacman -Scc' # clean cache
 alias pacli='pacman -Q | wc -l' # list user installed packages
-alias rgo=rg_and_open
 alias calc='ipython --profile=calculate'
 alias htop='htop -t'
 alias serve='python3 -m http.server 9999'
 alias debug='set -o nounset && set -o verbose && set -o xtrace'
 alias nodebug='set +o nounset && set +o verbose && set +o xtrace'
-alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 alias backup="sudo snap-sync --UUID 940761e2-7d84-4025-8972-89276e53bdc4 \
   --config home --noconfirm"
 
@@ -224,7 +219,15 @@ alias incognito='unset HISTFILE'
 alias tmpv="mpv --no-config --really-quiet --vo=tct --keep-open=yes \
   --profile=sw-fast"
 
-# Enable completions for aliases
+## Bash-completions
+# -----------------------------------------------------------------------------
+
+if [[ -r /usr/share/bash-completion/bash_completion ]]; then
+  source /usr/share/bash-completion/bash_completion
+fi
+
+# external alias completion, progcomp_alias shopt builtin sadly doesn't work
+# https://github.com/scop/bash-completion/issues/383
 if [[ -r /usr/share/bash-complete-alias/complete_alias ]]; then
   source /usr/share/bash-complete-alias/complete_alias
   complete -F _complete_alias la ll lh pac paca pacu pacau pacr pacs pacas \
