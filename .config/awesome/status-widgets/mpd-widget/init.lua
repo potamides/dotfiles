@@ -14,7 +14,7 @@ local mpd_container = wibarutil.create_parallelogram({
     step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
     layout = wibox.container.scroll.horizontal,
   },
-  wibarutil.left_parallelogram, beautiful.bg_normal)
+  wibarutil.left_parallelogram, beautiful.bg_normal, beautiful.small_gap)
 
 local state, title, artist = "stop"
 local function update_widget()

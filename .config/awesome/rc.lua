@@ -118,24 +118,24 @@ local mymainmenu = freedesktop.menu.build({
 
 local status_box = wibox.widget.textbox(modalawesome.active_mode.text)
 local mylauncher = wibarutil.create_parallelogram(
-{
-  awful.widget.launcher {
-    image = beautiful.archlinux_icon,
-    menu  = { toggle = function() mymainmenu:toggle {
-                coords = {
-                  x = beautiful.gap,
-                  y = beautiful.wibar_height + beautiful.gap
+  {
+    awful.widget.launcher {
+      image = beautiful.archlinux_icon,
+      menu  = { toggle = function() mymainmenu:toggle {
+                  coords = {
+                    x = beautiful.gap,
+                    y = beautiful.wibar_height + beautiful.gap
+                  }
                 }
-              }
-            end
-          }
+              end
+            }
+    },
+    status_box,
+    spacing = beautiful.gap,
+    layout  = wibox.layout.fixed.horizontal,
   },
-  status_box,
-  spacing = beautiful.gap,
-  layout  = wibox.layout.fixed.horizontal,
-},
-wibarutil.leftmost_parallelogram,
-beautiful.lightaqua, beautiful.small_gap)
+  wibarutil.leftmost_parallelogram,
+  beautiful.lightaqua, beautiful.small_gap)
 
 modalawesome.active_mode:connect_signal("widget::redraw_needed",
 function()
@@ -495,7 +495,7 @@ modes.launcher = gears.table.join(
     {
       description = "lock screen",
       pattern = {'l'},
-      handler = function() awful.spawn("physlock -s") end
+      handler = function() awful.spawn("physlock -s", false) end
     },
     {
       description = "launch ncmpcpp",
@@ -731,7 +731,7 @@ local function update_borders(s, layout_name)
 end
 
 local function update_borders_by_client(c)
-  if c.screen then
+  if c.screen and c.screen.selected_tag then
     update_borders(c.screen, c.screen.selected_tag.layout.name)
   end
 end
@@ -809,7 +809,7 @@ client.connect_signal("unfocus", title_remove)
 -- turn titlebar on when client is floating
 -------------------------------------------------------------------------------
 client.connect_signal("property::floating", function(c)
-  if c.floating and not c.requests_no_titlebar then
+  if c.floating and not (c.maximized or c.requests_no_titlebar) then
     awful.titlebar.show(c, "bottom")
     -- ensure that the titlebar is inside the screen
     c.height = math.min(c.height, c.screen.geometry.height - c.y % c.screen.geometry.height)
