@@ -31,21 +31,21 @@ $if mode=vi
   set keyseq-timeout 50
   # show editing mode in prompt
   set show-mode-in-prompt on
-$endif
 
-# different cursor shapes for each mode
-$if term=linux
-	set vi-ins-mode-string (ins)\1\e[?0c\2
-	set vi-cmd-mode-string (cmd)\1\e[?8c\2
-$else
-	set vi-ins-mode-string (ins)\1\e[6 q\2
-	set vi-cmd-mode-string (cmd)\1\e[2 q\2
+  # different cursor shapes for each mode
+  $if term=linux
+    set vi-ins-mode-string (ins)\1\e[?0c\2
+    set vi-cmd-mode-string (cmd)\1\e[?8c\2
+  $else
+    set vi-ins-mode-string (ins)\1\e[6 q\2
+    set vi-cmd-mode-string (cmd)\1\e[2 q\2
+  $endif
 $endif
 
 ## keybindings
 # -----------------------------------------------------------------------------
 
-# keybindings for either vi-insert or emacs keymap
+# keybindings for default keymap (either vi-insert or emacs)
 # Up: search history starting with chars up to cursor position
 "\e[A": history-search-backward
 # Down: similar but other direction
@@ -54,6 +54,12 @@ $endif
 TAB: menu-complete                  
 # Shift-Tab: step in other direction
 "\e[Z": menu-complete-backward      
+
+set keymap vi-insert
+# Expand variables like ~ and $USER to their values
+"\C-a": shell-expand-line
+# perform pathname expansion on the word before point
+"\C-e": glob-expand-word
 
 set keymap vi-command
 "\e[A": history-search-backward

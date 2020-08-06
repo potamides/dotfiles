@@ -9,7 +9,8 @@ fi
 
 # if not in vim or ranger show greeter
 if [[ -z $VIMRUNTIME && -z $RANGER_LEVEL && $(type -t neofetch) ]]; then
-    neofetch
+  # set DESKTOP_SESSION to null to correctly identify gtk theme and icons
+  DESKTOP_SESSION= neofetch
 fi
 
 # build prompt
@@ -60,7 +61,7 @@ shopt -s globstar                   # pattern ** also searches subdirectories
 if [[ -z $VIMRUNTIME ]]; then
   shopt -so vi
 
-  # reset cursor shape before executing a command
+  # reset cursor shape before executing a command (see .inputrc)
   if [[ $TERM = linux ]]; then
     PS0="\e[?8c"
   else
@@ -132,7 +133,7 @@ function fif() {
     return 1
   fi
   rg --files-with-matches --no-messages "$@" \
-    | fzf --multi --preview "highlight -O \ansi -l {} 2> /dev/null \
+    | fzf --multi --preview "pygmentize -f terminal {} 2> /dev/null \
     | rg --colors match:bg:yellow --ignore-case --pretty --context 10 '${!#}' \
     || rg --ignore-case --pretty --context 10 '${!#}' {}"
 }
@@ -158,9 +159,12 @@ function spdf(){
     echo "Need a string to search for!"
     return 1
   fi
+
+  local returncode=1
   for file in *.pdf; do
-    pdftotext "$file" - | grep "$@" --quiet && echo "$file"
+    pdftotext -q "$file" - | grep "$@" --quiet && echo "$file" && returncode=0
   done
+  return $returncode
 }
 
 # tldr version of man pages
