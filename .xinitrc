@@ -21,8 +21,6 @@ fi
 
 if [ -f "$usermodmap" ]; then
   xmodmap "$usermodmap"
-else
-  setxkbmap eu
 fi
 
 # start some nice programs
