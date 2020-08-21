@@ -1,0 +1,36 @@
+#!/bin/bash
+
+###############################################################################
+#                Conveniently copy audio or visual files to NAS               #
+###############################################################################
+
+function copy-to-nas(){
+  local mime_types audio_files visual_files directory
+  mime_types=$(find "$@" -type f -exec file --brief --mime-type -- {} +)
+  audio_files=$(grep --count audio <<< "$mime_types")
+  visual_files=$(grep --count "video\|image" <<< "$mime_types")
+
+  if [[ $audio_files -gt 0 || $visual_files -gt 0 ]]; then
+    if [[ $audio_files -gt $visual_files ]]; then
+      directory=music
+      echo "Identified music, beginning to copy!"
+    else
+      directory=visual_media
+      echo "Identified visual media, beginning to copy!"
+    fi
+  else
+    echo "Couldn't identify format of files to copy!"
+    return 1
+  fi
+
+  rsync --info=progress2 --recursive --times --perms --chmod=D775,F664 "$@" \
+    NAS:/media/storage/$directory/
+}
+
+if [[ "$#" -eq 0 ]]; then
+  echo "You need to specify files to copy!"
+  return 1
+else
+  # remove trailing slashes as this would only copy the contents of directories
+  copy-to-nas "${@%/}"
+fi

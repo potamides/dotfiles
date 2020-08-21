@@ -178,6 +178,16 @@ function whoowns(){
   pacman -Qo "$@" || { echo "Provided by:" && pacman -F "$@"; }
 }
 
+# fetch current weather report, with location as optional parameter
+function weather(){
+    local IFS=+
+    local request="wttr.in/${*^}?F"
+    if [[ "$(tput cols)" -lt 125 ]]; then
+      request+='n'
+    fi
+    curl -H "Accept-Language: ${LANG%_*}" --compressed "$request"
+}
+
 # Aliases
 # -----------------------------------------------------------------------------
 
@@ -218,7 +228,6 @@ alias backup="sudo snap-sync --UUID 940761e2-7d84-4025-8972-89276e53bdc4 \
 # fun stuff
 alias starwars='telnet towel.blinkenlights.nl'
 alias maps='telnet mapscii.me'
-alias weather='curl wttr.in'
 alias incognito='unset HISTFILE'
 alias tmpv="mpv --no-config --really-quiet --vo=tct --keep-open=yes \
   --profile=sw-fast"
