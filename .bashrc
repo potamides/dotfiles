@@ -188,6 +188,12 @@ function weather(){
     curl -H "Accept-Language: ${LANG%_*}" --compressed "$request"
 }
 
+# Conveniently copy files to NAS
+function ncp(){
+  rsync --info=progress2 --recursive --protect-args --times --perms \
+    --chmod=D775,F664 "${1%/}" "${2:+NAS:/media/storage/$2}"
+}
+
 # Aliases
 # -----------------------------------------------------------------------------
 
