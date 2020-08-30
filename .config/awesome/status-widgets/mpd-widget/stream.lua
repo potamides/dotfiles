@@ -1,6 +1,6 @@
 local awful = require("awful")
 local gears = require("gears")
-local lgi = require "lgi"
+local lgi = require("lgi")
 local GLib = lgi.GLib
 local Gio = lgi.Gio
 
