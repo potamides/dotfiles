@@ -266,7 +266,38 @@ colors:
   # Example:
   #   `- { index: 16, color: '#ff00ff' }`
   #
-  #indexed_colors: []
+  indexed_colors: [
+    { index: 24,  color: '#076678' },
+    { index: 66,  color: '#427b58' },
+    { index: 88,  color: '#9d0006' },
+    { index: 96,  color: '#8f3f71' },
+    { index: 100, color: '#79740e' },
+    { index: 108, color: '#8ec07c' },
+    { index: 109, color: '#83a598' },
+    { index: 130, color: '#af3a03' },
+    { index: 136, color: '#b57614' },
+    { index: 142, color: '#b8bb26' },
+    { index: 167, color: '#fb4934' },
+    { index: 175, color: '#d3869b' },
+    { index: 208, color: '#fe8019' },
+    { index: 214, color: '#fabd2f' },
+    { index: 223, color: '#ebdbb2' },
+    { index: 228, color: '#f2e5bc' },
+    { index: 229, color: '#fbf1c7' },
+    { index: 230, color: '#f9f5d7' },
+    { index: 234, color: '#1d2021' },
+    { index: 235, color: '#282828' },
+    { index: 236, color: '#32302f' },
+    { index: 237, color: '#3c3836' },
+    { index: 239, color: '#504945' },
+    { index: 241, color: '#665c54' },
+    { index: 243, color: '#7c6f64' },
+    { index: 244, color: '#928374' },
+    { index: 245, color: '#928374' },
+    { index: 246, color: '#a89984' },
+    { index: 248, color: '#bdae93' },
+    { index: 250, color: '#d5c4a1' }
+  ]
 
 # Bell
 #
