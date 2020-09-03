@@ -1,0 +1,45 @@
+# vi-like keybinings
+
+def_key "j"
+    scroll_down
+def_key "k"
+    scroll_up
+def_key "h"
+    previous_column
+def_key "l"
+    next_column
+
+def_key "ctrl-f"
+    page_down
+def_key "ctrl-b"
+    page_up
+
+def_key "n"
+    next_found_item
+def_key "N"
+    previous_found_item
+
+def_key "g"
+    move_home
+def_key "G"
+    move_end
+
+# rebind some keys which collide with vi-like keybindings
+
+#def_key "ctrl-f"
+#  apply_filter
+
+#def_key "l"
+#  show_lyrics
+
+def_key ","
+  move_selected_items_down
+
+#def_key "g"
+#  jump_to_position_in_song
+
+#def_key "G"
+#  jump_to_browser
+#
+#def_key "G"
+#  jump_to_playlist_editor
