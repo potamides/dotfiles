@@ -56,6 +56,7 @@ shopt -s cdspell                    # Fixes minor spelling errors in cd paths
 shopt -s no_empty_cmd_completion    # Stops empty line tab comp
 shopt -s dirspell                   # Tab comp can fix dir name typos
 shopt -s globstar                   # pattern ** also searches subdirectories
+shopt -s extglob                    # enable extended pattern matching features
 
 # enable vi like keybindings, when not in vim
 if [[ -z $VIMRUNTIME ]]; then
