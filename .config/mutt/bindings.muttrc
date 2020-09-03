@@ -1,0 +1,40 @@
+## Vi Key Bindings
+# https://github.com/neomutt/neomutt/issues/56#issuecomment-250780838
+# -----------------------------------------------------------------------------
+
+# Moving around
+bind attach,browser,index       gg   first-entry
+bind attach,browser,index       G    last-entry
+bind pager                      gg   top
+bind pager                      G    bottom
+bind pager                      k    previous-line
+bind pager                      j    next-line
+
+# Scrolling
+bind attach,browser,pager,index \CF  next-page
+bind attach,browser,pager,index \CB  previous-page
+bind attach,browser,pager,index \CU  half-up
+bind attach,browser,pager,index \CD  half-down
+bind browser,pager              \CE  next-line
+bind browser,pager              \CY  previous-line
+bind index                      \CE  next-line
+bind index                      \CY  previous-line
+
+# Mail & Reply
+bind pager,index                gr   group-reply
+
+# Threads
+bind browser,pager,index        \CN  search-opposite
+bind pager,index                gt   next-thread
+bind pager,index                gT   previous-thread
+bind index                      za   collapse-thread
+bind index                      zA   collapse-all
+
+# Other
+bind index                      \CL  imap-fetch-mail
+bind index,pager                B    sidebar-toggle-visible
+macro index,pager               <f1> "<shell-escape> \
+  info --vi-keys -v match-style=underline,bold,nocolor -v link-style=yellow \
+  -v active-link-style=yellow,bold mutt<enter>" "Show Mutt documentation"
+
+# vi: ft=muttrc

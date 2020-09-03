@@ -1,0 +1,81 @@
+# user defined variables
+# -----------------------------------------------------------------------------
+
+set my_folder = "~/.config/mutt"
+
+# general smtp stuff / email sending
+# -----------------------------------------------------------------------------
+
+set realname      = 'Jonas Belouadi'
+set ssl_starttls  = yes
+set ssl_force_tls = yes
+set use_from      = yes
+set reverse_name  = yes
+set edit_headers  = yes
+set text_flowed   = yes
+set send_charset  = "us-ascii:utf-8"
+set editor        = '$EDITOR +/^$ +nohlsearch' # Jump past header
+
+# general imap stuff / email fetching
+# -----------------------------------------------------------------------------
+
+# If cache directories are folders, Mutt will create folders for each account,
+# which may speeds things up even more
+set header_cache     = ~/.cache/mutt
+set message_cachedir = ~/.cache/mutt
+set mail_check       = 90
+set timeout          = 15
+unset imap_passive
+
+# account switching / specific imap & smtp stuff
+# -----------------------------------------------------------------------------
+
+source $my_folder/accounts/posteo # Default account
+
+# switch accounts easily
+macro index,pager <f2> '<sync-mailbox><enter-command> source \
+  $my_folder/accounts/posteo<enter><check-stats><change-folder>!<enter>'
+macro index,pager <f3> '<sync-mailbox><enter-command> source \
+  $my_folder/accounts/studmail<enter><check-stats><change-folder>!<enter>'
+macro index,pager <f4> '<sync-mailbox><enter-command> source \
+  $my_folder/accounts/gmail<enter><check-stats><change-folder>!<enter>'
+
+# sidebar
+# -----------------------------------------------------------------------------
+
+set mail_check_stats = yes
+set sidebar_visible  = yes
+set sidebar_format   = '%B%?F? [%F]?%* %?N?%N/?%S'
+
+# alias management
+# -----------------------------------------------------------------------------
+
+set display_filter = $my_folder/scripts/create-alias.sh # auto create aliases
+set alias_file     = $my_folder/aliases
+set sort_alias     = alias
+set reverse_alias  = yes
+source "cat $alias_file 2> /dev/null |" # only source if file exists
+
+# index settings
+# -----------------------------------------------------------------------------
+
+set sleep_time      = 0 # Speed up folders switch
+set sort            = "reverse-threads"
+set sort_aux        = "last-date-received"
+set uncollapse_jump = yes
+unset collapse_unread
+
+# pager / attachments settings
+# -----------------------------------------------------------------------------
+
+set mailcap_path = $my_folder/mailcap
+alternative_order text/enriched text/plain text/html
+auto_view text/html
+
+# additional configuration options
+# -----------------------------------------------------------------------------
+
+set quit = ask-yes
+# only source colors, when supported by terminal
+source "[ $(tput colors) -ge 256 ] && cat $my_folder/colors.muttrc |"
+source $my_folder/bindings.muttrc

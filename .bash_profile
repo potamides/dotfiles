@@ -40,6 +40,11 @@ export FZF_DEFAULT_OPTS="--color 16,fg:15,bg:0,hl:11,fg+:15,bg+:237,hl+:11 \
   --color border:7 \
   --bind ctrl-a:select-all,ctrl-d:deselect-all,ctrl-t:toggle-all"
 
+# source sensitive environment variables which don't belong in a public repo
+if [[ -r ~/.bash_profile.local ]]; then
+  source ~/.bash_profile.local
+fi
+
 ## Start session
 # -----------------------------------------------------------------------------
 
