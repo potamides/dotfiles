@@ -17,6 +17,6 @@ set record    = "+Sent"
 set trash     = "+Trash"
 
 # check this mailboxes for new messages periodically & display them in sidebar
-mailboxes +INBOX +Junk +Drafts +Sent +Archive +Trash
+mailboxes +INBOX +Junk +Drafts +Sent +Archives +Trash
 
 # vi: ft=muttrc
