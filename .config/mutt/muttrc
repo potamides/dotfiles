@@ -16,6 +16,10 @@ set text_flowed   = yes
 set send_charset  = "us-ascii:utf-8"
 set editor        = '$EDITOR +/^$ +nohlsearch' # Jump past header
 
+# generate a multipart/alternative container from markdown
+set send_multipart_alternative        = yes
+set send_multipart_alternative_filter = $my_folder/scripts/markdown2html.py
+
 # general imap stuff / email fetching
 # -----------------------------------------------------------------------------
 

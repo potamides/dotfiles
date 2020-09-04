@@ -20,11 +20,15 @@ bind browser,pager              \CY  previous-line
 bind index                      \CE  next-line
 bind index                      \CY  previous-line
 
+bind pager,index                dd  delete-message
+
 # Mail & Reply
 bind pager,index                gr   group-reply
 
 # Threads
 bind browser,pager,index        \CN  search-opposite
+bind pager,index                dT   delete-thread
+bind pager,index                dt   delete-subthread
 bind pager,index                gt   next-thread
 bind pager,index                gT   previous-thread
 bind index                      za   collapse-thread
