@@ -1,8 +1,11 @@
-# use lynx for automatic html viewing
-text/html; lynx -assume_charset=%{charset} -display_charset=utf-8 -collapse_br_tags -dump %s; nametemplate=%s.html; copiousoutput
+# use firefox for interactive viewing of html attachments
+text/html; firefox %s; needsterminal; test=test -n $DISPLAY
 
-# use rangers rifle program for interactive viewing of everything else
-audio/*; tmp=$(mktemp -d) && cp %s $tmp && setsid -f $SHELL -c "rifle -f F $tmp/$(basename %s) && rm -r $tmp" &> /dev/null
-image/*; tmp=$(mktemp -d) && cp %s $tmp && setsid -f $SHELL -c "rifle -f F $tmp/$(basename %s) && rm -r $tmp" &> /dev/null
-video/*; tmp=$(mktemp -d) && cp %s $tmp && setsid -f $SHELL -c "rifle -f F $tmp/$(basename %s) && rm -r $tmp" &> /dev/null
-application/*; tmp=$(mktemp -d) && cp %s $tmp && setsid -f $SHELL -c "rifle -f F $tmp/$(basename %s) && rm -r $tmp" &> /dev/null
+# use lynx for automatic html viewing
+text/html; lynx -assume_charset=%{charset} -display_charset=utf-8 -dump %s; nametemplate=%s.html; copiousoutput
+
+# use rangers rifle program to determine a program for interactive viewing of everything else
+audio/*; rifle -f f %s; needsterminal
+image/*; rifle -f f %s; needsterminal
+video/*; rifle -f f %s; needsterminal
+application/*; rifle -f f %s; needsterminal

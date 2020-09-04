@@ -30,7 +30,7 @@ function create_alias(){
 
   # check if nickname is set and if the email is not already present
   if [[ -v nickname ]] && ! grep -Fqs -- "${line[-1]}" $alias_file; then
-    count=$(grep -cs " $nickname\(-[[:digit:]]\+\)\? " $alias_file)
+    count=$(grep -cs "^alias $nickname\(-[[:digit:]]\+\)\? " $alias_file)
 
     # if nickname already exist append count as suffix
     if [[ -z $count || $count == 0 ]]; then
