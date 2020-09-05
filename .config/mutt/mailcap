@@ -1,11 +1,9 @@
-# use firefox for interactive viewing of html attachments
-text/html; firefox %s; needsterminal; test=test -n $DISPLAY
-
-# use lynx for automatic html viewing
-text/html; lynx -assume_charset=%{charset} -display_charset=utf-8 -dump %s; nametemplate=%s.html; copiousoutput
-
-# use rangers rifle program to determine a program for interactive viewing of everything else
+# when viewing interactively, use rangers rifle program for everything
+text/html; rifle -f f %s; nametemplate=%s.html; needsterminal
 audio/*; rifle -f f %s; needsterminal
 image/*; rifle -f f %s; needsterminal
 video/*; rifle -f f %s; needsterminal
 application/*; rifle -f f %s; needsterminal
+
+# for automatic viewing of html emails use pandoc
+text/html; pandoc --from=html --to=plain --reference-links; copiousoutput
