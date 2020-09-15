@@ -38,11 +38,16 @@ source $my_folder/accounts/posteo # Default account
 
 # switch accounts easily
 macro index,pager <f2> '<sync-mailbox><enter-command> source \
-  $my_folder/accounts/posteo<enter><check-stats><change-folder>!<enter>'
+$my_folder/accounts/posteo<enter><check-stats><change-folder>!<enter>\
+<browse-mailboxes><change-dir><kill-line>=<enter><exit>'
+
 macro index,pager <f3> '<sync-mailbox><enter-command> source \
-  $my_folder/accounts/studmail<enter><check-stats><change-folder>!<enter>'
+$my_folder/accounts/studmail<enter><check-stats><change-folder>!<enter>\
+<browse-mailboxes><change-dir><kill-line>=<enter><exit>'
+
 macro index,pager <f4> '<sync-mailbox><enter-command> source \
-  $my_folder/accounts/gmail<enter><check-stats><change-folder>!<enter>'
+$my_folder/accounts/gmail<enter><check-stats><change-folder>!<enter>\
+<browse-mailboxes><change-dir><kill-line>=<enter><exit>'
 
 # sidebar
 # -----------------------------------------------------------------------------
@@ -72,6 +77,9 @@ unset collapse_unread
 # pager / attachments settings
 # -----------------------------------------------------------------------------
 
+# don't quote boxes of html emails converted with pandoc (lines starting and
+# ending with "|")
+set smileys      = '(>From )|(:[-^]?[][)(><}{|/DP])|(^\\|.*(\\|)$)'
 set mailcap_path = $my_folder/mailcap
 alternative_order text/enriched text/plain text/html
 auto_view text/html

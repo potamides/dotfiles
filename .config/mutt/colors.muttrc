@@ -1,5 +1,6 @@
 # gruvbox dark (contrast dark medium):
-# https://www.sthu.org/code/codesnippets/mutt-gruvbox.html
+# based on https://www.sthu.org/code/codesnippets/mutt-gruvbox.html
+# with some regexes from https://github.com/altercation/mutt-colors-solarized
 # -----------------------------------------------------------------------------
 
 # bg0    = 235
@@ -24,6 +25,9 @@
 # aqua   = 108
 # orange = 208
 
+# basic colors
+# -----------------------------------------------------------------------------
+
 color attachment  color109 color235
 color bold        color229 color235
 color error       color167 color235
@@ -47,6 +51,9 @@ color underline   color223 color239
 color sidebar_divider    color250 color235
 color sidebar_new        color142 color235
 
+# index
+# -----------------------------------------------------------------------------
+
 color index color142 color235 ~N
 color index color108 color235 ~O
 color index color109 color235 ~P
@@ -56,17 +63,35 @@ color index color167 color235 ~=
 color index color235 color223 ~T
 color index color235 color167 ~D
 
+# message headers
+# -----------------------------------------------------------------------------
+
 color header color214 color235 "^(To:|From:)"
 color header color142 color235 "^Subject:"
 color header color108 color235 "^X-Spam-Status:"
 color header color108 color235 "^Received:"
 
-color body color142 color235 "[a-z]{3,256}://[-a-zA-Z0-9@:%._\\+~#=/?&,]+"
-#color body color142 color235 "[a-zA-Z]([-a-zA-Z0-9_]+\\.){2,256}[-a-zA-Z0-9_]{2,256}"
-color body color208 color235 "[-a-z_0-9.+%$]+@[-a-z_0-9.]+\\.[-a-z][-a-z]+"
-color body color208 color235 "mailto:[-a-z_0-9.+]+@[-a-z_0-9.]+"
+# message body
+# -----------------------------------------------------------------------------
+
+# insane URL regex
+color body color142 color235 "([a-z][a-z0-9+-]*://(((([a-z0-9_.!~*'();:&=+$,-]|%[0-9a-f][0-9a-f])*@)?((([a-z0-9]([a-z0-9-]*[a-z0-9])?)\\.)*([a-z]([a-z0-9-]*[a-z0-9])?)\\.?|[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)(:[0-9]+)?)|([a-z0-9_.!~*'()$,;:@&=+-]|%[0-9a-f][0-9a-f])+)(/([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*(;([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*)*(/([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*(;([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*)*)*)?(\\?([a-z0-9_.!~*'();/?:@&=+$,-]|%[0-9a-f][0-9a-f])*)?(#([a-z0-9_.!~*'();/?:@&=+$,-]|%[0-9a-f][0-9a-f])*)?|(www|ftp)\\.(([a-z0-9]([a-z0-9-]*[a-z0-9])?)\\.)*([a-z]([a-z0-9-]*[a-z0-9])?)\\.?(:[0-9]+)?(/([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*(;([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*)*(/([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*(;([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*)*)*)?(\\?([-a-z0-9_.!~*'();/?:@&=+$,]|%[0-9a-f][0-9a-f])*)?(#([-a-z0-9_.!~*'();/?:@&=+$,]|%[0-9a-f][0-9a-f])*)?)[^].,:;!)? \t\r\n<>\"]"
+# insane Email regex
+color body color208 color235 "((@(([0-9a-z-]+\\.)*[0-9a-z-]+\\.?|#[0-9]+|\\[[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\]),)*@(([0-9a-z-]+\\.)*[0-9a-z-]+\\.?|#[0-9]+|\\[[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\]):)?[0-9a-z_.+%$-]+@(([0-9a-z-]+\\.)*[0-9a-z-]+\\.?|#[0-9]+|\\[[0-2]?[0-9]?[0-9]\\.[0-2]?[0-9]?[0-9]\\.[0-2]?[0-9]?[0-9]\\.[0-2]?[0-9]?[0-9]\\])"
+# emoticons
 color body color235 color214 "[;:]-*[)>(<lt;|]"
-color body color229 color235 "\\*[- A-Za-z]+\\*"
+# *bold*
+color body color229 color235 "(^|[[:space:][:punct:]])\\*[^*]+\\*([[:space:][:punct:]]|$)"
+mono  body bold              "(^|[[:space:][:punct:]])\\*[^*]+\\*([[:space:][:punct:]]|$)"
+# _underline_
+color body color229 color235 "(^|[[:space:][:punct:]])_[^_]+_([[:space:][:punct:]]|$)"
+mono  body underline         "(^|[[:space:][:punct:]])_[^_]+_([[:space:][:punct:]]|$)"
+# /italic/  (Sometimes gets directory names)
+color body color229 color235 "(^|[[:space:][:punct:]])/[^/]+/([[:space:][:punct:]]|$)"
+mono body underline          "(^|[[:space:][:punct:]])/[^/]+/([[:space:][:punct:]]|$)"
+
+# pgp stuff
+# -----------------------------------------------------------------------------
 
 color body color214 color235 "^-.*PGP.*-*"
 color body color142 color235 "^gpg: Good signature from"
