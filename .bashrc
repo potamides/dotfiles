@@ -79,13 +79,13 @@ if [[ -r /usr/share/fzf/key-bindings.bash && \
   source /usr/share/fzf/completion.bash
 
   # Use rg instead of the default find command for listing path candidates.
-  function _fzf_compgen_path() {
+  function _fzf_compgen_path(){
     rg --files --hidden --smart-case --glob '!.git/*' --glob \
       '!node_modules/*' 2> /dev/null "${1-.}"
   }
 
   # Use rg to generate the list for directory completion
-  function _fzf_compgen_dir() {
+  function _fzf_compgen_dir(){
     rg --files --hidden --smart-case --null --glob '!.git/*' --glob \
       '!node_modules/*' "${1-.}" 2> /dev/null \
       | xargs -0 dirname | awk '!h[$0]++'
@@ -112,7 +112,7 @@ fi
 # -----------------------------------------------------------------------------
 
 # colored manpages
-function man() {
+function man(){
   LESS_TERMCAP_md=$'\e[01;31m' \
   LESS_TERMCAP_me=$'\e[0m' \
   LESS_TERMCAP_se=$'\e[0m' \
@@ -123,12 +123,12 @@ function man() {
 }
 
 # cd to directory and list files
-function cl() {
+function cl(){
   cd "$@" && ls -a
 }
 
 # Searching file contents with fzf and ripgrep
-function fif() {
+function fif(){
   if [[ "$#" -eq 0 ]]; then
     echo "Need a string to search for!"
     return 1
@@ -140,7 +140,7 @@ function fif() {
 }
 
 # Edit files found with fif with editor
-function fifo() {
+function fifo(){
   fif "$@" | xargs -rd "\n" "$EDITOR"
 }
 
@@ -181,8 +181,7 @@ function whoowns(){
 
 # fetch current weather report, with location as optional parameter
 function weather(){
-    local IFS=+
-    local request="wttr.in/${*^}?F"
+    local request="wttr.in/${@^}?F"
     if [[ "$(tput cols)" -lt 125 ]]; then
       request+='n'
     fi
