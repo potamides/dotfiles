@@ -51,7 +51,8 @@ let g:python3_host_prog = '/usr/bin/python3'
 autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 " Insert line break at column 80 and set spelllang in certain files
-autocmd BufReadPost,BufNewFile *.md,*.txt,*.tex setlocal textwidth=79 | setlocal spell spelllang=en_us,de_de,cjk
+autocmd BufReadPost,BufNewFile *.md,*.txt,*.tex setlocal textwidth=79 spell spelllang=en_us,de_de,cjk
+autocmd FileType mail setlocal formatoptions+=w spell spelllang=en_us,de_de,cjk
 
 " Open new terminals directly in insert mode
 autocmd TermOpen * startinsert
@@ -59,21 +60,12 @@ autocmd TermOpen * startinsert
 " Open init.vim command
 command! VimConfig :e $MYVIMRC
 
-" To use Control+{h,j,k,l}` to navigate windows:
-tnoremap <silent> <C-h> <C-\><C-N><C-w>h
-tnoremap <silent> <C-j> <C-\><C-N><C-w>j
-tnoremap <silent> <C-k> <C-\><C-N><C-w>k
-tnoremap <silent> <C-l> <C-\><C-N><C-w>l
-noremap <silent> <C-h> <C-w>h
-noremap <silent> <C-j> <C-w>j
-noremap <silent> <C-k> <C-w>k
-noremap <silent> <C-l> <C-w>l
-
 " To map <silent> <Esc> to exit terminal-mode:
 tnoremap <silent> <Esc> <C-\><C-n>
 
-" Toggle folding with the spacebar
-noremap <silent> <space> za
+" map mapleader and maplocalleader to space
+let mapleader=" "
+let maplocalleader=" "
 
 " Run the current line as if it were a command
 nnoremap <leader>e :exe getline(line('.'))<cr>
