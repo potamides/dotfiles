@@ -98,7 +98,7 @@ Conky makes use of
 to display the current Stallman Freedom Index. This package can be found in the
 AUR.
 
-### Alacritty ([.config/alacritty](.config/alacritty)), Ranger ([.config/ranger](.config/ranger)), Tmux ([.tmux.conf](.tmux.conf))
+### Termite ([.config/termite](.config/termite)), Ranger ([.config/ranger](.config/ranger)), Tmux ([.tmux.conf](.tmux.conf))
 Some of these applications don't have additional dependencies and if they have,
 they are integrated as git submodules or git subtrees so no additional steps
 are required.
