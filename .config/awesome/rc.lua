@@ -65,12 +65,11 @@ end
 
 
 -- This is used later as the default terminal and editor to run.
-local terminal         = "alacritty"
+local terminal         = "termite"
+local browser          = "firefox"
 local editor           = os.getenv("EDITOR") or "nvim"
 local editor_cmd       = terminal .. " -e " .. editor
-local browser          = "firefox"
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
-awful.util.shell       = "/usr/bin/bash"
 
 -- Default modkey.
 local modkey = "Mod4"
@@ -501,20 +500,10 @@ modes.launcher = gears.table.join(
       description = "launch ncmpcpp",
       pattern = {'n'},
       handler = function()
-        local host        = os.getenv("MPD_HOST") or "localhost"
-        local port        = os.getenv("MPD_PORT") or 6600
-        local name        = "ncmpcpp"
+        local host = os.getenv("MPD_HOST") or "localhost"
+        local port = os.getenv("MPD_PORT") or 6600
 
-        -- This is unfortunately a bit hacky, but Alacritty doesn't implement the startup notification protocol
-        -- https://github.com/alacritty/alacritty/issues/2824
-        local find_instance = function(c) return awful.rules.match(c, {instance = name}) end
-        local ncmpcpp_instance = awful.client.iterate(find_instance)()
-
-        if ncmpcpp_instance then
-          ncmpcpp_instance:jump_to()
-        else
-          awful.spawn(string.format("%s --class %s -e %s --host %s --port %s", terminal, name, name, host, port))
-        end
+        awful.spawn.raise_or_spawn(terminal .. " -e 'ncmpcpp --host " .. host .. " --port " .. port .. "'")
       end
     },
     {
@@ -645,7 +634,7 @@ awful.rules.rules = {
       properties = { floating = true, placement = awful.placement.centered }},
 
     -- always put ncmpcpp on last tag
-    { rule = { instance = "ncmpcpp"},
+    { rule = { name = "ncmpcpp.*"},
       properties = { tag = tags[#tags]}},
 
     -- display keyboard (and mouse) status nicely

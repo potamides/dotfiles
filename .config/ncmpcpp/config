@@ -454,7 +454,7 @@ media_library_albums_split_by_date = yes
 #
 #media_library_sort_by_mtime = no
 #
-#enable_window_title = yes
+enable_window_title = no
 #
 ##
 ## Note: You can choose default search mode for search engine. Available modes
