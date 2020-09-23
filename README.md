@@ -30,7 +30,7 @@ places administrative files in `$HOME/.dotfiles` and updates configuration
 files in `$HOME` with the content of the repository (**warning:** this
 overwrites existing files). For convenience the script can be executed like so:
 ```sh
-curl -LfsS https://raw.githubusercontent.com/potamides/dotfiles/master/.local/bin/install-dotfiles | bash
+curl -LfsS https://github.com/potamides/dotfiles/raw/master/.local/bin/install-dotfiles | bash
 ```
 
 With a simple alias (already included in [bashrc](.bashrc)) this dotfiles
@@ -44,7 +44,7 @@ installs all required packages and performs necessary application setup
 automatically. Note however that this script is specific to [Arch
 Linux](https://www.archlinux.org/). It can be invoked like this.
 ```sh
-curl -LfsS https://raw.githubusercontent.com/potamides/dotfiles/master/.local/bin/install-packages | bash
+curl -LfsS https://github.com/potamides/dotfiles/raw/master/.local/bin/install-packages | bash
 ```
 
 ## Contents
