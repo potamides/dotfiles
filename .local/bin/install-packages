@@ -1,0 +1,85 @@
+#!/bin/bash
+
+###############################################################################
+#            Install required packages and perform necessary setup.           #
+###############################################################################
+
+pacman_pkgs=(
+  ranger
+  neovim
+  tmux
+  ncmpcpp
+  qpdfview
+  physlock
+  termite
+  mutt
+  neofetch
+  keepassxc          # mutt dependency
+  yarn               # neovim dependency
+  python-pynvim      # neovim dependency
+  xorg-xinit         # awesome dependency
+  papirus-icon-theme # awesome dependency
+  fortune-mod        # neofetch dependency
+  scrot              # awesome optional dependency
+  firefox            # awesome optional dependency
+  redshift           # awesome optional dependency
+  mpv                # awesome optional dependency
+  udiskie            # ranger optional dependency
+  bash-completion    # bash optional dependency
+  fzf                # bash optional dependency
+  ripgrep            # bash optional dependency
+)
+
+aur_pkgs=(
+  awesome-luajit
+  conky-git
+  absolutely-proprietary     # conky dependency
+  nerd-fonts-source-code-pro # termite dependency
+  boxes                      # neofetch dependency
+  bash-complete-alias        # bash optional dependency
+  gtk-theme-arc-gruvbox-git  # awesome optional dependency
+  qt5-styleplugins           # awesome optional dependency
+)
+
+pip_pkgs=(
+  pypandoc # mutt dependency
+  pynliner # mutt dependency
+)
+
+function install_requirements(){
+  if [[ ! $(type -t yay) ]]; then
+    # shellcheck disable=SC2155
+    local directory=$(mktemp -d)
+    git clone https://aur.archlinux.org/yay-bin.git "$directory"
+    (cd "$directory" && makepkg -sri --noconfirm)
+    rm -rf "$directory"
+  fi
+
+  if [[ ! $(type -t pip) ]]; then
+    sudo pacman -S --noconfirm python-pip
+  fi
+}
+
+function install_packages(){
+  sudo pacman -S --needed --noconfirm "${pacman_pkgs[@]}"
+  yay -S --aur --needed --noconfirm "${aur_pkgs[@]}"
+  pip install "${pip_pkgs[@]}" --user
+}
+
+function install_nvim_plugins(){
+  curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  nvim --headless +PlugInstall +qall 2> /dev/null
+}
+
+function enable_service_files(){
+  systemctl --user enable --now mpd-tunnel
+  sudo cp ~/.config/systemd/user/physlock@.service /etc/systemd/system
+  sudo systemctl enable physlock@"$USER"
+}
+
+set -o errexit
+install_requirements
+install_packages
+install_nvim_plugins
+enable_service_files

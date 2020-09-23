@@ -1,0 +1,16 @@
+#!/bin/bash
+
+###############################################################################
+#  Install dotfiles as a bare git repository and override configuration files #
+#                                  in $HOME.                                  #
+###############################################################################
+
+set -o errexit
+export GIT_WORK_TREE=$HOME
+export GIT_DIR=$GIT_WORK_TREE/.dotfiles
+
+git clone --bare https://github.com/potamides/dotfiles.git $GIT_DIR
+git config status.showUntrackedFiles no
+git sparse-checkout set '*' '!README.md' '!.rice.png' '!.local/bin/install-*/'
+git checkout --force
+git submodule update --init
