@@ -1,108 +1,99 @@
-# Dotfiles
-
+# 🍚 Dotfiles 🍚
 > Ohne Fleiß kein Rice.
 > - potamides
 
-A repository for more sophisticated configurations of applications I use on a
-daily basis. My philosophy is to find a good balance between functionality and
-eye-candy, while keeping an eye on resource consumption. I put a lot of care
-into a consistent and appealing look and try to use the
-[gruvbox](https://github.com/morhetz/gruvbox) colorscheme for everything.
-
+A repository for more sophisticated configuration files of applications I use
+on a daily basis. My philosophy is to find a good balance between functionality
+and design, while keeping an eye on resource consumption. I put a lot of care
+into a consistent and pleasant look, that is easy on the eyes and try to use
+the [gruvbox](https://github.com/morhetz/gruvbox) colorscheme for everything.
 ![](.rice.png)
 
 ## Installation
+**Disclaimer:** The steps below are highly tailored to my needs and I would
+advise anyone else to review each instruction and only proceed if they know
+what it is doing.
 
-For tinkering this repository and its submodules can be cloned with the
-following command:
+If you just want to hack at your own leisure, this repository and its
+submodules can be cloned with the following command:
 ```sh
 git clone --recurse-submodules https://github.com/potamides/dotfiles
 ```
 
-Alternatively it can be installed as a bare git repository, inspired by [this
-Hacker News comment](https://news.ycombinator.com/item?id=11070797). The
-following
-[script](https://gist.github.com/potamides/385866f8380ec65f40de734c53147040)
-places administrative files in `$HOME/.dotfiles` and updates configurations in
-`$HOME` with the content of the repository (**warning:** this overwrites
-existing files):
+Alternatively it can be installed as a bare git repository, which allows for
+efficient dotfiles management without having to rely on additional external
+tools <sup> [1](https://news.ycombinator.com/item?id=11070797),
+[2](https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo/),
+[3](https://harfangk.github.io/2016/09/18/manage-dotfiles-with-a-git-bare-repository.html)
+</sup>. The project contains a [script](.local/bin/install-dotfiles), which
+places administrative files in `$HOME/.dotfiles` and updates configuration
+files in `$HOME` with the content of the repository (**warning:** this
+overwrites existing files). For convenience the script can be executed like so:
 ```sh
-#!/bin/bash
-
-set -o errexit
-export GIT_WORK_TREE=$HOME
-export GIT_DIR=$GIT_WORK_TREE/.dotfiles
-
-git clone --bare https://github.com/potamides/dotfiles.git $GIT_DIR
-git config status.showUntrackedFiles no
-git sparse-checkout set '*' '!README.md' '!.rice.png'
-git checkout --force
-git submodule update --init
+curl -LfsS https://raw.githubusercontent.com/potamides/dotfiles/master/.local/bin/install-dotfiles | bash
 ```
 
-This repository consists of configuration files for the following mentioned
-applications, so make sure those are installed. For each application some more
-or less detailed instructions are provided to get everything up and running.
-All applications use [Sauce Code Pro Nerd
-Font](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/SourceCodePro)
-as a monospaced font and [DejaVu Sans](https://dejavu-fonts.github.io/) as a
-variable-width font, so make sure those are installed as well.
-
-### Neovim ([.config/nvim](.config/nvim/))
-To set up my neovim configuration the
-[vim-plug](https://github.com/junegunn/vim-plug) plugin manager is required. To
-install it simply run the following command.
-
+With a simple alias (already included in [bashrc](.bashrc)) this dotfiles
+project can then be managed like any other git repository:
 ```sh
-curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 ```
 
-After setting it up launch neovim and run the command `:PlugInstall` to install
-all other plugins. Now restart neovim and everything should be working.
+This repository also contains a [script](.local/bin/install-packages) that
+installs all required packages and performs necessary application setup
+automatically. Note however that this script is specific to [Arch
+Linux](https://www.archlinux.org/). It can be invoked like this.
+```sh
+curl -LfsS https://raw.githubusercontent.com/potamides/dotfiles/master/.local/bin/install-packages | bash
+```
 
-### Bash ([.inputrc](.inputrc), [.bashrc](.bashrc), [.bash\_profile](.bash_profile))
-If available, the bash configuration sources
-[bash-completions](https://github.com/scop/bash-completion) and
-[complete-alias](https://github.com/cykerway/complete-alias) to get command
-line completions. The former is available as an official package in Archlinux
-and the latter can be found in the AUR. To integrate git into the prompt
-[git-prompt](https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh)
-is used, it should already be installed along with git.
-The configuration also makes use of neofetch.
+## Contents
+The project contains configuration files for the following programs. Many
+applications are straightforward to use. For programs where I developed a more
+individual workflow, I give basic usage instructions below.
+| | Name | Files \& Directories | Links |
+|-| ---- | ------- | ----- |
+| **Window Manager**          | awesome  | [.config/awesome](.config/awesome), [.xinitrc](.xinitrc) [.config/.../mpd-tunnel.service](.config/systemd/user/mpd-tunnel.service)| [Repository](https://github.com/awesomeWM/awesome), [Homepage](https://awesomewm.org/) |
+| **Terminal**                | termite  | [.config/termite](.config/termite) | [Repository](https://github.com/thestinger/termite) | 
+| **Terminal Multiplexer**    | tmux     | [.tmux.conf](.tmux.conf) | [Repository](https://github.com/tmux/tmux), [Homepage](tmux.github.io) |
+| **Shell**                   | bash     | [.inputrc](.inputrc), [.bashrc](.bashrc), [.bash\_profile](.bash_profile) | [Repository](https://git.savannah.gnu.org/cgit/bash.git), [Homepage](https://www.gnu.org/software/bash/) |
+| **Editor**                  | neovim   | [.config/nvim](.config/nvim) | [Repository](https://github.com/neovim/neovim), [Homepage](https://neovim.io/) |
+| **Mail Client**             | mutt     | [.config/mutt](.config/mutt) | [Repository](https://gitlab.com/muttmua/mutt), [Homepage](http://www.mutt.org/) |
+| **File Manager**            | ranger   | [.config/ranger](.config/ranger) | [Repository](https://github.com/ranger/ranger), [Homepage](https://ranger.github.io/) |
+| **Music Player**            | ncmpcpp  | [.config/ncmpcpp](.config/ncmpcpp) | [Repository](https://github.com/ncmpcpp/ncmpcpp), [Homepage](https://rybczak.net/ncmpcpp/) |
+| **Document Viewer**         | qpdfview | [.config/qpdfview](.config/qpdfview) | [Homepage](https://launchpad.net/qpdfview) |
+| **System Monitor**          | conky    | [.conkyrc](.conkyrc) | [Repository](https://github.com/brndnmtthws/conky), [Homepage](https://github.com/brndnmtthws/conky/wiki) |
+| **System Information Tool** | neofetch | [.config/neofetch](.config/neofetch) | [Repository](https://github.com/dylanaraps/neofetch), [Homepage](https://github.com/dylanaraps/neofetch/wiki) |
+| **Display Locker**          | physlock | [.config/.../physlock@.service](.config/systemd/user/physlock@.service) | [Repository](https://github.com/muennich/physlock) |
 
-### Neofetch ([.config/neofetch](.config/neofetch))
-Neofetch is configured to be used as a terminal greeter. It displays [fortune
-cookies](https://www.shlomifish.org/open-source/projects/fortune-mod/), so make
-sure the package is installed (available with pacman).
-[Boxes](https://boxes.thomasjensen.com/) is also required for the terminal
-greeter (an AUR package exists).
+Completely independent from the aforementioned applications this repository
+also contains some additional [scripts](.local/bin), that can be used to
+automate various tasks.
 
-### Awesome ([.config/awesome](.config/awesome), [.xinitrc](.xinitrc), [.Xresources](.Xresources))
-Awesome uses [mpv](https://mpv.io/) internally to play remote mpd streams.
-Other integrated applications are only used in some keybindings and are thus
-more or less optional or easily replaced. Take a look at calls to
-[awful.spawn](https://awesomewm.org/doc/api/libraries/awful.spawn.html) in the
-[rc.lua](.config/awesome/rc.lua) config file, it should be rather obvious. To
-get GTK applications to match the colorscheme as close as possible install
-[arc-gruvbox-theme](https://github.com/cyrinux/arc-gruvbox-theme) (can be found
-in the AUR) and
-[Papirus-Dark](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme)
-(official Archlinux package exists). To understand how to control my awesome
-configuration take a look at
-[modalawesome](https://github.com/potamides/modalawesome).
+### Awesome
+Instead of the standard
+[awful.key](https://awesomewm.org/doc/api/libraries/awful.key.html)
+keybindings, this configuration uses
+[modalawesome](https://github.com/potamides/modalawesome) to create vi-like
+keybindings with motions, counts and multiple modes. To understand how to
+control my awesome configuration, I recommend to check it out beforehand.
 
-### Conky ([.conkyrc](.conkyrc))
-Conky makes use of
-[absolutely-proprietray](https://github.com/vmavromatis/absolutely-proprietary)
-to display the current Stallman Freedom Index. This package can be found in the
-AUR.
+Additionally [mpd](https://www.musicpd.org/) is highly integrated into the
+configuration. I have a server where all my audio files are located. A systemd
+[service file](.config/systemd/user/mpd-tunnel.service) then creates an ssh
+tunnel to control mpd and to receive the audio stream, which is then played via
+[mpv](https://mpv.io/).
 
-### Termite ([.config/termite](.config/termite)), Ranger ([.config/ranger](.config/ranger)), Tmux ([.tmux.conf](.tmux.conf))
-Some of these applications don't have additional dependencies and if they have,
-they are integrated as git submodules or git subtrees so no additional steps
-are required.
+### Mutt
+Mutt is configured for multiple email accounts. It makes use of the command
+line tool distributed with [keepassxc](https://keepassxc.org/) to access
+passwords. The location of the password database and the keyfile can be
+controlled with the `KEYPASSXC_DATABASE` and `KEYPASSXC_KEYFILE` environment
+variables.
 
-### Scripts ([.local/bin](.local/bin)), Systemd Service Files ([.config/systemd/user](.config/systemd/user))
-These folders contain some useful shell scripts and systemd service files,
-which don't necessarily belong to any of the aforementioned programs.
+Mutt also contains a [script](.config/mutt/scripts/create-alias.sh) which
+automatically creates aliases for addresses in the `FROM` field, when reading
+an email. It also contains the
+[markdown2html](https://git.madduck.net/etc/mutt.git/blob_plain/HEAD:/.mutt/markdown2html)
+script to conveniently create `multipart/alternative` emails when the need
+arises.
