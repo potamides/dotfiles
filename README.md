@@ -53,9 +53,9 @@ applications are straightforward to use. For programs where I developed a more
 individual workflow, I give basic usage instructions below.
 | | Name | Files \& Directories | Links |
 |-| ---- | ------- | ----- |
-| **Window Manager**          | awesome  | [.config/awesome](.config/awesome), [.xinitrc](.xinitrc) [.config/.../mpd-tunnel.service](.config/systemd/user/mpd-tunnel.service)| [Repository](https://github.com/awesomeWM/awesome), [Homepage](https://awesomewm.org/) |
+| **Window Manager**          | awesome  | [.config/awesome](.config/awesome), [.xinitrc](.xinitrc) | [Repository](https://github.com/awesomeWM/awesome), [Homepage](https://awesomewm.org/) |
 | **Terminal**                | termite  | [.config/termite](.config/termite) | [Repository](https://github.com/thestinger/termite) | 
-| **Terminal Multiplexer**    | tmux     | [.tmux.conf](.tmux.conf) | [Repository](https://github.com/tmux/tmux), [Homepage](tmux.github.io) |
+| **Terminal Multiplexer**    | tmux     | [.tmux.conf](.tmux.conf) | [Repository](https://github.com/tmux/tmux), [Homepage](https://tmux.github.io) |
 | **Shell**                   | bash     | [.inputrc](.inputrc), [.bashrc](.bashrc), [.bash\_profile](.bash_profile) | [Repository](https://git.savannah.gnu.org/cgit/bash.git), [Homepage](https://www.gnu.org/software/bash/) |
 | **Editor**                  | neovim   | [.config/nvim](.config/nvim) | [Repository](https://github.com/neovim/neovim), [Homepage](https://neovim.io/) |
 | **Mail Client**             | mutt     | [.config/mutt](.config/mutt) | [Repository](https://gitlab.com/muttmua/mutt), [Homepage](http://www.mutt.org/) |
