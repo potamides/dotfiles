@@ -62,7 +62,7 @@ function install_requirements(){
 
 function install_packages(){
   sudo pacman -S --needed --noconfirm "${pacman_pkgs[@]}"
-  yay -S --aur --needed --noconfirm "${aur_pkgs[@]}"
+  yay -S --aur --needed --noconfirm --removemake "${aur_pkgs[@]}"
   pip install "${pip_pkgs[@]}" --user
 }
 
