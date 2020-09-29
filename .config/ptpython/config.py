@@ -4,10 +4,45 @@ Configuration example for ``ptpython``.
 Copy this file to $XDG_CONFIG_HOME/ptpython/config.py
 """
 from __future__ import unicode_literals
+from prompt_toolkit.application.current import get_app
+from prompt_toolkit.key_binding.vi_state import InputMode
+from prompt_toolkit.selection import SelectionType
 from ptpython.layout import CompletionVisualisation
+from ptpython.prompt_style import PromptStyle
 
 __all__ = ("configure",)
 
+class ViPrompt(PromptStyle):
+    """
+    Custom prompt with mode indicator.
+    """
+
+    def _get_mode_text(self):
+        app = get_app()
+        selection_state = app.current_buffer.selection_state
+        mode = app.vi_state.input_mode
+        selection_types = (SelectionType.LINES,
+                           SelectionType.CHARACTERS,
+                           SelectionType.BLOCK)
+
+        if selection_state and selection_state.type in selection_types:
+            return "(vis)"
+        if mode in (InputMode.INSERT, InputMode.INSERT_MULTIPLE):
+            return "(ins)"
+        if mode == InputMode.NAVIGATION:
+            return "(nav)"
+        if mode == InputMode.REPLACE:
+            return "(rpl)"
+        return ""
+
+    def in_prompt(self):
+        return [("class:prompt", f"{self._get_mode_text()}>>> ")]
+
+    def in2_prompt(self, width: int):
+        return [("class:prompt.dots", "...")]
+
+    def out_prompt(self):
+        return []
 
 def configure(repl):
     """
@@ -16,17 +51,17 @@ def configure(repl):
     :param repl: `PythonRepl` instance.
     """
     # Show function signature (bool).
-    repl.show_signature = True
+    repl.show_signature = False
 
     # Show docstring (bool).
     repl.show_docstring = True
 
     # Show the "[Meta+Enter] Execute" message when pressing [Enter] only
     # inserts a newline instead of executing the code.
-    repl.show_meta_enter_message = True
+    repl.show_meta_enter_message = False
 
     # Show completions. (NONE, POP_UP, MULTI_COLUMN or TOOLBAR)
-    repl.completion_visualisation = CompletionVisualisation.POP_UP
+    repl.completion_visualisation = CompletionVisualisation.TOOLBAR
 
     # When CompletionVisualisation.POP_UP has been chosen, use this
     # scroll_offset in the completion menu.
@@ -36,7 +71,7 @@ def configure(repl):
     repl.show_line_numbers = False
 
     # Show status bar.
-    repl.show_status_bar = True
+    repl.show_status_bar = False
 
     # When the sidebar is visible, also show the help text.
     repl.show_sidebar_help = True
@@ -55,20 +90,25 @@ def configure(repl):
 
     # Complete while typing. (Don't require tab before the
     # completion menu is shown.)
-    repl.complete_while_typing = True
+    repl.complete_while_typing = False
 
     # Fuzzy and dictionary completion.
     repl.enable_fuzzy_completion = False
     repl.enable_dictionary_completion = False
 
-    # Vi mode.
-    repl.vi_mode = True
-
     # Paste mode. (When True, don't insert whitespace after new line.)
     repl.paste_mode = False
 
-    # Use the classic prompt. (Display '>>>' instead of 'In [1]'.)
-    repl.prompt_style = "classic"  # 'classic' or 'ipython'
+    # Vi mode.
+    repl.vi_mode = True
+
+    # reduce delay when pressing escape
+    repl.app.ttimeoutlen = 0.05
+
+    # Use custom prompt that displays current vi mode
+    repl.all_prompt_styles["vi"] = ViPrompt()
+    repl.prompt_style = "vi"  # could also be 'classic' or 'ipython'
+
 
     # Don't insert a blank line after the output.
     repl.insert_blank_line_after_output = False
@@ -79,11 +119,11 @@ def configure(repl):
     # Note: When enable, please disable the `complete_while_typing` option.
     #       otherwise, when there is a completion available, the arrows will
     #       browse through the available completions instead of the history.
-    repl.enable_history_search = False
+    repl.enable_history_search = True
 
     # Enable auto suggestions. (Pressing right arrow will complete the input,
     # based on the history.)
-    repl.enable_auto_suggest = False
+    repl.enable_auto_suggest = True
 
     # Enable open-in-editor. Pressing C-x C-e in emacs mode or 'v' in
     # Vi navigation mode will open the input in the current editor.
