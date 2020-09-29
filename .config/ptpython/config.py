@@ -19,27 +19,22 @@ class ViPrompt(PromptStyle):
 
     def _get_mode_text(self):
         app = get_app()
-        selection_state = app.current_buffer.selection_state
         mode = app.vi_state.input_mode
-        selection_types = (SelectionType.LINES,
-                           SelectionType.CHARACTERS,
-                           SelectionType.BLOCK)
 
-        if selection_state and selection_state.type in selection_types:
+        if app.current_buffer.selection_state is not None:
             return "(vis)"
         if mode in (InputMode.INSERT, InputMode.INSERT_MULTIPLE):
             return "(ins)"
         if mode == InputMode.NAVIGATION:
-            return "(nav)"
+            return "(cmd)"
         if mode == InputMode.REPLACE:
             return "(rpl)"
-        return ""
 
     def in_prompt(self):
-        return [("class:prompt", f"{self._get_mode_text()}>>> ")]
+        return [("default", f"{self._get_mode_text()}> ")]
 
     def in2_prompt(self, width: int):
-        return [("class:prompt.dots", "...")]
+        return [("ansigray", "...")]
 
     def out_prompt(self):
         return []
@@ -141,7 +136,7 @@ def configure(repl):
     repl.enable_input_validation = True
 
     # Use this colorscheme for the code.
-    repl.use_code_colorscheme("default")
+    repl.use_code_colorscheme("rrt")
 
     # Set color depth (keep in mind that not all terminals support true color).
 
