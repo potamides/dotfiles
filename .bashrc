@@ -222,7 +222,7 @@ alias paclo='pacman -Qdt' # list orphans
 alias pacro='paclo && sudo pacman -Rns $(pacman -Qtdq)' # remove orphans
 alias pacc='sudo pacman -Scc' # clean cache
 alias pacli='pacman -Q | wc -l' # list user installed packages
-alias calc='ipython --profile=calculate'
+alias calc='ptpython -i <(echo "from math import *")'
 alias htop='htop -t'
 alias serve='python3 -m http.server 9999'
 alias debug='set -o nounset && set -o verbose && set -o xtrace'

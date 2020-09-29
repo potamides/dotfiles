@@ -42,7 +42,7 @@ alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 This repository also contains a [script](.local/bin/install-packages) that
 installs all required packages and performs necessary application setup
 automatically. Note however that this script is specific to [Arch
-Linux](https://www.archlinux.org/). It can be invoked like this.
+Linux](https://www.archlinux.org/). It can be invoked like this:
 ```sh
 curl -LfsS https://github.com/potamides/dotfiles/raw/master/.local/bin/install-packages | bash
 ```
@@ -65,6 +65,7 @@ individual workflow, I give basic usage instructions below.
 | **System Monitor**          | conky    | [.conkyrc](.conkyrc) | [Repository](https://github.com/brndnmtthws/conky), [Homepage](https://github.com/brndnmtthws/conky/wiki) |
 | **System Information Tool** | neofetch | [.config/neofetch](.config/neofetch) | [Repository](https://github.com/dylanaraps/neofetch), [Homepage](https://github.com/dylanaraps/neofetch/wiki) |
 | **Display Locker**          | physlock | [.config/.../physlock@.service](.config/systemd/user/physlock@.service) | [Repository](https://github.com/muennich/physlock) |
+| **Calculator**              | ptpython | [.config/ptpython](.config/ptpython) | [Repository](https://github.com/prompt-toolkit/ptpython) |
 
 Completely independent from the aforementioned applications this repository
 also contains some additional [scripts](.local/bin), that can be used to

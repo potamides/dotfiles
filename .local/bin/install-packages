@@ -33,6 +33,7 @@ pacman_pkgs=(
 aur_pkgs=(
   awesome-luajit
   conky-git
+  ptpython
   absolutely-proprietary     # conky dependency
   nerd-fonts-source-code-pro # termite dependency
   boxes                      # neofetch dependency
