@@ -57,6 +57,7 @@ shopt -s no_empty_cmd_completion    # Stops empty line tab comp
 shopt -s dirspell                   # Tab comp can fix dir name typos
 shopt -s globstar                   # pattern ** also searches subdirectories
 shopt -s extglob                    # enable extended pattern matching features
+shopt -so pipefail                  # pipe return value is last non-zero status
 
 # enable vi like keybindings, when not in vim
 if [[ -z $VIMRUNTIME ]]; then
@@ -130,7 +131,7 @@ function cl(){
 # Searching file contents with fzf and ripgrep
 function fif(){
   if [[ "$#" -eq 0 ]]; then
-    echo "Need a string to search for!"
+    echo "Need a string to search for!" >&2
     return 1
   fi
   rg --files-with-matches --no-messages "$@" \
@@ -157,15 +158,13 @@ function dus(){
 # search for keyword in pdf's in current directory
 function spdf(){
   if [[ "$#" -eq 0 ]]; then
-    echo "Need a string to search for!"
+    echo "Need a string to search for!" >&2
     return 1
   fi
 
-  local returncode=1
   for file in *.pdf; do
-    pdftotext -q "$file" - | grep "$@" --quiet && echo "$file" && returncode=0
+    pdftotext -q "$file" - | grep "$@" --quiet && echo "$file"
   done
-  return $returncode
 }
 
 # tldr version of man pages
@@ -224,6 +223,7 @@ alias pacc='sudo pacman -Scc' # clean cache
 alias pacli='pacman -Q | wc -l' # list user installed packages
 alias calc='ptpython -i <(echo "from math import *")'
 alias htop='htop -t'
+alias todo='$EDITOR ~/Documents/TODO.md'
 alias serve='python3 -m http.server 9999'
 alias debug='set -o nounset && set -o verbose && set -o xtrace'
 alias nodebug='set +o nounset && set +o verbose && set +o xtrace'

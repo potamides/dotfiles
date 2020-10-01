@@ -1,12 +1,9 @@
 """
-Configuration example for ``ptpython``.
-
-Copy this file to $XDG_CONFIG_HOME/ptpython/config.py
+Configuration file for ``ptpython``.
 """
 from __future__ import unicode_literals
 from prompt_toolkit.application.current import get_app
 from prompt_toolkit.key_binding.vi_state import InputMode
-from prompt_toolkit.selection import SelectionType
 from ptpython.layout import CompletionVisualisation
 from ptpython.prompt_style import PromptStyle
 
@@ -31,7 +28,7 @@ class ViPrompt(PromptStyle):
             return "(rpl)"
 
     def in_prompt(self):
-        return [("default", f"{self._get_mode_text()}> ")]
+        return [("", f"{self._get_mode_text()}> ")]
 
     def in2_prompt(self, width: int):
         return [("ansigray", "...")]
@@ -136,7 +133,7 @@ def configure(repl):
     repl.enable_input_validation = True
 
     # Use this colorscheme for the code.
-    repl.use_code_colorscheme("rrt")
+    repl.use_code_colorscheme("igor")
 
     # Set color depth (keep in mind that not all terminals support true color).
 
@@ -153,3 +150,6 @@ def configure(repl):
 
     # Preserve last used Vi input mode between main loop iterations
     repl.vi_keep_last_used_mode = False
+
+    # minimum brightness for the colorscheme
+    repl.min_brightness = 0.25

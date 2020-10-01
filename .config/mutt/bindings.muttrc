@@ -20,9 +20,8 @@ bind browser,pager              \CY  previous-line
 bind index                      \CE  next-line
 bind index                      \CY  previous-line
 
-bind pager,index                dd  delete-message
-
 # Mail & Reply
+bind pager,index                dd   delete-message
 bind pager,index                gr   group-reply
 
 # Threads
@@ -37,8 +36,5 @@ bind index                      zA   collapse-all
 # Other
 bind index                      \CL  imap-fetch-mail
 bind index,pager                B    sidebar-toggle-visible
-macro index,pager               <f1> "<shell-escape> \
-  info --vi-keys -v match-style=underline,bold,nocolor -v link-style=yellow \
-  -v active-link-style=yellow,bold mutt<enter>" "Show Mutt documentation"
 
 # vi: ft=muttrc
