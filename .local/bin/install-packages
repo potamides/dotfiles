@@ -37,6 +37,7 @@ aur_pkgs=(
   absolutely-proprietary     # conky dependency
   nerd-fonts-source-code-pro # termite dependency
   boxes                      # neofetch dependency
+  pandoc-bin                 # mutt dependency
   bash-complete-alias        # bash optional dependency
   gtk-theme-arc-gruvbox-git  # awesome optional dependency
   qt5-styleplugins           # awesome optional dependency
