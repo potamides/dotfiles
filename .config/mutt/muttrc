@@ -1,7 +1,8 @@
 # user defined variables
 # -----------------------------------------------------------------------------
 
-set my_folder = "~/.config/mutt"
+set my_folder  = "~/.config/mutt"
+set my_samples = "/usr/share/doc/mutt/samples"
 
 # general smtp stuff / email sending
 # -----------------------------------------------------------------------------
@@ -18,7 +19,7 @@ set editor        = '$EDITOR +/^$ +nohlsearch' # Jump past header
 
 # if desired generate a multipart/alternative container from markdown
 set send_multipart_alternative        = ask-no
-set send_multipart_alternative_filter = $my_folder/scripts/markdown2html.py
+set send_multipart_alternative_filter = "python $my_samples/markdown2html"
 
 # general imap stuff / email fetching
 # -----------------------------------------------------------------------------

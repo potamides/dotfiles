@@ -94,7 +94,7 @@ variables.
 
 Mutt also contains a [script](.config/mutt/scripts/create-alias.sh) which
 automatically creates aliases for addresses in the `FROM` field, when reading
-an email. It also contains the
+an email. It also utilizes the
 [markdown2html](https://git.madduck.net/etc/mutt.git/blob_plain/HEAD:/.mutt/markdown2html)
 script to conveniently create `multipart/alternative` emails when the need
 arises.
