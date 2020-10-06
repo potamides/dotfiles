@@ -49,7 +49,7 @@ PROMPT_COMMAND+="history -a;" # history -n;"
 
 # set window title to currently running command or running shell
 trap 'printf "\033]0;%s\007" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
-export PROMPT_COMMAND+='[ -n "$BASH_COMMAND" ] && \
+PROMPT_COMMAND+='[ -n "$BASH_COMMAND" ] && \
   printf "\033]0;%s\007" `basename $SHELL`;'
 
 shopt -s histappend                 # append history on exit, don't overwrite
