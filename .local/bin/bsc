@@ -7,8 +7,7 @@
 ssh_server=ISP-Pool
 directory_size_limit=10M
 directory=$(mktemp -du --tmpdir tmp.bluespec.XXXXXXXXXX)
-pre_exec="\
-  export PATH=\$PATH:/opt/bluespec/bin && \
+pre_exec="export PATH=\$PATH:/opt/bluespec/bin && \
   export BLUESPECDIR=/opt/bluespec/lib && \
   export LM_LICENSE_FILE=27000@licence.rbg.informatik.tu-darmstadt.de"
 
