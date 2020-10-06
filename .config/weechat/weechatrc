@@ -1,6 +1,8 @@
 dnl General Weechat options
 /set weechat.look.mouse "on"
 /set weechat.plugin.autoload "*,!ruby,"
+/set irc.look.smart_filter "on"
+/filter addreplace irc_smart * irc_smart_filter *
 /secure passphrase KEEPASS(Weechat, Password)
 
 dnl Add and configure servers
@@ -34,7 +36,7 @@ dnl Add and configure some scripts
 /set weechat.bar.status.items "[time],[buffer_last_number],[buffer_plugin],dnl
 buffer_number+:+buffer_name+(buffer_modes)+{buffer_nicklist_count}dnl
 +buffer_zoom+buffer_filter,scroll,[lag],[hotlist],completion,cmd_completion"
-/trigger add vimode signal "python_script_loaded" dnl
+/trigger addreplace vimode signal "python_script_loaded" dnl
 "${tg_signal_data} ==* */vimode.py" "" "/vimode bind_keys" "ok" "delete"
 
 /set irc.look.server_buffer "independent"
