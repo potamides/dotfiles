@@ -47,6 +47,11 @@ unset boldblue boldred reset returncode user dir firstline secondline
 # append terminal session command history with every command
 PROMPT_COMMAND+="history -a;" # history -n;"
 
+# set window title to currently running command or running shell
+trap 'printf "\033]0;%s\007" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
+export PROMPT_COMMAND+='[ -n "$BASH_COMMAND" ] && \
+  printf "\033]0;%s\007" `basename $SHELL`;'
+
 shopt -s histappend                 # append history on exit, don't overwrite
 shopt -s lithist                    # Save multi-line cmd with embedded newline
 shopt -s checkwinsize               # Update col/lines after commands
