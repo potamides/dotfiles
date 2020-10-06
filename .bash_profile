@@ -31,6 +31,9 @@ export PATH="${PATH}:${HOME}/.luarocks/bin"
 export QT_QPA_PLATFORMTHEME=gtk2
 export DESKTOP_SESSION=gnome
 
+# change weechat home directory
+export WEECHAT_HOME="$HOME/.config/weechat"
+
 # always use ripgrep with fzf
 export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case \
   --glob '!.git/*' --glob '!node_modules/*' 2> /dev/null"

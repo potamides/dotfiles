@@ -65,6 +65,7 @@ individual workflow, I give basic usage instructions below.
 | **System Monitor**          | conky    | [.conkyrc](.conkyrc) | [Repository](https://github.com/brndnmtthws/conky), [Homepage](https://github.com/brndnmtthws/conky/wiki) |
 | **System Information Tool** | neofetch | [.config/neofetch](.config/neofetch) | [Repository](https://github.com/dylanaraps/neofetch), [Homepage](https://github.com/dylanaraps/neofetch/wiki) |
 | **Display Locker**          | physlock | [.config/.../physlock@.service](.config/systemd/user/physlock@.service) | [Repository](https://github.com/muennich/physlock) |
+| **IRC Client**              | weechat  | [.config/weechat](.config/weechat) | [Repository](https://github.com/weechat/weechat), [Homepage](https://weechat.org/) |
 | **Calculator**              | ptpython | [.config/ptpython](.config/ptpython) | [Repository](https://github.com/prompt-toolkit/ptpython) |
 
 Completely independent from the aforementioned applications this repository
@@ -87,7 +88,7 @@ tunnel to control mpd and to receive the audio stream, which is then played via
 
 ### Mutt
 Mutt is configured for multiple email accounts. It makes use of the command
-line tool distributed with [keepassxc](https://keepassxc.org/) to access
+line tool distributed with [KeePassXC](https://keepassxc.org/) to access
 passwords. The location of the password database and the keyfile can be
 controlled with the `KEYPASSXC_DATABASE` and `KEYPASSXC_KEYFILE` environment
 variables.
@@ -98,3 +99,25 @@ an email. It also utilizes the
 [markdown2html](https://git.madduck.net/etc/mutt.git/blob_plain/HEAD:/.mutt/markdown2html)
 script to conveniently create `multipart/alternative` emails when the need
 arises.
+
+### Weechat
+Weechat keeps a lot of separate configuration files, which contain both default
+options and options altered by the user. Also some of the files contain highly
+sensitive information. Combined with the fact, that weechat doesn't support
+standalone password managers to obtain secrets, this makes it very hard to
+manage a weechat config with a dotfiles repository.
+
+That's why I wrote the script
+[confload.py](.config/weechat/python/confload.py). It reads a configuration
+file called [weechatrc](.config/weechat/weechatrc) located in the weechat home
+directory. The file itself should be written in
+[m4](https://www.gnu.org/software/m4/) macro language and after processing
+should contain valid weechat commands. The script also provides the special
+macro `KEEPASS(<title>, <attr>)`, which can be used to obtain sensitive
+information managed with KeepassXC. When this script is loaded for the first
+time it prompts the user for the KeePassXC password and then loads the config
+file. On subsequent launches of weechat this process can be manually invoked
+with the command `/confload <passphrase>`. Again you can use the
+`KEYPASSXC_DATABASE` and `KEYPASSXC_KEYFILE` environment variables for the
+locations of KeepassXC files.
+

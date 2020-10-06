@@ -2,6 +2,7 @@
 
 ###############################################################################
 #            Install required packages and perform necessary setup.           #
+#                     Requirements: base, base-devel, git                     #
 ###############################################################################
 
 pacman_pkgs=(
@@ -14,6 +15,7 @@ pacman_pkgs=(
   termite
   mutt
   neofetch
+  weechat
   keepassxc          # mutt dependency
   yarn               # neovim dependency
   python-pynvim      # neovim dependency
