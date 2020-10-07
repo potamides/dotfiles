@@ -1,7 +1,8 @@
 """
 Configuration file for ``ptpython``.
 """
-from __future__ import unicode_literals
+from sys import stdout
+from os import getenv
 from prompt_toolkit.application.current import get_app
 from prompt_toolkit.key_binding.vi_state import InputMode
 from ptpython.layout import CompletionVisualisation
@@ -14,20 +15,43 @@ class ViPrompt(PromptStyle):
     Custom prompt with mode indicator.
     """
 
-    def _get_mode_text(self):
-        app = get_app()
-        mode = app.vi_state.input_mode
+    @property
+    def _mode(self):
+        return get_app().vi_state.input_mode
 
-        if app.current_buffer.selection_state is not None:
+    @property
+    def _sel_state(self):
+        return get_app().current_buffer.selection_state
+
+    def _update_cursor_shape(self):
+        if self._sel_state is not None or self._mode == InputMode.NAVIGATION:
+            emul, virt = 2, 8
+        elif self._mode in (InputMode.INSERT, InputMode.INSERT_MULTIPLE):
+            emul, virt = 6, 0
+        elif self._mode in (InputMode.REPLACE, InputMode.REPLACE_SINGLE):
+            emul, virt = 4, 0
+        else:
+            return
+        # linux console uses other escape codes than most terminal emulators
+        if getenv("TERM") == "linux":
+            stdout.write(f"\x1b[?{virt}c")
+        else:
+            stdout.write(f"\x1b[{emul} q")
+        stdout.flush()
+
+    def _get_mode_text(self):
+        if self._sel_state is not None:
             return "(vis)"
-        if mode in (InputMode.INSERT, InputMode.INSERT_MULTIPLE):
-            return "(ins)"
-        if mode == InputMode.NAVIGATION:
+        if self._mode == InputMode.NAVIGATION:
             return "(cmd)"
-        if mode == InputMode.REPLACE:
+        if self._mode in (InputMode.INSERT, InputMode.INSERT_MULTIPLE):
+            return "(ins)"
+        if self._mode in (InputMode.REPLACE, InputMode.REPLACE_SINGLE):
             return "(rpl)"
+        return ""
 
     def in_prompt(self):
+        self._update_cursor_shape()
         return [("", f"{self._get_mode_text()}> ")]
 
     def in2_prompt(self, width: int):
