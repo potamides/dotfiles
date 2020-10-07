@@ -9,8 +9,8 @@ fi
 
 # if not in vim or ranger show greeter
 if [[ -z $VIMRUNTIME && -z $RANGER_LEVEL && $(type -t neofetch) ]]; then
-  # set DESKTOP_SESSION to null to correctly identify gtk theme and icons
-  DESKTOP_SESSION= neofetch
+  # set DESKTOP_SESSION to empty to correctly identify gtk theme and icons
+  DESKTOP_SESSION="" neofetch
 fi
 
 # build prompt
@@ -75,11 +75,6 @@ if [[ -z $VIMRUNTIME ]]; then
     PS0="\e[2 q"
   fi
 fi
-
-# set window title to currently running command or running shell
-trap 'printf "\033]0;%s\007" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
-PROMPT_COMMAND+='[ -n "$BASH_COMMAND" ] && \
-  printf "\033]0;%s\007" `basename $SHELL`;'
 
 # FZF config for interactive use
 # -----------------------------------------------------------------------------
@@ -190,7 +185,7 @@ function whoowns(){
 
 # fetch current weather report, with location as optional parameter
 function weather(){
-    local request="wttr.in/${@^}?F"
+    local request="wttr.in/${*^}?F"
     if [[ "$(tput cols)" -lt 125 ]]; then
       request+='n'
     fi
@@ -262,3 +257,10 @@ if [[ -r /usr/share/bash-complete-alias/complete_alias ]]; then
   complete -F _complete_alias la ll lh pac paca pacu pacau pacr pacs pacas \
     paci pacl paclo pacro pacc pacli calc dotfiles
 fi
+
+## stuff that should be executed last
+# -----------------------------------------------------------------------------
+
+# set window title to currently running command or running shell
+trap 'printf "\033]0;%s\007" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
+PROMPT_COMMAND+='[ -n "$BASH_COMMAND" ] && printf "\033]0;%s\007" "$SHELL";'
