@@ -44,14 +44,6 @@ unset boldblue boldred reset returncode user dir firstline secondline
 # general shell behavior
 # -----------------------------------------------------------------------------
 
-# append terminal session command history with every command
-PROMPT_COMMAND+="history -a;" # history -n;"
-
-# set window title to currently running command or running shell
-trap 'printf "\033]0;%s\007" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
-PROMPT_COMMAND+='[ -n "$BASH_COMMAND" ] && \
-  printf "\033]0;%s\007" `basename $SHELL`;'
-
 shopt -s histappend                 # append history on exit, don't overwrite
 shopt -s lithist                    # Save multi-line cmd with embedded newline
 shopt -s checkwinsize               # Update col/lines after commands
@@ -64,6 +56,14 @@ shopt -s globstar                   # pattern ** also searches subdirectories
 shopt -s extglob                    # enable extended pattern matching features
 shopt -so pipefail                  # pipe return value is last non-zero status
 
+# bash history stuff
+HISTSIZE=5000
+HISTFILESIZE=10000
+HISTTIMEFORMAT="%d/%m/%y %T"
+HISTCONTROL=ignoreboth:erasedups
+# append terminal session command history with every command
+PROMPT_COMMAND+="history -a;" # history -n;"
+
 # enable vi like keybindings, when not in vim
 if [[ -z $VIMRUNTIME ]]; then
   shopt -so vi
@@ -75,6 +75,11 @@ if [[ -z $VIMRUNTIME ]]; then
     PS0="\e[2 q"
   fi
 fi
+
+# set window title to currently running command or running shell
+trap 'printf "\033]0;%s\007" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
+PROMPT_COMMAND+='[ -n "$BASH_COMMAND" ] && \
+  printf "\033]0;%s\007" `basename $SHELL`;'
 
 # FZF config for interactive use
 # -----------------------------------------------------------------------------

@@ -6,33 +6,30 @@
 # -----------------------------------------------------------------------------
 
 export EDITOR=nvim
+export VISUAL=$EDITOR
+export BROWSER=firefox
 
-# bash history stuff
-export HISTSIZE=5000
-export HISTFILESIZE=10000
-export HISTTIMEFORMAT="%d/%m/%y %T"
-export HISTCONTROL=ignoreboth:erasedups
+# find locally installed executables
+export PATH="$PATH:$HOME/.local/bin:$HOME/.luarocks/bin"
 
 # run askpass to enter password when not launched from a terminal
 export SUDO_ASKPASS=/usr/lib/git-core/git-gui--askpass
 export SSH_ASKPASS=$SUDO_ASKPASS
 
-# local virtualenv with pipenv
-export PIPENV_VENV_IN_PROJECT=1
-# disable automated lockfile generation / update
-export PIPENV_SKIP_LOCK=1
-
-# to execute local executables
-export PATH="${PATH}:${HOME}/.local/bin"
-# find local executables installed by luarocks
-export PATH="${PATH}:${HOME}/.luarocks/bin"
-
 # get qt5 apps to use native gtk style (through qt5-styleplugins)
 export QT_QPA_PLATFORMTHEME=gtk2
 export DESKTOP_SESSION=gnome
 
-# change weechat home directory
+# change weechat config directory
 export WEECHAT_HOME="$HOME/.config/weechat"
+
+# force ptpython to use ansi colors everywhere
+export PROMPT_TOOLKIT_COLOR_DEPTH=DEPTH_4_BIT
+
+# local virtualenv with pipenv
+export PIPENV_VENV_IN_PROJECT=1
+# disable automated lockfile generation / update
+export PIPENV_SKIP_LOCK=1
 
 # always use ripgrep with fzf
 export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case \

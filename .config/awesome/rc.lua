@@ -66,7 +66,7 @@ end
 
 -- This is used later as the default terminal and editor to run.
 local terminal         = "termite"
-local browser          = "firefox"
+local browser          = os.getenv("BROWSER") or "firefox"
 local editor           = os.getenv("EDITOR") or "nvim"
 local editor_cmd       = terminal .. " -e " .. editor
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
