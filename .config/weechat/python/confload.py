@@ -114,15 +114,17 @@ class Initializer(CallbackCreator):
     def passwd_conceil_cb(self, data, modifier, modifier_data, string):
         """Add a prompt to notify user and mask all user input."""
         prompt = f"Enter password to unlock {DATABASE}: "
-        if self.is_command(string):
+        cursor = "b#"
+        if self.is_command(string.lstrip(cursor)):
             return prompt + string
-        return prompt + (len(string) - 3) * "*" + string[-3:]
+        pos = string.find(cursor)
+        return prompt + pos * "*" + cursor + (len(string) - 3 - pos) * "*"
 
     def passwd_grab_cb(self, data, modifier, modifier_data, string):
         """Check if user input is a potential password and try to load config."""
         if self.is_command(string):
             return string
-        if self.confload.preprocess(string):
+        if self.confload.preprocess(string.replace("/", "", 1)):
             self.confload.execute_commands()
             self.cleanup_and_finish()
             return "/input delete_line"

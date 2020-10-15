@@ -1,24 +1,32 @@
 dnl General Weechat options
-/set weechat.look.mouse "on"
+/set weechat.look.mouse      "on"
 /set weechat.plugin.autoload "*,!ruby,"
-/set irc.look.smart_filter "on"
+/set irc.look.smart_filter   "on"
+/secure passphrase           KEEPASS(Weechat, Password)
 /filter addreplace irc_smart * irc_smart_filter *
-/secure passphrase KEEPASS(Weechat, Password)
 
 dnl Add and configure servers
-/server add freenode chat.freenode.net
+/server add freenode                   "chat.freenode.net"
 /set irc.server.freenode.addresses     "chat.freenode.net/6697"
 /set irc.server.freenode.autoconnect   "on"
 /set irc.server.freenode.ssl           "on"
 /set irc.server.freenode.nicks         KEEPASS(Freenode, Nicks)
 /set irc.server.freenode.sasl_username KEEPASS(Freenode, Username)
-/secure set freenode_password          KEEPASS(Freenode, Password)
-/set irc.server.freenode.sasl_password "${sec.data.freenode_password}"
+/secure set freenode_pw                KEEPASS(Freenode, Password)
+/set irc.server.freenode.sasl_password "${sec.data.freenode_pw}"
+
+/server add oftc                   "irc.oftc.net"
+/set irc.server.oftc.addresses     "irc.oftc.net/6697"
+/set irc.server.oftc.autoconnect   "on"
+/set irc.server.oftc.ssl           "on"
+/set irc.server.oftc.nicks         KEEPASS(OFTC, Nicks)
+/secure set oftc_pw                KEEPASS(OFTC, Password)
+/set irc.server.oftc.command_delay "5"
+/set irc.server.oftc.command       "/msg NickServ IDENTIFY ${sec.data.oftc_pw}"
 
 dnl Add and configure some scripts
 /script install vimode.py autosort.py
 
-/set plugins.var.python.vimode.search_vim "on"
 /set plugins.var.python.vimode.mode_indicator_cmd_color        "cyan"
 /set plugins.var.python.vimode.mode_indicator_insert_color     "cyan"
 /set plugins.var.python.vimode.mode_indicator_normal_color     "cyan"
@@ -31,6 +39,7 @@ dnl Add and configure some scripts
 /set plugins.var.python.vimode.mode_indicator_search_color_bg  "default"
 /set plugins.var.python.vimode.mode_indicator_prefix           "["    
 /set plugins.var.python.vimode.mode_indicator_suffix           "]"    
+/set plugins.var.python.vimode.search_vim "on"
 /set weechat.bar.input.items "mode_indicator+[input_prompt]+(away),dnl
 [input_search],[input_paste],input_text,[vi_buffer]"
 /set weechat.bar.status.items "[time],[buffer_last_number],[buffer_plugin],dnl
@@ -40,7 +49,7 @@ buffer_number+:+buffer_name+(buffer_modes)+{buffer_nicklist_count}dnl
 "${tg_signal_data} ==* */vimode.py" "" "/vimode bind_keys" "ok" "delete"
 
 /set irc.look.server_buffer "independent"
-/set buflist.format.indent "${color:green}dnl
+/set buflist.format.indent  "${color:green}dnl
 ${if:${buffer.next_buffer.local_variables.type}=~^(channel|private)$?├─:└─}"
 
 dnl vim: ft=config
