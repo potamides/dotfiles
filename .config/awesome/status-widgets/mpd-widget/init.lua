@@ -5,6 +5,7 @@ local wibarutil = require("wibarutil")
 local wibox = require("wibox")
 local mpc = require("status-widgets.mpd-widget.mpc")
 local stream = require("status-widgets.mpd-widget.stream")
+local escape = require("lgi").GLib.markup_escape_text
 
 local mpd_widget = wibox.widget.textbox()
 local mpd_container = wibarutil.create_parallelogram({
@@ -27,7 +28,7 @@ local function update_widget()
         mpd_container:set_bg(gears.color(beautiful.bg_normal))
     end
     mpd_widget:set_markup(string.format("<span color=%q><b>%s</b></span>",
-        beautiful.fg_normal, text))
+        beautiful.fg_normal, escape(text, string.len(text))))
 end
 
 local stream_instance
