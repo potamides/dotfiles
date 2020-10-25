@@ -35,6 +35,9 @@ set smarttab
 " Highlight 80th and 120th column
 set colorcolumn=80,120
 
+" position cursor in visual block mode where there is no actual character
+set virtualedit=block
+
 " turn off automatic line wrapping
 "set nowrap
 
