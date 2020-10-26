@@ -28,6 +28,7 @@ set send_multipart_alternative_filter = "python $my_samples/markdown2html"
 # which may speeds things up even more
 set header_cache     = ~/.cache/mutt
 set message_cachedir = ~/.cache/mutt
+set imap_keepalive   = 180
 set mail_check       = 90
 set timeout          = 15
 unset imap_passive
