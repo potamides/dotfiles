@@ -19,7 +19,7 @@ local modalawesome = require("modalawesome")
 local xrandr       = require("xrandr")
 beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua")
 -- import this stuff after theme initialisation for proper colors
-local wibarutil   = require("wibarutil")
+local wibarutil   = require("utils.wibar")
 local battery     = require("status-widgets.battery-widget")
 local volume      = require("status-widgets.volume-widget")
 local mpd         = require("status-widgets.mpd-widget")

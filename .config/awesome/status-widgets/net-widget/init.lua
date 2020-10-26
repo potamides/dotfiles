@@ -1,11 +1,12 @@
 local awful     = require("awful")
 local wibox     = require("wibox")
 local beautiful = require("beautiful")
+local monitor   = require("utils.monitor")
 
 local net_widget = {}
 
-local function read_wireless(stdout, interface)
-  local match = stdout:match(interface .. ": " .. "%d+   (%d+)")
+local function read_wireless(content, interface)
+  local match = content:match(interface .. ": " .. "%d+   (%d+)")
 
   if match then
     local signal_strength = math.floor(match / 70 * 100)
@@ -15,8 +16,8 @@ local function read_wireless(stdout, interface)
   end
 end
 
-local function read_wired(stdout)
-  local match = stdout:match("up\n$")
+local function read_wired(content)
+  local match = content:match("up\n$")
 
   if match then
     return {"100%", "wired.svg"}
@@ -30,10 +31,8 @@ function net_widget.init(args)
 
   args.wireless_interface = args.wireless_interface or "wlp5s0"
   args.wired_interface    = args.wired_interface or "enp3s0"
-  args.path_to_icons      = args.path_to_icons or awful.util.getdir("config").."themes/gruvbox/widgets/net/"
+  args.path_to_icons      = args.path_to_icons or awful.util.getdir("config") .. "themes/gruvbox/widgets/net/"
   args.timeout            = args.timeout or 15
-
-  local cmd = "cat /proc/net/wireless /sys/class/net/" .. args.wired_interface .. "/operstate"
 
   net_widget.image = wibox.widget {
     image  = args.path_to_icons .. "wired_na.svg",
@@ -42,13 +41,12 @@ function net_widget.init(args)
   net_widget.text = wibox.widget.textbox()
   net_widget.text:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, "OFF"))
 
-  net_widget.text = awful.widget.watch(cmd, args.timeout, function(widget, stdout)
-    local result          = read_wireless(stdout, args.wireless_interface) or read_wired(stdout)
+  monitor("/proc/net/wireless", "/sys/class/net/" .. args.wired_interface .. "/operstate", function(content)
+    local result = read_wireless(content, args.wireless_interface) or read_wired(content)
 
-    widget:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, result[1]))
+    net_widget.text:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, result[1]))
     net_widget.image:set_image(args.path_to_icons .. result[2])
-    collectgarbage("step", 64)
-  end)
+  end, args.timeout)
 
 end
 

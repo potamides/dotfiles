@@ -1,12 +1,3 @@
--------------------------------------------------
--- Run Shell for Awesome Window Manager
--- More details could be found here:
--- https://github.com/streetturtle/awesome-wm-widgets/tree/master/run-shell
-
--- @author Pavel Makhov
--- @copyright 2019 Pavel Makhov
--------------------------------------------------
-
 local awful     = require("awful")
 local wibox     = require("wibox")
 local beautiful = require("beautiful")
