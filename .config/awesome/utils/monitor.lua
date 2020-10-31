@@ -57,7 +57,6 @@ function monitor:_read_async(file, index)
         for i = 1, #self._contents do
           self._contents[i] = nil
         end
-        collectgarbage("step", 128)
       end
     end
   end)
