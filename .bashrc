@@ -58,7 +58,7 @@ shopt -so pipefail                  # pipe return value is last non-zero status
 
 # bash history stuff
 HISTSIZE=5000
-HISTFILESIZE=10000
+HISTFILESIZE=50000
 HISTTIMEFORMAT="%d/%m/%y %T"
 HISTCONTROL=ignoreboth:erasedups
 # append terminal session command history with every command
@@ -215,8 +215,8 @@ alias info="info --vi-keys -v match-style=underline,bold,nocolor \
 # other useful aliases
 alias pac='sudo pacman -S' # install
 alias paca='yay -Sa' # aur install
-alias pacu='sudo pacman -Syu' # update
-alias pacau='yay -Syua' # aur update
+alias pacu='sudo -E pacman -Syu' # update
+alias pacau='yay -Syua --sudoflags -E' # aur update
 alias pacr='sudo pacman -Rsn' # remove
 alias pacs='pacman -Ss' # search
 alias pacas='yay -Ssa' # aur search
@@ -233,6 +233,7 @@ alias serve='python3 -m http.server 9999'
 alias debug='set -o nounset && set -o verbose && set -o xtrace'
 alias nodebug='set +o nounset && set +o verbose && set +o xtrace'
 alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+alias rec='ffmpeg -s 1920x1080 -f x11grab -i $DISPLAY.0+0,0 -f pulse -i 0 -y'
 alias backup="sudo snap-sync --UUID 940761e2-7d84-4025-8972-89276e53bdc4 \
   --config home --noconfirm"
 

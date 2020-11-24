@@ -5,9 +5,12 @@
 ## Set Environment Variables
 # -----------------------------------------------------------------------------
 
+export BROWSER=firefox
 export EDITOR=nvim
 export VISUAL=$EDITOR
-export BROWSER=firefox
+
+# merge program for pacdiff
+export DIFFPROG="$EDITOR -d"
 
 # find locally installed executables
 export PATH="$PATH:$HOME/.local/bin:$HOME/.luarocks/bin"
