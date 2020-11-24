@@ -28,9 +28,9 @@ set send_multipart_alternative_filter = "python $my_samples/markdown2html"
 # which may speeds things up even more
 set header_cache     = ~/.cache/mutt
 set message_cachedir = ~/.cache/mutt
-set imap_keepalive   = 180
 set mail_check       = 90
 set timeout          = 15
+set imap_idle        = yes
 unset imap_passive
 
 # account switching / specific imap & smtp stuff
@@ -84,7 +84,7 @@ unset collapse_unread
 set smileys      = '(>From )|(:[-^]?[][)(><}{|/DP])|(^\\|.*(\\|)$)'
 set mailcap_path = $my_folder/mailcap
 alternative_order text/enriched text/plain text/html
-auto_view text/html
+auto_view text/html text/calendar application/ics
 
 # additional configuration options
 # -----------------------------------------------------------------------------

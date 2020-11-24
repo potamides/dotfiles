@@ -7,3 +7,5 @@ application/*; rifle -f f %s; needsterminal
 
 # for automatic viewing of html emails use pandoc
 text/html; pandoc --from=html --to=plain --reference-links; copiousoutput
+text/calendar; mutt-ics; copiousoutput
+application/ics; mutt-ics; copiousoutput 
