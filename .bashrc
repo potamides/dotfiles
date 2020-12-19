@@ -2,17 +2,6 @@
 # ~/.bashrc
 #
 
-# If not running interactively, don't do anything
-if [[ $- != *i* ]]; then
-  return
-fi
-
-# if not in vim or ranger show greeter
-if [[ -z $VIMRUNTIME && -z $RANGER_LEVEL && $(type -t neofetch) ]]; then
-  # set DESKTOP_SESSION to empty to correctly identify gtk theme and icons
-  DESKTOP_SESSION="" neofetch
-fi
-
 # build prompt
 # -----------------------------------------------------------------------------
 
@@ -22,7 +11,7 @@ reset='\e[m'
 # echo return code on failure
 returncode="\`exit=\$?; [ \$exit -ne 0 ] && echo \"$boldred\$exit \"\`"
 # root user is red, other users are blue
-user="\`[ \$EUID -eq 0 ] && echo ${boldred@Q}\u || echo ${boldblue@Q}\u\`"
+user="\`[ \$EUID -eq 0 ] && echo \"$boldred\"\u || echo \"$boldblue\"\u\`"
 dir="\[$reset\]@\h \w"
 
 # prompt stuff that should come before and after git integration
@@ -33,7 +22,7 @@ secondline='\n\$ '
 if [[ -r /usr/share/git/git-prompt.sh ]]; then
   source /usr/share/git/git-prompt.sh
   GIT_PS1_SHOWCOLORHINTS=1
-  PROMPT_COMMAND="__git_ps1 ${firstline@Q} ${secondline@Q};"
+  PROMPT_COMMAND="__git_ps1 '$firstline' '$secondline';"
 else
   # if the file doesn't exist create prompt directly with PS1
   PS1="$firstline$secondline"
@@ -215,8 +204,8 @@ alias info="info --vi-keys -v match-style=underline,bold,nocolor \
 # other useful aliases
 alias pac='sudo pacman -S' # install
 alias paca='yay -Sa' # aur install
-alias pacu='sudo -E pacman -Syu' # update
-alias pacau='yay -Syua --sudoflags -E' # aur update
+alias pacu='sudo pacman -Syu' # update
+alias pacau='yay -Syua' # aur update
 alias pacr='sudo pacman -Rsn' # remove
 alias pacs='pacman -Ss' # search
 alias pacas='yay -Ssa' # aur search
@@ -263,5 +252,5 @@ fi
 # -----------------------------------------------------------------------------
 
 # set window title to currently running command or running shell
-trap 'printf "\033]0;%s\007" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
 PROMPT_COMMAND+='[ -n "$BASH_COMMAND" ] && printf "\033]0;%s\007" "$SHELL";'
+trap 'printf "\033]0;%s\007" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
