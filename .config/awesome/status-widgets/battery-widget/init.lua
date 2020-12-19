@@ -17,9 +17,9 @@ end
 
 function battery_widget._parse(content)
   local battery_info = {}
-  for status, power , energy, charge_str in content:gmatch('.*POWER_SUPPLY_STATUS=(%a+).+\
-POWER_SUPPLY_POWER_NOW=(%d+).+POWER_SUPPLY_ENERGY_NOW=(%d+).+POWER_SUPPLY_CAPACITY=(%d+)') do
-    table.insert(battery_info, {status = status, charge = charge_str, power = power, energy = energy})
+  for status, power, energy, charge in content:gmatch(
+    '.*STATUS=(%a+).+POWER_NOW=(%d+).+ENERGY_NOW=(%d+).+CAPACITY=(%d+)') do
+      table.insert(battery_info, {status = status, charge = charge, power = power, energy = energy})
   end
   local charge = 0
   local time   = 0
@@ -34,7 +34,7 @@ POWER_SUPPLY_POWER_NOW=(%d+).+POWER_SUPPLY_ENERGY_NOW=(%d+).+POWER_SUPPLY_CAPACI
     charge = charge + batt.charge
   end
   charge = charge / #battery_info
-  time   = 60 * time -- minutes
+  time = 60 * time -- minutes
 
   return charge, status, time
 end
@@ -82,9 +82,8 @@ function battery_widget.init(args)
         and os.difftime(os.time(), last_battery_check) > 300 then
           -- if 5 minutes have elapsed since the last warning
           last_battery_check = os.time()
-
           battery_widget._show_battery_warning(math.floor(time))
-        end
+      end
     elseif (charge >= 15 and charge < 40) then batteryType = "battery-caution%s-symbolic"
     elseif (charge >= 40 and charge < 60) then batteryType = "battery-low%s-symbolic"
     elseif (charge >= 60 and charge < 80) then batteryType = "battery-good%s-symbolic"
