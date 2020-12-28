@@ -1,0 +1,7 @@
+calendar = ~/.when/calendar
+editor = $EDITOR
+
+future = 7
+monday_first = 1
+filter_accents_on_output = 0
+items_today_style = "bold,fgblue" 

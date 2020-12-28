@@ -2,7 +2,16 @@
 # ~/.bashrc
 #
 
-# build prompt
+## show greeter
+# -----------------------------------------------------------------------------
+
+# if not in vim or ranger show reminders for today
+if [[ -z $VIMRUNTIME && -z $RANGER_LEVEL && $(type -t when) ]]; then
+  when --rows=10 --norows_auto --noheader --styled_output_if_not_tty |
+    sed 's/^/| /' | xargs -r -0 printf ',---- [ Reminders ]\n%s`---- '
+fi
+
+## build prompt
 # -----------------------------------------------------------------------------
 
 boldblue='\e[1;34m'
@@ -30,7 +39,7 @@ fi
 
 unset boldblue boldred reset returncode user dir firstline secondline
 
-# general shell behavior
+## general shell behavior
 # -----------------------------------------------------------------------------
 
 shopt -s histappend                 # append history on exit, don't overwrite
@@ -65,7 +74,7 @@ if [[ -z $VIMRUNTIME ]]; then
   fi
 fi
 
-# FZF config for interactive use
+## FZF config for interactive use
 # -----------------------------------------------------------------------------
 
 if [[ -r /usr/share/fzf/key-bindings.bash && \
@@ -187,7 +196,7 @@ function ncp(){
     --chmod=D775,F664 "${1%/}" "${2:+NAS:/media/storage/$2}"
 }
 
-# Aliases
+## Aliases
 # -----------------------------------------------------------------------------
 
 # bring color to the terminal
@@ -219,8 +228,8 @@ alias calc='ptpython -i <(echo "from math import *")'
 alias htop='htop -t'
 alias todo='$EDITOR ~/Documents/TODO.md'
 alias serve='python3 -m http.server 9999'
-alias debug='set -o nounset && set -o verbose && set -o xtrace'
-alias nodebug='set +o nounset && set +o verbose && set +o xtrace'
+alias debug='set -o verbose && set -o xtrace'
+alias nodebug='set +o verbose && set +o xtrace'
 alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 alias rec='ffmpeg -s 1920x1080 -f x11grab -i $DISPLAY.0+0,0 -f pulse -i 0 -y'
 alias backup="sudo snap-sync --UUID 940761e2-7d84-4025-8972-89276e53bdc4 \

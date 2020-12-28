@@ -14,14 +14,14 @@ pacman_pkgs=(
   physlock
   termite
   mutt
-  neofetch
   weechat
+  conky
+  when
   keepassxc          # mutt dependency
   yarn               # neovim dependency
   python-pynvim      # neovim dependency
   xorg-xinit         # awesome dependency
   papirus-icon-theme # awesome dependency
-  fortune-mod        # neofetch dependency
   scrot              # awesome optional dependency
   firefox            # awesome optional dependency
   redshift           # awesome optional dependency
@@ -34,11 +34,9 @@ pacman_pkgs=(
 
 aur_pkgs=(
   awesome-luajit
-  conky-git
   ptpython
   absolutely-proprietary     # conky dependency
   nerd-fonts-source-code-pro # termite dependency
-  boxes                      # neofetch dependency
   pandoc-bin                 # mutt dependency
   mutt-ics                   # mutt dependency
   bash-complete-alias        # bash optional dependency

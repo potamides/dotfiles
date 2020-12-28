@@ -63,7 +63,7 @@ individual workflow, I give basic usage instructions below.
 | **Music Player**            | ncmpcpp  | [.config/ncmpcpp](.config/ncmpcpp) | [Repository](https://github.com/ncmpcpp/ncmpcpp), [Homepage](https://rybczak.net/ncmpcpp/) |
 | **Document Viewer**         | qpdfview | [.config/qpdfview](.config/qpdfview) | [Homepage](https://launchpad.net/qpdfview) |
 | **System Monitor**          | conky    | [.conkyrc](.conkyrc) | [Repository](https://github.com/brndnmtthws/conky), [Homepage](https://github.com/brndnmtthws/conky/wiki) |
-| **System Information Tool** | neofetch | [.config/neofetch](.config/neofetch) | [Repository](https://github.com/dylanaraps/neofetch), [Homepage](https://github.com/dylanaraps/neofetch/wiki) |
+| **Calendar**                | when     | [.when](.when) | [Repository](https://github.com/bcrowell/when), [Homepage](http://www.lightandmatter.com/when/when.html) |
 | **Display Locker**          | physlock | [.config/.../physlock@.service](.config/systemd/user/physlock@.service) | [Repository](https://github.com/muennich/physlock) |
 | **IRC Client**              | weechat  | [.config/weechat](.config/weechat) | [Repository](https://github.com/weechat/weechat), [Homepage](https://weechat.org/) |
 | **Calculator**              | ptpython | [.config/ptpython](.config/ptpython) | [Repository](https://github.com/prompt-toolkit/ptpython) |
