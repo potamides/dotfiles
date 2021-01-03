@@ -27,6 +27,7 @@ pacman_pkgs=(
   redshift           # awesome optional dependency
   mpv                # awesome optional dependency
   udiskie            # ranger optional dependency
+  ueberzug           # ranger optional dependency
   bash-completion    # bash optional dependency
   fzf                # bash optional dependency
   ripgrep            # bash optional dependency
@@ -42,6 +43,7 @@ aur_pkgs=(
   bash-complete-alias        # bash optional dependency
   gtk-theme-arc-gruvbox-git  # awesome optional dependency
   qt5-styleplugins           # awesome optional dependency
+  dragon-drag-and-drop       # ranger optional dependency
 )
 
 pip_pkgs=(
