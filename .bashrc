@@ -7,7 +7,7 @@
 
 # if not in vim or ranger show reminders for today
 if [[ -z $VIMRUNTIME && -z $RANGER_LEVEL && $(type -t when) ]]; then
-  when --rows=10 --norows_auto --noheader --styled_output_if_not_tty |
+  when --rows=10 --norows_auto --noheader --styled_output_if_not_tty w |
     sed 's/^/| /' | xargs -r -0 printf ',---- [ Reminders ]\n%s`---- '
 fi
 
@@ -128,7 +128,7 @@ function man(){
 
 # cd to directory and list files
 function cl(){
-  cd "$@" && ls -a
+  cd "$@" && ls --color=auto -v
 }
 
 # Searching file contents with fzf and ripgrep
@@ -178,7 +178,7 @@ function tldr(){
 
 # list package which owns command
 function whoowns(){
-  pacman -Qo "$@" || { echo "Provided by:" && pacman -F "$@"; }
+  pacman -Qo "$@" 2> /dev/null || pacman -F "$@"
 }
 
 # fetch current weather report, with location as optional parameter
