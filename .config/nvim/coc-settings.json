@@ -45,10 +45,7 @@
   ],
 
   // Python
-  "python.linting.pylintUseMinimalCheckers": false,
-  //"python.jediPath": "/usr/lib/python3.8/site-packages/",
-  "python.jediPath": "~/.local/lib/python3.8/site-packages/",
-  "python.linting.pylintPath": "~/.local/bin/pylint",
+  "python.analysis.typeCheckingMode": "off",
 
   // Git
   "git.changedSign.text": "▌",

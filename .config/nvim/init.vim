@@ -245,7 +245,7 @@ call coc#add_extension(
   \ 'coc-snippets',
   \ 'coc-syntax',
   \ 'coc-json',
-  \ 'coc-python',
+  \ 'coc-pyright',
   \ 'coc-texlab',
   \ 'coc-git',
   \ 'coc-lists',
