@@ -200,7 +200,7 @@ screen.connect_signal("property::geometry", set_wallpaper)
 -- Taglist
 -------------------------------------------------------------------------------
 -- Each screen has its own tag table.
-local tags   = { "❶", "❷", "❸", "❹", "❺", "❻"}
+local tags = { "❶", "❷", "❸", "❹", "❺", "❻"}
 
 -- Assign the buttons for the taglist
 local taglist_buttons = gears.table.join(
