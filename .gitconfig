@@ -1,0 +1,32 @@
+[user]
+  name = Jonas Belouadi
+  email = 53401822+potamides@users.noreply.github.com
+[core]
+  quotepath = false
+[commit]
+  verbose = true
+[diff]
+  mnemonicPrefix = true
+[pull]
+  rebase = false
+[merge]
+  tool = nvimdiff2
+[mergetool "unityyamlmerge"]
+  binary = true
+  trustExitCode = false
+  cmd = UnityYAMLMerge merge -p "$BASE" "$REMOTE" "$LOCAL" "$MERGED"
+  keepTemporaries = true
+  keepBackup = false
+[merge "unityyamlmerge"]
+  name = Unity SmartMerge (UnityYamlMerge)
+  driver = UnityYAMLMerge merge -h -p --force %O %B %A %A
+  recursive = binary
+  keepTemporaries = true
+  keepBackup = false
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+[include]
+  path = ~/.gitconfig.local
