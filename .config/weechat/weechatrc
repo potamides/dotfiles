@@ -1,9 +1,10 @@
 dnl General Weechat options
-/set weechat.look.mouse      "on"
-/set weechat.plugin.autoload "*,!ruby,"
-/set irc.look.smart_filter   "on"
-/secure passphrase           KEEPASS(Weechat, Password)
-/filter addreplace irc_smart * irc_smart_filter *
+/set weechat.look.mouse              "on"
+/set weechat.plugin.autoload         "*,!ruby,"
+/set irc.look.smart_filter           "on"
+/set script.scripts.download_enabled "on"
+/secure passphrase                   KEEPASS(Weechat, Password)
+/filter addreplace                   irc_smart * irc_smart_filter *
 
 dnl Add and configure servers
 /server add freenode                   "chat.freenode.net"
@@ -45,11 +46,12 @@ dnl Add and configure some scripts
 /set weechat.bar.status.items "[time],[buffer_last_number],[buffer_plugin],dnl
 buffer_number+:+buffer_name+(buffer_modes)+{buffer_nicklist_count}dnl
 +buffer_zoom+buffer_filter,scroll,[lag],[hotlist],completion,cmd_completion"
-/trigger addreplace vimode signal "python_script_loaded" dnl
-"${tg_signal_data} ==* */vimode.py" "" "/vimode bind_keys" "ok" "delete"
+/trigger addreplace vimode signal "python_script_loaded" "${tg_signal_data} dnl
+==* */vimode.py" "" "/vimode bind_keys; /window refresh" "ok" "delete"
 
 /set irc.look.server_buffer "independent"
 /set buflist.format.indent  "${color:green}dnl
 ${if:${buffer.next_buffer.local_variables.type}=~^(channel|private)$?├─:└─}"
 
+/window refresh
 dnl vim: ft=config
