@@ -4,8 +4,8 @@
 #        Read keepassxc email attributes into a format mutt can source        #
 ###############################################################################
 
-database=${KEYPASSXC_DATABASE:-~/Passwords.kdbx}
-keyfile=${KEYPASSXC_KEYFILE:-~/Secret.key}
+database=${KEEPASSXC_DATABASE:-~/Passwords.kdbx}
+keyfile=${KEEPASSXC_KEYFILE:-~/Secret.key}
 
 function get_secrets(){
   local secrets IFS=$'\n'

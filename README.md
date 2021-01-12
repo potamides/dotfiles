@@ -90,7 +90,7 @@ tunnel to control mpd and to receive the audio stream, which is then played via
 Mutt is configured for multiple email accounts. It makes use of the command
 line tool distributed with [KeePassXC](https://keepassxc.org/) to access
 passwords. The location of the password database and the keyfile can be
-controlled with the `KEYPASSXC_DATABASE` and `KEYPASSXC_KEYFILE` environment
+controlled with the `KEEPASSXC_DATABASE` and `KEEPASSXC_KEYFILE` environment
 variables.
 
 Mutt also contains a [script](.config/mutt/scripts/create-alias.sh) which
@@ -118,6 +118,6 @@ information managed with KeepassXC. When this script is loaded for the first
 time it prompts the user for the KeePassXC password and then loads the config
 file. On subsequent launches of weechat this process can be manually invoked
 with the command `/confload <passphrase>`. Again you can use the
-`KEYPASSXC_DATABASE` and `KEYPASSXC_KEYFILE` environment variables for the
+`KEEPASSXC_DATABASE` and `KEEPASSXC_KEYFILE` environment variables for the
 locations of KeepassXC files.
 

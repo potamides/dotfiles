@@ -5,7 +5,7 @@ Confload: Create dotfiles-managable weechat configs with password manager integr
     * reads config file containing weechat commands with m4 macro processor
     * config file is expected to be in $WEECHAT_HOME/weechatrc
     * provides special m4 macro KEEPASS(<title>, <attr>) to read KeePassXC database
-    * specify KeyPassXC files with KEYPASSXC_DATABASE and KEYPASSXC_KEYFILE env vars
+    * specify KeePassXC files with KEEPASSXC_DATABASE and KEEPASSXC_KEYFILE env vars
 """
 from subprocess import check_output, CalledProcessError
 from os import getenv
@@ -15,8 +15,8 @@ from abc import ABC
 import weechat as w # pylint: disable=import-error
 import __main__
 
-DATABASE = getenv("KEYPASSXC_DATABASE", "~/Passwords.kdbx")
-KEYFILE = getenv("KEYPASSXC_KEYFILE", "~/Secret.key")
+DATABASE = getenv("KEEPASSXC_DATABASE", "~/Passwords.kdbx")
+KEYFILE = getenv("KEEPASSXC_KEYFILE", "~/Secret.key")
 TEMPLATE = join(getenv("WEECHAT_HOME", join(getenv("HOME"), ".weechat")), "weechatrc")
 
 class Confload():
