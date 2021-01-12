@@ -238,6 +238,8 @@ alias backup="sudo snap-sync --UUID 940761e2-7d84-4025-8972-89276e53bdc4 \
 # fun stuff
 alias starwars='telnet towel.blinkenlights.nl'
 alias maps='telnet mapscii.me'
+alias 2048='ssh play@ascii.town'
+alias tron='ssh sshtron.zachlatta.com'
 alias incognito='unset HISTFILE'
 alias tmpv="mpv --no-config --really-quiet --vo=tct --keep-open=yes \
   --profile=sw-fast"
