@@ -17,20 +17,21 @@ pacman_pkgs=(
   weechat
   conky
   when
-  keepassxc          # mutt dependency
-  yarn               # neovim dependency
-  python-pynvim      # neovim dependency
-  xorg-xinit         # awesome dependency
-  papirus-icon-theme # awesome dependency
-  scrot              # awesome optional dependency
-  firefox            # awesome optional dependency
-  redshift           # awesome optional dependency
-  mpv                # awesome optional dependency
-  udiskie            # ranger optional dependency
-  ueberzug           # ranger optional dependency
-  bash-completion    # bash optional dependency
-  fzf                # bash optional dependency
-  ripgrep            # bash optional dependency
+  keepassxc               # mutt dependency
+  yarn                    # neovim dependency
+  python-pynvim           # neovim dependency
+  xorg-xinit              # awesome dependency
+  papirus-icon-theme      # awesome dependency
+  scrot                   # awesome optional dependency
+  firefox                 # awesome optional dependency
+  redshift                # awesome optional dependency
+  mpv                     # awesome optional dependency
+  udiskie                 # ranger optional dependency
+  ueberzug                # ranger optional dependency
+  bash-completion         # bash optional dependency
+  fzf                     # bash optional dependency
+  ripgrep                 # bash optional dependency
+  python-websocket-client # weechat dependency
 )
 
 aur_pkgs=(

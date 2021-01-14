@@ -25,8 +25,13 @@ dnl Add and configure servers
 /set irc.server.oftc.command_delay "5"
 /set irc.server.oftc.command       "/msg NickServ IDENTIFY ${sec.data.oftc_pw}"
 
+/connect -auto
+
 dnl Add and configure some scripts
-/script install vimode.py autosort.py
+/secure set slack_token KEEPASS(HiWi-Slack, Token)
+/set plugins.var.python.slack.slack_api_token ${sec.data.slack_token}
+
+/script install vimode.py autosort.py slack.py
 
 /set plugins.var.python.vimode.mode_indicator_cmd_color        "cyan"
 /set plugins.var.python.vimode.mode_indicator_insert_color     "cyan"
@@ -45,13 +50,13 @@ dnl Add and configure some scripts
 [input_search],[input_paste],input_text,[vi_buffer]"
 /set weechat.bar.status.items "[time],[buffer_last_number],[buffer_plugin],dnl
 buffer_number+:+buffer_name+(buffer_modes)+{buffer_nicklist_count}dnl
-+buffer_zoom+buffer_filter,scroll,[lag],[hotlist],completion,cmd_completion"
++buffer_zoom+buffer_filter,scroll,[lag],[hotlist],completion,dnl
+slack_typing_notice,cmd_completion"
 /trigger addreplace vimode signal "python_script_loaded" "${tg_signal_data} dnl
-==* */vimode.py" "" "/vimode bind_keys; /window refresh" "ok" "delete"
+==* */vimode.py" "" "/window refresh; /vimode bind_keys" "ok" "delete"
 
 /set irc.look.server_buffer "independent"
 /set buflist.format.indent  "${color:green}dnl
 ${if:${buffer.next_buffer.local_variables.type}=~^(channel|private)$?├─:└─}"
 
-/window refresh
 dnl vim: ft=config
