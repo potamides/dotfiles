@@ -1,14 +1,13 @@
-source "$my_folder/scripts/keepassxc-mutt.sh Google |"
 unalternates *
 unmailboxes *
 
 # set smtp and imap stuff
-set imap_user = "$my_mail"
-set from      = "$my_mail"
-set imap_pass = "$my_pass"
-set smtp_pass = "$my_pass"
+set imap_user = "$my_google_mail"
+set from      = "$my_google_mail"
+set imap_pass = "$my_google_pass"
+set smtp_pass = "$my_google_pass"
 set folder    = "imaps://imap.gmail.com:993"
-set smtp_url  = "smtps://$my_mail@smtp.gmail.com:465/"
+set smtp_url  = "smtps://$my_google_mail@smtp.gmail.com:465/"
 
 # specify some special mailboxes
 set spoolfile = "+INBOX"
@@ -17,7 +16,7 @@ set record    = "+[Google Mail]/Sent Mail"
 set trash     = "+[Google Mail]/Trash"
 
 # recognize googlemail domain
-alternates '^'$my_user'@googlemail\.com$'
+alternates '^'$my_google_user'@googlemail\.com$'
 
 # check this mailboxes for new messages periodically & display them in sidebar
 mailboxes +INBOX "+[Google Mail]/Spam" "+[Google Mail]/Drafts" \

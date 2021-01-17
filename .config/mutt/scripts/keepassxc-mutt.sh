@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2086
 
 ###############################################################################
 #        Read keepassxc email attributes into a format mutt can source        #
@@ -8,22 +9,33 @@ database=${KEEPASSXC_DATABASE:-~/Passwords.kdbx}
 keyfile=${KEEPASSXC_KEYFILE:-~/Secret.key}
 
 function get_secrets(){
-  local secrets IFS=$'\n'
-  # shellcheck disable=SC2207
-  secrets=($(keepassxc-cli show --attributes UserName --attributes Email \
-    --attributes Password --key-file "$keyfile" "$database" "$1"))
+  local entry password secrets quiet IFS=$'\n'
 
-  # if we misspelled the password, try again
-  if [[ $? -ne 0 ]]; then
-    get_secrets "$1"
-    return
-  fi
-  
-  echo set my_user="${secrets[0]@Q}"
-  echo set my_mail="${secrets[1]@Q}"
-  echo set my_pass="${secrets[2]@Q}"
+  for entry in "$@"; do
+    coproc keepassxc-cli show -a UserName -a Email -a Password -k "$keyfile" \
+      $quiet "$database" "$entry"
+
+    if [[ -z "$password" ]]; then
+      read -rs password
+    fi
+    exec 3>&"${COPROC[0]}"
+    echo "$password">&"${COPROC[1]}"
+    wait $COPROC_PID
+    read -rd '' -u 3 -a secrets
+
+    # if we misspelled the password, try again
+    if [[ "${#secrets[@]}" -eq 0 ]]; then
+      get_secrets "$@"
+      return
+    fi
+
+    quiet="--quiet" # don't show keepassxc prompt on subsequent entries 
+    echo "set my_${entry@L}_user=${secrets[0]@Q}"
+    echo "set my_${entry@L}_mail=${secrets[1]@Q}"
+    echo "set my_${entry@L}_pass=${secrets[2]@Q}"
+  done
 }
 
-if [[ -n $1 ]]; then
-  get_secrets "$1"
+if [[ -n "$*" ]]; then
+  get_secrets "$@"
 fi

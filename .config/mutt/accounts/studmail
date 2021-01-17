@@ -1,14 +1,13 @@
-source "$my_folder/scripts/keepassxc-mutt.sh Studmail |"
 unalternates *
 unmailboxes *
 
 # set smtp and imap stuff
-set imap_user = "$my_user"
-set from      = "$my_mail"
-set imap_pass = "$my_pass"
-set smtp_pass = "$my_pass"
+set imap_user = "$my_studmail_user"
+set from      = "$my_studmail_mail"
+set imap_pass = "$my_studmail_pass"
+set smtp_pass = "$my_studmail_pass"
 set folder    = "imaps://imap.stud.tu-darmstadt.de:993"
-set smtp_url  = "smtps://$my_user@smtp.tu-darmstadt.de:465"
+set smtp_url  = "smtps://$my_studmail_user@smtp.tu-darmstadt.de:465"
 
 # specify some special mailboxes
 set spoolfile = "+INBOX"
