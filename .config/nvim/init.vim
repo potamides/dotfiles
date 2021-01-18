@@ -38,15 +38,6 @@ set colorcolumn=80,120
 " position cursor in visual block mode where there is no actual character
 set virtualedit=block
 
-" turn off automatic line wrapping
-"set nowrap
-
-" highlight current line
-" set cursorline 
-
-" minimum of 5 lines between cursor and screen end
-" set so=5
-
 " use system python 3 for virtualenvs
 let g:python3_host_prog = '/usr/bin/python3'
 
@@ -62,9 +53,6 @@ autocmd TermOpen * startinsert
 
 " Open init.vim command
 command! VimConfig :e $MYVIMRC
-
-" To map <silent> <Esc> to exit terminal-mode:
-tnoremap <silent> <Esc> <C-\><C-n>
 
 " map mapleader and maplocalleader to space
 let mapleader=" "

@@ -38,7 +38,7 @@
   "latex.forwardSearch.executable": "qpdfview",
   "latex.forwardSearch.args": ["--unique", "%p#src:%f:%l:1"],
   "latex.build.args": [
-      "-pdflua",
+      "-lualatex",
       "-interaction=nonstopmode",
       "-synctex=1",
       "-pvc"
