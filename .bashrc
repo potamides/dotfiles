@@ -53,26 +53,23 @@ shopt -s dirspell                   # Tab comp can fix dir name typos
 shopt -s globstar                   # pattern ** also searches subdirectories
 shopt -s extglob                    # enable extended pattern matching features
 shopt -so pipefail                  # pipe return value is last non-zero status
+shopt -so vi                        # enable vi like keybindings
+
+# reset cursor shape before executing a command (see .inputrc)
+if [[ $TERM = linux ]]; then
+  PS0="\e[?8c"
+else
+  PS0="\e[2 q"
+fi
 
 # bash history stuff
 HISTSIZE=5000
 HISTFILESIZE=50000
-HISTTIMEFORMAT="%d/%m/%y %T"
+HISTTIMEFORMAT="%d/%m/%y %T "
 HISTCONTROL=ignoreboth:erasedups
-# append terminal session command history with every command
-PROMPT_COMMAND+="history -a;" # history -n;"
-
-# enable vi like keybindings, when not in vim
-if [[ -z $VIMRUNTIME ]]; then
-  shopt -so vi
-
-  # reset cursor shape before executing a command (see .inputrc)
-  if [[ $TERM = linux ]]; then
-    PS0="\e[?8c"
-  else
-    PS0="\e[2 q"
-  fi
-fi
+# don't append wifi passwords to history file
+HISTIGNORE="nmcli d* w* [ch]* * password *"
+PROMPT_COMMAND+="history -a;"
 
 ## FZF config for interactive use
 # -----------------------------------------------------------------------------
@@ -152,7 +149,7 @@ function fifo(){
 function dus(){
   local dir="${1-.}/"
   if [[ -d "$dir" ]]; then
-    du -shc "$dir".[^.]* "$dir"* | sort -h
+    (shopt -s dotglob; du -shc "$dir"* | sort -h)
   else
     return 1
   fi
