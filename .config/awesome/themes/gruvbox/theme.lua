@@ -78,19 +78,6 @@ theme.titlebar_fg_focus  = theme.bg0_s
 theme.titlebar_fg_normal = theme.bg0_s
 theme.titlebar_bg_normal = theme.bg0_s
 
--- There are other variable sets
--- overriding the default one when
--- defined, the sets are:
--- taglist_[bg|fg]_[focus|urgent|occupied|empty|volatile]
--- tasklist_[bg|fg]_[focus|urgent]
--- titlebar_[bg|fg]_[normal|focus]
--- tooltip_[font|opacity|fg_color|bg_color|border_width|border_color]
--- mouse_finder_[color|timeout|animate_timeout|radius|factor]
--- prompt_[fg|bg|fg_cursor|bg_cursor|font]
--- hotkeys_[bg|fg|border_width|border_color|shape|opacity|modifiers_fg|label_bg|label_fg|group_margin|font|description_font]
--- Example:
---theme.taglist_bg_focus = "#ff0000"
-
 -- Taglist
 theme.taglist_fg_empty    = theme.bg3
 theme.taglist_fg_occupied = theme.fg4
@@ -104,9 +91,7 @@ theme.taglist_bg_volatile = theme.lightpurple
 theme.taglist_bg_empty    = theme.bg1
 theme.taglist_font        = "DejaVu Sans Bold 18"
 
--- Variables set for theming the menu:
--- menu_[bg|fg]_[normal|focus]
--- menu_[border_color|border_width]
+-- Menu
 theme.menu_height       = dpi(16)
 theme.menu_width        = dpi(140)
 theme.menu_border_width = dpi(10)
@@ -115,12 +100,10 @@ theme.menu_fg_focus     = theme.bg_normal
 theme.menu_bg_focus     = theme.lightaqua
 theme.menu_border_color = theme.bg_normal
 
--- Taglist
---theme.taglist_squares_sel   = themes_path .. "gruvbox/taglist/squarefz.png"
---theme.taglist_squares_unsel = themes_path .. "gruvbox/taglist/squarez.png"
---theme.taglist_squares_resize = "false"
+-- Menubar
+theme.menubar_border_width = theme.border_width
 
--- notifications
+-- Notifications
 theme.notification_opacity = 0.75
 
 -- Calendar
@@ -133,7 +116,7 @@ theme.calendar_weeknumber_fg_color  = theme.fg_focus
 theme.calendar_normal_fg_color      = theme.fg_focus
 theme.calendar_focus_fg_color       = theme.fg_focus
 
--- custom sizes
+-- Custom sizes
 theme.small_gap        = dpi(2)
 theme.gap              = dpi(4)
 theme.big_gap          = dpi(14)
@@ -142,7 +125,7 @@ theme.big_negative_gap = dpi(-10)
 theme.wibar_height     = dpi(21)
 theme.titlebar_height  = dpi(20)
 
--- systray
+-- Systray
 theme.systray_icon_spacing = theme.gap
 
 -- Layout
@@ -184,7 +167,7 @@ theme.titlebar_floating_button_normal_active   = themes_path .. "gruvbox/titleba
 theme.titlebar_floating_button_focus_inactive  = themes_path .. "gruvbox/titlebar/floating_unselect.svg"
 theme.titlebar_floating_button_normal_inactive = themes_path .. "gruvbox/titlebar/floating_unselect.svg"
 
--- Generate Awesome icon
+-- Generate Awesome Icon
 theme.awesome_icon = theme_assets.awesome_icon(
     theme.menu_height, theme.bg_focus, theme.fg_focus
 )

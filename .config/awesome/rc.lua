@@ -477,7 +477,11 @@ modes.launcher = gears.table.join(
       description = "take screenshot",
       pattern = {'p'},
       handler = function()
-        awful.spawn( "scrot 'Pictures/Screenshots/Screenshot-%Y%m%d-%H%M%S.png'", false)
+        local sgeo = awful.screen.focused().geometry
+        local boxflag = string.format("--autoselect %s,%s,%s,%s", sgeo.x, sgeo.y, sgeo.width, sgeo.height)
+        local path = os.getenv("HOME") .. "/Pictures/Screenshots/Screenshot-%Y%m%d-%H%M%S.png"
+
+        awful.spawn(string.format("scrot %s %s", boxflag, path), false)
         naughty.notify({ text = "Took screenshot." })
         end
     },
@@ -573,11 +577,11 @@ modes.launcher = gears.table.join(
       description = "show the menubar",
       pattern = {'m'},
       handler = function()
-        local s                 = awful.screen.focused()
-        menubar.geometry.y      = s.geometry.y + s.geometry.height - 2 * beautiful.titlebar_height
-        menubar.geometry.height = beautiful.titlebar_height
+        local sgeo              = awful.screen.focused().geometry
         menubar.show_categories = false
-        menubar.show(s)
+        menubar.geometry.height = beautiful.wibar_height
+        menubar.geometry.y      = sgeo.y + sgeo.height - menubar.geometry.height - 2 * beautiful.menubar_border_width
+        menubar.show()
       end
     },
   },
@@ -627,7 +631,7 @@ awful.rules.rules = {
 
     -- askpass has wrong height on multi-screen setups somehow
     { rule = { instance = "git-gui--askpass" },
-      properties = { height = 173 }},
+      properties = { height = 200 }},
 
     -- some applications like password prompt for keepassxc autotype should be floating and centered
     { rule_any = { name = {"Unlock Database - KeePassXC"}, instance = {"git-gui--askpass"}},
