@@ -130,7 +130,7 @@ colorscheme gruvbox
 "               HEX-COLORIZER
 " ------------------------------------------------
 
-lua require'colorizer'.setup()
+lua require'colorizer'.setup({'*'},{names = false})
 
 " ------------------------------------------------
 "               LIGHTLINE
@@ -202,8 +202,8 @@ let g:lightline#bufferline#enable_devicons=1
 let g:lightline#bufferline#min_buffer_count=2
 
 " use TAB to navigate buffers
-noremap <silent> <Tab> :bnext<CR>  
-noremap <silent> <S-Tab> :bprev<CR>
+noremap <silent> <C-k> :bnext<CR>
+noremap <silent> <C-j> :bprev<CR>
 
 " close a buffer
 tnoremap <silent> <C-q> <C-\><C-N>:bp\|bd #<CR>
@@ -318,9 +318,9 @@ noremap <silent> <leader>cd :<C-u>CocList --number-select diagnostics<cr>
 tnoremap <silent> <C-p> <C-\><C-N>:<C-u>CocList --number-select --no-sort files<cr>
 inoremap <silent> <C-p> <C-\><C-N>:<C-u>CocList --number-select --no-sort files<cr>
 noremap <silent> <C-p> :<C-u>CocList --number-select --no-sort files<cr>
-tnoremap <silent> <C-e> <C-\><C-N>:<C-u>CocList --number-select --no-sort --interactive grep -smartcase -workspace<cr>
-inoremap <silent> <C-e> <C-\><C-N>:<C-u>CocList --number-select --no-sort --interactive grep -smartcase -workspace<cr>
-noremap <silent> <C-e> :<C-u>CocList --number-select --no-sort --interactive grep -smartcase<cr>
+tnoremap <silent> <A-p> <C-\><C-N>:<C-u>CocList --number-select --no-sort --interactive grep -smartcase -workspace<cr>
+inoremap <silent> <A-p> <C-\><C-N>:<C-u>CocList --number-select --no-sort --interactive grep -smartcase -workspace<cr>
+noremap <silent> <A-p> :<C-u>CocList --number-select --no-sort --interactive grep -smartcase<cr>
 
 " TEX
 au BufReadPost,BufNewFile *.tex nnoremap <silent> <leader>bn :<C-u>CocCommand latex.Build<cr>
