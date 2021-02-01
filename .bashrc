@@ -178,6 +178,11 @@ function whoowns(){
   pacman -Qo "$@" 2> /dev/null || pacman -F "$@"
 }
 
+# list commands which are provided by package
+function listprogs(){
+  pacman -Qlq "$@" | grep -Po "(?<=${PATH//://|}/).+"
+}
+
 # fetch current weather report, with location as optional parameter
 function weather(){
     local request="wttr.in/${*^}?F"
@@ -221,6 +226,7 @@ alias paclo='pacman -Qdt' # list orphans
 alias pacro='paclo && sudo pacman -Rns $(pacman -Qtdq)' # remove orphans
 alias pacc='sudo pacman -Scc' # clean cache
 alias pacli='pacman -Q | wc -l' # list user installed packages
+alias sh='sh +o history' # prevent sh from truncating HISTFILE
 alias calc='ptpython -i <(echo "from math import *")'
 alias htop='htop -t'
 alias todo='$EDITOR ~/Documents/TODO.md'
@@ -260,5 +266,5 @@ fi
 # -----------------------------------------------------------------------------
 
 # set window title to currently running command or running shell
-PROMPT_COMMAND+='[ -n "$BASH_COMMAND" ] && printf "\033]0;%s\007" "$SHELL";'
-trap 'printf "\033]0;%s\007" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
+PROMPT_COMMAND+='[ -n "$BASH_COMMAND" ] && printf "\e]0;%s\a" "$SHELL";'
+trap 'printf "\e]0;%s\a" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
