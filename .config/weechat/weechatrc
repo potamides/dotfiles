@@ -1,12 +1,16 @@
 dnl General Weechat options
-/set weechat.look.mouse              "on"
+dnl ---------------------------------------------------------------------------
 /set weechat.plugin.autoload         "*,!ruby,"
-/set irc.look.smart_filter           "on"
+/set weechat.look.mouse              "on"
 /set script.scripts.download_enabled "on"
+/set logger.file.color_lines         "on"
+/set logger.look.backlog             500
+/set logger.level.irc                3
 /secure passphrase                   KEEPASS(Weechat, Password)
-/filter addreplace                   irc_smart * irc_smart_filter *
+/filter addreplace irc_smart         * irc_smart_filter *
 
 dnl Add and configure servers
+dnl ---------------------------------------------------------------------------
 /server add freenode                   "chat.freenode.net"
 /set irc.server.freenode.addresses     "chat.freenode.net/6697"
 /set irc.server.freenode.autoconnect   "on"
@@ -15,6 +19,8 @@ dnl Add and configure servers
 /set irc.server.freenode.sasl_username KEEPASS(Freenode, Username)
 /secure set freenode_pw                KEEPASS(Freenode, Password)
 /set irc.server.freenode.sasl_password "${sec.data.freenode_pw}"
+/set irc.server.freenode.autojoin      "##machinelearning"
+/filter addreplace bot                 irc.freenode.* nick_Feed[bot] *
 
 /server add oftc                   "irc.oftc.net"
 /set irc.server.oftc.addresses     "irc.oftc.net/6697"
@@ -24,15 +30,18 @@ dnl Add and configure servers
 /secure set oftc_pw                KEEPASS(OFTC, Password)
 /set irc.server.oftc.command_delay "5"
 /set irc.server.oftc.command       "/msg NickServ IDENTIFY ${sec.data.oftc_pw}"
+/set irc.server.oftc.autojoin      "#awesome"
 
 /connect -auto
 
-dnl Add and configure some scripts
+dnl Script installation / advanced configuration
+dnl ---------------------------------------------------------------------------
+
+dnl Slack
 /secure set slack_token KEEPASS(HiWi-Slack, Token)
 /set plugins.var.python.slack.slack_api_token ${sec.data.slack_token}
 
-/script install vimode.py autosort.py slack.py
-
+dnl Vimode
 /set plugins.var.python.vimode.mode_indicator_cmd_color        "cyan"
 /set plugins.var.python.vimode.mode_indicator_insert_color     "cyan"
 /set plugins.var.python.vimode.mode_indicator_normal_color     "cyan"
@@ -55,8 +64,17 @@ slack_typing_notice,cmd_completion"
 /trigger addreplace vimode signal "python_script_loaded" "${tg_signal_data} dnl
 ==* */vimode.py" "" "/window refresh; /vimode bind_keys" "ok" "delete"
 
+dnl Autosort
 /set irc.look.server_buffer "independent"
 /set buflist.format.indent  "${color:green}dnl
 ${if:${buffer.next_buffer.local_variables.type}=~^(channel|private)$?├─:└─}"
+
+dnl Show notifications for all messages on select channels
+/trigger set beep conditions "${tg_displayed} && ${tg_tags} !!- dnl
+,notify_none, && (${tg_highlight} || ${tg_msg_pv} || ${buffer.full_name} == dnl
+irc.oftc.#awesome)"
+
+dnl Install all scripts lastly, because some depend on previously set options
+/script install vimode.py autosort.py slack.py
 
 dnl vim: ft=config
