@@ -617,13 +617,17 @@ awful.rules.rules = {
     },
 
     -- Browser & keepassxc always on tag 1
-    { rule_any = { class = {browser, "KeePassXC"}},
-      except_any = { name = {"Unlock Database - KeePassXC", "Auto-Type - KeePassXC"}},
-      properties = { tag = tags[1]}},
+    { rule_any = { class = { browser, "KeePassXC" }},
+      except_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }},
+      properties = { tag = tags[1] }},
+
+    -- Spawn keepassxc prompts on tags were they were called (which they don't do by default)
+    { rule_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }},
+      callback = function(c) c:move_to_tag(awful.screen.focused().selected_tag) end },
 
     -- dirty hack to preven Ctrl-q from closing firefox
-    { rule = { class = browser},
-      properties = { keys = awful.key({"Control"}, "q", function() end)}},
+    { rule = { class = browser },
+      properties = { keys = awful.key({ "Control" }, "q", function() end) }},
 
     -- Make dragon sticky for easy drag and drop in ranger
     { rule = { class = "Dragon-drag-and-drop" },
@@ -634,17 +638,17 @@ awful.rules.rules = {
       properties = { height = 200 }},
 
     -- some applications like password prompt for keepassxc autotype should be floating and centered
-    { rule_any = { name = {"Unlock Database - KeePassXC"}, instance = {"git-gui--askpass"}},
+    { rule_any = { name = { "Unlock Database - KeePassXC" }, instance = { "git-gui--askpass" }},
       properties = { floating = true, placement = awful.placement.centered }},
 
     -- always put ncmpcpp on last tag
-    { rule = { name = "ncmpcpp.*"},
-      properties = { tag = tags[#tags]}},
+    { rule = { name = "ncmpcpp.*" },
+      properties = { tag = tags[#tags] }},
 
     -- display keyboard (and mouse) status nicely
     { rule = { class = "Key-mon" },
-      properties = {placement = awful.placement.bottom, sticky = true, floating = true, focusable = false},
-      callback = function(c) c.border_width = 0 end},
+      properties = { placement = awful.placement.bottom, sticky = true, floating = true, focusable = false },
+      callback = function(c) c.border_width = 0 end },
 }
 -- }}}
 
