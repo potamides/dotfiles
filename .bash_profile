@@ -29,11 +29,6 @@ export WEECHAT_HOME="$HOME/.config/weechat"
 # force ptpython to use ansi colors everywhere
 export PROMPT_TOOLKIT_COLOR_DEPTH=DEPTH_4_BIT
 
-# local virtualenv with pipenv
-export PIPENV_VENV_IN_PROJECT=1
-# disable automated lockfile generation / update
-export PIPENV_SKIP_LOCK=1
-
 # always use ripgrep with fzf
 export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case \
   --glob '!.git/*' --glob '!node_modules/*' 2> /dev/null"
@@ -43,7 +38,7 @@ export FZF_DEFAULT_OPTS="--color 16,fg:15,bg:0,hl:11,fg+:15,bg+:237,hl+:11 \
   --color border:7 \
   --bind ctrl-a:select-all,ctrl-d:deselect-all,ctrl-t:toggle-all"
 
-# source sensitive environment variables which don't belong in a public repo
+# source environment variables which are not under version control
 if [[ -r ~/.bash_profile.local ]]; then
   source ~/.bash_profile.local
 fi

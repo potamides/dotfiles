@@ -1,48 +1,46 @@
 conky.config = {
-	use_xft = true,
 	font = 'DejaVu Sans:size=10',
+	use_xft = true,
+	double_buffer = true,
+	no_buffers = true,
+	draw_graph_borders = true,
+  own_window = true,
+  own_window_transparent = true,
+	own_window_type = 'override',
+	alignment = 'middle_right',
 	update_interval = 3,
   update_interval_on_battery = 5,
 	total_run_times = 0,
-  own_window = true,
-	own_window_type = 'override',
-  own_window_transparent = true,
-	double_buffer = true,
   top_name_width = 10,
 	minimum_width = 190,
 	maximum_width = 190,
-	draw_shades = false,
-	draw_borders = false,
-	draw_graph_borders = true,
-	default_color = '#d5c4a1',
-	default_shade_color = '#282828',
-	default_outline_color = '#282828',
-	alignment = 'middle_right',
-	no_buffers = true,
-	uppercase = false,
-	cpu_avg_samples = 3,
-	override_utf8_locale = true,
-	gap_y = 25,
+	gap_y = 30,
 	gap_x = 10,
 	border_inner_margin = 6,
 	border_outer_margin = 6,
-	use_spacer = 'right',
+	default_color = '#d5c4a1',
+	default_shade_color = '#282828',
+	default_outline_color = '#282828',
 	color1 = '#fe8019',
 	color2 = '#fb4934',
 };
 
 conky.text = [[
+###############################################################################
+# System
+###############################################################################
 $color1${font DejaVu Sans:size=14:bold}System $font${hr 2}$color
 ${voffset 2}#
 ${font DejaVu Sans:size=10:bold}Uptime$font$alignr$uptime_short
-${font DejaVu Sans:size=10:bold}Temp$font$alignr#
+${font DejaVu Sans:size=10:bold}Temperature$font$alignr#
 ${if_match $acpitemp>=60}$color1$endif#
 ${if_match $acpitemp>=75}$color2$endif#
 ${acpitemp}$color°C
 ${font DejaVu Sans:size=10:bold}Frequency$font$alignr$freq MHz
-${font DejaVu Sans:size=10:bold}Processes$font$alignr${processes}(total)
-${font DejaVu Sans:size=10:bold}Freedom Idx$font$alignr#
-${texeci 7200 absolutely-proprietary <<< no | grep -Po '(?<=Your Stallman Freedom Index is )\d+\.\d+' || echo 0.00}%
+${font DejaVu Sans:size=10:bold}Processes$font$alignr${processes}
+${font DejaVu Sans:size=10:bold}Freedom Index$font$alignr#
+${texeci 7200 absolutely-proprietary <<< no |
+  grep -Po '(?<=Your Stallman Freedom Index is )\d+\.\d+' || echo 0.00}%
 $color1${cpubar cpu1 20,90}${offset 10}${cpubar cpu2 20,90}#
 $color${goto 17}${voffset 9}CPU 1${alignr 103}${cpu cpu1}%$color
 ${voffset -37}${goto 117}CPU 2${alignr 3}${cpu cpu2}%
@@ -58,23 +56,34 @@ ${voffset -37}${goto 117}CPU 8${alignr 3}${cpu cpu8}%
 ${voffset 10}#
 ${font DejaVu Sans:size=10:bold}RAM$font${alignr}$mem / $memmax
 ${memgraph 40,190 -l}
+###############################################################################
+# Activity
+###############################################################################
 $color1${font DejaVu Sans:size=14:bold}Activity $font ${hr 2}$color
 ${voffset 2}#
-${font DejaVu Sans:size=10:bold}Top CPU$font ${goto 110}${font DejaVu Sans:size=9}CPU%${goto 160}MEM%$font
+${font DejaVu Sans:size=10:bold}Top CPU$font ${goto 110}#
+${font DejaVu Sans:size=9}CPU%${goto 160}MEM%$font
 ${top name 1}${goto 105}${top cpu 1}${goto 155}${top mem 1}
 ${top name 2}${goto 105}${top cpu 2}${goto 155}${top mem 2}
 ${top name 3}${goto 105}${top cpu 3}${goto 155}${top mem 3}
 ${voffset 4}#
-${font DejaVu Sans:size=10:bold}Top RAM$font${goto 110}${font DejaVu Sans:size=9}CPU%${goto 160}MEM%$font
+${font DejaVu Sans:size=10:bold}Top RAM$font${goto 110}#
+${font DejaVu Sans:size=9}CPU%${goto 160}MEM%$font
 ${top_mem name 1}${goto 105}${top_mem cpu 1}${goto 155}${top_mem mem 1}
 ${top_mem name 2}${goto 105}${top_mem cpu 2}${goto 155}${top_mem mem 2}
 ${top_mem name 3}${goto 105}${top_mem cpu 3}${goto 155}${top_mem mem 3}
 ${voffset 2}#
+###############################################################################
+# Filesystem
+###############################################################################
 $color1${font DejaVu Sans:size=14:bold}Filesystem $font ${hr 2}$color
 ${voffset 2}#
 ${font DejaVu Sans:size=10:bold}Root$font${alignr}${fs_free /} / ${fs_size /}
 ${fs_bar 4,190 /}
 ${voffset 2}#
+###############################################################################
+# Network
+###############################################################################
 $color1${font DejaVu Sans:size=14:bold}Network $font ${hr 2}$color
 ${voffset 2}#
 ${if_existing /sys/class/net/enp3s0/operstate up}#
