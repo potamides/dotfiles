@@ -20,6 +20,7 @@ pacman_pkgs=(
   keepassxc               # mutt dependency
   yarn                    # neovim dependency
   python-pynvim           # neovim dependency
+  xclip                   # neovim dependency
   xorg-xinit              # awesome dependency
   papirus-icon-theme      # awesome dependency
   scrot                   # awesome optional dependency
