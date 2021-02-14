@@ -96,8 +96,7 @@ theme.menu_height       = dpi(16)
 theme.menu_width        = dpi(140)
 theme.menu_border_width = dpi(10)
 theme.menu_fg_normal    = theme.fg_focus
-theme.menu_fg_focus     = theme.bg_normal
-theme.menu_bg_focus     = theme.lightaqua
+theme.menu_bg_focus     = theme.bg2
 theme.menu_border_color = theme.bg_normal
 
 -- Menubar
