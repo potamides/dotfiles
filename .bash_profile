@@ -1,6 +1,4 @@
-#
-# ~/.bash_profile
-#
+# shellcheck shell=bash
 
 ## Set Environment Variables
 # -----------------------------------------------------------------------------
@@ -22,6 +20,9 @@ export SSH_ASKPASS=$SUDO_ASKPASS
 # get qt5 apps to use native gtk style (through qt5-styleplugins)
 export QT_QPA_PLATFORMTHEME=gtk2
 export DESKTOP_SESSION=gnome
+
+# VA-API acceleration on X11 for firefox
+export MOZ_X11_EGL=1
 
 # change weechat config directory
 export WEECHAT_HOME="$HOME/.config/weechat"
@@ -47,7 +48,7 @@ fi
 # -----------------------------------------------------------------------------
 
 if [[ -z $DISPLAY && $(tty) = /dev/tty1 ]]; then
-  exec startx
+  exec systemd-cat startx -- -keeptty
 elif [[ -r ~/.bashrc ]]; then
   source ~/.bashrc
 fi

@@ -1,6 +1,4 @@
-#
-# ~/.bashrc
-#
+# shellcheck shell=bash
 
 ## show greeter
 # -----------------------------------------------------------------------------
@@ -146,13 +144,8 @@ function fifo(){
 }
 
 # report disk usage of directory and sort files by size
-function dus(){
-  local dir="${1-.}/"
-  if [[ -d "$dir" ]]; then
-    (shopt -s dotglob; du -shc "$dir"* | sort -h)
-  else
-    return 1
-  fi
+function dusort(){
+  find "${@}" -mindepth 1 -maxdepth 1 -exec du -sch {} + | sort -h
 }
 
 # search for keyword in pdf's in current directory
@@ -161,7 +154,6 @@ function spdf(){
     echo "Need a string to search for!" >&2
     return 1
   fi
-
   for file in *.pdf; do
     pdftotext -q "$file" - | grep "$@" --quiet && echo "$file"
   done
