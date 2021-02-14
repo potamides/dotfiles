@@ -16,7 +16,6 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- other stuff
 local freedesktop  = require("freedesktop")
 local modalawesome = require("modalawesome")
-local xrandr       = require("xrandr")
 beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua")
 -- import this stuff after theme initialisation for proper colors
 local wibarutil   = require("utils.wibar")
@@ -26,6 +25,7 @@ local mpd         = require("status-widgets.mpd-widget")
 local net_widget  = require("status-widgets.net-widget")
 local run_shell   = require("status-widgets.run-shell")
 local revelation  = require("revelation")
+local xrandr      = require("xrandr")
 revelation.init()
 volume.init()
 battery.init()
@@ -233,18 +233,17 @@ local widget_template = {
   id     = 'background_role',
   widget = wibox.container.background,
   -- Add support for hover colors
-  create_callback = function(self, c3, index, objects) --luacheck: no unused args
+  create_callback = function(self, tag)
     self:connect_signal('mouse::enter', function()
-      if not c3.selected then
+      if not tag.selected then
         if self.bg ~= beautiful.bg2 then
-          self.backup     = self.bg
-          self.has_backup = true
+          self.backup = self.bg
         end
         self.bg = beautiful.bg2
       end
     end)
     self:connect_signal('mouse::leave', function()
-      if self.has_backup and not c3.selected then
+      if self.backup and not tag.selected then
         self.bg = self.backup
       end
     end)
@@ -493,7 +492,7 @@ modes.launcher = gears.table.join(
     {
       description = "launch keepassxc",
       pattern = {'k'},
-      handler = function() awful.spawn("keepassxc") end
+      handler = function() awful.spawn.raise_or_spawn("keepassxc") end
     },
     {
       description = "lock screen",
@@ -672,38 +671,32 @@ end)
 
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
 client.connect_signal("request::titlebars", function(c)
-    -- buttons for the titlebar
-    local buttons = gears.table.join(
-        awful.button({ }, 1, function()
-            c:emit_signal("request::activate", "titlebar", {raise = true})
-            awful.mouse.client.move(c)
-        end),
-        awful.button({ }, 3, function()
-            c:emit_signal("request::activate", "titlebar", {raise = true})
-            awful.mouse.client.resize(c)
-        end)
-    )
+  -- buttons for the titlebar
+  local buttons = gears.table.join(
+    awful.button({ }, 1, function()
+      c:emit_signal("request::activate", "titlebar", {raise = true})
+      awful.mouse.client.move(c)
+    end),
+    awful.button({ }, 3, function()
+      c:emit_signal("request::activate", "titlebar", {raise = true})
+      awful.mouse.client.resize(c)
+    end)
+  )
 
-    awful.titlebar(c, {size = beautiful.titlebar_height, position = "bottom"}) : setup {
-        { -- Left
-            --awful.titlebar.widget.iconwidget(c),
-            buttons = buttons,
-            layout  = wibox.layout.fixed.horizontal
-        },
-        { -- Middle
-            --{ -- Title
-            --    align  = "center",
-            --    widget = awful.titlebar.widget.titlewidget(c)
-            --},
-            buttons = buttons,
-            layout  = wibox.layout.flex.horizontal
-        },
-        wibox.container.margin(
-          awful.titlebar.widget.floatingbutton(c),
-          beautiful.gap, beautiful.gap + beautiful.small_gap, beautiful.gap, beautiful.gap),
-
-        layout = wibox.layout.align.horizontal
-    }
+  awful.titlebar(c, {size = beautiful.titlebar_height, position = "bottom"}):setup {
+    nil,
+    nil,
+    {
+      awful.titlebar.widget.floatingbutton(c),
+      left = beautiful.gap,
+      right = beautiful.gap + beautiful.small_gap,
+      top = beautiful.gap,
+      bottom = beautiful.gap,
+      widget = wibox.container.margin
+    },
+    buttons = buttons,
+    layout = wibox.layout.align.horizontal
+  }
 end)
 
 
@@ -770,7 +763,7 @@ end)
 -------------------------------------------------------------------------------
 local function title_create(c)
   return wibox.widget {
-    markup = "<b>" .. (c.class or "") .. "</b>",
+    markup = "<b>" .. (c.class or "client") .. "</b>",
     align = "center",
     widget = wibox.widget.textbox,
   }
@@ -786,7 +779,7 @@ end
 
 local function title_update(c)
   if c.title then
-    c.title:set_markup("<b>" .. (c.class or "") .. "</b>")
+    c.title:set_markup("<b>" .. (c.class or "client") .. "</b>")
   end
 end
 

@@ -34,6 +34,6 @@ if [[ -d /etc/X11/xinit/xinitrc.d ]]; then
 fi
 
 conky --daemonize
-udiskie --quiet &
+udiskie &
 redshift &
 exec awesome --no-argb
