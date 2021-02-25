@@ -3,15 +3,13 @@
 -------------------------------------------------------------------------------
 
 local awful = require("awful")
-local theme_assets = require("beautiful.theme_assets")
-local themes_path = awful.util.getdir("config").."/themes/"
 local dpi = require("beautiful.xresources").apply_dpi
+local theme_assets = require("beautiful.theme_assets")
 
-
-
+local theme_path = awful.util.getdir("config").."/themes/gruvbox/"
 local theme = {}
 
-theme.archlinux_icon  = themes_path .. "gruvbox/bar/archlinux.svg"
+theme.archlinux_icon  = theme_path .. "bar/archlinux.svg"
 theme.font            = "DejaVu Sans 11"
 theme.revelation_font = "SauceCodePro Nerd Font 20"
 theme.icon_theme      = "Papirus-Dark"
@@ -19,9 +17,9 @@ theme.icon_theme      = "Papirus-Dark"
 function theme.wallpaper(s)
   -- the screen where conky is on
   if s.geometry.x == 0 and s.geometry.y == 0 then
-    return themes_path .. "gruvbox/wall_primary.png"
+    return theme_path .. "wall_primary.png"
   else
-    return themes_path .. "gruvbox/wall_secondary.png"
+    return theme_path .. "wall_secondary.png"
   end
 end
 
@@ -128,43 +126,43 @@ theme.titlebar_height  = dpi(20)
 theme.systray_icon_spacing = theme.gap
 
 -- Layout
-theme.layout_tile       = themes_path .. "gruvbox/layouts/tile.svg"
-theme.layout_tileleft   = themes_path .. "gruvbox/layouts/tileleft.svg"
-theme.layout_tilebottom = themes_path .. "gruvbox/layouts/tilebottom.svg"
-theme.layout_tiletop    = themes_path .. "gruvbox/layouts/tiletop.svg"
-theme.layout_fairv      = themes_path .. "gruvbox/layouts/fair.svg"
-theme.layout_fairh      = themes_path .. "gruvbox/layouts/fair.svg"
-theme.layout_spiral     = themes_path .. "gruvbox/layouts/spiral.svg"
-theme.layout_dwindle    = themes_path .. "gruvbox/layouts/spiral.svg"
-theme.layout_max        = themes_path .. "gruvbox/layouts/max.svg"
-theme.layout_fullscreen = themes_path .. "gruvbox/layouts/fullscreen.svg"
-theme.layout_magnifier  = themes_path .. "gruvbox/layouts/magnifier.svg"
-theme.layout_floating   = themes_path .. "gruvbox/layouts/floating.svg"
-theme.layout_cornernw   = themes_path .. "gruvbox/layouts/cornernw.svg"
-theme.layout_cornerne   = themes_path .. "gruvbox/layouts/cornerne.svg"
-theme.layout_cornersw   = themes_path .. "gruvbox/layouts/cornersw.svg"
-theme.layout_cornerse   = themes_path .. "gruvbox/layouts/cornerse.svg"
+theme.layout_tile       = theme_path .. "layouts/tile.svg"
+theme.layout_tileleft   = theme_path .. "layouts/tileleft.svg"
+theme.layout_tilebottom = theme_path .. "layouts/tilebottom.svg"
+theme.layout_tiletop    = theme_path .. "layouts/tiletop.svg"
+theme.layout_fairv      = theme_path .. "layouts/fair.svg"
+theme.layout_fairh      = theme_path .. "layouts/fair.svg"
+theme.layout_spiral     = theme_path .. "layouts/spiral.svg"
+theme.layout_dwindle    = theme_path .. "layouts/spiral.svg"
+theme.layout_max        = theme_path .. "layouts/max.svg"
+theme.layout_fullscreen = theme_path .. "layouts/fullscreen.svg"
+theme.layout_magnifier  = theme_path .. "layouts/magnifier.svg"
+theme.layout_floating   = theme_path .. "layouts/floating.svg"
+theme.layout_cornernw   = theme_path .. "layouts/cornernw.svg"
+theme.layout_cornerne   = theme_path .. "layouts/cornerne.svg"
+theme.layout_cornersw   = theme_path .. "layouts/cornersw.svg"
+theme.layout_cornerse   = theme_path .. "layouts/cornerse.svg"
 
 -- Titlebar
-theme.titlebar_ontop_button_focus_active    = themes_path .. "gruvbox/titlebar/ontop_select.svg"
-theme.titlebar_ontop_button_normal_active   = themes_path .. "gruvbox/titlebar/ontop_select.svg"
-theme.titlebar_ontop_button_focus_inactive  = themes_path .. "gruvbox/titlebar/ontop_unselect.svg"
-theme.titlebar_ontop_button_normal_inactive = themes_path .. "gruvbox/titlebar/ontop_unselect.svg"
+theme.titlebar_ontop_button_focus_active    = theme_path .. "titlebar/ontop_select.svg"
+theme.titlebar_ontop_button_normal_active   = theme_path .. "titlebar/ontop_select.svg"
+theme.titlebar_ontop_button_focus_inactive  = theme_path .. "titlebar/ontop_unselect.svg"
+theme.titlebar_ontop_button_normal_inactive = theme_path .. "titlebar/ontop_unselect.svg"
 
-theme.titlebar_sticky_button_focus_active    = themes_path .. "gruvbox/titlebar/sticky_select.svg"
-theme.titlebar_sticky_button_normal_active   = themes_path .. "gruvbox/titlebar/sticky_select.svg"
-theme.titlebar_sticky_button_focus_inactive  = themes_path .. "gruvbox/titlebar/sticky_unselect.svg"
-theme.titlebar_sticky_button_normal_inactive = themes_path .. "gruvbox/titlebar/sticky_unselect.svg"
+theme.titlebar_sticky_button_focus_active    = theme_path .. "titlebar/sticky_select.svg"
+theme.titlebar_sticky_button_normal_active   = theme_path .. "titlebar/sticky_select.svg"
+theme.titlebar_sticky_button_focus_inactive  = theme_path .. "titlebar/sticky_unselect.svg"
+theme.titlebar_sticky_button_normal_inactive = theme_path .. "titlebar/sticky_unselect.svg"
 
-theme.titlebar_maximized_button_focus_active    = themes_path .. "gruvbox/titlebar/maximized_select.svg"
-theme.titlebar_maximized_button_normal_active   = themes_path .. "gruvbox/titlebar/maximized_select.svg"
-theme.titlebar_maximized_button_focus_inactive  = themes_path .. "gruvbox/titlebar/maximized_unselect.svg"
-theme.titlebar_maximized_button_normal_inactive = themes_path .. "gruvbox/titlebar/maximized_unselect.svg"
+theme.titlebar_maximized_button_focus_active    = theme_path .. "titlebar/maximized_select.svg"
+theme.titlebar_maximized_button_normal_active   = theme_path .. "titlebar/maximized_select.svg"
+theme.titlebar_maximized_button_focus_inactive  = theme_path .. "titlebar/maximized_unselect.svg"
+theme.titlebar_maximized_button_normal_inactive = theme_path .. "titlebar/maximized_unselect.svg"
 
-theme.titlebar_floating_button_focus_active    = themes_path .. "gruvbox/titlebar/floating_select.svg"
-theme.titlebar_floating_button_normal_active   = themes_path .. "gruvbox/titlebar/floating_select.svg"
-theme.titlebar_floating_button_focus_inactive  = themes_path .. "gruvbox/titlebar/floating_unselect.svg"
-theme.titlebar_floating_button_normal_inactive = themes_path .. "gruvbox/titlebar/floating_unselect.svg"
+theme.titlebar_floating_button_focus_active    = theme_path .. "titlebar/floating_select.svg"
+theme.titlebar_floating_button_normal_active   = theme_path .. "titlebar/floating_select.svg"
+theme.titlebar_floating_button_focus_inactive  = theme_path .. "titlebar/floating_unselect.svg"
+theme.titlebar_floating_button_normal_inactive = theme_path .. "titlebar/floating_unselect.svg"
 
 -- Generate Awesome Icon
 theme.awesome_icon = theme_assets.awesome_icon(

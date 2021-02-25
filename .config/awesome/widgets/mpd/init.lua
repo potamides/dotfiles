@@ -3,8 +3,8 @@ local awful = require("awful")
 local beautiful = require("beautiful")
 local wibarutil = require("utils.wibar")
 local wibox = require("wibox")
-local mpc = require("status-widgets.mpd-widget.mpc")
-local stream = require("status-widgets.mpd-widget.stream")
+local mpc = require("widgets.mpd.mpc")
+local stream = require("widgets.mpd.stream")
 local escape = require("lgi").GLib.markup_escape_text
 
 local mpd_widget = wibox.widget.textbox()

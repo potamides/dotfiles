@@ -19,11 +19,11 @@ local modalawesome = require("modalawesome")
 beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua")
 -- import this stuff after theme initialisation for proper colors
 local wibarutil   = require("utils.wibar")
-local battery     = require("status-widgets.battery-widget")
-local volume      = require("status-widgets.volume-widget")
-local mpd         = require("status-widgets.mpd-widget")
-local net_widget  = require("status-widgets.net-widget")
-local run_shell   = require("status-widgets.run-shell")
+local battery     = require("widgets.battery")
+local volume      = require("widgets.volume")
+local mpd         = require("widgets.mpd")
+local net_widget  = require("widgets.net")
+local run_shell   = require("widgets.run-shell")
 local revelation  = require("revelation")
 local xrandr      = require("xrandr")
 revelation.init()
@@ -559,7 +559,7 @@ modes.launcher = gears.table.join(
       pattern = {'d'},
       handler = function(mode)
         run_shell.launch{
-          prompt = 'DuckDuckGo: ',
+          prompt = 'DDG: ',
           exe_callback = function(command)
             local search = "https://duckduckgo.com/?q=" .. command:gsub('%s', '+')
             awful.spawn.easy_async("xdg-open " .. search, function()

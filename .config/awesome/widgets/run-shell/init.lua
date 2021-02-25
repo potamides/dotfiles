@@ -27,6 +27,7 @@ function widget.new()
             left   = dpi(10),
             layout = wibox.container.margin,
         }
+        w.min_width = w.width
 
         return w
     end
@@ -51,12 +52,8 @@ function widget.new()
           w.width = old_width
         end
         opts.changed_callback = function()
-          local width = run_shell:get_preferred_size()
-          local empty_area = w.width - 2 * beautiful.border_width - dpi(10) - width
-          if empty_area < dpi(10) then
-            w.width = w.width + dpi(10) - empty_area
-            awful.placement.centered(w, {parent = awful.screen.focused()})
-          end
+          w.width = math.max(run_shell:get_preferred_size() + 2 * w:get_widget():get_left(), w.min_width)
+          awful.placement.centered(w)
         end
         awful.prompt.run(opts)
     end
