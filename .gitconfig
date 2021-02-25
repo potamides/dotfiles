@@ -28,5 +28,9 @@
   smudge = git-lfs smudge -- %f
   process = git-lfs filter-process
   required = true
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/
+[url "ssh://git@gitlab.com/"]
+	insteadOf = https://gitlab.com/
 [include]
   path = ~/.gitconfig.local
