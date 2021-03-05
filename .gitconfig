@@ -3,6 +3,7 @@
   email = 53401822+potamides@users.noreply.github.com
 [core]
   quotepath = false
+  askPass = ""
 [commit]
   verbose = true
 [diff]
