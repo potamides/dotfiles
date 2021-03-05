@@ -6,40 +6,40 @@
 #     clean. The container is assumed to be on an encrypted block device.     #
 ###############################################################################
 
+set -o errexit
 user=steam
 container_name=garbage
 mount_path=/mnt/$container_name
 block_device=$(findfs UUID=d5a47e6b-1dd2-47f2-a224-90472cd0be9e)
-export SUDO_ASKPASS=/usr/lib/git-core/git-gui--askpass
+export SUDO_ASKPASS=${SUDO_ASKPASS:-/usr/lib/git-core/git-gui--askpass}
 
 function unlock_device(){
-  if [[ ! -b /dev/mapper/$container_name ]]; then
+  if [[ ! -b "/dev/mapper/$container_name" ]]; then
     if [[ -t 0 ]]; then
-      sudo cryptsetup open $block_device $container_name || exit
+      cryptsetup open "$block_device" "$container_name"
     else
       local message="Enter passphrase for $block_device:"
-      sudo cryptsetup open $block_device $container_name <<<"$($SUDO_ASKPASS $message)" || exit
+      cryptsetup open "$block_device" "$container_name" <<<"$($SUDO_ASKPASS "$message")"
     fi
   fi
 }
 
 function mount_device(){
-  if ! mountpoint -q $mount_path; then
-    # sudo timeout probably lasts long enough
-    sudo mkdir -p $mount_path || return
-    sudo mount /dev/mapper/$container_name $mount_path
+  if ! mountpoint -q "$mount_path"; then
+    mkdir -p "$mount_path"
+    mount "/dev/mapper/$container_name" "$mount_path"
   fi
 }
 
 function umount_device(){
-  if mountpoint -q $mount_path; then
-    sudo umount $mount_path || return
-    sudo rmdir $mount_path
+  if mountpoint -q "$mount_path"; then
+    umount "$mount_path"
+    rmdir "$mount_path"
   fi
 }
 
 function is_running(){
-  if [[ ! $(machinectl --property=State show $container_name 2> /dev/null) = "State=running" ]]; then
+  if [[ ! $(machinectl --property=State show "$container_name" 2> /dev/null) = "State=running" ]]; then
     return 1
   fi
 }
@@ -51,7 +51,7 @@ function notify_status(){
     local message="The garbage container is offline!"
   fi
   if [[ -t 1 ]]; then
-    echo $message
+    echo "$message"
   else
     notify-send "$message"
   fi
@@ -59,9 +59,10 @@ function notify_status(){
 
 function kill_container(){
   if is_running; then
-    sudo machinectl -q terminate $container_name
+    machinectl -q terminate "$container_name"
     # wait for other session to properly shut down
-    while [[ $(pgrep -cf $0) -gt 1 ]]; do
+    # shellcheck disable=SC2046
+    while [[ $(pgrep -cf "$0") -gt 1 ]]; do
       sleep 1
     done
   fi
@@ -75,13 +76,13 @@ function launch_container(){
 
   # https://www.reddit.com/r/linux_gaming/comments/c50vsb/howto_run_steam_in_a_container_without_32bit/
   # https://patrickskiba.com/sysytemd-nspawn/2019/03/21/graphical-applications-in-systemd-nspawn.html
-  sudo systemd-nspawn \
+  systemd-nspawn \
     --quiet \
     --private-users-chown \
     --user=$user \
     --volatile=no \
-    --setenv=DISPLAY=$DISPLAY \
-    --setenv=DRI_PRIME=$DRI_PRIME \
+    --setenv=DISPLAY="$DISPLAY" \
+    --setenv=DRI_PRIME="$DRI_PRIME" \
     --setenv=PULSE_SERVER=unix:/run/user/host/pulse/native \
     --bind=/run/user/1000/pulse:/run/user/host/pulse \
     --bind=/run/user/1000/ \
@@ -105,21 +106,32 @@ function launch_container(){
   xhost -local:
 }
 
+function check_user(){
+  # make sure that the script is run as root
+  if [[ $EUID -ne 0 ]]; then
+      exec sudo -Es "$0" "$@"
+  fi
+}
+
 case "$1" in
   --mount|-m)
+    check_user "$@"
     unlock_device
     mount_device
     ;;
   --umount|-u)
+    check_user "$@"
     umount_device
     ;;
   --notify|-n)
     notify_status
     ;;
   --kill|-k)
+    check_user "$@"
     kill_container
     ;;
   *)
+    check_user "$@"
     unlock_device
     launch_container "$@"
     ;;
