@@ -385,17 +385,17 @@ modes.tag = gears.table.join(
   {
     {
       description = "show all clients on screen",
-      pattern = {'A'},
+      pattern = {'s', 's'},
       handler = function() revelation() end
     },
     {
       description = "show all clients on current tag",
-      pattern = {'a'},
+      pattern = {'s', 't'},
       handler = function() revelation({curr_tag_only=true}) end
     },
     {
       description = "hide all visible clients until keypress",
-      pattern = {'N'},
+      pattern = {'d'},
       handler = function(mode)
         local tags_ = awful.screen.focused().selected_tags
         local grabber
@@ -511,7 +511,7 @@ modes.launcher = gears.table.join(
     },
     {
       description = "toggle mpd playback",
-      pattern = {'N'},
+      pattern = {'o'},
       handler = function() mpd.toggle() end
     },
     {
