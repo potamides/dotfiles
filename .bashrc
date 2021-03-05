@@ -50,7 +50,6 @@ shopt -s no_empty_cmd_completion    # Stops empty line tab comp
 shopt -s dirspell                   # Tab comp can fix dir name typos
 shopt -s globstar                   # pattern ** also searches subdirectories
 shopt -s extglob                    # enable extended pattern matching features
-shopt -so pipefail                  # pipe return value is last non-zero status
 shopt -so vi                        # enable vi like keybindings
 
 # reset cursor shape before executing a command (see .inputrc)
@@ -121,11 +120,6 @@ function man(){
   command man "$@"
 }
 
-# cd to directory and list files
-function cl(){
-  cd "$@" && ls --color=auto -v
-}
-
 # Searching file contents with fzf and ripgrep
 function fif(){
   if [[ "$#" -eq 0 ]]; then
@@ -145,7 +139,7 @@ function fifo(){
 
 # report disk usage of directory and sort files by size
 function dusort(){
-  find "${@}" -mindepth 1 -maxdepth 1 -exec du -sch {} + | sort -h
+  find "$@" -mindepth 1 -maxdepth 1 -exec du -sch {} + | sort -h
 }
 
 # search for keyword in pdf's in current directory
@@ -173,6 +167,11 @@ function whoowns(){
 # list commands which are provided by package
 function listprogs(){
   pacman -Qlq "$@" | grep -Po "(?<=${PATH//://|}/).+"
+}
+
+# find fonts which contain character(s)
+function findfonts(){
+  fc-list ":charset=$(printf "%x " "${@/#/\'}")" family style
 }
 
 # fetch current weather report, with location as optional parameter
