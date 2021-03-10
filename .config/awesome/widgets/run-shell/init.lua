@@ -2,15 +2,13 @@ local awful     = require("awful")
 local wibox     = require("wibox")
 local beautiful = require("beautiful")
 local dpi       = require("beautiful.xresources").apply_dpi
+local cache     = require("gears.cache")
 
 local run_shell = wibox.widget.textbox()
 local widget    = {}
 
 function widget.new()
-
-    local widget_instance = {
-        _cached_wiboxes = {}
-    }
+    local widget_instance = {}
 
     function widget_instance._create_wibox()
         local w = wibox {
@@ -27,21 +25,15 @@ function widget.new()
             left   = dpi(10),
             layout = wibox.container.margin,
         }
-        w.min_width = w.width
 
         return w
     end
 
+    widget_instance._cache = cache.new(widget_instance._create_wibox)
+
     function widget_instance:launch(opts)
-        local s = awful.screen.focused()
-        if not self._cached_wiboxes[s] then
-            self._cached_wiboxes[s] = {}
-        end
-        if not self._cached_wiboxes[s][1] then
-            self._cached_wiboxes[s][1] = self:_create_wibox()
-        end
-        local w = self._cached_wiboxes[s][1]
-        local old_width = w.width
+        local w = self._cache:get()
+        local min_width = w.width
         w.visible = true
         awful.placement.centered(w, {parent = awful.screen.focused()})
 
@@ -49,10 +41,10 @@ function widget.new()
         opts.bg_cursor = beautiful.border_focus
         opts.done_callback = function()
           w.visible = false
-          w.width = old_width
+          w.width = min_width
         end
         opts.changed_callback = function()
-          w.width = math.max(run_shell:get_preferred_size() + 2 * w:get_widget():get_left(), w.min_width)
+          w.width = math.max(run_shell:get_preferred_size() + 2 * w:get_widget():get_left(), min_width)
           awful.placement.centered(w)
         end
         awful.prompt.run(opts)

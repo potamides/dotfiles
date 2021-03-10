@@ -9,13 +9,13 @@ local unpack = unpack or table.unpack -- luacheck: globals unpack (compatibility
 
 local battery_widget = {}
 
-function battery_widget._show_battery_warning(time)
+local function show_battery_warning(time)
   naughty.notify({ preset = naughty.config.presets.critical,
     title = "Battery is low!",
     text = string.format("About %smin left based on your usage.", time) })
 end
 
-function battery_widget._parse(content)
+local function parse_battery_info(content)
   local battery_info = {}
   for status, power, energy, charge in content:gmatch(
     '.*STATUS=(%a+).+POWER_NOW=(%d+).+ENERGY_NOW=(%d+).+CAPACITY=(%d+)') do
@@ -39,7 +39,7 @@ function battery_widget._parse(content)
   return charge, status, time
 end
 
-function battery_widget._get_batteries()
+local function get_batteries()
   local dir, batteries = new_for_path("/sys/class/power_supply/"), {}
   local files = dir:enumerate_children('standard::name', 'NONE')
 
@@ -70,8 +70,8 @@ function battery_widget.init(args)
   local last_battery_check = os.time()
   local batteryType = "battery-good-symbolic"
 
-  monitor(unpack(merge(battery_widget._get_batteries(), {function(content)
-    local charge, status, time = battery_widget._parse(content)
+  monitor(unpack(merge(get_batteries(), {function(content)
+    local charge, status, time = parse_battery_info(content)
 
     battery_widget.text:set_markup(string.format("<span color=%q><b>%s%%</b></span>",
       beautiful.bg_normal, math.floor(charge)))
@@ -82,7 +82,7 @@ function battery_widget.init(args)
         and os.difftime(os.time(), last_battery_check) > 300 then
           -- if 5 minutes have elapsed since the last warning
           last_battery_check = os.time()
-          battery_widget._show_battery_warning(math.floor(time))
+          show_battery_warning(math.floor(time))
       end
     elseif (charge >= 15 and charge < 40) then batteryType = "battery-caution%s-symbolic"
     elseif (charge >= 40 and charge < 60) then batteryType = "battery-low%s-symbolic"
