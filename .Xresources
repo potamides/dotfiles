@@ -1,33 +1,80 @@
-! -- Colors -- !
-! hard contrast: *background: #1d2021
-*background: #282828
-! soft contrast: *background: #32302f
-*foreground: #ebdbb2
-! Black + DarkGrey
+! -- gruvbox colors -- !
+! black + darkGrey
 *color0:  #282828
 *color8:  #928374
-! DarkRed + Red
+! darkRed + red
 *color1:  #cc241d
 *color9:  #fb4934
-! DarkGreen + Green
+! darkGreen + green
 *color2:  #98971a
 *color10: #b8bb26
-! DarkYellow + Yellow
+! darkYellow + yellow
 *color3:  #d79921
 *color11: #fabd2f
-! DarkBlue + Blue
+! darkBlue + blue
 *color4:  #458588
 *color12: #83a598
-! DarkMagenta + Magenta
+! darkMagenta + magenta
 *color5:  #b16286
 *color13: #d3869b
-! DarkCyan + Cyan
+! darkCyan + cyan
 *color6:  #689d6a
 *color14: #8ec07c
-! LightGrey + White
+! lightGrey + white
 *color7:  #a89984
 *color15: #ebdbb2
+! additional colors
+*color24:  #076678
+*color66:  #458588
+*color72:  #689d6a
+*color88:  #9d0006
+*color96:  #8f3f71
+*color100: #79740e
+*color106: #98971a
+*color108: #8ec07c
+*color109: #83a598
+*color124: #cc241d
+*color130: #af3a03
+*color132: #b16286
+*color136: #b57614
+*color142: #b8bb26
+*color166: #d65d0e
+*color167: #fb4934
+*color172: #d79921
+*color175: #d3869b
+*color208: #fe8019
+*color214: #fabd2f
+*color223: #ebdbb2
+*color228: #f2e5bc
+*color229: #fbf1c7
+*color230: #f9f5d7
+*color234: #1d2021
+*color235: #282828
+*color236: #32302f
+*color237: #3c3836
+*color239: #504945
+*color241: #665c54
+*color243: #7c6f64
+*color244: #928374
+*color245: #928374
+*color246: #a89984
+*color248: #bdae93
+*color250: #d5c4a1
 
+! -- colors for tk windowing toolkit (and others) -- !
+*background: #282828
+*foreground: #ebdbb2
 
-! -- Fonts -- !
-*.font:xft:SauceCodePro Nerd Font Mono:pixelsize=8
+*selectBackground: #32302f
+*selectForeground: #f2e5bc
+
+*activeBackground: #3c3836
+*activeForeground: #fbf1c7
+
+*insertBackground:    #504945
+*highlightBackground: #665c54
+*disabledForeground:  #d5c4a1
+
+*selectColor:    #7c6f64
+*highlightColor: #7c6f64
+*troughColor:    #928374

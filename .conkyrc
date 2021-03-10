@@ -80,7 +80,7 @@ ${voffset 2}#
 ###############################################################################
 $color1${font1}Filesystem ${hr 2}$color$font
 ${voffset 2}#
-${font2}Root$font$alignr${fs_free /} / ${fs_size /}
+${font2}Root$font$alignr${fs_used /} / ${fs_size /}
 ${fs_bar 4,190 /}
 ${voffset 2}#
 ###############################################################################
