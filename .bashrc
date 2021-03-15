@@ -6,7 +6,7 @@
 # if not in vim or ranger show reminders for today
 if [[ -z $VIMRUNTIME && -z $RANGER_LEVEL && $(type -t when) ]]; then
   when --rows=10 --norows_auto --noheader --styled_output_if_not_tty w |
-    sed 's/^/| /' | xargs -r -0 printf ',---- [ Reminders ]\n%s`---- '
+    sed 's/^/| /' | xargs -r -0 printf ',---- [ Reminders ]\n%s`- '
 fi
 
 ## build prompt
