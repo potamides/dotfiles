@@ -62,9 +62,8 @@ function stream:_connect()
 end
 
 function stream:_spawn_mpv()
-  local cmd = string.format("mpv --no-config --idle=yes --no-terminal --input-ipc-server=%s %s",
-    self._socket, self._link)
-  awful.spawn(cmd, false)
+  local cmd = "mpv --no-config --idle=yes --no-terminal --cache-pause-initial=yes --input-ipc-server=%s %s"
+  awful.spawn(cmd:format(self._socket, self._link), false)
   self._spawned = true
 end
 
@@ -73,10 +72,9 @@ function stream:play()
 	if not self._connected and not self:_connect() and not self._spawned then
     -- if we can't connect to mpv, we have to spawn it
 		self:_spawn_mpv()
-		return
+  else
+    self._output:write_all('{ "command": ["playlist-play-index", 0] }\n')
 	end
-  -- reset playback when mpd changes song to start new song immediately
-  self._output:write_all('{ "command": ["loadfile", "' .. self._link .. '"] }\n')
 end
 
 function stream:pause()
@@ -84,7 +82,7 @@ function stream:pause()
 		return
 	end
   -- flush buffers and reject further data
-  self._output:write_all('{ "command": ["stop"] }\n')
+  self._output:write_all('{ "command": ["stop", "keep-playlist"] }\n')
   -- close mpv after 10 minutes of inactivity
   self._timer:again()
 end

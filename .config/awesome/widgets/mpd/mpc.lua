@@ -55,10 +55,10 @@ function mpc:_connect()
 		address = Gio.NetworkAddress.new(self._host, self._port)
 	end
 	local client = Gio.SocketClient()
-	local conn, err = client:connect(address)
+	local conn, con_err = client:connect(address)
 
 	if not conn then
-		self:_error(err)
+		self:_error(con_err)
 		return false
 	end
 
@@ -105,7 +105,6 @@ function mpc:_connect()
 		end)
 	end
 
-
 	self._input:read_line_async(GLib.PRIORITY_DEFAULT, nil, function(obj, res)
     -- Read the welcome message
     obj:read_line_finish(res)
@@ -149,7 +148,7 @@ function mpc:_start_idle()
 	if self._idle then
 		error("Still idle?!")
 	end
-	self:_send("idle", function(success, reply)
+	self:_send("idle", function(success, reply) --luacheck: no unused args
 		if reply.changed then
 			-- idle mode was disabled by mpd
 			self:_send_idle_commands()
@@ -191,7 +190,7 @@ function mpc:send(...)
 end
 
 function mpc:toggle_play()
-	self:send("status", function(success, status)
+	self:send("status", function(success, status) --luacheck: no unused args
 		if status.state == "stop" then
 			self:send("play")
 		else
@@ -199,27 +198,5 @@ function mpc:toggle_play()
 		end
 	end)
 end
-
---[[
-
--- Example on how to use this (standalone)
-
-local host, port, password = nil, nil, nil
-local m = mpc.new(host, port, password, error,
-	"status", function(success, status) print("status is", status.state) end)
-
-GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, function()
-	-- Test command submission
-	m:send("status", function(_, s) print(s.state) end,
-		"currentsong", function(_, s) print(s.title) end)
-	m:send("status", function(_, s) print(s.state) end)
-	-- Force a reconnect
-	GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, function()
-		m._conn:close()
-	end)
-end)
-
-GLib.MainLoop():run()
---]]
 
 return mpc
