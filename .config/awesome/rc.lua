@@ -18,7 +18,7 @@ local freedesktop  = require("freedesktop")
 local modalawesome = require("modalawesome")
 beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua")
 -- import this stuff after theme initialisation for proper colors
-local wibarutil   = require("utils.wibar")
+local utils       = require("utils")
 local battery     = require("widgets.battery")
 local volume      = require("widgets.volume")
 local mpd         = require("widgets.mpd")
@@ -93,30 +93,24 @@ awful.layout.layouts = {
 -------------------------------------------------------------------------------
 -- Create a launcher widget and a main menu
 local myawesomemenu = {
-  { "hotkeys", function() return false, hotkeys_popup.show_help end},
-  { "manual", terminal .. " -e man awesome" },
-  { "edit config", editor_cmd .. " " .. awesome.conffile },
-  { "restart", awesome.restart },
-  { "quit", function() awesome.quit() end},
-  { "open terminal", terminal },
-  { "lock", function() awesome.spawn("physlock -s") end },
-  { "reboot", function() awesome.spawn("systemctl reboot") end },
-  { "shutdown", function() awesome.spawn("systemctl poweroff") end },
+  { "Hotkeys", function() return false, hotkeys_popup.show_help end},
+  { "Edit Config", editor_cmd .. " " .. awesome.conffile },
+  { "Restart", awesome.restart },
+  { "Quit", function() awesome.quit() end},
+  { "Open Terminal", terminal },
+  { "Lock", function() awesome.spawn("physlock -s") end },
+  { "Reboot", function() awesome.spawn("systemctl reboot") end },
+  { "Shutdown", function() awesome.spawn("systemctl poweroff") end },
 }
 
 local mymainmenu = freedesktop.menu.build({
   icon_size = beautiful.menu_height,
-  before = {
-    { "Awesome", myawesomemenu, beautiful.awesome_icon },
-    -- other triads can be put here
-  },
-  after = {
-  }
+  before = {{ "Awesome", myawesomemenu, beautiful.awesome_icon } },
 })
 
 
 local status_box = wibox.widget.textbox(modalawesome.active_mode.text)
-local mylauncher = wibarutil.create_parallelogram(
+local mylauncher = wibox.widget(utils.widget.compose{{
   {
     awful.widget.launcher {
       image = beautiful.archlinux_icon,
@@ -133,8 +127,10 @@ local mylauncher = wibarutil.create_parallelogram(
     spacing = beautiful.gap,
     layout  = wibox.layout.fixed.horizontal,
   },
-  wibarutil.leftmost_parallelogram,
-  beautiful.lightaqua, beautiful.small_gap)
+  shape = utils.shape.rightangled.left,
+  color = beautiful.lightaqua,
+  margin = beautiful.small_gap
+}})
 
 modalawesome.active_mode:connect_signal("widget::redraw_needed",
 function()
@@ -233,18 +229,20 @@ local widget_template = {
   id     = 'background_role',
   widget = wibox.container.background,
   -- Add support for hover colors
-  create_callback = function(self, tag)
+  create_callback = function(self)
+    self._set_bg = self.set_bg
+    self.set_bg = function(_, hex)
+      self.hex_bg = hex
+      self:_set_bg(hex)
+    end
     self:connect_signal('mouse::enter', function()
-      if not tag.selected then
-        if self.bg ~= beautiful.bg2 then
-          self.backup = self.bg
-        end
-        self.bg = beautiful.bg2
+      if self.hex_bg == beautiful.taglist_bg_empty then
+        self.bg = beautiful.taglist_bg_hover
       end
     end)
     self:connect_signal('mouse::leave', function()
-      if self.backup and not tag.selected then
-        self.bg = self.backup
+      if self.hex_bg == beautiful.taglist_bg_hover then
+        self.bg = beautiful.taglist_bg_empty
       end
     end)
   end,
@@ -269,7 +267,7 @@ awful.screen.connect_for_each_screen(function(s)
     screen  = s,
     filter  = function(t) return t.name ~= "Revelation" and t.name ~=  "Revelation_zoom" end,
     style   = {
-      shape = wibarutil.left_parallelogram
+      shape = utils.shape.parallelogram.left
     },
     layout   = {
       spacing = beautiful.negative_gap,
@@ -288,7 +286,6 @@ awful.screen.connect_for_each_screen(function(s)
     -- global titlebar buttons contianer
     s.buttonsbox_container = wibox.container.margin()
     -- systray
-    --local systray = wibox.widget.systray()
 
     -- add widgets to the wibar
     s.mywibox:setup {
@@ -305,40 +302,71 @@ awful.screen.connect_for_each_screen(function(s)
         },
         { -- Right widgets
             wibox.container.margin(modalawesome.sequence, beautiful.gap, beautiful.big_gap),
-            --wibox.container.margin(systray, beautiful.gap, beautiful.gap, beautiful.small_gap, beautiful.small_gap),
 
             -- Internet Widget
-            wibarutil.compose_parallelogram(
+            utils.widget.compose{
+              {
                 net_widget.text,
+                color = beautiful.fg_normal,
+                shape = utils.shape.parallelogram.right
+              },
+              {
                 net_widget.image,
-                wibarutil.right_parallelogram,
-                wibarutil.right_parallelogram),
+                color = beautiful.bg_focus,
+                shape = utils.shape.parallelogram.right,
+                margin = beautiful.gap,
+              }
+            },
 
             -- Audio Volume
-            wibarutil.compose_parallelogram(
+            utils.widget.compose{
+              {
                 volume.text,
+                color = beautiful.fg_normal,
+                shape = utils.shape.parallelogram.right
+              },
+              {
                 volume.image,
-                wibarutil.right_parallelogram,
-                wibarutil.right_parallelogram),
+                color = beautiful.bg_focus,
+                shape = utils.shape.parallelogram.right,
+                margin = beautiful.gap,
+              }
+            },
 
             -- Battery Indicator
-            wibarutil.compose_parallelogram(
+            utils.widget.compose{
+              {
                 battery.text,
+                color = beautiful.fg_normal,
+                shape = utils.shape.parallelogram.right
+              },
+              {
                 battery.image,
-                wibarutil.right_parallelogram,
-                wibarutil.right_parallelogram),
+                color = beautiful.bg_focus,
+                shape = utils.shape.parallelogram.right,
+                margin = beautiful.gap,
+              }
+            },
 
             -- Clock / Layout / Global Titlebar Buttons
-            wibarutil.compose_parallelogram(
+            utils.widget.compose{
+              {
                 mytextclock,
+                color = beautiful.fg_normal,
+                shape = utils.shape.parallelogram.right
+              },
+              {
                 {
-                    s.mylayoutbox,
-                    s.buttonsbox_container,
-                    spacing = beautiful.small_gap,
-                    layout = wibox.layout.fixed.horizontal
+                  s.mylayoutbox,
+                  s.buttonsbox_container,
+                  spacing = beautiful.small_gap,
+                  layout = wibox.layout.fixed.horizontal
                 },
-                wibarutil.right_parallelogram,
-                wibarutil.rightmost_parallelogram),
+                color = beautiful.bg_focus,
+                shape = utils.shape.rightangled.right,
+                margin = beautiful.gap,
+              }
+            },
 
             spacing = beautiful.negative_gap,
             fill_space = true,

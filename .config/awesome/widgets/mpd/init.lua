@@ -1,28 +1,31 @@
 local gears = require("gears")
 local beautiful = require("beautiful")
-local wibarutil = require("utils.wibar")
+local utils = require("utils")
 local wibox = require("wibox")
 local mpc = require("widgets.mpd.mpc")
 local stream = require("widgets.mpd.stream")
 local escape = require("lgi").GLib.markup_escape_text
 
 local mpd_widget = wibox.widget.textbox()
-local mpd_container = wibarutil.create_parallelogram({
+local mpd_container = wibox.widget(utils.widget.compose{{
     mpd_widget,
     max_size = beautiful.xresources.apply_dpi(200),
     speed = 70,
     step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
     layout = wibox.container.scroll.horizontal,
   },
-  wibarutil.left_parallelogram, beautiful.bg_normal, beautiful.small_gap)
+  shape = utils.shape.parallelogram.left,
+  color = beautiful.bg_normal,
+  margin = beautiful.small_gap
+})
 
 local function update_widget(title, artist, state)
   local text = ""
   if state == "play" and title then
     text = artist and artist .. " - " .. title or title
-    mpd_container:set_bg(gears.color(beautiful.bg1))
+    mpd_container:set_bg(beautiful.bg_focus)
   else
-    mpd_container:set_bg(gears.color(beautiful.bg_normal))
+    mpd_container:set_bg(beautiful.bg_normal)
   end
   mpd_widget:set_markup(string.format("<span color=%q><b>%s</b></span>",
     beautiful.fg_normal, escape(text, string.len(text))))

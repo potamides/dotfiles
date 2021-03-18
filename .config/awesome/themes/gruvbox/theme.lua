@@ -9,7 +9,6 @@ local theme_assets = require("beautiful.theme_assets")
 local theme_path = awful.util.getdir("config").."/themes/gruvbox/"
 local theme = {}
 
-theme.archlinux_icon  = theme_path .. "bar/archlinux.svg"
 theme.font            = "DejaVu Sans 11"
 theme.revelation_font = "SauceCodePro Nerd Font 20"
 theme.icon_theme      = "Papirus-Dark"
@@ -55,8 +54,8 @@ theme.bg0_h       = "#1d2021"
 -- Colors
 theme.bg_normal  = theme.bg0_h
 theme.bg_focus   = theme.bg1
-theme.bg_urgent  = theme.bg_normal
-theme.bg_systray = theme.bg_normal
+theme.bg_urgent  = theme.bg0_h
+theme.bg_systray = theme.bg0_h
 
 theme.fg_normal  = theme.fg4
 theme.fg_focus   = theme.fg1
@@ -64,7 +63,7 @@ theme.fg_urgent  = theme.lightorange
 
 --  Borders
 theme.useless_gap       = 0
-theme.gap_single_client = false
+theme.gap_single_client = true
 theme.border_width      = dpi(3)
 theme.border_normal     = theme.bg0_h
 theme.border_focus      = theme.bg4
@@ -87,15 +86,16 @@ theme.taglist_bg_urgent   = theme.lightorange
 theme.taglist_bg_occupied = theme.bg1
 theme.taglist_bg_volatile = theme.lightpurple
 theme.taglist_bg_empty    = theme.bg1
+theme.taglist_bg_hover    = theme.bg2
 theme.taglist_font        = "DejaVu Sans Bold 18"
 
 -- Menu
 theme.menu_height       = dpi(16)
 theme.menu_width        = dpi(140)
 theme.menu_border_width = dpi(10)
-theme.menu_fg_normal    = theme.fg_focus
+theme.menu_fg_normal    = theme.fg1
 theme.menu_bg_focus     = theme.bg2
-theme.menu_border_color = theme.bg_normal
+theme.menu_border_color = theme.bg0_h
 
 -- Menubar
 theme.menubar_border_width = theme.border_width
@@ -104,14 +104,14 @@ theme.menubar_border_width = theme.border_width
 theme.notification_opacity = 0.75
 
 -- Calendar
-theme.calendar_year_fg_color        = theme.fg_focus
-theme.calendar_month_fg_color       = theme.fg_focus
-theme.calendar_year_header_fg_color = theme.fg_focus
-theme.calendar_header_fg_color      = theme.fg_focus
-theme.calendar_weekday_fg_color     = theme.fg_focus
-theme.calendar_weeknumber_fg_color  = theme.fg_focus
-theme.calendar_normal_fg_color      = theme.fg_focus
-theme.calendar_focus_fg_color       = theme.fg_focus
+theme.calendar_year_fg_color        = theme.fg1
+theme.calendar_month_fg_color       = theme.fg1
+theme.calendar_year_header_fg_color = theme.fg1
+theme.calendar_header_fg_color      = theme.fg1
+theme.calendar_weekday_fg_color     = theme.fg1
+theme.calendar_weeknumber_fg_color  = theme.fg1
+theme.calendar_normal_fg_color      = theme.fg1
+theme.calendar_focus_fg_color       = theme.fg1
 
 -- Custom sizes
 theme.small_gap        = dpi(2)
@@ -164,10 +164,9 @@ theme.titlebar_floating_button_normal_active   = theme_path .. "titlebar/floatin
 theme.titlebar_floating_button_focus_inactive  = theme_path .. "titlebar/floating_unselect.svg"
 theme.titlebar_floating_button_normal_inactive = theme_path .. "titlebar/floating_unselect.svg"
 
--- Generate Awesome Icon
-theme.awesome_icon = theme_assets.awesome_icon(
-    theme.menu_height, theme.bg_focus, theme.fg_focus
-)
+-- Icons
+theme.awesome_icon = theme_assets.awesome_icon(theme.menu_height, theme.bg_focus, theme.fg_focus)
+theme.archlinux_icon  = theme_path .. "bar/archlinux.svg"
 
 return theme
 

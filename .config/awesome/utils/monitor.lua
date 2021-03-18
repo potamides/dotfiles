@@ -53,7 +53,7 @@ function monitor:_read_async(file, index)
     if content then
       self._contents[index] = content
       if self:_all_reads_completed() then
-        self._callback(table.concat(self._contents))
+        self._callback(table.concat(self._contents), "\n")
         for i = 1, #self._contents do
           self._contents[i] = nil
         end
