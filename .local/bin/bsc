@@ -24,11 +24,11 @@ function copy_from_remote(){
 }
 
 function check(){
-  local directory_byte_size directory_byte_size_LIMIT
+  local directory_byte_size directory_byte_size_limit
   directory_byte_size=$(du -sb "$PWD" | awk '{print $1;}')
-  directory_byte_size_LIMIT=$(numfmt --from=iec $directory_size_limit)
+  directory_byte_size_limit=$(numfmt --from=iec $directory_size_limit)
 
-  if [[ $directory_byte_size -gt $directory_byte_size_LIMIT ]]; then
+  if [[ $directory_byte_size -gt $directory_byte_size_limit ]]; then
     echo "directory exceeds size limit of $directory_size_limit! Aborting."
     exit 1
   fi
