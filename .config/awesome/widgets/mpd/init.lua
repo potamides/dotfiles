@@ -8,16 +8,15 @@ local escape = require("lgi").GLib.markup_escape_text
 
 local mpd_widget = wibox.widget.textbox()
 local mpd_container = wibox.widget(utils.widget.compose{{
-    mpd_widget,
-    max_size = beautiful.xresources.apply_dpi(200),
-    speed = 70,
-    step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
-    layout = wibox.container.scroll.horizontal,
-  },
+  mpd_widget,
+  max_size = beautiful.xresources.apply_dpi(200),
+  speed = 70,
+  step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
+  layout = wibox.container.scroll.horizontal,
   shape = utils.shape.parallelogram.left,
   color = beautiful.bg_normal,
   margin = beautiful.small_gap
-})
+}})
 
 local function update_widget(title, artist, state)
   local text = ""
