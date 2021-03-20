@@ -39,16 +39,15 @@ project can then be managed like any other git repository:
 alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 ```
 
-This repository also contains a [script](.local/bin/install-packages) that
-defines all required packages which can then be installed with your package
-managers of choice. Note however that I wrote this with [Arch
-Linux](https://www.archlinux.org/) in mind and the package naming conventions
-might be specific to it:
+This repository also contains a [script](.local/bin/install-packages) which can
+be used to install all required packages, note however that it is specific to
+[Arch Linux](https://www.archlinux.org/). When this script is sourced it
+defines the array variables `PKG`, `PIP` and `AUR`. You can then use `pacman`,
+`pip` and an [AUR helper](https://wiki.archlinux.org/index.php/AUR_helpers) of
+your choice to install everything:
 ```sh
 source <(curl -LfsS https://github.com/potamides/dotfiles/raw/master/.local/bin/install-packages)
-sudo pacman -S "${PKG[@]}"
-yay -Sa "${AUR[@]}"
-pip install "${PIP[@]}" --user
+sudo pacman -S "${PKG[@]}" && yay -Sa "${AUR[@]}" && pip install "${PIP[@]}" --user
 ```
 
 ## Contents
