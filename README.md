@@ -2,12 +2,12 @@
 > Ohne Fleiß kein Rice.
 > - potamides
 
-A repository for more sophisticated configuration files of applications I use
-on a daily basis. My philosophy is to find a good balance between functionality
-and design, while keeping an eye on resource consumption. I put a lot of care
-into a consistent and pleasant look, that is easy on the eyes and try to use
-the [gruvbox](https://github.com/morhetz/gruvbox) colorscheme for everything.
-![](.rice.png)
+This is a repository for configuration files of various applications that I use
+on a daily basis. My goal is to find a satisfactory balance between
+functionality and design, while keeping an eye on resource consumption. I put a
+lot of care into a consistent look, that is easy on the eyes and try to use the
+[gruvbox](https://github.com/morhetz/gruvbox) colorscheme for everything.
+![rice](.rice.png)
 
 ## Installation
 **Disclaimer:** The steps below are highly tailored to my needs and I would
@@ -25,12 +25,12 @@ efficient dotfiles management without having to rely on additional external
 tools <sup> [1](https://news.ycombinator.com/item?id=11070797),
 [2](https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo/),
 [3](https://harfangk.github.io/2016/09/18/manage-dotfiles-with-a-git-bare-repository.html)
-</sup>. The project contains a [script](.local/bin/install-dotfiles), which
-places administrative files in `$HOME/.dotfiles` and updates configuration
+</sup>. For that the project contains a [script](.local/bin/install-dotfiles),
+that places administrative files in `$HOME/.dotfiles` and updates configuration
 files in `$HOME` with the content of the repository (**warning:** this
 overwrites existing files). For convenience the script can be executed like so:
 ```sh
-curl -LfsS https://github.com/potamides/dotfiles/raw/master/.local/bin/install-dotfiles | bash
+bash <(curl -LfsS https://github.com/potamides/dotfiles/raw/master/.local/bin/install-dotfiles)
 ```
 
 With a simple alias (already included in [bashrc](.bashrc)) this dotfiles
@@ -40,11 +40,15 @@ alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 ```
 
 This repository also contains a [script](.local/bin/install-packages) that
-installs all required packages and performs necessary application setup
-automatically. Note however that this script is specific to [Arch
-Linux](https://www.archlinux.org/). It can be invoked like this:
+defines all required packages which can then be installed with your package
+managers of choice. Note however that I wrote this with [Arch
+Linux](https://www.archlinux.org/) in mind and the package naming conventions
+might be specific to it:
 ```sh
-curl -LfsS https://github.com/potamides/dotfiles/raw/master/.local/bin/install-packages | bash
+source <(curl -LfsS https://github.com/potamides/dotfiles/raw/master/.local/bin/install-packages)
+sudo pacman -S "${PKG[@]}"
+yay -Sa "${AUR[@]}"
+pip install "${PIP[@]}" --user
 ```
 
 ## Contents
@@ -53,20 +57,19 @@ applications are straightforward to use. For programs where I developed a more
 individual workflow, I give basic usage instructions below.
 | | Name | Files \& Directories | Links |
 |-| ---- | ------- | ----- |
-| **Window Manager**          | awesome  | [.config/awesome](.config/awesome), [.xinitrc](.xinitrc) | [Repository](https://github.com/awesomeWM/awesome), [Homepage](https://awesomewm.org/) |
-| **Terminal**                | termite  | [.config/termite](.config/termite) | [Repository](https://github.com/thestinger/termite) | 
-| **Terminal Multiplexer**    | tmux     | [.tmux.conf](.tmux.conf) | [Repository](https://github.com/tmux/tmux), [Homepage](https://tmux.github.io) |
-| **Shell**                   | bash     | [.inputrc](.inputrc), [.bashrc](.bashrc), [.bash\_profile](.bash_profile) | [Repository](https://git.savannah.gnu.org/cgit/bash.git), [Homepage](https://www.gnu.org/software/bash/) |
-| **Editor**                  | neovim   | [.config/nvim](.config/nvim) | [Repository](https://github.com/neovim/neovim), [Homepage](https://neovim.io/) |
-| **Mail Client**             | mutt     | [.config/mutt](.config/mutt) | [Repository](https://gitlab.com/muttmua/mutt), [Homepage](http://www.mutt.org/) |
-| **File Manager**            | ranger   | [.config/ranger](.config/ranger) | [Repository](https://github.com/ranger/ranger), [Homepage](https://ranger.github.io/) |
-| **Music Player**            | ncmpcpp  | [.config/ncmpcpp](.config/ncmpcpp) | [Repository](https://github.com/ncmpcpp/ncmpcpp), [Homepage](https://rybczak.net/ncmpcpp/) |
-| **Document Viewer**         | qpdfview | [.config/qpdfview](.config/qpdfview) | [Homepage](https://launchpad.net/qpdfview) |
-| **System Monitor**          | conky    | [.conkyrc](.conkyrc) | [Repository](https://github.com/brndnmtthws/conky), [Homepage](https://github.com/brndnmtthws/conky/wiki) |
-| **Calendar**                | when     | [.when](.when) | [Repository](https://github.com/bcrowell/when), [Homepage](http://www.lightandmatter.com/when/when.html) |
-| **Display Locker**          | physlock | [.config/.../physlock@.service](.config/systemd/user/physlock@.service) | [Repository](https://github.com/muennich/physlock) |
-| **IRC Client**              | weechat  | [.config/weechat](.config/weechat) | [Repository](https://github.com/weechat/weechat), [Homepage](https://weechat.org/) |
-| **Calculator**              | ptpython | [.config/ptpython](.config/ptpython) | [Repository](https://github.com/prompt-toolkit/ptpython) |
+| **Shell**                | bash     | [.inputrc](.inputrc), [.bashrc](.bashrc), [.bash\_profile](.bash_profile) | [Repository](https://git.savannah.gnu.org/cgit/bash.git), [Homepage](https://www.gnu.org/software/bash/) |
+| **Window Manager**       | awesome  | [.config/awesome](.config/awesome), [.xinitrc](.xinitrc) | [Repository](https://github.com/awesomeWM/awesome), [Homepage](https://awesomewm.org/) |
+| **Editor**               | neovim   | [.config/nvim](.config/nvim) | [Repository](https://github.com/neovim/neovim), [Homepage](https://neovim.io/) |
+| **Terminal**             | termite  | [.config/termite](.config/termite) | [Repository](https://github.com/thestinger/termite) | 
+| **Terminal Multiplexer** | tmux     | [.tmux.conf](.tmux.conf) | [Repository](https://github.com/tmux/tmux), [Homepage](https://tmux.github.io) |
+| **Music Player**         | ncmpcpp  | [.config/ncmpcpp](.config/ncmpcpp) | [Repository](https://github.com/ncmpcpp/ncmpcpp), [Homepage](https://rybczak.net/ncmpcpp/) |
+| **System Monitor**       | conky    | [.conkyrc](.conkyrc) | [Repository](https://github.com/brndnmtthws/conky), [Homepage](https://github.com/brndnmtthws/conky/wiki) |
+| **Mail Client**          | mutt     | [.config/mutt](.config/mutt) | [Repository](https://gitlab.com/muttmua/mutt), [Homepage](http://www.mutt.org/) |
+| **IRC Client**           | weechat  | [.config/weechat](.config/weechat) | [Repository](https://github.com/weechat/weechat), [Homepage](https://weechat.org/) |
+| **File Manager**         | ranger   | [.config/ranger](.config/ranger) | [Repository](https://github.com/ranger/ranger), [Homepage](https://ranger.github.io/) |
+| **Calculator**           | ptpython | [.config/ptpython](.config/ptpython) | [Repository](https://github.com/prompt-toolkit/ptpython) |
+| **Calendar**             | when     | [.when](.when) | [Repository](https://github.com/bcrowell/when), [Homepage](http://www.lightandmatter.com/when/when.html) |
+| **Document Viewer**      | qpdfview | [.config/qpdfview](.config/qpdfview) | [Homepage](https://launchpad.net/qpdfview) |
 
 Completely independent from the aforementioned applications this repository
 also contains some additional [scripts](.local/bin), that can be used to
@@ -80,11 +83,15 @@ keybindings, this configuration uses
 keybindings with motions, counts and multiple modes. To understand how to
 control my awesome configuration, I recommend to check it out beforehand.
 
-Additionally [mpd](https://www.musicpd.org/) is highly integrated into the
-configuration. I have a server where all my audio files are located. A systemd
-[service file](.config/systemd/user/mpd-tunnel.service) then creates an ssh
-tunnel to control mpd and to receive the audio stream, which is then played via
-[mpv](https://mpv.io/).
+Additionally, if an [mpd](https://www.musicpd.org/) server is running on
+`$MPD_HOST:$MPD_PORT`, song information is displayed in the status bar. Songs
+are also played back via [mpv](https://mpv.io/) by listening on
+`$MPD_HOST:$MPD_STREAM_PORT`. In my case, all my audio files are located on a
+server and to connect to its mpd instance I use an ssh tunnel via a [systemd
+user service](.config/systemd/user/mpd-tunnel.service):
+```sh
+systemctl --user enable --now mpd-tunnel
+```
 
 ### Mutt
 Mutt is configured for multiple email accounts. It makes use of the command
@@ -101,11 +108,11 @@ script to conveniently create `multipart/alternative` emails when the need
 arises.
 
 ### Weechat
-Weechat keeps a lot of separate configuration files, which contain both default
-options and options altered by the user. Also some of the files contain highly
-sensitive information. Combined with the fact, that weechat doesn't support
-standalone password managers to obtain secrets, this makes it very hard to
-manage a weechat config with a dotfiles repository.
+>Weechat keeps a lot of separate configuration files, which contain both
+>default options and options altered by the user. Also some of the files
+>contain highly sensitive information. Combined with the fact, that weechat
+>doesn't support standalone password managers to obtain secrets, this makes it
+>hard to manage a weechat config with a dotfiles repository.
 
 That's why I wrote the script
 [confload.py](.config/weechat/python/confload.py). It reads a configuration
@@ -120,4 +127,3 @@ file. On subsequent launches of weechat this process can be manually invoked
 with the command `/confload <passphrase>`. Again you can use the
 `KEEPASSXC_DATABASE` and `KEEPASSXC_KEYFILE` environment variables for the
 locations of KeepassXC files.
-

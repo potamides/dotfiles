@@ -61,6 +61,12 @@ let maplocalleader=" "
 " Run the current line as if it were a command
 nnoremap <leader>e :exe getline(line('.'))<cr>
 
+" Install vim-plug if not found
+if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
+  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+endif
+
 " Specify a directory for plugins
 call plug#begin('~/.local/share/nvim/plugged')
 Plug 'morhetz/gruvbox'
@@ -74,6 +80,11 @@ Plug 'hanw/vim-bluespec'
 Plug 'potamides/painless-digraph'
 Plug 'norcalli/nvim-colorizer.lua'
 call plug#end()
+
+" If running for the first time install plugins
+if empty(glob('~/.local/share/nvim/plugged'))
+  PlugInstall --sync
+endif
 
 " ------------------------------------------------
 "               NUMBERS

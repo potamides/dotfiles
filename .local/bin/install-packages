@@ -1,92 +1,64 @@
 #!/bin/bash
+# shellcheck disable=SC2128
 
 ###############################################################################
 #            Install required packages and perform necessary setup.           #
-#                     Requirements: base, base-devel, git                     #
+#                Optional Dependencies: sudo, pacman, yay, pip                #
 ###############################################################################
 
-pacman_pkgs=(
-  ranger
-  neovim
-  tmux
-  ncmpcpp
-  qpdfview
-  physlock
-  termite
-  mutt
-  weechat
-  conky
-  when
-  keepassxc               # mutt dependency
-  yarn                    # neovim dependency
-  python-pynvim           # neovim dependency
-  xclip                   # neovim dependency
-  xorg-xinit              # awesome dependency
-  papirus-icon-theme      # awesome dependency
-  scrot                   # awesome optional dependency
-  firefox                 # awesome optional dependency
-  redshift                # awesome optional dependency
-  mpv                     # awesome optional dependency
-  udiskie                 # ranger optional dependency
-  ueberzug                # ranger optional dependency
-  bash-completion         # bash optional dependency
-  fzf                     # bash optional dependency
-  ripgrep                 # bash optional dependency
-  python-websocket-client # weechat dependency
+PKG=(
+  awesome ranger neovim tmux ncmpcpp qpdfview termite mutt weechat conky when
+
+  # used by mutt & weechat
+  keepassxc
+
+  # used by weechat
+  python-websocket-client
+
+  # used by neovim
+  yarn python-pynvim xclip
+
+  # used by awesome
+  xorg-xinit papirus-icon-theme physlock scrot firefox redshift mpv
+
+  # used by ranger
+  udiskie ueberzug
+
+  # used by bash
+  bash-completion fzf ripgrep
 )
 
-aur_pkgs=(
-  awesome-luajit
+AUR=(
   ptpython
-  absolutely-proprietary     # conky dependency
-  nerd-fonts-source-code-pro # termite dependency
-  pandoc-bin                 # mutt dependency
-  mutt-ics                   # mutt dependency
-  bash-complete-alias        # bash optional dependency
-  gtk-theme-arc-gruvbox-git  # awesome optional dependency
-  qt5-styleplugins           # awesome optional dependency
-  dragon-drag-and-drop       # ranger optional dependency
+
+  # used by conky
+  absolutely-proprietary
+
+  # used by termite
+  nerd-fonts-source-code-pro
+
+  # used by mutt
+  pandoc-bin mutt-ics
+
+  # used by bash
+  bash-complete-alias
+
+  # used by awesome
+  gtk-theme-arc-gruvbox-git qt5-styleplugins
+
+  # used by ranger
+  dragon-drag-and-drop
 )
 
-pip_pkgs=(
-  pypandoc # mutt dependency
-  pynliner # mutt dependency
+PIP=(
+  # used by mutt
+  pypandoc pynliner
 )
 
-function install_requirements(){
-  if [[ ! $(type -t yay) ]]; then
-    # shellcheck disable=SC2155
-    local directory=$(mktemp -d)
-    git clone https://aur.archlinux.org/yay-bin.git "$directory"
-    (cd "$directory" && makepkg -sri --noconfirm)
-    rm -rf "$directory"
-  fi
-
-  if [[ ! $(type -t pip) ]]; then
-    sudo pacman -S --noconfirm python-pip
-  fi
-}
-
-function install_packages(){
-  sudo pacman -S --needed --noconfirm "${pacman_pkgs[@]}"
-  yay -S --aur --needed --noconfirm --removemake "${aur_pkgs[@]}"
-  pip install "${pip_pkgs[@]}" --user
-}
-
-function install_nvim_plugins(){
-  curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  nvim --headless +PlugInstall +qall 2> /dev/null
-}
-
-function enable_service_files(){
-  systemctl --user enable --now mpd-tunnel
-  sudo cp ~/.config/systemd/user/physlock@.service /etc/systemd/system
-  sudo systemctl enable physlock@"$USER"
-}
-
-set -o errexit
-install_requirements
-install_packages
-install_nvim_plugins
-enable_service_files
+# if this script is not sourced install packages
+if [[ "$BASH_SOURCE" == "$0" ]]; then
+  set -o errexit
+  sudo pacman -S --needed "${PKG[@]}"
+  yay -S --aur --needed --removemake "${AUR[@]}"
+  pip install "${PIP[@]}" --user
+fi

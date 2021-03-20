@@ -3,7 +3,7 @@
 ###############################################################################
 #  Install dotfiles as a bare git repository and override configuration files #
 #                                  in $HOME.                                  #
-#                              Requirements: git                              #
+#                              Dependencies: git                              #
 ###############################################################################
 
 set -o errexit
