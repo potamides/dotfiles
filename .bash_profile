@@ -1,4 +1,4 @@
-# shellcheck shell=bash
+# shellcheck shell=bash disable=SC1090
 
 ## Set Environment Variables
 # -----------------------------------------------------------------------------
@@ -31,8 +31,8 @@ export WEECHAT_HOME="$HOME/.config/weechat"
 export PROMPT_TOOLKIT_COLOR_DEPTH=DEPTH_4_BIT
 
 # always use ripgrep with fzf
-export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case \
-  --glob '!.git/*' --glob '!node_modules/*' 2> /dev/null"
+export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case --glob \
+  '!{.git,node_modules}'"
 # also use custom color configuration and keybindings
 export FZF_DEFAULT_OPTS="--color 16,fg:15,bg:0,hl:11,fg+:15,bg+:237,hl+:11 \
   --color info:12,prompt:248,spinner:11,pointer:12,marker:208,header:241 \
