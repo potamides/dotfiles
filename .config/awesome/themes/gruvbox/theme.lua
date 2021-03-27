@@ -15,7 +15,7 @@ theme.icon_theme      = "Papirus-Dark"
 
 function theme.wallpaper(s)
   -- the screen where conky is on
-  if s.geometry.x == 0 and s.geometry.y == 0 then
+  if s == screen.primary then
     return theme_path .. "wall_primary.png"
   else
     return theme_path .. "wall_secondary.png"
@@ -63,7 +63,7 @@ theme.fg_urgent  = theme.lightorange
 
 --  Borders
 theme.useless_gap       = 0
-theme.gap_single_client = true
+theme.gap_single_client = false
 theme.border_width      = dpi(3)
 theme.border_normal     = theme.bg0_h
 theme.border_focus      = theme.bg4

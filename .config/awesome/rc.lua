@@ -60,9 +60,8 @@ end
 -- }}}
 
 -------------------------------------------------------------------------------
--- {{{ Variable definitions
+-- {{{ Various definitions
 -------------------------------------------------------------------------------
-
 
 -- This is used later as the default terminal and editor to run.
 local terminal         = "termite"
@@ -108,20 +107,20 @@ local mymainmenu = freedesktop.menu.build({
   before = {{ "Awesome", myawesomemenu, beautiful.awesome_icon } },
 })
 
-
 local status_box = wibox.widget.textbox(modalawesome.active_mode.text)
 local mylauncher = wibox.widget(utils.widget.compose{{
   {
     awful.widget.launcher {
       image = beautiful.archlinux_icon,
-      menu  = { toggle = function() mymainmenu:toggle {
-                  coords = {
-                    x = beautiful.gap,
-                    y = beautiful.wibar_height + beautiful.gap
-                  }
-                }
-              end
+      menu  = { toggle = function()
+          mymainmenu:toggle {
+            coords = {
+              x = beautiful.gap,
+              y = beautiful.wibar_height + beautiful.gap
             }
+          }
+        end
+      }
     },
     status_box,
     spacing = beautiful.gap,
@@ -615,7 +614,6 @@ modes.launcher = gears.table.join(
   modes.launcher
 )
 
-
 modalawesome.init{
   modkey      = modkey,
   modes       = modes,
@@ -632,7 +630,6 @@ awful.rules.rules = {
     -- All clients will match this rule.
     { rule = { },
         properties = {
-            border_width = beautiful.border_width,
             border_color = beautiful.border_normal,
             focus = awful.client.focus.filter,
             raise = true,
@@ -650,7 +647,7 @@ awful.rules.rules = {
 
     -- Spawn keepassxc prompts on tags were they were called (which they don't do by default)
     { rule_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }},
-      callback = function(c) c:move_to_tag(awful.screen.focused().selected_tag) end },
+      properties = { tag = function() return awful.screen.focused().selected_tag end }},
 
     -- dirty hack to preven Ctrl-q from closing firefox
     { rule = { class = browser },
@@ -674,8 +671,14 @@ awful.rules.rules = {
 
     -- display keyboard (and mouse) status nicely
     { rule = { class = "Key-mon" },
-      properties = { placement = awful.placement.bottom, sticky = true, floating = true, focusable = false },
-      callback = function(c) c.border_width = 0 end },
+      properties = { placement = awful.placement.bottom, sticky = true, floating = true, focusable = false }},
+
+    -- place conky in background on primary screen
+    { rule = { class = "conky" },
+      properties = { focusable = false, screen = screen.primary, placement = awful.placement.restore,
+        new_tag = { hide = true, volatile = true }},
+      -- ugly hack, reload conky config when awesome restarts (fixes https://github.com/brndnmtthws/conky/issues/110)
+      callback = function() awful.spawn.once("killall -SIGUSR1 conky") end },
 }
 -- }}}
 
@@ -685,10 +688,6 @@ awful.rules.rules = {
 
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", function(c)
-    -- Set the windows at the slave,
-    -- i.e. put it at the end of others instead of setting it master.
-    -- if not awesome.startup then awful.client.setslave(c) end
-
     if awesome.startup and
         not c.size_hints.user_position
         and not c.size_hints.program_position then
@@ -727,7 +726,6 @@ client.connect_signal("request::titlebars", function(c)
   }
 end)
 
-
 -- Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
     c:emit_signal("request::activate", "mouse_enter", {raise = false})
@@ -740,7 +738,7 @@ local function update_borders(s, layout_name)
   local only_one = #s.tiled_clients == 1 -- use tiled_clients so that other floating windows don't affect the count
   -- but iterate over clients instead of tiled_clients as tiled_clients doesn't include maximized windows
   for _, c in pairs(s.clients) do
-    if (max or only_one) and not c.floating or c.maximized then
+    if (max or only_one) and not c.floating or c.maximized or not c.focusable then
       c.border_width = 0
     else
       c.border_width = beautiful.border_width
@@ -826,6 +824,7 @@ client.connect_signal("unfocus", title_remove)
 
 -- turn titlebar on when client is floating
 -------------------------------------------------------------------------------
+
 client.connect_signal("property::floating", function(c)
   if c.floating and not (c.maximized or c.requests_no_titlebar) then
     awful.titlebar.show(c, "bottom")
@@ -870,7 +869,7 @@ client.connect_signal("unfocus", buttons_remove)
 -- When a screen disconnects move clients to tag of same name on other screen
 -- https://github.com/awesomeWM/awesome/issues/1382
 -------------------------------------------------------------------------------
-tag.connect_signal("request::screen",
+tag.connect_signal("removal-pending",
   function(t)
     local fallback_tag = nil
 
@@ -889,8 +888,8 @@ tag.connect_signal("request::screen",
       fallback_tag = awful.tag.find_fallback()
     end
 
-    -- delete the tag and move it to other screen
-    t:delete(fallback_tag, true)
-  end)
+    -- move clients to tag on otherscreen
+    fallback_tag:clients(t:clients())
+end)
 
 -- }}}
