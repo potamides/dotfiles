@@ -2,7 +2,9 @@
 # shellcheck disable=SC2128
 
 ###############################################################################
-#            Install required packages and perform necessary setup.           #
+#   Install required packages. When this script is sourced instead of being   #
+#  executed it only defines array variables with the packages that should be  #
+#   installed, leaving the choice of package managers and flags to the user.  #
 #                Optional Dependencies: sudo, pacman, yay, pip                #
 ###############################################################################
 
