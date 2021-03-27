@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###############################################################################
-# Read email from stdin end identify sender address. Create an alias for that #
+# Read email from stdin and identify sender address. Create an alias for that #
 #    address in the format mutt expects. Then, if no alias for that address   #
 #  exists yet, append it to the alias file. Also handles duplicate nicknames. #
 #              Inspired by this: http://wcaleb.org/blog/mutt-tips             #

@@ -92,6 +92,6 @@ auto_view text/html text/calendar application/ics
 # -----------------------------------------------------------------------------
 
 set quit = ask-yes
-# only source colors, when supported by terminal
-source "[ $(tput colors) -ge 256 ] && cat $my_folder/colors.muttrc |"
 source $my_folder/bindings.muttrc
+source "[ $(tput colors) -ge 256 ] && cat $my_folder/colors.muttrc || \
+  cat $my_samples/colors.linux |" # source 8bit colors when supported by $TERM
