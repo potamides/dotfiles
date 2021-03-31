@@ -98,7 +98,6 @@ alias pacc='sudo pacman -Scc' # clean cache
 alias pacli='pacman -Q | wc -l' # list user installed packages
 alias sh='sh +o history' # prevent sh from truncating HISTFILE
 alias calc='ptpython -i <(echo "from math import *")'
-alias htop='htop -t'
 alias todo='$EDITOR ~/Documents/TODO.md'
 alias serve='python3 -m http.server 9999'
 alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
@@ -111,7 +110,8 @@ alias starwars='telnet towel.blinkenlights.nl'
 alias maps='telnet mapscii.me'
 alias 2048='ssh play@ascii.town'
 alias tron='ssh sshtron.zachlatta.com'
-alias incognito='unset HISTFILE'
+alias nyancat='(mpv --no-terminal --no-video --loop \
+  https://youtu.be/QH2-TGUlwu4 & telnet rainbowcat.acc.umu.se; kill $!)'
 
 ## Bash-completions
 # -----------------------------------------------------------------------------
@@ -147,17 +147,6 @@ function dusort(){
   find "$@" -mindepth 1 -maxdepth 1 -exec du -sch {} + | sort -h
 }
 
-# search for keyword in pdf's in current directory
-function spdf(){
-  if [[ "$#" -eq 0 ]]; then
-    echo "Need a string to search for!" >&2
-    return 1
-  fi
-  for file in *.pdf; do
-    pdftotext -q "$file" - | grep "$@" --quiet && echo "$file"
-  done
-}
-
 # tldr version of man pages
 function tldr(){
   local IFS=-
@@ -171,7 +160,7 @@ function whoowns(){
 
 # list commands which are provided by package
 function listprogs(){
-  pacman -Qlq "$@" | grep -Po "(?<=${PATH//://|}/).+"
+  pacman -Qlq "$@" | grep --color=never -Po "(?<=${PATH//://|}/).+"
 }
 
 # find fonts which contain character(s)
@@ -181,11 +170,11 @@ function findfonts(){
 
 # fetch current weather report, with location as optional parameter
 function weather(){
-    local request="wttr.in/${*^}?F"
-    if [[ "$(tput cols)" -lt 125 ]]; then
-      request+='n'
-    fi
-    curl -H "Accept-Language: ${LANG%_*}" --compressed "$request"
+  local request="wttr.in/${*^}?F"
+  if [[ "$(tput cols)" -lt 125 ]]; then
+    request+='n'
+  fi
+  curl -H "Accept-Language: ${LANG%_*}" --compressed "$request"
 }
 
 # Conveniently copy files to NAS
@@ -225,21 +214,17 @@ if [[ -r /usr/share/fzf/key-bindings.bash && \
 
   # Use rg to generate the list for directory completion
   function _fzf_compgen_dir(){
-    eval "$FZF_DEFAULT_COMMAND" --null "${1-.}" 2> /dev/null \
-      | xargs -0 dirname | awk '!h[$0]++'
+    eval "$FZF_DEFAULT_COMMAND" --null "${1-.}" 2> /dev/null |
+      xargs -0 dirname | awk '!h[$0]++'
   }
 
   # Functions which make use of fzf but are not internally used by it:
   # Searching file contents with fzf and ripgrep
   function fif(){
-    if [[ "$#" -eq 0 ]]; then
-      echo "Need a string to search for!" >&2
-      return 1
-    fi
-    eval "${FZF_DEFAULT_COMMAND/--files}" -l --no-messages "$@" \
-      | fzf --multi --preview "pygmentize -f terminal {} 2> /dev/null \
-      | rg match:bg:yellow --ignore-case --pretty --context 10 '${!#}' \
-      || rg --ignore-case --pretty --context 10 '${!#}' {}"
+    eval "${FZF_DEFAULT_COMMAND/--files}" -l --no-messages "$@" |
+      fzf --exit-0 --multi --preview "pygmentize -f terminal {} 2> /dev/null |
+      rg match:bg:yellow --ignore-case --pretty --context 10 '${!#}' ||
+      rg --ignore-case --pretty --context 10 '${!#}' {}"
   }
 
   # Edit files found with fif in editor
