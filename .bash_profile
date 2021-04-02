@@ -21,11 +21,9 @@ export SSH_ASKPASS=$SUDO_ASKPASS
 export QT_QPA_PLATFORMTHEME=gtk2
 export DESKTOP_SESSION=gnome
 
-# VA-API acceleration on X11 for firefox
-export MOZ_X11_EGL=1
-
-# change weechat config directory
+# change path for configuration files for some programs
 export WEECHAT_HOME="$HOME/.config/weechat"
+export GTK2_RC_FILES="$HOME/.config/gtk-2.0/gtkrc"
 
 # force ptpython to use ansi colors everywhere
 export PROMPT_TOOLKIT_COLOR_DEPTH=DEPTH_4_BIT
@@ -38,6 +36,9 @@ export FZF_DEFAULT_OPTS="--color 16,fg:15,bg:0,hl:11,fg+:15,bg+:237,hl+:11 \
   --color info:12,prompt:248,spinner:11,pointer:12,marker:208,header:241 \
   --color border:7 \
   --bind ctrl-a:select-all,ctrl-d:deselect-all,ctrl-t:toggle-all"
+
+# VA-API acceleration on X11 for firefox
+export MOZ_X11_EGL=1
 
 # source environment variables which are not under version control
 if [[ -r ~/.bash_profile.local ]]; then

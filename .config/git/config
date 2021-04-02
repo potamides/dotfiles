@@ -34,4 +34,4 @@
 [url "ssh://git@gitlab.com/"]
 	insteadOf = https://gitlab.com/
 [include]
-  path = ~/.gitconfig.local
+  path = config.local
