@@ -110,8 +110,8 @@ alias starwars='telnet towel.blinkenlights.nl'
 alias maps='telnet mapscii.me'
 alias 2048='ssh play@ascii.town'
 alias tron='ssh sshtron.zachlatta.com'
-alias nyancat='(mpv --no-terminal --no-video --loop \
-  https://youtu.be/QH2-TGUlwu4 & telnet rainbowcat.acc.umu.se; kill $!)'
+alias nyancat="mpv --no-terminal --no-video --loop ytdl://QH2-TGUlwu4 & \
+  telnet rainbowcat.acc.umu.se; kill %%"
 
 ## Bash-completions
 # -----------------------------------------------------------------------------
@@ -124,8 +124,7 @@ fi
 # https://github.com/scop/bash-completion/issues/383
 if [[ -r /usr/share/bash-complete-alias/complete_alias ]]; then
   source /usr/share/bash-complete-alias/complete_alias
-  complete -F _complete_alias la ll lh pac paca pacu pacau pacr pacs pacas \
-    paci pacl paclo pacro pacc pacli calc dotfiles
+  complete -F _complete_alias "${!BASH_ALIASES[@]}"
 fi
 
 ## Functions
