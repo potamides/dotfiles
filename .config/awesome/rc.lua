@@ -284,7 +284,6 @@ awful.screen.connect_for_each_screen(function(s)
     s.title_container = wibox.container.margin()
     -- global titlebar buttons contianer
     s.buttonsbox_container = wibox.container.margin()
-    -- systray
 
     -- add widgets to the wibar
     s.mywibox:setup {
@@ -413,7 +412,7 @@ modes.tag = gears.table.join(
     {
       description = "show all clients on screen",
       pattern = {'s', 's'},
-      handler = function() revelation() end
+      handler = function() revelation({rule={focusable=true}}) end
     },
     {
       description = "show all clients on current tag",
@@ -501,7 +500,7 @@ modes.launcher = gears.table.join(
     },
     {
       description = "take screenshot",
-      pattern = {'p'},
+      pattern = {'c'},
       handler = function()
         local sgeo = awful.screen.focused().geometry
         local boxflag = string.format("--autoselect %s,%s,%s,%s", sgeo.x, sgeo.y, sgeo.width, sgeo.height)
@@ -538,7 +537,7 @@ modes.launcher = gears.table.join(
     },
     {
       description = "toggle mpd playback",
-      pattern = {'o'},
+      pattern = {'p'},
       handler = function() mpd.toggle() end
     },
     {
@@ -736,6 +735,7 @@ end)
 local function update_borders(s, layout_name)
   local max = layout_name == "max"
   local only_one = #s.tiled_clients == 1 -- use tiled_clients so that other floating windows don't affect the count
+
   -- but iterate over clients instead of tiled_clients as tiled_clients doesn't include maximized windows
   for _, c in pairs(s.clients) do
     if (max or only_one) and not c.floating or c.maximized or not c.focusable then
@@ -758,25 +758,22 @@ local function update_borders_by_tag(t)
   end
 end
 
--- this is definitely not optimal, but as good as it gets https://github.com/awesomeWM/awesome/issues/2518
-client.connect_signal("property::floating", update_borders_by_client)
-client.connect_signal("property::fullscreen", update_borders_by_client)
-client.connect_signal("property::maximized_vertical", update_borders_by_client)
-client.connect_signal("property::maximized_horizontal", update_borders_by_client)
-client.connect_signal("property::minimized", update_borders_by_client)
-client.connect_signal("property::hidden", update_borders_by_client)
-client.connect_signal("manage", update_borders_by_client)
-client.connect_signal("unmanage", update_borders_by_client)
+-- this is definitely not optimal, but as good as it gets (https://github.com/awesomeWM/awesome/issues/2518)
+for _, signal in pairs({"%sfloating", "%sfullscreen", "%smaximized_vertical", "%smaximized_horizontal", "%smaximized",
+  "%sminimized", "%shidden", "manage", "unmanage"}) do
+  client.connect_signal(string.format(signal, "property::"), update_borders_by_client)
+end
+
+for _, signal in pairs({"%sselected", "%sactivated", "tagged"}) do
+  tag.connect_signal(string.format(signal, "property::"), update_borders_by_tag)
+end
+
 client.connect_signal("property::screen", function(c, old_screen)
   update_borders_by_client(c)
   if old_screen and old_screen.selected_tag then
     update_borders(old_screen, old_screen.selected_tag.layout.name)
   end
 end)
-
-tag.connect_signal("property::selected", update_borders_by_tag)
-tag.connect_signal("property::activated", update_borders_by_tag)
-tag.connect_signal("tagged", update_borders_by_tag)
 
 client.connect_signal("focus", function(c)
   c.border_color = beautiful.border_focus
@@ -822,19 +819,6 @@ client.connect_signal("property::name", title_update)
 client.connect_signal("focus", title_insert)
 client.connect_signal("unfocus", title_remove)
 
--- turn titlebar on when client is floating
--------------------------------------------------------------------------------
-
-client.connect_signal("property::floating", function(c)
-  if c.floating and not (c.maximized or c.requests_no_titlebar) then
-    awful.titlebar.show(c, "bottom")
-    -- ensure that the titlebar is inside the screen
-    c.height = math.min(c.height, c.screen.geometry.height - c.y % c.screen.geometry.height)
-  else
-    awful.titlebar.hide(c, "bottom")
-  end
-end)
-
 -- Update Titlbar Buttons in Wibar on focus / unfocus
 --------------------------------------------------------------------------------
 local function buttons_create(c)
@@ -866,30 +850,14 @@ end
 client.connect_signal("focus", buttons_insert)
 client.connect_signal("unfocus", buttons_remove)
 
--- When a screen disconnects move clients to tag of same name on other screen
--- https://github.com/awesomeWM/awesome/issues/1382
+-- turn titlebar on when client is floating
 -------------------------------------------------------------------------------
-tag.connect_signal("removal-pending",
-  function(t)
-    local fallback_tag = nil
 
-    -- find tag with same name on any other screen
-    for other_screen in screen do
-      if other_screen ~= t.screen then
-        fallback_tag = awful.tag.find_by_name(other_screen, t.name)
-        if fallback_tag ~= nil then
-          break
-        end
-      end
-    end
-
-    -- no tag with same name exists, chose random one
-    if fallback_tag == nil then
-      fallback_tag = awful.tag.find_fallback()
-    end
-
-    -- move clients to tag on otherscreen
-    fallback_tag:clients(t:clients())
+client.connect_signal("property::floating", function(c)
+  if c.floating and not (c.maximized or c.requests_no_titlebar) then
+    awful.titlebar.show(c, "bottom")
+  else
+    awful.titlebar.hide(c, "bottom")
+  end
 end)
-
 -- }}}
