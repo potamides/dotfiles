@@ -200,6 +200,13 @@ let g:lightline.tab = {
     \ 'active': [ 'tabnum', 'modified' ],
     \ 'inactive': [ 'tabnum', 'modified' ] }
 
+let s:palette = g:lightline#colorscheme#{g:lightline.colorscheme}#palette
+let s:palette.tabline.right = s:palette.tabline.left
+
+" set showtabline to 1, when the bufferline plugin autohides the tabline. This
+" prevents the tabline from hiding when there are multiple tabs.
+autocmd OptionSet showtabline if v:option_new == 0 | set showtabline=1 | endif
+
 "Autocommand to update the modified indicator
 autocmd BufWritePost,TextChanged,TextChangedI * call lightline#update()
 
