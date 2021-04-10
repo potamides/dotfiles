@@ -61,7 +61,7 @@ fi
 
 # bash history stuff
 HISTSIZE=5000
-HISTFILESIZE=50000
+HISTFILESIZE=inf
 HISTTIMEFORMAT="%d/%m/%y %T "
 HISTCONTROL=ignoreboth:erasedups
 # don't append wifi passwords to history file
@@ -96,7 +96,6 @@ alias paclo='pacman -Qdt' # list orphans
 alias pacro='paclo && sudo pacman -Rns $(pacman -Qtdq)' # remove orphans
 alias pacc='sudo pacman -Scc' # clean cache
 alias pacli='pacman -Q | wc -l' # list user installed packages
-alias sh='sh +o history' # prevent sh from truncating HISTFILE
 alias calc='ptpython -i <(echo "from math import *")'
 alias todo='$EDITOR ~/Documents/TODO.md'
 alias serve='python3 -m http.server 9999'
@@ -159,7 +158,7 @@ function whoowns(){
 
 # list commands which are provided by package
 function listprogs(){
-  pacman -Qlq "$@" | grep --color=never -Po "(?<=${PATH//://|}/).+"
+  pacman -Qlq "$@" | sed -rn "s:(${PATH//:/|})/(.+):\\2:p"
 }
 
 # find fonts which contain character(s)

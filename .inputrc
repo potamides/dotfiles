@@ -9,6 +9,8 @@ set menu-complete-display-prefix on
 set skip-completed-text on
 # don't match files starting with .
 set match-hidden-files off
+# turn off use of internal pager when returning long completion lists
+set page-completions off
 
 ## colorized completion
 # -----------------------------------------------------------------------------
