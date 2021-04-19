@@ -19,7 +19,7 @@ local function outputs()
          local output = line:match("^([%w-]+) connected ")
          if output then
             _outputs[#_outputs + 1] = output
-                                   end
+         end
       end
       xrandr:close()
    end

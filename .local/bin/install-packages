@@ -23,6 +23,9 @@ PKG=(
   # used by awesome
   xorg-xinit papirus-icon-theme physlock scrot firefox redshift mpv
 
+  # used by awesome & conky
+  xorg-xrandr
+
   # used by ranger
   udiskie ueberzug
 

@@ -1,3 +1,7 @@
+-------------------------------------------------------------------------------
+-- {{{ Imports
+-------------------------------------------------------------------------------
+
 -- If LuaRocks is installed, make sure that packages installed through it are
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
@@ -31,6 +35,7 @@ volume.init()
 battery.init()
 net_widget.init()
 
+-- }}}
 -------------------------------------------------------------------------------
 -- {{{ Error handling
 -------------------------------------------------------------------------------
@@ -57,8 +62,8 @@ do
     in_error = false
   end)
 end
--- }}}
 
+-- }}}
 -------------------------------------------------------------------------------
 -- {{{ Various definitions
 -------------------------------------------------------------------------------
@@ -82,10 +87,10 @@ awful.layout.layouts = {
   awful.layout.suit.corner.nw,
   awful.layout.suit.max.fullscreen,
 }
--- }}}
 
+-- }}}
 -------------------------------------------------------------------------------
--- {{{ Wibar
+-- {{{ Interface
 -------------------------------------------------------------------------------
 
 -- Menu
@@ -178,14 +183,8 @@ mytextclock:buttons(gears.table.join(
 -- Wallpaper
 -------------------------------------------------------------------------------
 local function set_wallpaper(s)
-  -- Wallpaper
   if beautiful.wallpaper then
-    local wallpaper = beautiful.wallpaper
-    -- If wallpaper is a function, call it with the screen
-    if type(wallpaper) == "function" then
-      wallpaper = wallpaper(s)
-    end
-    gears.wallpaper.maximized(wallpaper, s, true)
+      utils.wallpaper.repeated(beautiful.wallpaper, s)
   end
 end
 
@@ -374,10 +373,12 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.align.horizontal,
     }
 end)
+
 -- }}}
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 -- {{{ Mouse bindings & Key bindings
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
 local clientbuttons = gears.table.join(
     awful.button({ }, 1, function(c)
         c:emit_signal("request::activate", "mouse_click", {raise = true})
@@ -618,8 +619,8 @@ modalawesome.init{
   modes       = modes,
   keybindings = keybindings,
 }
--- }}}
 
+-- }}}
 -------------------------------------------------------------------------------
 -- {{{ Rules
 -------------------------------------------------------------------------------
@@ -676,11 +677,19 @@ awful.rules.rules = {
     { rule = { class = "conky" },
       properties = { focusable = false, screen = screen.primary, placement = awful.placement.restore,
         new_tag = { hide = true, volatile = true }},
-      -- ugly hack, reload conky config when awesome restarts (fixes https://github.com/brndnmtthws/conky/issues/110)
-      callback = function() awful.spawn.once("killall -SIGUSR1 conky") end },
+      callback = function()
+        if not awful.rules.conky_signals_connected then
+          awful.rules.conky_signals_connected = true
+          -- reload conky when geometry of primary screen changes
+          screen.connect_signal("property::geometry", function(s)
+            if s == screen.primary then awful.spawn("killall -SIGUSR1 conky", false) end
+          end)
+        end
+      end
+      },
 }
--- }}}
 
+-- }}}
 -------------------------------------------------------------------------------
 -- {{{ Signals
 -------------------------------------------------------------------------------
@@ -860,4 +869,7 @@ client.connect_signal("property::floating", function(c)
     awful.titlebar.hide(c, "bottom")
   end
 end)
+
 -- }}}
+
+-- dnl vim: foldmethod=marker foldlevel=0

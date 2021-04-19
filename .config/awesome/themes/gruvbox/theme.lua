@@ -3,6 +3,7 @@
 -------------------------------------------------------------------------------
 
 local awful = require("awful")
+local usurface = require("utils.surface")
 local dpi = require("beautiful.xresources").apply_dpi
 local theme_assets = require("beautiful.theme_assets")
 
@@ -13,14 +14,8 @@ theme.font            = "DejaVu Sans 11"
 theme.revelation_font = "SauceCodePro Nerd Font 20"
 theme.icon_theme      = "Papirus-Dark"
 
-function theme.wallpaper(s)
-  -- the screen where conky is on
-  if s == screen.primary then
-    return theme_path .. "wall_primary.png"
-  else
-    return theme_path .. "wall_secondary.png"
-  end
-end
+-- crop to size where wallpaper repeats itself
+theme.wallpaper = usurface.crop(theme_path .. "wallpaper.png", 1536, 1080, true)
 
 -- Dark Gruvbox Colors
 theme.lightred    = "#fb4934"
