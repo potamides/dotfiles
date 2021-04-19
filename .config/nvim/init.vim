@@ -167,7 +167,7 @@ function! DevFileformat()
 endfunction
 
 let g:lightline = {
-    \ 'colorscheme': 'gruvbox',
+  \ 'colorscheme': 'gruvbox',
 	\ 'component': {
 	\   'lineinfo': ' %3l:%-2v',
 	\ },
@@ -184,49 +184,42 @@ let g:lightline = {
     \ },
 	\ 'separator': { 'left': '', 'right': '' },
 	\ 'subseparator': { 'left': '', 'right': '' }
-	\ }
+\ }
 
 " ------------------------------------------------
 "               BUFFERLINE
 " ------------------------------------------------
 
-let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
+let g:lightline.component_expand = {
+  \ 'buffers': 'lightline#bufferline#buffers',
+  \ 'rtabs': '{ -> reverse(lightline#tabs())}'
+\ }
 
-let g:lightline.component_type = {'buffers': 'tabsel'}
+let g:lightline.component_type = {'buffers': 'tabsel', 'rtabs': 'tabsel'}
 
-let g:lightline.tabline = {'left': [['buffers']], 'right': [['tabs']]}
+let g:lightline.tabline = {'left': [['buffers']], 'right': [['rtabs']]}
 
 let g:lightline.tab = {
     \ 'active': [ 'tabnum', 'modified' ],
     \ 'inactive': [ 'tabnum', 'modified' ] }
 
+let g:lightline.component_raw = {'buffers': 1}
+
 let s:palette = g:lightline#colorscheme#{g:lightline.colorscheme}#palette
 let s:palette.tabline.right = s:palette.tabline.left
 
-" set showtabline to 1, when the bufferline plugin autohides the tabline. This
-" prevents the tabline from hiding when there are multiple tabs.
-autocmd OptionSet showtabline if v:option_new == 0 | set showtabline=1 | endif
-
-"Autocommand to update the modified indicator
-autocmd BufWritePost,TextChanged,TextChangedI * call lightline#update()
-
-"Use unicode symbols for modified and read-only buffers as well as the more buffers indicator
 let g:lightline#bufferline#unicode_symbols=1
-
-"Enables the usage of vim-devicons to display a filetype icon for the buffer.
 let g:lightline#bufferline#enable_devicons=1
+let g:lightline#bufferline#clickable = 1
 
-"The minimum number of buffers needed to automatically show the tabline
+"The minimum number of buffers & tabs needed to automatically show the tabline
 let g:lightline#bufferline#min_buffer_count=2
+let g:lightline#bufferline#min_tab_count=2
 
-" use TAB to navigate buffers
-noremap <silent> <C-k> :bnext<CR>
-noremap <silent> <C-j> :bprev<CR>
 
-" close a buffer
-tnoremap <silent> <C-q> <C-\><C-N>:bp\|bd #<CR>
-inoremap <silent> <C-q> <C-\><C-N>:bp\|bd #<CR>
-nnoremap <silent> <C-q> :bp\|bd #<CR>
+" navigate buffers like tabs (gt, gT)
+noremap <silent> <expr> gb ':<C-U>bnext' . v:count1 . '<CR>'
+noremap <silent> <expr> gB ':<C-U>bprev' . v:count1 . '<CR>'
 
 " ------------------------------------------------
 "               COC
