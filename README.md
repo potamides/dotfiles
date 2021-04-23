@@ -120,9 +120,9 @@ directory. The file itself should be written in
 [m4](https://www.gnu.org/software/m4/) macro language and after processing
 should contain valid weechat commands. The script also provides the special
 macro `KEEPASS(<title>, <attr>)`, which can be used to obtain sensitive
-information managed with KeepassXC. When this script is loaded for the first
+information managed with KeePassXC. When this script is loaded for the first
 time it prompts the user for the KeePassXC password and then loads the config
 file. On subsequent launches of weechat this process can be manually invoked
 with the command `/confload <passphrase>`. Again you can use the
 `KEEPASSXC_DATABASE` and `KEEPASSXC_KEYFILE` environment variables for the
-locations of KeepassXC files.
+locations of KeePassXC files.
