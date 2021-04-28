@@ -150,40 +150,26 @@ lua require'colorizer'.setup({'*'},{names = false})
 " Disable mode indicator because it is displayed in lightline
 set noshowmode
 
-function! LightlineReadonly()
-	return &readonly ? '' : ''
-endfunction
-
-function! DevFiletype()
-  return winwidth(0) > 70 ? WebDevIconsGetFileTypeSymbol() . ' ' . (strlen(&filetype) ? &filetype : 'no ft') : ''
-endfunction
-
-function! Fileencoding()
-  return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
-endfunction
-
-function! DevFileformat()
-  return winwidth(0) > 70 ? (WebDevIconsGetFileFormatSymbol() . ' ' . &fileformat) : ''
+function! LightlineFilename()
+  let filename = expand('%:t') !=# '' ? expand('%:t') : '*'
+  let modified = (&modifiable && !&readonly) ? &modified ? ' ✎' : '' : ' '
+  return WebDevIconsGetFileTypeSymbol() . ' ' . filename . modified
 endfunction
 
 let g:lightline = {
   \ 'colorscheme': 'gruvbox',
-	\ 'component': {
-	\   'lineinfo': ' %3l:%-2v',
-	\ },
-	\ 'component_function': {
-    \   'readonly': 'LightlineReadonly',
-    \   'filetype': 'DevFiletype',
-    \   'fileencoding': 'Fileencoding',
-    \   'fileformat': 'DevFileformat',
-	\ },
-    \ 'active': {
-    \   'right': [['lineinfo'],
-    \             ['percent'],
-    \             ['fileformat', 'fileencoding', 'filetype']]
-    \ },
-	\ 'separator': { 'left': '', 'right': '' },
-	\ 'subseparator': { 'left': '', 'right': '' }
+  \ 'component': {
+    \ 'lineinfo': ' %3l:%-2c',
+  \ },
+  \ 'component_function': {
+    \ 'cocstatus': 'coc#status',
+    \ 'filename': 'LightlineFilename',
+  \ },
+  \ 'active': {
+    \ 'left': [[ 'mode', 'paste' ], [ 'cocstatus', 'filename' ]],
+  \ },
+  \ 'separator': { 'left': '▌', 'right': '▐' },
+  \ 'subseparator': { 'left': '│', 'right': '│' }
 \ }
 
 " ------------------------------------------------
@@ -200,26 +186,30 @@ let g:lightline.component_type = {'buffers': 'tabsel', 'rtabs': 'tabsel'}
 let g:lightline.tabline = {'left': [['buffers']], 'right': [['rtabs']]}
 
 let g:lightline.tab = {
-    \ 'active': [ 'tabnum', 'modified' ],
-    \ 'inactive': [ 'tabnum', 'modified' ] }
+    \ 'active': [ 'tabnum' ],
+    \ 'inactive': [ 'tabnum' ] }
 
 let g:lightline.component_raw = {'buffers': 1}
 
 let s:palette = g:lightline#colorscheme#{g:lightline.colorscheme}#palette
 let s:palette.tabline.right = s:palette.tabline.left
 
-let g:lightline#bufferline#unicode_symbols=1
-let g:lightline#bufferline#enable_devicons=1
+let g:lightline#bufferline#unicode_symbols = 1
+let g:lightline#bufferline#enable_devicons = 1
 let g:lightline#bufferline#clickable = 1
 
 "The minimum number of buffers & tabs needed to automatically show the tabline
-let g:lightline#bufferline#min_buffer_count=2
-let g:lightline#bufferline#min_tab_count=2
+let g:lightline#bufferline#min_buffer_count = 2
+let g:lightline#bufferline#min_tab_count = 2
 
 
 " navigate buffers like tabs (gt, gT)
 noremap <silent> <expr> gb ':<C-U>bnext' . v:count1 . '<CR>'
 noremap <silent> <expr> gB ':<C-U>bprev' . v:count1 . '<CR>'
+
+" gb (go to bookmark) is mapped in netrw, remedied by remapping this to 'b and `b (go to mark)
+autocmd FileType netrw nmap <buffer> <silent> <nowait> 'b <Plug>NetrwBookHistHandler_gb
+autocmd FileType netrw nmap <buffer> <silent> <nowait> `b <Plug>NetrwBookHistHandler_gb
 
 " ------------------------------------------------
 "               COC
@@ -249,15 +239,6 @@ call coc#add_extension(
   \ 'coc-git',
   \ 'coc-lists',
   \)
-
-" Show diagnostics in status line
-let g:lightline.active.left = [ [ 'mode', 'paste' ], [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
-let g:lightline.component_function = {'cocstatus': 'coc#status',
-                                  \   'readonly': 'LightlineReadonly',
-                                  \   'filetype': 'DevFiletype',
-                                  \   'fileencoding': 'Fileencoding',
-                                  \   'fileformat': 'DevFileformat',
-	                              \ }
 
 " Use auocmd to force lightline update.
 autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
