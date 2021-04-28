@@ -15,7 +15,7 @@ theme.revelation_font = "SauceCodePro Nerd Font 20"
 theme.icon_theme      = "Papirus-Dark"
 
 -- crop to size where wallpaper repeats itself
-theme.wallpaper = usurface.crop(theme_path .. "wallpaper.png", 1536, 1080, true)
+theme.wallpaper = usurface.crop(theme_path .. "wallpaper.png", 384, 0, 1920, 1080)
 
 -- Dark Gruvbox Colors
 theme.lightred    = "#fb4934"
@@ -119,6 +119,9 @@ theme.titlebar_height  = dpi(20)
 
 -- Systray
 theme.systray_icon_spacing = theme.gap
+
+-- MPD Status Widget
+theme.mpd_widget_width = dpi(200)
 
 -- Layout
 theme.layout_tile       = theme_path .. "layouts/tile.svg"
