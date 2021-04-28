@@ -1,4 +1,3 @@
-local awful     = require("awful")
 local wibox     = require("wibox")
 local beautiful = require("beautiful")
 local monitor   = require("utils.monitor")
@@ -31,7 +30,7 @@ function net_widget.init(args)
 
   args.wireless_interface = args.wireless_interface or "wlp5s0"
   args.wired_interface    = args.wired_interface or "enp3s0"
-  args.path_to_icons      = args.path_to_icons or awful.util.getdir("config") .. "themes/gruvbox/widgets/net/"
+  args.path_to_icons      = args.path_to_icons or beautiful.theme_path .. "/widgets/net/"
   args.timeout            = args.timeout or 15
 
   net_widget.image = wibox.widget {

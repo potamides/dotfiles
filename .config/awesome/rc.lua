@@ -21,19 +21,15 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 local freedesktop  = require("freedesktop")
 local modalawesome = require("modalawesome")
 beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua")
--- import this stuff after theme initialisation for proper colors
-local utils       = require("utils")
-local battery     = require("widgets.battery")
-local volume      = require("widgets.volume")
-local mpd         = require("widgets.mpd")
-local net_widget  = require("widgets.net")
-local run_shell   = require("widgets.run-shell")
-local revelation  = require("revelation")
-local xrandr      = require("xrandr")
-revelation.init()
-volume.init()
-battery.init()
-net_widget.init()
+-- import stuff which uses beautiful after theme initialization
+local utils      = require("utils")
+local battery    = require("widgets.battery")
+local volume     = require("widgets.volume")
+local mpd        = require("widgets.mpd")
+local net_widget = require("widgets.net")
+local run_shell  = require("widgets.run-shell")
+local revelation = require("revelation")
+local xrandr     = require("xrandr")
 
 -- }}}
 -------------------------------------------------------------------------------
@@ -65,7 +61,7 @@ end
 
 -- }}}
 -------------------------------------------------------------------------------
--- {{{ Various definitions
+-- {{{ Variable definitions
 -------------------------------------------------------------------------------
 
 -- This is used later as the default terminal and editor to run.
@@ -90,11 +86,9 @@ awful.layout.layouts = {
 
 -- }}}
 -------------------------------------------------------------------------------
--- {{{ Interface
+-- {{{ Menu
 -------------------------------------------------------------------------------
 
--- Menu
--------------------------------------------------------------------------------
 -- Create a launcher widget and a main menu
 local myawesomemenu = {
   { "Hotkeys", function() return false, hotkeys_popup.show_help end},
@@ -136,8 +130,7 @@ local mylauncher = wibox.widget(utils.widget.compose{{
   margin = beautiful.small_gap
 }})
 
-modalawesome.active_mode:connect_signal("widget::redraw_needed",
-function()
+modalawesome.active_mode:connect_signal("widget::redraw_needed", function()
   local color
   local text = modalawesome.active_mode.text
 
@@ -155,8 +148,12 @@ function()
 
   -- use of undocumented function :(
   for s in screen do s.mytaglist._do_taglist_update() end
-end
-)
+end)
+
+-- }}}
+-------------------------------------------------------------------------------
+-- {{{ Wibar
+-------------------------------------------------------------------------------
 
 -- Clock
 -------------------------------------------------------------------------------
@@ -190,6 +187,28 @@ end
 
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
+
+-- Widget Initialization
+-------------------------------------------------------------------------------
+volume.init()
+battery.init()
+net_widget.init()
+mpd.init{ widget_template = utils.widget.compose{{
+    {
+      {
+        id     = 'text_role',
+        widget = wibox.widget.textbox,
+      },
+      max_size = beautiful.mpd_widget_width,
+      speed = 70,
+      step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
+      layout = wibox.container.scroll.horizontal,
+    },
+    shape = utils.shape.parallelogram.left,
+    color = beautiful.bg_normal,
+    margin = beautiful.small_gap
+  }}
+}
 
 -- Taglist
 -------------------------------------------------------------------------------
@@ -227,20 +246,19 @@ local widget_template = {
   id     = 'background_role',
   widget = wibox.container.background,
   -- Add support for hover colors
-  create_callback = function(self)
-    self._set_bg = self.set_bg
-    self.set_bg = function(_, hex)
-      self.hex_bg = hex
-      self:_set_bg(hex)
-    end
+  create_callback = function(self, tag)
+    local bg_empty = table.concat{gears.color(beautiful.taglist_bg_empty):get_rgba()}
+    local bg_occupied = table.concat{gears.color(beautiful.taglist_bg_occupied):get_rgba()}
+    local bg_hover = table.concat{gears.color(beautiful.taglist_bg_hover):get_rgba()}
     self:connect_signal('mouse::enter', function()
-      if self.hex_bg == beautiful.taglist_bg_empty then
+      local bg = table.concat{self.bg:get_rgba()}
+      if  bg == bg_empty or bg == bg_occupied then
         self.bg = beautiful.taglist_bg_hover
       end
     end)
     self:connect_signal('mouse::leave', function()
-      if self.hex_bg == beautiful.taglist_bg_hover then
-        self.bg = beautiful.taglist_bg_empty
+      if table.concat{self.bg:get_rgba()} == bg_hover then
+        self.bg = #tag:clients() == 0 and beautiful.taglist_bg_empty or beautiful.taglist_bg_occupied
       end
     end)
   end,
@@ -261,7 +279,7 @@ awful.screen.connect_for_each_screen(function(s)
   awful.button({ }, 4, function() awful.layout.inc( 1) end),
   awful.button({ }, 5, function() awful.layout.inc(-1) end)))
   -- Create a taglist widget
-  s.mytaglist = awful.widget.taglist {
+  s.mytaglist = awful.widget.taglist{
     screen  = s,
     filter  = function(t) return t.name ~= "Revelation" and t.name ~=  "Revelation_zoom" end,
     style   = {
@@ -376,7 +394,7 @@ end)
 
 -- }}}
 -------------------------------------------------------------------------------
--- {{{ Mouse bindings & Key bindings
+-- {{{ Bindings
 -------------------------------------------------------------------------------
 
 local clientbuttons = gears.table.join(
@@ -588,8 +606,8 @@ modes.launcher = gears.table.join(
         run_shell.launch{
           prompt = 'DDG: ',
           exe_callback = function(command)
-            local search = "https://duckduckgo.com/?q=" .. command:gsub('%s', '+')
-            awful.spawn.easy_async("xdg-open " .. search, function()
+            local search = " https://duckduckgo.com/?q=" .. command:gsub('%s', '+')
+            awful.spawn.easy_async(browser .. search, function()
               local find_browser = function(c) return awful.rules.match(c, {class = browser, urgent = true}) end
               local browser_instance = awful.client.iterate(find_browser)()
               browser_instance:jump_to()
@@ -614,6 +632,7 @@ modes.launcher = gears.table.join(
   modes.launcher
 )
 
+revelation.init()
 modalawesome.init{
   modkey      = modkey,
   modes       = modes,
@@ -872,4 +891,4 @@ end)
 
 -- }}}
 
--- dnl vim: foldmethod=marker foldlevel=0
+-- dnl vim: foldmethod=marker

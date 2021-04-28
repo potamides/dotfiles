@@ -1,5 +1,4 @@
 local beautiful = require("beautiful")
-local awful = require("awful")
 local naughty = require("naughty")
 local monitor = require("utils.monitor")
 local wibox = require("wibox")
@@ -56,7 +55,7 @@ end
 
 function battery_widget.init(args)
   args = args or {}
-  args.path_to_icons = args.path_to_icons or awful.util.getdir("config") .. "themes/gruvbox/widgets/battery/"
+  args.path_to_icons = args.path_to_icons or beautiful.theme_path .. "/widgets/battery/"
   args.disable_battery_warning = args.disable_battery_warning or false
   args.timeout = args.timeout or 15
 

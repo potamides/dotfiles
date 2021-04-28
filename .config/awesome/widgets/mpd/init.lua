@@ -1,43 +1,30 @@
 local gears = require("gears")
 local beautiful = require("beautiful")
-local utils = require("utils")
 local wibox = require("wibox")
 local mpc = require("widgets.mpd.mpc")
 local stream = require("widgets.mpd.stream")
 local escape = require("lgi").GLib.markup_escape_text
 
-local mpd_widget = wibox.widget.textbox()
-local mpd_container = wibox.widget(utils.widget.compose{{
-  {
-    mpd_widget,
-    max_size = beautiful.xresources.apply_dpi(200),
-    speed = 70,
-    step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
-    layout = wibox.container.scroll.horizontal,
-  },
-  shape = utils.shape.parallelogram.left,
-  color = beautiful.bg_normal,
-  margin = beautiful.small_gap
-}})
+local mpd = {}
+local stream_instance
 
 local function update_widget(title, artist, state)
   local text = ""
   if state == "play" and title then
     text = artist and artist .. " - " .. title or title
-    mpd_container:set_bg(beautiful.bg_focus)
+    mpd.widget:set_bg(beautiful.bg_focus)
   else
-    mpd_container:set_bg(beautiful.bg_normal)
+    mpd.widget:set_bg(beautiful.bg_normal)
   end
-  mpd_widget:set_markup(string.format("<span color=%q><b>%s</b></span>",
+  mpd.text:set_markup(string.format("<span color=%q><b>%s</b></span>",
     beautiful.fg_normal, escape(text, string.len(text))))
 end
 
-local stream_instance
-local function update_stream(old_state, new_state)
+local function update_stream(host, port, socket, old_state, new_state)
   if new_state ~= old_state then
     if new_state == "play" then
       if not stream_instance then
-        stream_instance = stream.new()
+        stream_instance = stream.new(host, port, socket)
       end
       stream_instance:play()
     elseif stream_instance then
@@ -46,23 +33,37 @@ local function update_stream(old_state, new_state)
   end
 end
 
-local connection
 local function error_handler()
   -- Try a reconnect soon-ish
   gears.timer.start_new(60, function()
-    connection:send("ping")
+    mpd.connection:send("ping")
   end)
 end
 
-local state = "stop"
-connection = mpc.new(nil, nil, nil, error_handler,
-  "status", function(_, result)
-    update_stream(state, result.state)
-    state = result.state
-  end,
-  "currentsong", function(_, result)
-    update_widget(result.title, result.artist, state)
-end)
+function mpd.toggle()
+  mpd.connection:toggle_play()
+end
 
-local mpd = {widget = mpd_container, toggle = function() connection:toggle_play() end}
+function mpd.init(args)
+  args = args or {}
+
+  if args.widget_template then
+    mpd.widget = wibox.widget(args.widget_template)
+    mpd.text = mpd.widget:get_children_by_id("text_role")[1]
+  else
+    mpd.text = wibox.widget.textbox()
+    mpd.widget = wibox.container.background(mpd.text)
+  end
+
+  local state = "stop"
+  mpd.connection = mpc.new(args.host, args.port, args.password, error_handler,
+    "status", function(_, result)
+      update_stream(args.host, args.stream_port, args.socket, state, result.state)
+      state = result.state
+    end,
+    "currentsong", function(_, result)
+      update_widget(result.title, result.artist, state)
+  end)
+end
+
 return mpd
