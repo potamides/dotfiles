@@ -19,8 +19,8 @@ dnl ---------------------------------------------------------------------------
 /set irc.server.freenode.sasl_username KEEPASS(Freenode, Username)
 /secure set freenode_pw                KEEPASS(Freenode, Password)
 /set irc.server.freenode.sasl_password "${sec.data.freenode_pw}"
-/set irc.server.freenode.autojoin      "##machinelearning"
 /filter addreplace bot                 irc.freenode.* nick_Feed[bot] *
+/set irc.server.freenode.autojoin      "#archlinux,#bash,#neovim,##japanese"
 
 /server add oftc                   "irc.oftc.net"
 /set irc.server.oftc.addresses     "irc.oftc.net/6697"
@@ -77,4 +77,4 @@ irc.oftc.#awesome)"
 dnl Install all scripts lastly, because some depend on previously set options
 /script install vimode.py autosort.py slack.py
 
-dnl vim: ft=config
+dnl vim: filetype=config
