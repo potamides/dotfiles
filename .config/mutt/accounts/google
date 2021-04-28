@@ -22,4 +22,4 @@ alternates '^'$my_google_user'@googlemail\.com$'
 mailboxes +INBOX "+[Google Mail]/Spam" "+[Google Mail]/Drafts" \
   "+[Google Mail]/Sent Mail" "+[Google Mail]/All Mail" "+[Google Mail]/Trash"
 
-# vi: ft=muttrc
+# vim: filetype=muttrc

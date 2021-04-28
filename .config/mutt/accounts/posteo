@@ -21,4 +21,4 @@ alternates '^'$my_posteo_user'\+.*@posteo\.net$'
 # check this mailboxes for new messages periodically & display them in sidebar
 mailboxes +INBOX +Junk +Drafts +Sent +Archive +Trash
 
-# vi: ft=muttrc
+# vim: filetype=muttrc

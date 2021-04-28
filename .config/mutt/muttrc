@@ -56,9 +56,10 @@ $my_folder/accounts/google<enter><check-stats><change-folder>!<enter>\
 # sidebar
 # -----------------------------------------------------------------------------
 
-set mail_check_stats = yes
-set sidebar_visible  = yes
-set sidebar_format   = '%B%?F? [%F]?%* %?N?%N/?%S'
+set mail_check_stats     = yes
+set sidebar_visible      = yes
+set sidebar_format       = '%B%?F? [%F]?%* %?N?%N/?%S'
+set sidebar_divider_char = '│'
 
 # alias management
 # -----------------------------------------------------------------------------
