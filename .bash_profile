@@ -6,6 +6,7 @@
 export BROWSER=firefox
 export EDITOR=nvim
 export VISUAL=$EDITOR
+export TERMCMD=termite
 
 # merge program for pacdiff
 export DIFFPROG="$EDITOR -d"
