@@ -15,13 +15,13 @@ from abc import ABC
 import weechat as w # pylint: disable=import-error
 import __main__
 
-DATABASE = getenv("KEEPASSXC_DATABASE", "~/Passwords.kdbx")
-KEYFILE = getenv("KEEPASSXC_KEYFILE", "~/Secret.key")
+DATABASE = getenv("KEEPASSXC_DATABASE", "~/database.kdbx")
+KEYFILE = getenv("KEEPASSXC_KEYFILE", "")
 TEMPLATE = join(getenv("WEECHAT_HOME", join(getenv("HOME"), ".weechat")), "weechatrc")
 
 class Confload():
     """Preprocess config file and execute execute commands."""
-    keexc = "keepassxc-cli show --quiet --attributes $2 --key-file {} {} $1 <<< {}"
+    keexc = "keepassxc-cli show --attributes $2 --key-file '{}' --quiet '{}' $1 <<< {}"
     abort = "ifelse(eval(sysval != 0), 1, `m4exit(sysval)')dnl"
     commands = None
 
