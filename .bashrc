@@ -1,4 +1,4 @@
-# shellcheck shell=bash disable=SC1091,SC2034
+# shellcheck shell=bash disable=SC1091,SC2034,SC2139
 
 ## show greeter
 # -----------------------------------------------------------------------------
@@ -83,26 +83,19 @@ alias info="info --vi-keys -v match-style=underline,bold,nocolor \
   -v link-style=yellow -v active-link-style=yellow,bold"
 
 # other useful aliases
-alias pac='sudo pacman -S' # install
-alias paca='yay -Sa' # aur install
-alias pacu='sudo pacman -Syu' # update
-alias pacau='yay -Syua' # aur update
-alias pacr='sudo pacman -Rsn' # remove
-alias pacs='pacman -Ss' # search
-alias pacas='yay -Ssa' # aur search
-alias paci='pacman -Qi' # info
-alias pacl='pacman -Ql' # list files
-alias paclo='pacman -Qdt' # list orphans
-alias pacro='paclo && sudo pacman -Rns $(pacman -Qtdq)' # remove orphans
-alias pacc='sudo pacman -Scc' # clean cache
-alias pacli='pacman -Q | wc -l' # list user installed packages
+alias pac='pacman'
+alias spac='sudo pacman'
+alias apac='yay -a'
+alias pacli='pacman -Q | wc -l'
+alias pacro='pacman -Qtd > /dev/null && sudo pacman -Rns $(pacman -Qtdq)'
 alias calc='ptpython -i <(echo "from math import *")'
 alias todo='$EDITOR ~/Documents/TODO.md'
-alias serve='python3 -m http.server 9999'
+alias server='python3 -m http.server 9999'
 alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
-alias rec='ffmpeg -s 1920x1080 -f x11grab -i $DISPLAY.0+0,0 -f pulse -i 0 -y'
-alias backup="sudo snap-sync --UUID 940761e2-7d84-4025-8972-89276e53bdc4 \
-  --config home --noconfirm"
+alias rec='ffmpeg -f x11grab -i $DISPLAY -f pulse -i 0 -y'
+alias {,n}vim="$(type -p {,n}vim)" # alias vim/nvim to whichever is available
+alias backup="sudo snap-sync --config home --noconfirm --UUID \
+  \"\$(lsblk -no UUID /dev/disk/by-label/backup)\""
 
 # fun stuff
 alias starwars='telnet towel.blinkenlights.nl'
