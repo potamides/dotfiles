@@ -699,10 +699,9 @@ awful.rules.rules = {
       callback = function()
         if not awful.rules.conky_signals_connected then
           awful.rules.conky_signals_connected = true
-          -- reload conky when geometry of primary screen changes
-          screen.connect_signal("property::geometry", function(s)
-            if s == screen.primary then awful.spawn("killall -SIGUSR1 conky", false) end
-          end)
+          -- reload conky when geometry of a screen changes and on restarts of awesome
+          screen.connect_signal("property::geometry", function() awful.spawn("killall -SIGUSR1 conky", false) end)
+          awesome.connect_signal("exit", function() awful.spawn("killall -SIGUSR1 conky", false) end)
         end
       end
       },
