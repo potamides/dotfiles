@@ -117,8 +117,10 @@ augroup END
 " use gruvbox bg colors to distinguish marked characters
 augroup qs_colors
   autocmd!
-  autocmd ColorScheme * highlight QuickScopePrimary guibg='#7c6f64'
-  autocmd ColorScheme * highlight QuickScopeSecondary guibg='#504945' 
+  autocmd ColorScheme * execute 'highlight QuickScopePrimary guisp=' . g:terminal_color_10 .
+    \ ' gui=bold,underline ctermfg=10 cterm=bold,underline'
+  autocmd ColorScheme * execute 'highlight QuickScopeSecondary guisp=' . g:terminal_color_13 .
+    \ ' gui=bold,underline ctermfg=13 cterm=bold,underline'
 augroup END
 
 " Trigger a highlight in the appropriate direction when pressing these keys
@@ -315,6 +317,7 @@ inoremap <silent> <A-p> <C-\><C-N>:<C-u>CocList --number-select --no-sort --inte
 noremap <silent> <A-p> :<C-u>CocList --number-select --no-sort --interactive grep -smartcase<cr>
 
 " TEX
+let g:tex_flavor = "latex"
 au BufReadPost,BufNewFile *.tex nnoremap <silent> <leader>bn :<C-u>CocCommand latex.Build<cr>
 au BufReadPost,BufNewFile *.tex nnoremap <silent> <leader>cn :<C-u>CocCommand latex.BuildCancel<cr>
 au BufReadPost,BufNewFile *.tex nnoremap <silent> <leader>fs :<C-u>CocCommand latex.ForwardSearch<cr>
