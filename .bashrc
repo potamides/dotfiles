@@ -4,7 +4,7 @@
 # -----------------------------------------------------------------------------
 
 # if not in vim or ranger show reminders for today
-if [[ -z $VIMRUNTIME && -z $RANGER_LEVEL && $(type -t when) ]]; then
+if [[ -z $VIMRUNTIME && -z $RANGER_LEVEL && -n $(type -t when) ]]; then
   when --wrap=78 --noheader --styled_output_if_not_tty w | sed 's/^/│ /' |
     xargs -r0 printf "┌─[ Reminders ]\\n%s└$(printf '%0.s─' {0..22})\\n"
 fi
@@ -19,7 +19,7 @@ reset='\e[m'
 returncode="\`exit=\$?; [ \$exit -ne 0 ] && echo \"$boldred\$exit \"\`"
 # root user is red, other users are blue
 user="\`[ \$EUID -eq 0 ] && echo \"$boldred\"\u || echo \"$boldblue\"\u\`"
-dir="\[$reset\]@\h \w"
+dir="$reset@\h \w"
 
 # prompt stuff that should come before and after git integration
 firstline=$returncode$user$dir
@@ -50,7 +50,6 @@ shopt -s no_empty_cmd_completion    # Stops empty line tab comp
 shopt -s dirspell                   # Tab comp can fix dir name typos
 shopt -s globstar                   # pattern ** also searches subdirectories
 shopt -s extglob                    # enable extended pattern matching features
-shopt -so vi                        # enable vi like keybindings
 
 # reset cursor shape before executing a command (see .inputrc)
 if [[ $TERM = linux ]]; then
@@ -93,7 +92,7 @@ alias todo='$EDITOR ~/Documents/TODO.md'
 alias server='python3 -m http.server 9999'
 alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 alias rec='ffmpeg -f x11grab -i $DISPLAY -f pulse -i 0 -y'
-alias {,n}vim="$(type -p {,n}vim)" # alias vim/nvim to whichever is available
+alias {,n}vim="$(type -p nvim || type -p vim)"
 alias backup="sudo snap-sync --config home --noconfirm --UUID \
   \"\$(lsblk -no UUID /dev/disk/by-label/backup)\""
 
@@ -151,7 +150,7 @@ function whoowns(){
 
 # list commands which are provided by package
 function listprogs(){
-  pacman -Qlq "$@" | sed -rn "s:(${PATH//:/|})/(.+):\\2:p"
+  pacman -Qlq "$@" | fgrep "${PATH//:/$'\n'}" | sed -rn 's|.*/([^/]+)$|\1|p'
 }
 
 # find fonts which contain character(s)

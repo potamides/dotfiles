@@ -17,7 +17,7 @@ set page-completions off
 
 # Note that this may cause completion text blink in some terminals (e.g. xterm)
 set colored-stats on
-# Mark symlinked directories
+# Append a slash to symlinked directories
 set mark-symlinked-directories on
 # Color the common prefix
 set colored-completion-prefix on
@@ -25,29 +25,26 @@ set colored-completion-prefix on
 ## vi mode related stuff
 # -----------------------------------------------------------------------------
 
-# use vi keybindings (activated only for bash through .bashrc)
-#set editing-mode vi
+# use vi keybindings
+set editing-mode vi
+# reduce input delay on e.g. Escape
+set keyseq-timeout 50
+# show editing mode in prompt
+set show-mode-in-prompt on
 
-$if mode=vi
-  # reduce input delay on e.g. Escape
-  set keyseq-timeout 50
-  # show editing mode in prompt
-  set show-mode-in-prompt on
-
-  # different cursor shapes for each mode
-  $if term=linux
-    set vi-ins-mode-string (ins)\1\e[?0c\2
-    set vi-cmd-mode-string (cmd)\1\e[?8c\2
-  $else
-    set vi-ins-mode-string (ins)\1\e[6 q\2
-    set vi-cmd-mode-string (cmd)\1\e[2 q\2
-  $endif
+# different cursor shapes for each mode
+$if term=linux
+  set vi-ins-mode-string (ins)\1\e[?0c\2
+  set vi-cmd-mode-string (cmd)\1\e[?8c\2
+$else
+  set vi-ins-mode-string (ins)\1\e[6 q\2
+  set vi-cmd-mode-string (cmd)\1\e[2 q\2
 $endif
 
 ## keybindings
 # -----------------------------------------------------------------------------
 
-# keybindings for default keymap (either vi-insert or emacs)
+# keybindings for default keymap (vi-insert)
 # Up: search history starting with chars up to cursor position
 "\e[A": history-search-backward
 # Down: similar but other direction
@@ -56,19 +53,15 @@ $endif
 TAB: menu-complete                  
 # Shift-Tab: step in other direction
 "\e[Z": menu-complete-backward      
+# Expand variables like ~ and $USER to their values
+"\C-a": shell-expand-line
+# perform pathname expansion on the word before point
+"\C-e": glob-expand-word
 
-$if mode=vi
-  set keymap vi-command
-  "\e[A": history-search-backward
-  j: history-search-forward
-  "\e[B": history-search-forward
-  k: history-search-backward
-  TAB: menu-complete                  
-  "\e[Z": menu-complete-backward      
-
-  set keymap vi-insert
-  # Expand variables like ~ and $USER to their values
-  "\C-a": shell-expand-line
-  # perform pathname expansion on the word before point
-  "\C-e": glob-expand-word
-$endif
+set keymap vi-command
+"\e[A": history-search-backward
+j: history-search-forward
+"\e[B": history-search-forward
+k: history-search-backward
+TAB: menu-complete                  
+"\e[Z": menu-complete-backward      
