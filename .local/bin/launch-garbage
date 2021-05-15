@@ -8,18 +8,18 @@
 
 set -o errexit
 user=steam
-container_name=garbage
-mount_path=/mnt/$container_name
-block_device=$(findfs UUID=d5a47e6b-1dd2-47f2-a224-90472cd0be9e)
+label=garbage
+mount_path=/mnt/$label
+block_device=$(findfs LABEL=$label-crypt)
 export SUDO_ASKPASS=${SUDO_ASKPASS:-/usr/lib/git-core/git-gui--askpass}
 
 function unlock_device(){
-  if [[ ! -b "/dev/mapper/$container_name" ]]; then
+  if [[ ! -b "/dev/mapper/$label" ]]; then
     if [[ -t 0 ]]; then
-      cryptsetup open "$block_device" "$container_name"
+      cryptsetup open "$block_device" "$label"
     else
       local message="Enter passphrase for $block_device:"
-      cryptsetup open "$block_device" "$container_name" <<<"$($SUDO_ASKPASS "$message")"
+      cryptsetup open "$block_device" "$label" <<<"$($SUDO_ASKPASS "$message")"
     fi
   fi
 }
@@ -27,7 +27,7 @@ function unlock_device(){
 function mount_device(){
   if ! mountpoint -q "$mount_path"; then
     mkdir -p "$mount_path"
-    mount "/dev/mapper/$container_name" "$mount_path"
+    mount "/dev/mapper/$label" "$mount_path"
   fi
 }
 
@@ -39,7 +39,7 @@ function umount_device(){
 }
 
 function is_running(){
-  if [[ ! $(machinectl --property=State show "$container_name" 2> /dev/null) = "State=running" ]]; then
+  if [[ ! $(machinectl --property=State show "$label" 2> /dev/null) = "State=running" ]]; then
     return 1
   fi
 }
@@ -59,7 +59,7 @@ function notify_status(){
 
 function kill_container(){
   if is_running; then
-    machinectl -q terminate "$container_name"
+    machinectl -q terminate "$label"
     # wait for other session to properly shut down
     # shellcheck disable=SC2046
     while [[ $(pgrep -cf "$0") -gt 1 ]]; do
@@ -101,7 +101,7 @@ function launch_container(){
     --property="DeviceAllow=char-usb_device rwm" \
     --property="DeviceAllow=char-input rwm" \
     --property="DeviceAllow=char-drm rwm" \
-    --image=/dev/mapper/$container_name "$@"
+    --image=/dev/mapper/$label "$@"
 
   xhost -local:
 }
