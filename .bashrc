@@ -150,7 +150,7 @@ function whoowns(){
 
 # list commands which are provided by package
 function listprogs(){
-  pacman -Qlq "$@" | fgrep "${PATH//:/$'\n'}" | sed -rn 's|.*/([^/]+)$|\1|p'
+  pacman -Qlq "$@" | grep -F "${PATH//:/$'\n'}" | sed -rn 's|.*/([^/]+)$|\1|p'
 }
 
 # find fonts which contain character(s)
