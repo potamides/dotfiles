@@ -102,7 +102,7 @@ def configure(repl):
     repl.wrap_lines = True
 
     # Mouse support.
-    repl.enable_mouse_support = True
+    repl.enable_mouse_support = False
 
     # Complete while typing. (Don't require tab before the
     # completion menu is shown.)

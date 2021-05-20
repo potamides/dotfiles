@@ -3,10 +3,10 @@
 ## Set Environment Variables
 # -----------------------------------------------------------------------------
 
-export BROWSER=firefox
-export EDITOR=nvim
-export VISUAL=$EDITOR
-export TERMCMD=termite
+export BROWSER="firefox"
+export EDITOR="nvim"
+export VISUAL="$EDITOR"
+export TERMCMD="termite"
 
 # merge program for pacdiff
 export DIFFPROG="$EDITOR -d"
@@ -15,19 +15,20 @@ export DIFFPROG="$EDITOR -d"
 export PATH="$PATH:$HOME/.local/bin:$HOME/.luarocks/bin"
 
 # run askpass to enter password when not launched from a terminal
-export SUDO_ASKPASS=/usr/lib/git-core/git-gui--askpass
-export SSH_ASKPASS=$SUDO_ASKPASS
+export SUDO_ASKPASS="/usr/lib/git-core/git-gui--askpass"
+export SSH_ASKPASS="$SUDO_ASKPASS"
 
 # get qt5 apps to use native gtk style (through qt5-styleplugins)
-export QT_QPA_PLATFORMTHEME=gtk2
-export DESKTOP_SESSION=gnome
+export QT_QPA_PLATFORMTHEME="gtk2"
+export DESKTOP_SESSION="gnome"
 
-# change path for configuration files for some programs
+# set path to configuration files for some programs
 export WEECHAT_HOME="$HOME/.config/weechat"
 export GTK2_RC_FILES="$HOME/.config/gtk-2.0/gtkrc"
+export PYTHONSTARTUP="$HOME/.config/python/config.py"
 
 # force ptpython to use ansi colors everywhere
-export PROMPT_TOOLKIT_COLOR_DEPTH=DEPTH_4_BIT
+export PROMPT_TOOLKIT_COLOR_DEPTH="DEPTH_4_BIT"
 
 # always use ripgrep with fzf
 export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case --glob \
