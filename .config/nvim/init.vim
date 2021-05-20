@@ -41,6 +41,9 @@ set virtualedit=block
 " use system python 3 for virtualenvs
 let g:python3_host_prog = '/usr/bin/python3'
 
+" highlight these languages in markdown codeblocks
+let g:markdown_fenced_languages = ['sh', 'python', 'lua']
+
 " jump to the last position when reopening a file
 autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
@@ -318,6 +321,8 @@ noremap <silent> <A-p> :<C-u>CocList --number-select --no-sort --interactive gre
 
 " TEX
 let g:tex_flavor = "latex"
+let g:tex_fold_enabled=1
+
 au BufReadPost,BufNewFile *.tex nnoremap <silent> <leader>bn :<C-u>CocCommand latex.Build<cr>
 au BufReadPost,BufNewFile *.tex nnoremap <silent> <leader>cn :<C-u>CocCommand latex.BuildCancel<cr>
 au BufReadPost,BufNewFile *.tex nnoremap <silent> <leader>fs :<C-u>CocCommand latex.ForwardSearch<cr>
