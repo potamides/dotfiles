@@ -16,16 +16,16 @@ boldblue='\e[1;34m'
 boldred='\e[1;31m'
 reset='\e[m'
 # echo return code on failure
-returncode="\`exit=\$?; [ \$exit -ne 0 ] && echo \"$boldred\$exit \"\`"
+returncode="\$(exit=\$?; [ \$exit -ne 0 ] && echo \"$boldred\$exit \")"
 # root user is red, other users are blue
-user="\`[ \$EUID -eq 0 ] && echo \"$boldred\"\u || echo \"$boldblue\"\u\`"
+user="\$([ \$EUID -eq 0 ] && echo \"$boldred\"\u || echo \"$boldblue\"\u)"
 dir="$reset@\h \w"
 
 # prompt stuff that should come before and after git integration
 firstline=$returncode$user$dir
 secondline='\n\$ '
 
-# integrate git into prompt with PROMPT_COMMAND
+# integrate git into prompt via PROMPT_COMMAND
 if [[ -r /usr/share/git/git-prompt.sh ]]; then
   source /usr/share/git/git-prompt.sh
   GIT_PS1_SHOWCOLORHINTS=1
@@ -43,7 +43,7 @@ unset boldblue boldred reset returncode user dir firstline secondline
 shopt -s histappend                 # append history on exit, don't overwrite
 shopt -s lithist                    # Save multi-line cmd with embedded newline
 shopt -s checkwinsize               # Update col/lines after commands
-shopt -s checkjobs                  # deferr exit if jobs are running
+shopt -s checkjobs                  # defer exit if jobs are running
 shopt -s autocd                     # Can change dir without `cd`
 shopt -s cdspell                    # Fixes minor spelling errors in cd paths
 shopt -s no_empty_cmd_completion    # Stops empty line tab comp
@@ -88,11 +88,10 @@ alias apac='yay -a'
 alias pacli='pacman -Q | wc -l'
 alias pacro='pacman -Qtd > /dev/null && sudo pacman -Rns $(pacman -Qtdq)'
 alias calc='ptpython -i <(echo "from math import *")'
-alias todo='$EDITOR ~/Documents/TODO.md'
+alias todo='$EDITOR +sil\ /^##\ $(date +%A) +noh +norm\ zz ~/Documents/TODO.md'
 alias server='python3 -m http.server 9999'
 alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 alias rec='ffmpeg -f x11grab -i $DISPLAY -f pulse -i 0 -y'
-alias {,n}vim="$(type -p nvim || type -p vim)"
 alias backup="sudo snap-sync --config home --noconfirm --UUID \
   \"\$(lsblk -no UUID /dev/disk/by-label/backup)\""
 
@@ -182,8 +181,8 @@ if [[ -r /usr/share/fzf/key-bindings.bash && \
   source /usr/share/fzf/completion.bash
 
   # syntax highlight matches and preview directories
-  FZF_COMPLETION_OPTS="--preview '(pygmentize -f terminal {} \
-    2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
+  FZF_COMPLETION_OPTS="--preview '{ pygmentize -f terminal {} || cat {} ||
+    tree -C {}; } 2> /dev/null | head -200'"
 
   # To apply the command to CTRL-T as well
   FZF_CTRL_T_OPTS="$FZF_COMPLETION_OPTS"
@@ -199,22 +198,22 @@ if [[ -r /usr/share/fzf/key-bindings.bash && \
 
   # Use rg instead of the default find command for listing path candidates.
   function _fzf_compgen_path(){
-    eval "$FZF_DEFAULT_COMMAND" "${1-.}" 2> /dev/null
+    eval "$FZF_DEFAULT_COMMAND" '"${1-.}"' 2> /dev/null
   }
 
   # Use rg to generate the list for directory completion
   function _fzf_compgen_dir(){
-    eval "$FZF_DEFAULT_COMMAND" --null "${1-.}" 2> /dev/null |
+    eval "$FZF_DEFAULT_COMMAND" --null '"${1-.}"' 2> /dev/null |
       xargs -0 dirname | awk '!h[$0]++'
   }
 
   # Functions which make use of fzf but are not internally used by it:
   # Searching file contents with fzf and ripgrep
   function fif(){
-    eval "${FZF_DEFAULT_COMMAND/--files}" -l --no-messages "$@" |
+    eval "${FZF_DEFAULT_COMMAND/--files}" -l --no-messages '"${@}"' |
       fzf --exit-0 --multi --preview "pygmentize -f terminal {} 2> /dev/null |
-      rg match:bg:yellow --ignore-case --pretty --context 10 '${!#}' ||
-      rg --ignore-case --pretty --context 10 '${!#}' {}"
+      rg --ignore-case --pretty --context 10 ${!#@Q} ||
+      rg --ignore-case --pretty --context 10 ${!#@Q} {}"
   }
 
   # Edit files found with fif in editor
