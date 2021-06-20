@@ -11,26 +11,34 @@ dnl ---------------------------------------------------------------------------
 
 dnl Add and configure servers
 dnl ---------------------------------------------------------------------------
+/server add liberachat                   "irc.libera.chat"
+/set irc.server.liberachat.addresses     "irc.libera.chat/6697"
+/set irc.server.liberachat.ssl           "on"
+/set irc.server.liberachat.nicks         KEEPASS(Libera.Chat, Nicks)
+/set irc.server.liberachat.sasl_username KEEPASS(Libera.Chat, Username)
+/secure set liberachat_pw                KEEPASS(Libera.Chat, Password)
+/set irc.server.liberachat.sasl_password "${sec.data.liberachat_pw}"
+/set irc.server.liberachat.autoconnect   "on"
+/set irc.server.liberachat.autojoin      "#archlinux,#bash,#neovim,##japanese"
+
+/server add oftc                   "irc.oftc.net"
+/set irc.server.oftc.addresses     "irc.oftc.net/6697"
+/set irc.server.oftc.ssl           "on"
+/set irc.server.oftc.nicks         KEEPASS(OFTC, Nicks)
+/secure set oftc_pw                KEEPASS(OFTC, Password)
+/set irc.server.oftc.command_delay "5"
+/set irc.server.oftc.command       "/msg NickServ IDENTIFY ${sec.data.oftc_pw}"
+/set irc.server.oftc.autoconnect   "on"
+/set irc.server.oftc.autojoin      "#awesome"
+
 /server add freenode                   "chat.freenode.net"
 /set irc.server.freenode.addresses     "chat.freenode.net/6697"
-/set irc.server.freenode.autoconnect   "on"
 /set irc.server.freenode.ssl           "on"
 /set irc.server.freenode.nicks         KEEPASS(Freenode, Nicks)
 /set irc.server.freenode.sasl_username KEEPASS(Freenode, Username)
 /secure set freenode_pw                KEEPASS(Freenode, Password)
 /set irc.server.freenode.sasl_password "${sec.data.freenode_pw}"
 /filter addreplace bot                 irc.freenode.* nick_Feed[bot] *
-/set irc.server.freenode.autojoin      "#archlinux,#bash,#neovim,##japanese"
-
-/server add oftc                   "irc.oftc.net"
-/set irc.server.oftc.addresses     "irc.oftc.net/6697"
-/set irc.server.oftc.autoconnect   "on"
-/set irc.server.oftc.ssl           "on"
-/set irc.server.oftc.nicks         KEEPASS(OFTC, Nicks)
-/secure set oftc_pw                KEEPASS(OFTC, Password)
-/set irc.server.oftc.command_delay "5"
-/set irc.server.oftc.command       "/msg NickServ IDENTIFY ${sec.data.oftc_pw}"
-/set irc.server.oftc.autojoin      "#awesome"
 
 /connect -auto
 
@@ -52,8 +60,8 @@ dnl Vimode
 /set plugins.var.python.vimode.mode_indicator_normal_color_bg  "default"
 /set plugins.var.python.vimode.mode_indicator_replace_color_bg "default"
 /set plugins.var.python.vimode.mode_indicator_search_color_bg  "default"
-/set plugins.var.python.vimode.mode_indicator_prefix           "["    
-/set plugins.var.python.vimode.mode_indicator_suffix           "]"    
+/set plugins.var.python.vimode.mode_indicator_prefix           "["
+/set plugins.var.python.vimode.mode_indicator_suffix           "]"
 /set plugins.var.python.vimode.search_vim "on"
 /set weechat.bar.input.items "mode_indicator+[input_prompt]+(away),dnl
 [input_search],[input_paste],input_text,[vi_buffer]"
