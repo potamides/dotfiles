@@ -57,8 +57,8 @@ theme.fg_focus   = theme.fg1
 theme.fg_urgent  = theme.lightorange
 
 --  Borders
-theme.useless_gap       = 0
-theme.gap_single_client = false
+theme.useless_gap       = dpi(10)
+theme.gap_single_client = true
 theme.border_width      = dpi(3)
 theme.border_normal     = theme.bg0_h
 theme.border_focus      = theme.bg4
@@ -140,6 +140,7 @@ theme.layout_cornernw   = theme_path .. "layouts/cornernw.svg"
 theme.layout_cornerne   = theme_path .. "layouts/cornerne.svg"
 theme.layout_cornersw   = theme_path .. "layouts/cornersw.svg"
 theme.layout_cornerse   = theme_path .. "layouts/cornerse.svg"
+theme.layout_centerwork = theme_path .. "layouts/centerwork.svg"
 
 -- Titlebar
 theme.titlebar_ontop_button_focus_active    = theme_path .. "titlebar/ontop_select.svg"

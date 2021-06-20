@@ -3,7 +3,8 @@ local utils = {
   widget    = require("utils.widget"),
   shape     = require("utils.shape"),
   wallpaper = require("utils.wallpaper"),
-  surface   = require("utils.surface")
+  surface   = require("utils.surface"),
+  layout    = require("utils.layout")
 }
 
 return utils

@@ -76,12 +76,13 @@ local modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
+  utils.layout.centerwork,
   awful.layout.suit.tile,
   awful.layout.suit.tile.bottom,
   awful.layout.suit.fair,
   awful.layout.suit.spiral,
   awful.layout.suit.corner.nw,
-  awful.layout.suit.max.fullscreen,
+  awful.layout.suit.max,
 }
 
 -- }}}
@@ -269,7 +270,17 @@ awful.screen.connect_for_each_screen(function(s)
   set_wallpaper(s)
 
   -- Taglist
-  awful.tag(tags, s, awful.layout.layouts[1])
+  local ultrawide = s.geometry.width / s.geometry.height > 2
+  --awful.tag(tags, s, awful.layout.layouts[ultrawide and 2 or 1])
+  for index, tag in ipairs(tags) do
+    awful.tag.add(tag, {
+      layout   = awful.layout.layouts[ultrawide and 1 or 2],
+      gap      = ultrawide and beautiful.useless_gap or 0,
+      screen   = s,
+      selected = index == 1,
+    })
+  end
+
   -- Create an imagebox widget which will contain an icon indicating which layout we're using.
   -- We need one layoutbox per screen.
   s.mylayoutbox = awful.widget.layoutbox(s)
@@ -295,101 +306,101 @@ awful.screen.connect_for_each_screen(function(s)
 
 -- Wibar
 -------------------------------------------------------------------------------
-    -- Create the wibar
-    s.mywibox = awful.wibar({position = "top", screen = s, height = beautiful.wibar_height})
-    --global titlebar title container
-    s.title_container = wibox.container.margin()
-    -- global titlebar buttons contianer
-    s.buttonsbox_container = wibox.container.margin()
+  -- Create the wibar
+  s.mywibox = awful.wibar({position = "top", screen = s, height = beautiful.wibar_height})
+  --global titlebar title container
+  s.title_container = wibox.container.margin()
+  -- global titlebar buttons contianer
+  s.buttonsbox_container = wibox.container.margin()
 
-    -- add widgets to the wibar
-    s.mywibox:setup {
-        { -- Left widgets
-            mylauncher,
-            s.mytaglist,
-            mpd.widget,
-            spacing = beautiful.negative_gap,
-            layout = wibox.layout.fixed.horizontal,
+  -- add widgets to the wibar
+  s.mywibox:setup {
+    { -- Left widgets
+      mylauncher,
+      s.mytaglist,
+      mpd.widget,
+      spacing = beautiful.negative_gap,
+      layout = wibox.layout.fixed.horizontal,
+    },
+    { -- Middle widgets
+      s.title_container,
+      layout = wibox.layout.align.horizontal,
+    },
+    { -- Right widgets
+      wibox.container.margin(modalawesome.sequence, beautiful.gap, beautiful.big_gap),
+
+      -- Internet Widget
+      utils.widget.compose{
+        {
+          net_widget.text,
+          color = beautiful.fg_normal,
+          shape = utils.shape.parallelogram.right
         },
-        { -- Middle widgets
-            s.title_container,
-            layout = wibox.layout.align.horizontal,
+        {
+          net_widget.image,
+          color = beautiful.bg_focus,
+          shape = utils.shape.parallelogram.right,
+          margin = beautiful.gap,
+        }
+      },
+
+      -- Audio Volume
+      utils.widget.compose{
+        {
+          volume.text,
+          color = beautiful.fg_normal,
+          shape = utils.shape.parallelogram.right
         },
-        { -- Right widgets
-            wibox.container.margin(modalawesome.sequence, beautiful.gap, beautiful.big_gap),
+        {
+          volume.image,
+          color = beautiful.bg_focus,
+          shape = utils.shape.parallelogram.right,
+          margin = beautiful.gap,
+        }
+      },
 
-            -- Internet Widget
-            utils.widget.compose{
-              {
-                net_widget.text,
-                color = beautiful.fg_normal,
-                shape = utils.shape.parallelogram.right
-              },
-              {
-                net_widget.image,
-                color = beautiful.bg_focus,
-                shape = utils.shape.parallelogram.right,
-                margin = beautiful.gap,
-              }
-            },
-
-            -- Audio Volume
-            utils.widget.compose{
-              {
-                volume.text,
-                color = beautiful.fg_normal,
-                shape = utils.shape.parallelogram.right
-              },
-              {
-                volume.image,
-                color = beautiful.bg_focus,
-                shape = utils.shape.parallelogram.right,
-                margin = beautiful.gap,
-              }
-            },
-
-            -- Battery Indicator
-            utils.widget.compose{
-              {
-                battery.text,
-                color = beautiful.fg_normal,
-                shape = utils.shape.parallelogram.right
-              },
-              {
-                battery.image,
-                color = beautiful.bg_focus,
-                shape = utils.shape.parallelogram.right,
-                margin = beautiful.gap,
-              }
-            },
-
-            -- Clock / Layout / Global Titlebar Buttons
-            utils.widget.compose{
-              {
-                mytextclock,
-                color = beautiful.fg_normal,
-                shape = utils.shape.parallelogram.right
-              },
-              {
-                {
-                  s.mylayoutbox,
-                  s.buttonsbox_container,
-                  spacing = beautiful.small_gap,
-                  layout = wibox.layout.fixed.horizontal
-                },
-                color = beautiful.bg_focus,
-                shape = utils.shape.rightangled.right,
-                margin = beautiful.gap,
-              }
-            },
-
-            spacing = beautiful.negative_gap,
-            fill_space = true,
-            layout = wibox.layout.fixed.horizontal,
+      -- Battery Indicator
+      utils.widget.compose{
+        {
+          battery.text,
+          color = beautiful.fg_normal,
+          shape = utils.shape.parallelogram.right
         },
-        expand = "none",
-        layout = wibox.layout.align.horizontal,
-    }
+        {
+          battery.image,
+          color = beautiful.bg_focus,
+          shape = utils.shape.parallelogram.right,
+          margin = beautiful.gap,
+        }
+      },
+
+      -- Clock / Layout / Global Titlebar Buttons
+      utils.widget.compose{
+        {
+          mytextclock,
+          color = beautiful.fg_normal,
+          shape = utils.shape.parallelogram.right
+        },
+        {
+          {
+            s.mylayoutbox,
+            s.buttonsbox_container,
+            spacing = beautiful.small_gap,
+            layout = wibox.layout.fixed.horizontal
+          },
+          color = beautiful.bg_focus,
+          shape = utils.shape.rightangled.right,
+          margin = beautiful.gap,
+        }
+      },
+
+      spacing = beautiful.negative_gap,
+      fill_space = true,
+      layout = wibox.layout.fixed.horizontal,
+    },
+    expand = "none",
+    layout = wibox.layout.align.horizontal,
+  }
 end)
 
 -- }}}
@@ -655,7 +666,7 @@ awful.rules.rules = {
             buttons = clientbuttons,
             screen = awful.screen.preferred,
             placement = awful.placement.no_overlap+awful.placement.no_offscreen,
-            --size_hints_honor = false,
+            size_hints_honor = false,
         }
     },
 
@@ -677,11 +688,11 @@ awful.rules.rules = {
       properties = { ontop = true, sticky = true }},
 
     -- askpass has wrong height on multi-screen setups somehow
-    { rule = { instance = "git-gui--askpass" },
+    { rule = { class = "Git-gui--askpass" },
       properties = { height = 200 }},
 
     -- some applications like password prompt for keepassxc autotype should be floating and centered
-    { rule_any = { name = { "Unlock Database - KeePassXC" }, instance = { "git-gui--askpass" }},
+    { rule_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }, class = { "Git-gui--askpass" }},
       properties = { floating = true, placement = awful.placement.centered }},
 
     -- always put ncmpcpp on last tag
@@ -691,6 +702,10 @@ awful.rules.rules = {
     -- display keyboard (and mouse) status nicely
     { rule = { class = "Key-mon" },
       properties = { placement = awful.placement.bottom, sticky = true, floating = true, focusable = false }},
+
+    -- honor size hints of mpv video player
+    { rule = { class = "mpv" },
+      properties = { size_hints_honor = true }},
 
     -- place conky in background on primary screen
     { rule = { class = "conky" },
@@ -714,12 +729,16 @@ awful.rules.rules = {
 
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", function(c)
-    if awesome.startup and
-        not c.size_hints.user_position
-        and not c.size_hints.program_position then
-        -- Prevent clients from being unreachable after screen count changes.
-        awful.placement.no_offscreen(c)
-    end
+  if awesome.startup and
+    not c.size_hints.user_position
+    and not c.size_hints.program_position then
+    -- Prevent clients from being unreachable after screen count changes.
+    awful.placement.no_offscreen(c)
+  else
+    -- Set the windows at the slave,
+    -- i.e. put it at the end of others instead of setting it master.
+    awful.client.setslave(c)
+  end
 end)
 
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
@@ -759,13 +778,14 @@ end)
 
 -- smart border
 -------------------------------------------------------------------------------
-local function update_borders(s, layout_name)
-  local max = layout_name == "max"
+local function update_borders(s, t)
+  local max = awful.layout.get(s).name == "max"
   local only_one = #s.tiled_clients == 1 -- use tiled_clients so that other floating windows don't affect the count
+  local nogap = t.gap == 0 or (only_one and not t.gap_single_client)
 
   -- but iterate over clients instead of tiled_clients as tiled_clients doesn't include maximized windows
   for _, c in pairs(s.clients) do
-    if (max or only_one) and not c.floating or c.maximized or not c.focusable then
+    if (max or only_one) and nogap and not c.floating or c.maximized or not c.focusable then
       c.border_width = 0
     else
       c.border_width = beautiful.border_width
@@ -775,13 +795,13 @@ end
 
 local function update_borders_by_client(c)
   if c.screen and c.screen.selected_tag then
-    update_borders(c.screen, c.screen.selected_tag.layout.name)
+    update_borders(c.screen, c.screen.selected_tag)
   end
 end
 
 local function update_borders_by_tag(t)
   if t.screen then
-    update_borders(t.screen, t.layout.name)
+    update_borders(t.screen, t)
   end
 end
 
@@ -879,7 +899,6 @@ client.connect_signal("unfocus", buttons_remove)
 
 -- turn titlebar on when client is floating
 -------------------------------------------------------------------------------
-
 client.connect_signal("property::floating", function(c)
   if c.floating and not (c.maximized or c.requests_no_titlebar) then
     awful.titlebar.show(c, "bottom")
