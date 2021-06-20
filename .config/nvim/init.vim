@@ -44,6 +44,12 @@ let g:python3_host_prog = '/usr/bin/python3'
 " highlight these languages in markdown codeblocks
 let g:markdown_fenced_languages = ['sh', 'python', 'lua']
 
+" highlight options added by bash in readline files
+let readline_has_bash = 1
+
+" error flagging in bash doesn't work well
+let g:sh_no_error = 1
+
 " jump to the last position when reopening a file
 autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
@@ -156,9 +162,9 @@ lua require'colorizer'.setup({'*'},{names = false})
 set noshowmode
 
 function! LightlineFilename()
-  let filename = expand('%:t') !=# '' ? expand('%:t') : '*'
-  let modified = (&modifiable && !&readonly) ? &modified ? ' ✎' : '' : ' '
-  return WebDevIconsGetFileTypeSymbol() . ' ' . filename . modified
+  let filename = get(expand('%:t', 0, 1), 0, "*")
+  let suffix = (&modifiable && !&readonly) ? &modified ? ' ✎' : '' : ' '
+  return WebDevIconsGetFileTypeSymbol() . ' ' . filename . suffix
 endfunction
 
 let g:lightline = {
