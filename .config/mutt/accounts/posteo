@@ -15,8 +15,8 @@ set postponed = "+Drafts"
 set record    = "+Sent"
 set trash     = "+Trash"
 
-# recognize filter addresses
-alternates '^'$my_posteo_user'\+.*@posteo\.net$'
+# recognize filter addresses and aliases
+alternates '^'$my_posteo_user'\+.*@posteo\.net$' '^potamides@posteo\.net$'
 
 # check this mailboxes for new messages periodically & display them in sidebar
 mailboxes +INBOX +Junk +Drafts +Sent +Archive +Trash
