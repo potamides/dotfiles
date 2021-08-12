@@ -1,4 +1,9 @@
-! -- gruvbox colors -- !
+!! gruvbox colors for all Xlib applications
+! -----------------------------------------------------------------------------
+
+*background: #282828
+*foreground: #ebdbb2
+
 ! black + darkGrey
 *color0:  #282828
 *color8:  #928374
@@ -61,20 +66,59 @@
 *color248: #bdae93
 *color250: #d5c4a1
 
-! -- colors for tk windowing toolkit (and others) -- !
-*background: #282828
-*foreground: #ebdbb2
+!! git askpass specific colors
+! -----------------------------------------------------------------------------
 
-*selectBackground: #32302f
-*selectForeground: #f2e5bc
+git-gui--askpass*selectBackground: #32302f
+git-gui--askpass*selectForeground: #f2e5bc
 
-*activeBackground: #3c3836
-*activeForeground: #fbf1c7
+git-gui--askpass*activeBackground: #3c3836
+git-gui--askpass*activeForeground: #fbf1c7
 
-*insertBackground:    #504945
-*highlightBackground: #665c54
-*disabledForeground:  #d5c4a1
+git-gui--askpass*insertBackground:    #504945
+git-gui--askpass*highlightBackground: #665c54
+git-gui--askpass*disabledForeground:  #d5c4a1
 
-*selectColor:    #7c6f64
-*highlightColor: #7c6f64
-*troughColor:    #928374
+git-gui--askpass*selectColor:    #7c6f64
+git-gui--askpass*highlightColor: #7c6f64
+git-gui--askpass*troughColor:    #928374
+
+!! xterm specific options
+! -----------------------------------------------------------------------------
+
+! general options
+xterm*termName:     xterm-256color
+xterm*bellIsUrgent: true
+xterm*fullscreen:   never
+xterm*buffered:     true
+
+! font and cursor
+xterm*faceName:     monospace
+xterm*faceSize:     14
+xterm*pointerShape: left_ptr
+xterm*cursorTheme:  Adwaita
+
+! scrolling behavior
+xterm*savelines:       10000
+xterm*scrollKey:       true
+xterm*alternateScroll: true
+xterm*scrollTtyOutput: false
+xterm*multiScroll:     true
+
+! text selection
+xterm*highlightSelection: true
+xterm*trimSelection:      true
+xterm*cutNewLine:         false
+
+! select urls on double click
+xterm*charClass: 33:48,35:48,37-38:48,43:48,45-47:48,58:48,61:48,63-64:48,126:48
+
+! custom keybindings
+xterm*vt100.translations: #override \
+  Ctrl Shift <Btn1Up>: exec-formatted("xdg-open '%t'", SELECT) select-end() \n\
+  Ctrl Shift <Key>T:   spawn-new-terminal() \n\
+  Ctrl Shift <Key>V:   insert-selection(CLIPBOARD) \n\
+  Ctrl Shift <Key>C:   copy-selection(CLIPBOARD) \n\
+  Ctrl <Key> minus:    smaller-vt-font() \n\
+  Ctrl <Key> plus:     larger-vt-font() \n\
+  Ctrl <Key> 0:        set-vt-font(d)
