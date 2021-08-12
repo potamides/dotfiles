@@ -2,7 +2,7 @@
 set clipboard=unnamedplus
 
 " Maintain undo history between sessions
-set undofile 
+set undofile
 
 " Enable Mouse
 set mouse=a
@@ -38,6 +38,9 @@ set colorcolumn=80,120
 " position cursor in visual block mode where there is no actual character
 set virtualedit=block
 
+" when wrap is off use indicator if line continues
+set list listchars+=precedes:<,extends:>
+
 " use system python 3 for virtualenvs
 let g:python3_host_prog = '/usr/bin/python3'
 
@@ -59,6 +62,9 @@ autocmd FileType mail setlocal formatoptions+=w spell spelllang=en_us,de_de,cjk
 
 " Open new terminals directly in insert mode
 autocmd TermOpen * startinsert
+
+" don't wrap text when line is shorter than 80 chars 
+autocmd VimResized,VimEnter * if (&columns < 80) | set nowrap | else | set wrap | endif
 
 " Open init.vim command
 command! VimConfig :e $MYVIMRC
@@ -111,10 +117,10 @@ augroup numbertoggle
     "Display relative numbers when we gain focus
     " Display relative numbers when we leave insert mode
     autocmd FocusGained,WinEnter,InsertLeave * if &number==1 | setlocal relativenumber | endif
-    
+
     " Disable numbers for buffers with matching filetypes
     autocmd TermOpen,FileType term://*,defx setlocal nonumber
-    
+
     " Disable relative numbers for buffers with matching filetypes
     autocmd TermOpen,FileType term://*,defx,qf setlocal norelativenumber
 augroup END
