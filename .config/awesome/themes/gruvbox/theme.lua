@@ -10,8 +10,8 @@ local theme_assets = require("beautiful.theme_assets")
 local theme_path = awful.util.getdir("config").."/themes/gruvbox/"
 local theme = {}
 
-theme.font            = "DejaVu Sans 11"
-theme.revelation_font = "SauceCodePro Nerd Font 20"
+theme.font            = "sans-serif 11"
+theme.revelation_font = "monospace 20"
 theme.icon_theme      = "Papirus-Dark"
 
 -- crop to size where wallpaper repeats itself
