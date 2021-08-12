@@ -208,12 +208,12 @@ if [[ -r /usr/share/fzf/key-bindings.bash && \
   }
 
   # Functions which make use of fzf but are not internally used by it:
-  # Searching file contents with fzf and ripgrep
+  # Search file contents with fzf and ripgrep
   function fif(){
     eval "${FZF_DEFAULT_COMMAND/--files}" -l --no-messages '"${@}"' |
       fzf --exit-0 --multi --preview "pygmentize -f terminal {} 2> /dev/null |
-      rg --ignore-case --pretty --context 10 ${!#@Q} ||
-      rg --ignore-case --pretty --context 10 ${!#@Q} {}"
+      ${FZF_DEFAULT_COMMAND/--files} --pretty --context 10 -- ${!#@Q} ||
+      ${FZF_DEFAULT_COMMAND/--files} --pretty --context 10 -- ${!#@Q} {}"
   }
 
   # Edit files found with fif in editor
