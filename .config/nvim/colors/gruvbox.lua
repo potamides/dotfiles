@@ -20,6 +20,9 @@ lush(lush.extends{gruvbox}.with(function()
     SpellLocal {gruvbox.GruvboxAquaUnderline},
     SpellRare {gruvbox.GruvboxPurpleUnderline},
 
+    -- use same error highlighting as original gruvbox colorscheme
+    Error {gruvbox.GruvboxRed, gui = "bold,inverse"},
+
     -- prevent collision with colors used by gitsigns
     LspDiagnosticsDefaultHint {gruvbox.GruvboxPurple},
     LspDiagnosticsSignHint {gruvbox.GruvboxPurpleSign},
