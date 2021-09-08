@@ -113,14 +113,14 @@ color248 = #bdae93
 color250 = #d5c4a1
 
 [hints]
-font = SauceCodePro Nerd Font 12
-foreground = #ebdbb2
-background = #282828
-active_foreground = #d3869b
-active_background = #282828
-#padding = 2
+font = SauceCodePro Nerd Font 14
+foreground = #282828
+background = #fabd2f
+active_foreground = #282828
+active_background = #fe8019
 border = #282828
-#border_width = 0.5
-#roundness = 2.0
+padding = 0
+border_width = 0.0
+roundness = 0.0
 
 # vim: ft=dosini cms=#%s
