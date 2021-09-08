@@ -4,7 +4,7 @@
 # partially complete the word and show all possible completions
 set show-all-if-ambiguous on
 # insert the common prefix in menu-complete
-set menu-complete-display-prefix on 
+set menu-complete-display-prefix on
 # skip characters from completion that match characters after cursor position
 set skip-completed-text on
 # don't match files starting with .
@@ -47,12 +47,14 @@ $endif
 # keybindings for default keymap (vi-insert)
 # Up: search history starting with chars up to cursor position
 "\e[A": history-search-backward
+"\eOA": history-search-backward
 # Down: similar but other direction
 "\e[B": history-search-forward
+"\eOB": history-search-forward
 # step through list of completions
-TAB: menu-complete                  
+TAB: menu-complete
 # Shift-Tab: step in other direction
-"\e[Z": menu-complete-backward      
+"\e[Z": menu-complete-backward
 # Expand variables like ~ and $USER to their values
 "\C-a": shell-expand-line
 # perform pathname expansion on the word before point
@@ -60,8 +62,10 @@ TAB: menu-complete
 
 set keymap vi-command
 "\e[A": history-search-backward
-j: history-search-forward
-"\e[B": history-search-forward
+"\eOA": history-search-backward
 k: history-search-backward
-TAB: menu-complete                  
-"\e[Z": menu-complete-backward      
+"\e[B": history-search-forward
+"\eOB": history-search-forward
+j: history-search-forward
+TAB: menu-complete
+"\e[Z": menu-complete-backward
