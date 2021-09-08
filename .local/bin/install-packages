@@ -9,7 +9,7 @@
 ###############################################################################
 
 PKG=(
-  awesome ranger neovim tmux ncmpcpp qpdfview termite mutt weechat conky when
+  awesome ranger neovim tmux ncmpcpp qpdfview mutt weechat conky when
 
   # used by mutt & weechat
   keepassxc
@@ -18,7 +18,7 @@ PKG=(
   python-websocket-client
 
   # used by neovim
-  yarn python-pynvim xclip
+  texlab pyright lua-language-server xclip
 
   # used by awesome
   xorg-xinit papirus-icon-theme physlock scrot firefox redshift mpv
@@ -34,7 +34,7 @@ PKG=(
 )
 
 AUR=(
-  ptpython
+  ptpython termite
 
   # used by conky
   absolutely-proprietary
