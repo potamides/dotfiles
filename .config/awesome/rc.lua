@@ -652,7 +652,7 @@ modalawesome.init{
 
 -- }}}
 -------------------------------------------------------------------------------
--- {{{ Rules
+-- {{{ Rules & Filters
 -------------------------------------------------------------------------------
 
 -- Rules to apply to new clients (through the "manage" signal).
@@ -709,8 +709,8 @@ awful.rules.rules = {
 
     -- place conky in background on primary screen
     { rule = { class = "conky" },
-      properties = { focusable = false, screen = screen.primary, placement = awful.placement.restore,
-        new_tag = { hide = true, volatile = true }},
+      properties = { focusable = false, screen = function() return screen.primary end,
+        placement = awful.placement.restore, new_tag = { hide = true, volatile = true }},
       callback = function()
         if not awful.rules.conky_signals_connected then
           awful.rules.conky_signals_connected = true
@@ -721,6 +721,13 @@ awful.rules.rules = {
       end
       },
 }
+
+-- filter for qpdfview to prevent focus stealing after compiling latex documents
+awful.ewmh.add_activate_filter(function(c)
+    if c.class == "qpdfview" then
+      return false
+    end
+end, "ewmh")
 
 -- }}}
 -------------------------------------------------------------------------------
@@ -833,7 +840,7 @@ end)
 -------------------------------------------------------------------------------
 local function title_create(c)
   return wibox.widget {
-    markup = "<b>" .. (c.class or "client") .. "</b>",
+    markup = "<b>" .. (c.class:gsub("^.+%.", "") or "client") .. "</b>",
     align = "center",
     widget = wibox.widget.textbox,
   }
@@ -849,7 +856,7 @@ end
 
 local function title_update(c)
   if c.title then
-    c.title:set_markup("<b>" .. (c.class or "client") .. "</b>")
+    c.title:set_markup("<b>" .. (c.class:gsub("^.+%.", "") or "client") .. "</b>")
   end
 end
 
