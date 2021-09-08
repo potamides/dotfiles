@@ -113,6 +113,7 @@ fi
 # external alias completion, progcomp_alias shopt builtin sadly doesn't work
 # https://github.com/scop/bash-completion/issues/383
 if [[ -r /usr/share/bash-complete-alias/complete_alias ]]; then
+  COMPAL_AUTO_UNMASK=1
   source /usr/share/bash-complete-alias/complete_alias
   complete -F _complete_alias "${!BASH_ALIASES[@]}"
 fi
@@ -180,6 +181,11 @@ if [[ -r /usr/share/fzf/key-bindings.bash && \
   source /usr/share/fzf/key-bindings.bash
   source /usr/share/fzf/completion.bash
 
+  # fzf preserves previous completions, but this would break complete-alias
+  for cmd in "${!BASH_ALIASES[@]}"; do
+    unset "_fzf_orig_completion_$cmd"
+  done
+
   # syntax highlight matches and preview directories
   FZF_COMPLETION_OPTS="--preview '{ pygmentize -f terminal {} || cat {} ||
     tree -C {}; } 2> /dev/null | head -200'"
@@ -222,8 +228,11 @@ if [[ -r /usr/share/fzf/key-bindings.bash && \
   }
 fi
 
-## window title
+## window title and current working directory
 # -----------------------------------------------------------------------------
+
+# advise the terminal of the current working directory
+PROMPT_COMMAND+='printf "\e]7;file://%s%s\e\\" "$HOSTNAME" "$PWD";'
 
 # set window title to currently running command or running shell
 PROMPT_COMMAND+='[ -n "$BASH_COMMAND" ] && printf "\e]0;%s\a" "$SHELL";'
