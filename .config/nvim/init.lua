@@ -212,7 +212,7 @@ packer.autostartup{{
   {
     "ellisonleao/gruvbox.nvim",
     requires = "rktjmp/lush.nvim",
-    run = "git sparse-checkout set '*' '!/colors/*'"
+    run = "git sparse-checkout set lua"
   }
 }}
 
