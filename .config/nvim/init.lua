@@ -70,7 +70,6 @@ vim.g.maplocalleader = " "
 -- syntax related global variables
 vim.g.sh_no_error = true
 vim.g.readline_has_bash = true
-vim.g.tex_fold_enabled = true
 vim.g.tex_flavor = "latex"
 vim.g.markdown_fenced_languages = {"sh", "python", "lua"}
 
@@ -228,9 +227,22 @@ end
 
 -- Lightline
 -------------------------------------------------------------------------------
+local components = require("components")
+
 local function vga_fallback(regular, fallback)
   return vim.g.vga_compatible and fallback or regular
 end
+
+-- signs for custom lightline components defined in lua/components.lua
+components.setup{
+  edit     = vga_fallback("✎", "+"),
+  lock     = vga_fallback("", "-"),
+  git      = vga_fallback("", "↨"),
+  error    = vga_fallback("", "‼"),
+  warning  = vga_fallback("", "!"),
+  filetype = vga_fallback(vim.fn.WebDevIconsGetFileTypeSymbol, "≡"),
+  spinner  = vga_fallback({'⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'}, {"-", "\\", "|", "/"})
+}
 
 vim.g.lightline = {
   -- use same colorscheme as the one loaded by neovim with sensible fallback
@@ -238,14 +250,15 @@ vim.g.lightline = {
   -- register new components
   component = {
     lineinfo     = vga_fallback("", "↕") .. " %3l:%-2c",
-    fileencoding = '%{v:lua.vim.fn.lightline_narrow() ? "" : &fenc!=#""?&fenc:&enc}',
-    fileformat   = '%{v:lua.vim.fn.lightline_narrow() ? "" : &ff}',
+    fileencoding = string.format('%%{%s() ? "" : &fenc!=#""?&fenc:&enc}', components.string.narrow),
+    fileformat   = string.format('%%{%s() ? "" : &ff}', components.string.narrow),
   },
   component_function = {
-    filename  = "g:lightline_filename",
-    gitbranch = "g:lightline_gitbranch",
-    warnings  = "g:lightline_warnings",
-    errors    = "g:lightline_errors"
+    filename  = components.string.filename,
+    gitbranch = components.string.gitbranch,
+    progress  = components.string.progress,
+    warnings  = components.string.warnings,
+    errors    = components.string.errors
   },
   component_expand = {
     buffers = "lightline#bufferline#buffers",
@@ -260,44 +273,16 @@ vim.g.lightline = {
     buffers = true
   },
   component_visible_condition = {
-    fileencoding = "!v:lua.vim.fn.lightline_narrow()",
-    fileformat   = "!v:lua.vim.fn.lightline_narrow()",
+    fileencoding = string.format("!%s()", components.string.narrow),
+    fileformat   = string.format("!%s()", components.string.narrow)
   },
   -- modify statusline and tabline
   separator    = {left = "▌", right = "▐"},
   subseparator = {left = "│", right = "│"},
-  active       = {left = {{"mode", "paste"}, {"filename"}, {"gitbranch", "errors", "warnings"}}},
+  active       = {left = {{"mode", "paste"}, {"filename"}, {"progress", "gitbranch", "errors", "warnings"}}},
   tabline      = {left = {{"buffers"}}, right = {{"rtabs"}}},
-  tab          = {active = {"tabnum"}, inactive = {"tabnum"}},
+  tab          = {active = {"tabnum"}, inactive = {"tabnum"}}
 }
-
-function vim.fn.lightline_narrow()
-  return vim.fn.winwidth(0) < 95
-end
-
-function vim.g.lightline_filename()
-  local filename = vim.fn.expand("%:t", false, true)[1] or "*"
-  local edit, lock = vga_fallback(" ✎", " +"), vga_fallback(" ", " -")
-  local suffix = (vim.o.modifiable and not vim.o.readonly) and (vim.o.modified and edit or "") or lock
-  return vga_fallback(vim.fn.WebDevIconsGetFileTypeSymbol(), "≡") .. " " .. filename .. suffix
-end
-
-function vim.g.lightline_gitbranch()
-  if vim.fn.lightline_narrow() then
-    return ""
-  else
-    return vim.b.gitsigns_head and vga_fallback(" ", "↨ ") .. vim.b.gitsigns_head or ""
-  end
-end
-
-function vim.g.lightline_errors()
-    local errors = vim.lsp.diagnostic.get_count(0, "Error")
-    return errors > 0 and vga_fallback(" ", "‼ ") .. errors or ""
-end
-function vim.g.lightline_warnings()
-    local warnings = vim.lsp.diagnostic.get_count(0, "Warning")
-    return warnings > 0 and vga_fallback(" ", "! ") .. warnings or ""
-end
 
 vim.g["lightline#bufferline#unicode_symbols"] = not vim.g.vga_compatible
 vim.g["lightline#bufferline#enable_devicons"] = not vim.g.vga_compatible
@@ -306,14 +291,6 @@ vim.g["lightline#bufferline#clickable"]       = true
 -- the minimum number of buffers & tabs needed to automatically show the tabline
 vim.g["lightline#bufferline#min_buffer_count"] = 2
 vim.g["lightline#bufferline#min_tab_count"]    = 2
-
--- update diagnostics information inside lightline
-vim.cmd([[
-  augroup lightline_diagnostics
-    autocmd!
-    autocmd User LspDiagnosticsChanged call lightline#update()
-  augroup END
-]])
 
 -- Quick-Scope
 -------------------------------------------------------------------------------
