@@ -31,6 +31,9 @@ PKG=(
 
   # used by bash
   bash-completion fzf ripgrep
+
+  # terminal fonts
+  adobe-source-code-pro-fonts ttf-nerd-fonts-symbols
 )
 
 AUR=(
@@ -38,9 +41,6 @@ AUR=(
 
   # used by conky
   absolutely-proprietary
-
-  # used by termite
-  nerd-fonts-source-code-pro
 
   # used by mutt
   pandoc-bin mutt-ics
