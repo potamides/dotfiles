@@ -1,4 +1,4 @@
-!! gruvbox colors for all Xlib applications
+!! gruvbox colors for all xlib applications
 ! -----------------------------------------------------------------------------
 
 *background: #282828
@@ -66,7 +66,23 @@
 *color248: #bdae93
 *color250: #d5c4a1
 
-!! git askpass specific colors
+!! xft fonts
+!-------------------------------------------------------------------------------
+
+Xft.antialias:      true
+Xft.embeddedbitmap: false
+Xft.hinting:        true
+Xft.hintstyle:      hintslight
+Xft.lcdfilter:      lcddefault
+Xft.rgba:           rgb
+
+!! xcursor theme
+! -----------------------------------------------------------------------------
+
+Xcursor.theme: Adwaita
+Xcursor.size:  32
+
+!! git askpass theme
 ! -----------------------------------------------------------------------------
 
 git-gui--askpass*selectBackground: #32302f
@@ -83,7 +99,7 @@ git-gui--askpass*selectColor:    #7c6f64
 git-gui--askpass*highlightColor: #7c6f64
 git-gui--askpass*troughColor:    #928374
 
-!! xterm specific options
+!! xterm options
 ! -----------------------------------------------------------------------------
 
 ! general options
@@ -96,7 +112,6 @@ xterm*buffered:     true
 xterm*faceName:     monospace
 xterm*faceSize:     14
 xterm*pointerShape: left_ptr
-xterm*cursorTheme:  Adwaita
 
 ! scrolling behavior
 xterm*savelines:       10000
