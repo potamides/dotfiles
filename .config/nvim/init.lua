@@ -119,8 +119,8 @@ vim.cmd([[
 vim.cmd([[
   augroup number_toggle
     autocmd!
-    autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
-    autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
+    autocmd BufEnter,FocusGained,InsertLeave,TermLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
+    autocmd BufLeave,FocusLost,InsertEnter,TermEnter,WinLeave   * if &nu                  | set nornu | endif
   augroup END
 ]])
 
@@ -135,12 +135,16 @@ vim.cmd([[
 -- Commands
 -------------------------------------------------------------------------------
 
--- similar to autocmds, the lua interface for commands is also still work in progress
+-- similar to autocmds, the lua interface of commands is also still work in progress
 -- (see https://github.com/neovim/neovim/pull/11613)
 
 -- pretty print lua code with :Print <code>
 vim.cmd([[command! -complete=lua -nargs=* Print :lua print(vim.inspect(<args>))]])
 
+-- open new terminal at the bottom of the current tab
+vim.cmd([[command! -nargs=? Terminal :botright 12split | term <args>]])
+
+vim.cmd([[command! Run :!"%:p"]])              -- Execute current file
 vim.cmd([[command! Config :e $MYVIMRC]])       -- open config file with :Config
 vim.cmd([[command! Reload :luafile $MYVIMRC]]) -- reload config file with :Reload
 
@@ -177,12 +181,15 @@ set_keymap('<leader>f',  '<cmd>lua vim.lsp.buf.formatting()<CR>')
 -------------------------------------------------------------------------------
 local prefix = "LspDiagnosticsSign"
 
-vim.fn.sign_define{
-  { name = prefix .. "Error",       text = "▌", texthl = prefix .. "Error"},
-  { name = prefix .. "Warning",     text = "▌", texthl = prefix .. "Warning"},
-  { name = prefix .. "Hint",        text = "▌", texthl = prefix .. "Hint"},
-  { name = prefix .. "Information", text = "▌", texthl = prefix .. "Information"}
-}
+-- when not on the console set some nice lsp signs
+if not vim.g.vga_compatible then
+  vim.fn.sign_define{
+    { name = prefix .. "Error",       text = "▌", texthl = prefix .. "Error"},
+    { name = prefix .. "Warning",     text = "▌", texthl = prefix .. "Warning"},
+    { name = prefix .. "Hint",        text = "▌", texthl = prefix .. "Hint"},
+    { name = prefix .. "Information", text = "▌", texthl = prefix .. "Information"}
+  }
+end
 
 -- }}}
 -------------------------------------------------------------------------------
@@ -197,6 +204,7 @@ packer.autostartup{{
   "unblevable/quick-scope",
   "DarwinSenior/nvim-colorizer.lua",
   "neovim/nvim-lspconfig",
+  "tpope/vim-fugitive",
   {
     "lewis6991/gitsigns.nvim",
     requires = "nvim-lua/plenary.nvim"
@@ -310,11 +318,11 @@ local gitsigns = require("gitsigns")
 
 gitsigns.setup{
   signs = {
-    add = { hl = "GitSignsAdd", text = "▌" },
-    change = { hl = "GitSignsChange", text = "▌" },
-    delete = { hl = "GitSignsDelete", text = vga_fallback("▁", "▼")},
-    topdelete = { hl = "GitSignsDelete", text = vga_fallback("▔", "▲")},
-    changedelete = { hl = "GitSignsChange", text = "▬" },
+    add = { hl = "GitSignsAdd", text = vga_fallback("▌", "+")},
+    change = { hl = "GitSignsChange", text = vga_fallback("▌", "≈")},
+    delete = { hl = "GitSignsDelete", text = vga_fallback("▁", "v")},
+    topdelete = { hl = "GitSignsDelete", text = vga_fallback("▔", "^")},
+    changedelete = { hl = "GitSignsChange", text = vga_fallback("▬", "±")},
   }
 }
 

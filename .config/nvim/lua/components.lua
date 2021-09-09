@@ -79,13 +79,13 @@ end
 function comps.setup(signs)
   comps.signs = vim.tbl_extend("force", comps.signs, signs or {})
 
-  -- comps.string.* returns string representations of  comps.* methods in a
-  -- format that is callable by viml
+  -- components.string.* returns string representations of components.* methods
+  -- in a format that is callable by viml
   setmetatable(comps.string, {
     __index = function(table, key)
       if comps[key] and type(comps[key]) == "function" then
-        vim.g["lightline_" .. key] = comps[key]
-        table[key] = "g:lightline_" .. key
+        vim.g["_lightline_" .. key] = comps[key]
+        table[key] = "g:_lightline_" .. key
         return table[key]
       end
     end
