@@ -30,14 +30,15 @@ vim.opt.textwidth = 79
 vim.opt.colorcolumn = {80, 120}
 vim.opt.breakindent = true
 
--- list mode for horizontal scrolling
+-- set list chars for horizontal scrolling
 vim.opt.list = true
-vim.opt.listchars.precedes = "<"
-vim.opt.listchars.extends = ">"
+vim.opt.listchars:append{tab = "» ", precedes = "<", extends = ">"}
 
 -- setup built-in completion
-vim.opt.omnifunc = 'v:lua.vim.lsp.omnifunc'
 vim.opt.completeopt:append{"menuone", "noinsert"}
+vim.opt.complete:remove{"t"}
+vim.opt.omnifunc = 'v:lua.vim.lsp.omnifunc'             -- neovim internal lsp completion
+vim.opt.completefunc = 'v:lua.vim.luasnip.completefunc' -- custom snippet completion defined in plugin/luasnip.lua
 
 -- print line number in front of each line
 vim.opt.number = true
@@ -150,32 +151,35 @@ vim.cmd([[command! Reload :luafile $MYVIMRC]]) -- reload config file with :Reloa
 
 -- Mappings
 -------------------------------------------------------------------------------
-local function set_keymap(lhs, rhs, opts)
-  vim.api.nvim_set_keymap('n', lhs, rhs, vim.tbl_extend("error", {noremap=true, silent=true}, opts or {}))
+local opts = {noremap = true, silent = true}
+
+local function set_keymap(...)
+  vim.api.nvim_set_keymap(...)
 end
 
+
 -- navigate buffers like tabs (gt & gT)
-set_keymap("gb", '"<cmd>bnext " . v:count1 . "<CR>"', {expr = true})
-set_keymap("gB", '"<cmd>bprev " . v:count1 . "<CR>"', {expr = true})
+set_keymap("n", "gb", '"<cmd>bnext " . v:count1 . "<CR>"', {expr = true, unpack(opts)})
+set_keymap("n", "gB", '"<cmd>bprev " . v:count1 . "<CR>"', {expr = true, unpack(opts)})
 
 -- language server mappings
-set_keymap('gD',         '<cmd>lua vim.lsp.buf.declaration()<CR>')
-set_keymap('gd',         '<cmd>lua vim.lsp.buf.definition()<CR>')
-set_keymap('K',          '<cmd>lua vim.lsp.buf.hover()<CR>')
-set_keymap('gi',         '<cmd>lua vim.lsp.buf.implementation()<CR>')
-set_keymap('<C-k>',      '<cmd>lua vim.lsp.buf.signature_help()<CR>')
-set_keymap('<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>')
-set_keymap('<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>')
-set_keymap('<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>')
-set_keymap('<leader>D',  '<cmd>lua vim.lsp.buf.type_definition()<CR>')
-set_keymap('<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>')
-set_keymap('<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>')
-set_keymap('gr',         '<cmd>lua vim.lsp.buf.references()<CR>')
-set_keymap('<leader>e',  '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>')
-set_keymap('[d',         '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>')
-set_keymap(']d',         '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>')
-set_keymap('<leader>q',  '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>')
-set_keymap('<leader>f',  '<cmd>lua vim.lsp.buf.formatting()<CR>')
+set_keymap("n", 'gD',         '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+set_keymap("n", 'gd',         '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+set_keymap("n", 'K',          '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+set_keymap("n", 'gi',         '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+set_keymap("n", '<C-k>',      '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+set_keymap("n", '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+set_keymap("n", '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+set_keymap("n", '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+set_keymap("n", '<leader>D',  '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+set_keymap("n", '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+set_keymap("n", '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+set_keymap("n", 'gr',         '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+set_keymap("n", '<leader>e',  '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+set_keymap("n", '[d',         '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+set_keymap("n", ']d',         '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+set_keymap("n", '<leader>q',  '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+set_keymap("n", '<leader>f',  '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 
 -- Language Server Client
 -------------------------------------------------------------------------------
@@ -206,6 +210,10 @@ packer.autostartup{{
   "neovim/nvim-lspconfig",
   "tpope/vim-fugitive",
   {
+    "L3MON4D3/LuaSnip",
+    requires = "rafamadriz/friendly-snippets"
+  },
+  {
     "lewis6991/gitsigns.nvim",
     requires = "nvim-lua/plenary.nvim"
   },
@@ -219,6 +227,7 @@ packer.autostartup{{
   {
     "ellisonleao/gruvbox.nvim",
     requires = "rktjmp/lush.nvim",
+    -- we overwrite parts of gruvbox so make sure to only load library files
     run = "git sparse-checkout set lua"
   }
 }}
@@ -342,6 +351,26 @@ local lspconfig = require('lspconfig')
 
 -- debounce 'didChange' notifications to the server
 lspconfig.util.default_config.flags = {debounce_text_changes = 150}
+
+-- LuaSnip
+-------------------------------------------------------------------------------
+require("luasnip.loaders.from_vscode").lazy_load()
+
+opts = {silent = true, expr = true}
+
+-- Since we use a custom insert mode completion function for LuaSnip (see
+-- help-page for 'ins-completion' and 'completefunc' defined above), we use
+-- similar mappings for snippet expansion for a seamless experience.
+set_keymap("i", "<C-x><C-u>", "luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<C-x><C-u>'", opts)
+set_keymap("i", "<C-u>", "luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : '<C-u>'", opts)
+set_keymap("i", "<C-n>", "luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : '<C-n>'", opts)
+set_keymap("i", "<C-p>", "luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '<C-p>'", opts)
+
+opts = {silent = true, noremap = true}
+
+set_keymap("s", "<C-u>", "<cmd>lua require('luasnip').jump(1)<Cr>", opts)
+set_keymap("s", "<C-n>", "<cmd>lua require('luasnip').jump(1)<Cr>", opts)
+set_keymap("s", "<C-p>", "<cmd>lua require('luasnip').jump(-1)<Cr>", opts)
 
 -- }}}
 -- dnl vim: foldmethod=marker foldmarker=--\ {{{,--\ }}}
