@@ -724,9 +724,9 @@ awful.rules.rules = {
 
 -- filter for qpdfview to prevent focus stealing after compiling latex documents
 awful.ewmh.add_activate_filter(function(c)
-    if c.class == "qpdfview" then
-      return false
-    end
+  if c.class == "qpdfview" then
+    return false
+  end
 end, "ewmh")
 
 -- }}}
@@ -840,7 +840,7 @@ end)
 -------------------------------------------------------------------------------
 local function title_create(c)
   return wibox.widget {
-    markup = "<b>" .. (c.class:gsub("^.+%.", "") or "client") .. "</b>",
+    markup = "<b>" .. (c.class or "client"):gsub("^.+%.", "") .. "</b>",
     align = "center",
     widget = wibox.widget.textbox,
   }
@@ -856,7 +856,7 @@ end
 
 local function title_update(c)
   if c.title then
-    c.title:set_markup("<b>" .. (c.class:gsub("^.+%.", "") or "client") .. "</b>")
+    c.title:set_markup("<b>" .. (c.class or "client"):gsub("^.+%.", "") .. "</b>")
   end
 end
 
@@ -916,4 +916,4 @@ end)
 
 -- }}}
 
--- dnl vim: foldmethod=marker
+-- vim: foldmethod=marker
