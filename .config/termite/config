@@ -113,7 +113,7 @@ color248 = #bdae93
 color250 = #d5c4a1
 
 [hints]
-font = SauceCodePro Nerd Font 14
+font = monospace 14
 foreground = #282828
 background = #fabd2f
 active_foreground = #282828
