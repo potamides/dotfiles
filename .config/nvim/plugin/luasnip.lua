@@ -4,16 +4,17 @@
   'ins-completion' for details. After completion the snippet is expanded.
 --]]
 
-local luasnip = require("luasnip")
+-- lazy load LuaSnip, only useful when LuaSnip wasn't already loaded elsewhere
+local luasnip = setmetatable({}, {__index = function(_, key) return require("luasnip")[key] end})
 vim.luasnip = {}
 
 local function snippet2completion(snippet)
   local docstring = snippet:get_docstring()
   return {
-    word = snippet.trigger,
-    menu = snippet.name,
-    info = type(docstring) == "table" and table.concat(docstring, "\n") or docstring,
-    dup = true,
+    word      = snippet.trigger,
+    menu      = snippet.name,
+    info      = type(docstring) == "table" and table.concat(docstring, "\n") or docstring,
+    dup       = true,
     user_data = "luasnip"
   }
 end
@@ -25,7 +26,7 @@ function vim.luasnip.completefunc(findstart, base)
     return vim.fn.match(vim.fn.getline("."):sub(1, vim.fn.col(".")), '\\k*$')
   end
 
-  local snippets = vim.list_extend(vim.list_slice(luasnip.snippets.all), luasnip.snippets[vim.bo.filetype])
+  local snippets = vim.list_extend(vim.list_slice(luasnip.snippets.all), luasnip.snippets[vim.bo.filetype] or {})
   snippets = vim.tbl_filter(function(snippet) return vim.startswith(snippet.trigger, base) end, snippets)
   snippets = vim.tbl_map(snippet2completion, snippets)
   return snippets

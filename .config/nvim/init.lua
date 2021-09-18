@@ -1,7 +1,9 @@
 --[[
   Main Neovim configuration. Tries to be mostly language agnostic. Language
-  specific and buffer-local options are instead moved to corresponding
-  ftplugins.
+  specific and buffer-local options were moved to corresponding ftplugins in
+  the directory "ftplugin" instead. Also, larger chunks of coherent code were
+  moved into libraries in "lua" or plugins in "plugin" to not clutter the main
+  configuration file.
 --]]
 
 -------------------------------------------------------------------------------
@@ -74,7 +76,11 @@ vim.g.readline_has_bash = true
 vim.g.tex_flavor = "latex"
 vim.g.markdown_fenced_languages = {"sh", "python", "lua"}
 
-vim.g.netrw_browsex_viewer = "xdg-open"        -- define opener for 'gx' mapping
+-- setup netrw and viewer for 'gx' mapping
+vim.g.netrw_banner = 0
+vim.g.netrw_liststyle = 3
+vim.g.netrw_browsex_viewer = "xdg-open"
+
 vim.g.python3_host_prog = "/usr/bin/python3"   -- use system python (useful when working with virualenvs)
 vim.g.vga_compatible = vim.env.TERM == "linux" -- VGA textmode fallback (with CP437 character set) for legacy terminals
 
@@ -153,33 +159,35 @@ vim.cmd([[command! Reload :luafile $MYVIMRC]]) -- reload config file with :Reloa
 -------------------------------------------------------------------------------
 local opts = {noremap = true, silent = true}
 
-local function set_keymap(...)
+local function keymap(...)
   vim.api.nvim_set_keymap(...)
 end
 
-
 -- navigate buffers like tabs (gt & gT)
-set_keymap("n", "gb", '"<cmd>bnext " . v:count1 . "<CR>"', {expr = true, unpack(opts)})
-set_keymap("n", "gB", '"<cmd>bprev " . v:count1 . "<CR>"', {expr = true, unpack(opts)})
+keymap("n", "gb", '"<cmd>bnext " . v:count1 . "<cr>"', {expr = true, unpack(opts)})
+keymap("n", "gB", '"<cmd>bprev " . v:count1 . "<cr>"', {expr = true, unpack(opts)})
+
+-- works around an annoying netrw bug (see https://github.com/vim/vim/issues/4738)
+keymap("n", "gx", "<cmd>call netrw#BrowseX(netrw#GX(), 0)<cr>", opts)
 
 -- language server mappings
-set_keymap("n", 'gD',         '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-set_keymap("n", 'gd',         '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-set_keymap("n", 'K',          '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-set_keymap("n", 'gi',         '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-set_keymap("n", '<C-k>',      '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-set_keymap("n", '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-set_keymap("n", '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-set_keymap("n", '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-set_keymap("n", '<leader>D',  '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-set_keymap("n", '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-set_keymap("n", '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-set_keymap("n", 'gr',         '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-set_keymap("n", '<leader>e',  '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-set_keymap("n", '[d',         '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-set_keymap("n", ']d',         '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-set_keymap("n", '<leader>q',  '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-set_keymap("n", '<leader>f',  '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+keymap("n", 'gD',         '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
+keymap("n", 'gd',         '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+keymap("n", 'K',          '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+keymap("n", 'gi',         '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
+keymap("n", '<C-k>',      '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+keymap("n", '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<cr>', opts)
+keymap("n", '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<cr>', opts)
+keymap("n", '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<cr>', opts)
+keymap("n", '<leader>D',  '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
+keymap("n", '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+keymap("n", '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+keymap("n", 'gr',         '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+keymap("n", '<leader>e',  '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>', opts)
+keymap("n", '[d',         '<cmd>lua vim.lsp.diagnostic.goto_prev()<cr>', opts)
+keymap("n", ']d',         '<cmd>lua vim.lsp.diagnostic.goto_next()<cr>', opts)
+keymap("n", '<leader>q',  '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
+keymap("n", '<leader>f',  '<cmd>lua vim.lsp.buf.formatting()<cr>', opts)
 
 -- Language Server Client
 -------------------------------------------------------------------------------
@@ -188,10 +196,10 @@ local prefix = "LspDiagnosticsSign"
 -- when not on the console set some nice lsp signs
 if not vim.g.vga_compatible then
   vim.fn.sign_define{
-    { name = prefix .. "Error",       text = "▌", texthl = prefix .. "Error"},
-    { name = prefix .. "Warning",     text = "▌", texthl = prefix .. "Warning"},
-    { name = prefix .. "Hint",        text = "▌", texthl = prefix .. "Hint"},
-    { name = prefix .. "Information", text = "▌", texthl = prefix .. "Information"}
+    {name = prefix .. "Error",       text = "▌", texthl = prefix .. "Error"},
+    {name = prefix .. "Warning",     text = "▌", texthl = prefix .. "Warning"},
+    {name = prefix .. "Hint",        text = "▌", texthl = prefix .. "Hint"},
+    {name = prefix .. "Information", text = "▌", texthl = prefix .. "Information"}
   }
 end
 
@@ -203,35 +211,45 @@ local packer = require("autopacker")
 
 -- small, custom wrapper around packer.startup which installs packer
 -- automatically when it is missing
-packer.autostartup{{
-  "wbthomason/packer.nvim",
-  "unblevable/quick-scope",
-  "DarwinSenior/nvim-colorizer.lua",
-  "neovim/nvim-lspconfig",
-  "tpope/vim-fugitive",
+packer.autostartup{
   {
-    "L3MON4D3/LuaSnip",
-    requires = "rafamadriz/friendly-snippets"
+    "wbthomason/packer.nvim",
+    "unblevable/quick-scope",
+    "DarwinSenior/nvim-colorizer.lua",
+    "neovim/nvim-lspconfig",
+    "tpope/vim-fugitive",
+    {
+      'nvim-telescope/telescope.nvim',
+      requires = 'nvim-lua/plenary.nvim'
+    },
+    {
+      "lewis6991/gitsigns.nvim",
+      requires = "nvim-lua/plenary.nvim"
+    },
+    {
+      "L3MON4D3/LuaSnip",
+      requires = "rafamadriz/friendly-snippets"
+    },
+    {
+      "itchyny/lightline.vim",
+      requires = {
+        "mgee/lightline-bufferline",
+        "ryanoasis/vim-devicons"
+      }
+    },
+    {"morhetz/gruvbox",
+      -- install colorscheme as library so that we can easily patch it
+      run = "git mv -k colors library"
+    },
   },
-  {
-    "lewis6991/gitsigns.nvim",
-    requires = "nvim-lua/plenary.nvim"
-  },
-  {
-    "itchyny/lightline.vim",
-    requires = {
-      "mgee/lightline-bufferline",
-      "ryanoasis/vim-devicons"
+  config = {
+    git = {
+      subcommands = {
+        update = packer.config.git.subcommands.update .. " --autostash"
+      }
     }
-  },
-  {
-    "ellisonleao/gruvbox.nvim",
-    requires = "rktjmp/lush.nvim",
-    -- we overwrite parts of gruvbox so make sure to only load library files
-    run = "git sparse-checkout set lua"
   }
-}}
-
+}
 -- Gruvbox
 -------------------------------------------------------------------------------
 vim.g.gruvbox_contrast_dark = "medium"
@@ -327,11 +345,11 @@ local gitsigns = require("gitsigns")
 
 gitsigns.setup{
   signs = {
-    add = { hl = "GitSignsAdd", text = vga_fallback("▌", "+")},
-    change = { hl = "GitSignsChange", text = vga_fallback("▌", "≈")},
-    delete = { hl = "GitSignsDelete", text = vga_fallback("▁", "v")},
-    topdelete = { hl = "GitSignsDelete", text = vga_fallback("▔", "^")},
-    changedelete = { hl = "GitSignsChange", text = vga_fallback("▬", "±")},
+    add = {hl = "GitSignsAdd", text = vga_fallback("▌", "+")},
+    change = {hl = "GitSignsChange", text = vga_fallback("▌", "≈")},
+    delete = {hl = "GitSignsDelete", text = vga_fallback("▁", "v")},
+    topdelete = {hl = "GitSignsDelete", text = vga_fallback("▔", "^")},
+    changedelete = {hl = "GitSignsChange", text = vga_fallback("▬", "±")},
   }
 }
 
@@ -347,30 +365,37 @@ colorizer.setup(
 
 -- Lsp-config
 -------------------------------------------------------------------------------
-local lspconfig = require('lspconfig')
+local lspconfig = require('lspconfig.util')
 
 -- debounce 'didChange' notifications to the server
-lspconfig.util.default_config.flags = {debounce_text_changes = 150}
+lspconfig.default_config.flags = {debounce_text_changes = 150}
 
 -- LuaSnip
 -------------------------------------------------------------------------------
 require("luasnip.loaders.from_vscode").lazy_load()
 
-opts = {silent = true, expr = true}
+-- we only define LuaSnip mappings for jumping around, expansion is handled by
+-- insert mode completion (see help-page for 'ins-completion' and
+-- 'completefunc' defined above).
+for _, mode in pairs{"i", "s"} do
+  keymap(mode, "<C-s><C-n>", "<cmd>lua require('luasnip').jump(1)<cr>", opts)
+  keymap(mode, "<C-s><C-p>", "<cmd>lua require('luasnip').jump(-1)<cr>", opts)
+  keymap(mode, "<C-s><C-j>", "luasnip#choice_active() ? '<Plug>luasnip-next-choice' : ''", {expr = true, unpack(opts)})
+  keymap(mode, "<C-s><C-k>", "luasnip#choice_active() ? '<Plug>luasnip-prev-choice' : ''", {expr = true, unpack(opts)})
+end
 
--- Since we use a custom insert mode completion function for LuaSnip (see
--- help-page for 'ins-completion' and 'completefunc' defined above), we use
--- similar mappings for snippet expansion for a seamless experience.
-set_keymap("i", "<C-x><C-u>", "luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<C-x><C-u>'", opts)
-set_keymap("i", "<C-u>", "luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : '<C-u>'", opts)
-set_keymap("i", "<C-n>", "luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : '<C-n>'", opts)
-set_keymap("i", "<C-p>", "luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '<C-p>'", opts)
+-- Telescope
+-------------------------------------------------------------------------------
+local telescope = setmetatable({}, {__index = function(_, k) return require("telescope.builtin")[k] end})
 
-opts = {silent = true, noremap = true}
+-- when a count N is given to a telescope mapping called through the following
+-- function, the search is started in the Nth parent directory
+function vim.fn.telescope_cwd(picker)
+  telescope[picker]{cwd = vim.fn["repeat"]("../", vim.v.count or 0) .. "."}
+end
 
-set_keymap("s", "<C-u>", "<cmd>lua require('luasnip').jump(1)<Cr>", opts)
-set_keymap("s", "<C-n>", "<cmd>lua require('luasnip').jump(1)<Cr>", opts)
-set_keymap("s", "<C-p>", "<cmd>lua require('luasnip').jump(-1)<Cr>", opts)
+keymap("n", "<leader>ff", "<cmd>lua vim.fn.telescope_cwd('find_files')<cr>", opts)
+keymap("n", "<leader>fg", "<cmd>lua vim.fn.telescope_cwd('live_grep')<cr>", opts)
 
 -- }}}
--- dnl vim: foldmethod=marker foldmarker=--\ {{{,--\ }}}
+-- vim: foldmethod=marker foldmarker=--\ {{{,--\ }}}

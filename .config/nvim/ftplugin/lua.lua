@@ -1,6 +1,6 @@
 --[[
   Setup sumneko language server. It is configured for both use with neovim and
-  awesome wm.
+  awesome wm. Also set some filetype-specific options.
 --]]
 
 if not vim.b.loaded_python_lsp then
@@ -58,6 +58,11 @@ if not vim.b.loaded_python_lsp then
       sumneko.manager.try_add()
     end
   end
+
+  -- customize how automatic formatting is done
+  vim.opt_local.formatoptions:append{
+    o = false,
+  }
 
   vim.b.loaded_python_lsp = true
 end
