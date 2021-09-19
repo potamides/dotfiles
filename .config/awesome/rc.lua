@@ -570,9 +570,10 @@ modes.launcher = gears.table.join(
         local boxflag = string.format("--autoselect %s,%s,%s,%s", sgeo.x, sgeo.y, sgeo.width, sgeo.height)
         local path = os.getenv("HOME") .. "/Pictures/Screenshots/Screenshot-%Y%m%d-%H%M%S.png"
 
-        awful.spawn(string.format("scrot %s %s", boxflag, path), false)
-        naughty.notify({ text = "Took screenshot." })
-        end
+        awful.spawn.easy_async(string.format("scrot %s %s", boxflag, path), function()
+          naughty.notify({ text = "Took screenshot." })
+        end)
+      end
     },
     {
       description = "launch browser",
@@ -608,11 +609,11 @@ modes.launcher = gears.table.join(
       description = "lua execute prompt",
       pattern = {'x'},
       handler = function()
-          run_shell.launch{
-            prompt = 'Lua: ',
-            exe_callback = awful.util.eval,
-            history_path = awful.util.get_cache_dir() .. "/history_eval"
-          }
+        run_shell.launch{
+          prompt = 'Lua: ',
+          exe_callback = awful.util.eval,
+          history_path = awful.util.get_cache_dir() .. "/history_eval"
+        }
       end,
     },
     {
