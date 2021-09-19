@@ -167,9 +167,6 @@ end
 keymap("n", "gb", '"<cmd>bnext " . v:count1 . "<cr>"', {expr = true, unpack(opts)})
 keymap("n", "gB", '"<cmd>bprev " . v:count1 . "<cr>"', {expr = true, unpack(opts)})
 
--- works around an annoying netrw bug (see https://github.com/vim/vim/issues/4738)
-keymap("n", "gx", "<cmd>call netrw#BrowseX(netrw#GX(), 0)<cr>", opts)
-
 -- language server mappings
 keymap("n", 'gD',         '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
 keymap("n", 'gd',         '<cmd>lua vim.lsp.buf.definition()<cr>', opts)

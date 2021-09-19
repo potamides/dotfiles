@@ -21,6 +21,9 @@ if not vim.b.loaded_python_lsp then
             path = runtime_path
           },
           diagnostics = {
+            disable = {
+              "unbalanced-assignments"
+            },
             globals = {
               -- neovim globals
               "vim",
