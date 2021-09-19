@@ -6,7 +6,7 @@
 ###############################################################################
 
 database=${KEEPASSXC_DATABASE:-~/database.kdbx}
-keyfile=${KEEPASSXC_KEYFILE:-}
+keyfile=${KEEPASSXC_KEYFILE:-} # optional
 
 function get_secrets(){
   local entry password secrets quiet IFS=$'\n'
@@ -29,13 +29,16 @@ function get_secrets(){
       return
     fi
 
-    quiet="--quiet" # don't show keepassxc prompt on subsequent entries 
+    quiet="--quiet" # don't show keepassxc prompt on subsequent entries
     echo "set my_${entry@L}_user=${secrets[0]@Q}"
     echo "set my_${entry@L}_mail=${secrets[1]@Q}"
     echo "set my_${entry@L}_pass=${secrets[2]@Q}"
   done
 }
 
+
 if [[ -n "$*" ]]; then
+  # also exit mutt when receiving interrupt from keyboard
+  trap 'kill $PPID && exit' INT
   get_secrets "$@"
 fi
