@@ -2,137 +2,131 @@
 -- slightly modified version of https://awesomewm.org/recipes/xrandr.lua
 
 local gtable  = require("gears.table")
-local spawn   = require("awful.spawn")
+local spawn  = require("awful.spawn")
 local naughty = require("naughty")
 local beautiful = require("beautiful")
 
--- A path to a fancy icon
-local icon_path = "/usr/share/icons/" .. beautiful.icon_theme .. "/32x32/devices/display.svg"
+local xrandr = {
+  state = { cid = nil }
+}
 
 -- Get active outputs
 local function outputs()
-   local _outputs = {}
-   local xrandr = io.popen("xrandr -q --current")
+  local _outputs = {}
+  local handle = io.popen("xrandr -q --current")
 
-   if xrandr then
-      for line in xrandr:lines() do
-         local output = line:match("^([%w-]+) connected ")
-         if output then
-            _outputs[#_outputs + 1] = output
-         end
+  if handle then
+    for line in handle:lines() do
+      local output = line:match("^([%w-]+) connected ")
+      if output then
+        _outputs[#_outputs + 1] = output
       end
-      xrandr:close()
-   end
+    end
+    handle:close()
+  end
 
-   return _outputs
+  return _outputs
 end
 
 local function arrange(out)
-   -- We need to enumerate all permutations of horizontal outputs.
+  -- We need to enumerate all permutations of horizontal outputs.
 
-   local choices  = {}
-   local previous = { {} }
-   for _ = 1, #out do
-      -- Find all permutation of length `i`: we take the permutation
-      -- of length `i-1` and for each of them, we create new
-      -- permutations by adding each output at the end of it if it is
-      -- not already present.
-      local new = {}
-      for _, p in pairs(previous) do
-         for _, o in pairs(out) do
-            if not gtable.hasitem(p, o) then
-               new[#new + 1] = gtable.join(p, {o})
-            end
-         end
+  local choices  = {}
+  local previous = { {} }
+  for _ = 1, #out do
+    -- Find all permutation of length `i`: we take the permutation of length
+    -- `i-1` and for each of them, we create new permutations by adding each
+    -- output at the end of it if it is not already present.
+    local new = {}
+    for _, p in pairs(previous) do
+      for _, o in pairs(out) do
+        if not gtable.hasitem(p, o) then
+          new[#new + 1] = gtable.join(p, {o})
+        end
       end
-      choices = gtable.join(choices, new)
-      previous = new
-   end
+    end
+    choices = gtable.join(choices, new)
+    previous = new
+  end
 
-   return choices
+  return choices
 end
 
 -- Build available choices
 local function menu()
-   local _menu = {}
-   local out = outputs()
-   local choices = arrange(out)
+  local _menu = {}
+  local out = outputs()
+  local choices = arrange(out)
+  local cmd = "xrandr"
 
-   for _, choice in pairs(choices) do
-      local cmd = "xrandr"
-      -- Enabled outputs
+  for _, choice in pairs(choices) do
+    -- Enabled outputs
+    for i, o in pairs(choice) do
+      cmd = cmd .. " --output " .. o .. " --auto"
+      if i > 1 then
+        cmd = cmd .. " --below " .. choice[i-1]
+      end
+    end
+    -- Disabled outputs
+    for _, o in pairs(out) do
+      if not gtable.hasitem(choice, o) then
+        cmd = cmd .. " --output " .. o .. " --off"
+      end
+    end
+
+    local label = ""
+    if #choice == 1 then
+      label = 'Only <span weight="bold">' .. choice[1] .. '</span>'
+    else
       for i, o in pairs(choice) do
-         cmd = cmd .. " --output " .. o .. " --auto"
-         if i > 1 then
-            cmd = cmd .. " --below " .. choice[i-1]
-         end
+        if i > 1 then label = label .. " + " end
+        label = label .. '<span weight="bold">' .. o .. '</span>'
       end
-      -- Disabled outputs
-      for _, o in pairs(out) do
-         if not gtable.hasitem(choice, o) then
-            cmd = cmd .. " --output " .. o .. " --off"
-         end
-      end
+    end
 
-      local label = ""
-      if #choice == 1 then
-         label = 'Only <span weight="bold">' .. choice[1] .. '</span>'
-      else
-         for i, o in pairs(choice) do
-            if i > 1 then label = label .. " + " end
-            label = label .. '<span weight="bold">' .. o .. '</span>'
-         end
-      end
+    _menu[#_menu + 1] = { label, cmd }
+  end
 
-      _menu[#_menu + 1] = { label, cmd }
-   end
-
-   return _menu
+  return _menu
 end
-
--- Display xrandr notifications from choices
-local state = { cid = nil }
 
 local function naughty_destroy_callback(reason)
   if reason == naughty.notificationClosedReason.expired or
-     reason == naughty.notificationClosedReason.dismissedByUser then
-    local action = state.index and state.menu[state.index - 1][2]
-    if action then
-      spawn(action, false)
-      state.index = nil
-    end
+    reason == naughty.notificationClosedReason.dismissedByUser then
+   local action = xrandr.state.index and xrandr.state.menu[xrandr.state.index - 1][2]
+   if action then
+    spawn(action, false)
+    xrandr.state.index = nil
+   end
   end
 end
 
-local function xrandr()
-   -- Build the list of choices
-   if not state.index then
-      state.menu = menu()
-      state.index = 1
-   end
+function xrandr.show()
+  -- Build the list of choices
+  if not xrandr.state.index then
+    xrandr.state.menu = menu()
+    xrandr.state.index = 1
+  end
 
-   -- Select one and display the appropriate notification
-   local label
-   local next  = state.menu[state.index]
-   state.index = state.index + 1
+  -- Select one and display the appropriate notification
+  local label
+  local next  = xrandr.state.menu[xrandr.state.index]
+  xrandr.state.index = xrandr.state.index + 1
 
-   if not next then
-      label = "Keep the current configuration"
-      state.index = nil
-   else
-      label = next[1]
-   end
-   state.cid = naughty.notify({ text = label,
-                                icon = icon_path,
-                                timeout = 4,
-                                screen = mouse.screen,
-                                replaces_id = state.cid,
-                                destroy = naughty_destroy_callback}).id
+  if not next then
+    label = "Keep the current configuration"
+    xrandr.state.index = nil
+  else
+    label = next[1]
+  end
+  xrandr.state.cid = naughty.notify({
+    text        = label,
+    icon        = "/usr/share/icons/" .. beautiful.icon_theme .. "/32x32/devices/display.svg",
+    timeout     = 4,
+    screen      = mouse.screen,
+    replaces_id = xrandr.state.cid,
+    destroy     = naughty_destroy_callback
+  }).id
 end
 
-return {
-   outputs = outputs,
-   arrange = arrange,
-   menu = menu,
-   xrandr = xrandr
-}
+return xrandr

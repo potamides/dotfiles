@@ -87,10 +87,14 @@ theme.taglist_font        = "DejaVu Sans Bold 18"
 -- Menu
 theme.menu_height       = dpi(16)
 theme.menu_width        = dpi(140)
-theme.menu_border_width = dpi(10)
+theme.menu_border_width = dpi(3)
 theme.menu_fg_normal    = theme.fg1
-theme.menu_bg_focus     = theme.bg2
+theme.menu_bg_focus     = theme.bg0_s
 theme.menu_border_color = theme.bg0_h
+
+-- Menu of clients
+theme.clientsmenu_width        = dpi(640)
+theme.clientsmenu_border_color = theme.bg4
 
 -- Menubar
 theme.menubar_border_width = theme.border_width

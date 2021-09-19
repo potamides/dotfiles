@@ -6,8 +6,8 @@
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
 -- Standard awesome library
-local gears = require("gears")
 local awful = require("awful")
+local gears = require("gears")
 require("awful.autofocus")
 -- Widget and layout library
 local wibox = require("wibox")
@@ -20,16 +20,13 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- other stuff
 local freedesktop  = require("freedesktop")
 local modalawesome = require("modalawesome")
-beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua")
--- import stuff which uses beautiful after theme initialization
-local utils      = require("utils")
-local battery    = require("widgets.battery")
-local volume     = require("widgets.volume")
-local mpd        = require("widgets.mpd")
-local net_widget = require("widgets.net")
-local run_shell  = require("widgets.run-shell")
-local revelation = require("revelation")
-local xrandr     = require("xrandr")
+local utils        = require("utils")
+local battery      = require("widgets.battery")
+local volume       = require("widgets.volume")
+local mpd          = require("widgets.mpd")
+local net_widget   = require("widgets.net")
+local run_shell    = require("widgets.run-shell")
+local xrandr       = require("xrandr")
 
 -- }}}
 -------------------------------------------------------------------------------
@@ -63,6 +60,9 @@ end
 -------------------------------------------------------------------------------
 -- {{{ Variable definitions
 -------------------------------------------------------------------------------
+
+-- Themes define colors, icons, font and wallpapers.
+beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 local terminal         = os.getenv("TERMCMD") or "termite"
@@ -150,6 +150,39 @@ modalawesome.active_mode:connect_signal("widget::redraw_needed", function()
   -- use of undocumented function :(
   for s in screen do s.mytaglist._do_taglist_update() end
 end)
+
+-- menu of clients that match a particular rule.
+local function clientmenu(filter, selected_tags_only)
+  local scr, items, clients = awful.screen.focused(), {
+    theme = {
+      width        = beautiful.clientsmenu_width,
+      border_color = beautiful.clientsmenu_border_color
+    }
+  }
+
+  if selected_tags_only then
+    clients = gears.table.join(unpack(gears.table.map(function(t) return t:clients() end, scr.selected_tags)))
+  else
+    clients = client.get()
+  end
+
+  for c in gears.table.iterate(clients, function(c) return awful.rules.match(c, filter) end) do
+    table.insert(items, {
+      c.name,
+      function() c:jump_to() end,
+      -- most clients which do not have an icon are terminal applications
+      c.icon or menubar.utils.lookup_icon("terminal")
+    })
+  end
+
+  local menu, geom = awful.menu(items), scr.geometry
+  menu:show{
+    coords = {
+      y = (geom.height - menu.height) / 2,
+      x = (geom.width - menu.width) / 2
+    }
+  }
+end
 
 -- }}}
 -------------------------------------------------------------------------------
@@ -292,7 +325,7 @@ awful.screen.connect_for_each_screen(function(s)
   -- Create a taglist widget
   s.mytaglist = awful.widget.taglist{
     screen  = s,
-    filter  = function(t) return t.name ~= "Revelation" and t.name ~=  "Revelation_zoom" end,
+    filter  = awful.widget.taglist.filter.all,
     style   = {
       shape = utils.shape.parallelogram.left
     },
@@ -424,6 +457,8 @@ local clientbuttons = gears.table.join(
 
 -- Initialize modalawesome & customize modes
 -------------------------------------------------------------------------------
+local modes = require("modalawesome.modes")
+
 local keybindings = {
   -- Media keys
   {{}, "XF86AudioMute", volume.toggle},
@@ -432,22 +467,21 @@ local keybindings = {
   {{}, "XF86AudioMicMute", function() awful.spawn("amixer set Capture toggle") end},
   {{}, "XF86MonBrightnessDown", function() awful.spawn("xbacklight -dec 10") end},
   {{}, "XF86MonBrightnessUp", function() awful.spawn("xbacklight -inc 10") end},
-  {{}, "XF86Display", xrandr.xrandr},
+  {{}, "XF86Display", xrandr.show},
   {{}, "XF86Tools", function() awful.spawn(editor_cmd .. " " .. awesome.conffile) end},
 }
 
-local modes = require("modalawesome.modes")
 modes.tag = gears.table.join(
   {
     {
       description = "show all clients on screen",
       pattern = {'s', 's'},
-      handler = function() revelation({rule={focusable=true}}) end
+      handler = function() clientmenu{focusable = true} end
     },
     {
       description = "show all clients on current tag",
       pattern = {'s', 't'},
-      handler = function() revelation({curr_tag_only=true}) end
+      handler = function() clientmenu({}, true) end
     },
     {
       description = "hide all visible clients until keypress",
@@ -521,7 +555,7 @@ modes.launcher = gears.table.join(
     {
       description = "switch monitor setup",
       pattern = { "F7" },
-      handler = xrandr.xrandr
+      handler = xrandr.show
     },
     {
       description = "launch ranger",
@@ -643,7 +677,6 @@ modes.launcher = gears.table.join(
   modes.launcher
 )
 
-revelation.init()
 modalawesome.init{
   modkey      = modkey,
   modes       = modes,
