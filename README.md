@@ -1,7 +1,7 @@
 <p align="center">
   <img alt="🍚 Dotfiles" width="100%" src="https://gist.githubusercontent.com/potamides/0e0b14f876f94e068f2e8a073ae31040/raw/headline.svg"/>
 </p>
-https://gist.githubusercontent.com/potamides/0e0b14f876f94e068f2e8a073ae31040/raw/3521a33d61db45c449a03f26ed4c1d5126779365/headline.svg
+
 This is a repository for configuration files of various applications that I use
 on a daily basis. My goal is to find a satisfactory balance between
 functionality and design, while keeping an eye on resource consumption. I put a
