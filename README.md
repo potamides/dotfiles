@@ -1,13 +1,14 @@
-# 🍚 Dotfiles 🍚
-> Ohne Fleiß kein Rice.
-> - potamides
+<p align="center">
+  <img alt="🍚 Dotfiles" width="100%" src="https://gist.githubusercontent.com/potamides/0e0b14f876f94e068f2e8a073ae31040/raw/14d1dc2ede4ba5add90293d77f104493d42bd350/headline.svg"/>
+</p>
 
 This is a repository for configuration files of various applications that I use
 on a daily basis. My goal is to find a satisfactory balance between
 functionality and design, while keeping an eye on resource consumption. I put a
 lot of care into a consistent look, that is easy on the eyes and try to use the
 [gruvbox](https://github.com/morhetz/gruvbox) colorscheme for everything.
-![rice](.rice.png)
+
+![](.rice.png)
 
 ## Installation
 **Disclaimer:** The steps below are highly tailored to my needs and I would
