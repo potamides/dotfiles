@@ -14,5 +14,4 @@ git clone --bare https://github.com/potamides/dotfiles.git "$GIT_DIR"
 git config status.showUntrackedFiles no
 git checkout --force
 git submodule update --init
-git sparse-checkout set '*' '!README.md' '!.rice.png' '!.local/bin/install-*' \
-  '!.gitmodules'
+git sparse-checkout set '*' '!.gitmodules' '!README.md' '!.local/bin/install-*'

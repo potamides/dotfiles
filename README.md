@@ -2,13 +2,19 @@
   <img alt="🍚 Dotfiles" width="100%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/dotfiles-headline.svg"/>
 </p>
 
+---
+
+<p align="center">
+  <img alt="CRT Monitor with rice" width="60%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/7db3e8a8932b26dab8bfdeca39ae874707aafd02/rice-crt.svg"/>
+</p>
+
+---
+
 This is a repository for configuration files of various applications that I use
 on a daily basis. My goal is to find a satisfactory balance between
 functionality and design, while keeping an eye on resource consumption. I put a
 lot of care into a consistent look, that is easy on the eyes and try to use the
 [gruvbox](https://github.com/morhetz/gruvbox) colorscheme for everything.
-
-![](.rice.png)
 
 ## Installation
 **Disclaimer:** The steps below are highly tailored to my needs and I would
