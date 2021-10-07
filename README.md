@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="🍚 Dotfiles" width="100%" src="https://gist.githubusercontent.com/potamides/0e0b14f876f94e068f2e8a073ae31040/raw/headline.svg"/>
+  <img alt="🍚 Dotfiles" width="100%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/dotfiles-headline.svg"/>
 </p>
 
 This is a repository for configuration files of various applications that I use
