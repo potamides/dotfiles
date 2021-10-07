@@ -5,7 +5,7 @@
 ---
 
 <p align="center">
-  <img alt="CRT Monitor with rice" width="60%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/7db3e8a8932b26dab8bfdeca39ae874707aafd02/rice-crt.svg"/>
+  <img alt="CRT Monitor with rice" width="60%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/1146067037af8bc8f87850e36a06f63c1f365591/rice-crt.svg"/>
 </p>
 
 ---
