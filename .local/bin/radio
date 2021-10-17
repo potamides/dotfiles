@@ -15,6 +15,7 @@ declare -A stations=(
   [Nightride FM]=https://stream.nightride.fm/nightride.ogg
   [Nightwave Plaza]=https://radio.plaza.one/ogg
   [No-Life Radio]=http://listen.nolife-radio.com:8000
+  [Radio Monacensis]=https://monacensis.stream.laut.fm/monacensis
   [Shonan Beach FM]=http://shonanbeachfm.out.airtime.pro:8000/shonanbeachfm_c
 )
 
