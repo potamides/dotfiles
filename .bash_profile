@@ -22,6 +22,11 @@ export SSH_ASKPASS="$SUDO_ASKPASS"
 export QT_QPA_PLATFORMTHEME="gtk2"
 export DESKTOP_SESSION="gnome"
 
+# integrate Fcitx input method framework
+export GTK_IM_MODULE="fcitx"
+export QT_IM_MODULE="fcitx"
+export XMODIFIERS="@im=fcitx"
+
 # set path to configuration files for some programs
 export WEECHAT_HOME="$HOME/.config/weechat"
 export GTK2_RC_FILES="$HOME/.config/gtk-2.0/gtkrc"
@@ -38,9 +43,6 @@ export FZF_DEFAULT_OPTS="--color 16,fg:15,bg:0,hl:11,fg+:15,bg+:237,hl+:11 \
   --color info:12,prompt:248,spinner:11,pointer:12,marker:208,header:241 \
   --color border:7 \
   --bind ctrl-a:select-all,ctrl-d:deselect-all,ctrl-t:toggle-all"
-
-# VA-API acceleration on X11 for firefox
-export MOZ_X11_EGL=1
 
 # source environment variables which are not under version control
 if [[ -r ~/.bash_profile.local ]]; then

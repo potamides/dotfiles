@@ -1,0 +1,23 @@
+[Groups/0]
+# Group Name
+Name="Japanese Input"
+# Layout
+Default Layout=eu
+# Default Input Method
+DefaultIM=mozc
+
+[Groups/0/Items/0]
+# Name
+Name=keyboard-eu
+# Layout
+Layout=
+
+[Groups/0/Items/1]
+# Name
+Name=mozc
+# Layout
+Layout=
+
+[GroupOrder]
+0="Japanese Input"
+
