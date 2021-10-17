@@ -60,7 +60,7 @@ theme.fg_urgent  = theme.lightorange
 theme.useless_gap       = dpi(10)
 theme.gap_single_client = true
 theme.border_width      = dpi(3)
-theme.border_normal     = theme.bg0_h
+theme.border_normal     = theme.bg2
 theme.border_focus      = theme.bg4
 theme.border_marked     = theme.lightpurple
 
@@ -89,12 +89,15 @@ theme.menu_height       = dpi(16)
 theme.menu_width        = dpi(140)
 theme.menu_border_width = dpi(3)
 theme.menu_fg_normal    = theme.fg1
-theme.menu_bg_focus     = theme.bg0_s
+theme.menu_bg_focus     = theme.bg2
 theme.menu_border_color = theme.bg0_h
 
 -- Menu of clients
 theme.clientsmenu_width        = dpi(640)
 theme.clientsmenu_border_color = theme.bg4
+
+-- hotkeys popup
+theme.hotkeys_border_color = theme.bg4
 
 -- Menubar
 theme.menubar_border_width = theme.border_width
@@ -111,6 +114,15 @@ theme.calendar_weekday_fg_color     = theme.fg1
 theme.calendar_weeknumber_fg_color  = theme.fg1
 theme.calendar_normal_fg_color      = theme.fg1
 theme.calendar_focus_fg_color       = theme.fg1
+
+theme.calendar_year_border_color        = theme.bg0_h
+theme.calendar_month_border_color       = theme.bg0_h
+theme.calendar_year_header_border_color = theme.bg0_h
+theme.calendar_header_border_color      = theme.bg0_h
+theme.calendar_weekday_border_color     = theme.bg0_h
+theme.calendar_weeknumber_border_color  = theme.bg0_h
+theme.calendar_normal_border_color      = theme.bg0_h
+theme.calendar_focus_border_color       = theme.bg0_h
 
 -- Custom sizes
 theme.small_gap        = dpi(2)
