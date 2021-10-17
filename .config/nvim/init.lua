@@ -247,6 +247,7 @@ packer.autostartup{
     }
   }
 }
+
 -- Gruvbox
 -------------------------------------------------------------------------------
 vim.g.gruvbox_contrast_dark = "medium"
@@ -267,13 +268,15 @@ end
 
 -- signs for custom lightline components defined in lua/components.lua
 components.setup{
-  edit     = vga_fallback("✎", "+"),
-  lock     = vga_fallback("", "-"),
-  git      = vga_fallback("", "↨"),
-  error    = vga_fallback("", "‼"),
-  warning  = vga_fallback("", "!"),
-  filetype = vga_fallback(vim.fn.WebDevIconsGetFileTypeSymbol, "≡"),
-  spinner  = vga_fallback({'⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'}, {"-", "\\", "|", "/"})
+  signs = {
+    edit     = vga_fallback("✎", "+"),
+    lock     = vga_fallback("", "-"),
+    git      = vga_fallback("", "↨"),
+    error    = vga_fallback("", "‼"),
+    warning  = vga_fallback("", "!"),
+    filetype = vga_fallback(vim.fn.WebDevIconsGetFileTypeSymbol, "≡"),
+    spinner  = vga_fallback({'⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'}, {"-", "\\", "|", "/"})
+  }
 }
 
 vim.g.lightline = {
@@ -282,12 +285,12 @@ vim.g.lightline = {
   -- register new components
   component = {
     lineinfo     = vga_fallback("", "↕") .. " %3l:%-2c",
-    fileencoding = string.format('%%{%s() ? "" : &fenc!=#""?&fenc:&enc}', components.string.narrow),
-    fileformat   = string.format('%%{%s() ? "" : &ff}', components.string.narrow),
+    fileencoding = string.format('%%{%s() ? "" : &fenc!=#""?&fenc:&enc}', components.string.is_narrow),
+    fileformat   = string.format('%%{%s() ? "" : &ff}', components.string.is_narrow),
   },
   component_function = {
     filename  = components.string.filename,
-    gitbranch = components.string.gitbranch,
+    gitbranch = components.narrow.string.gitbranch,
     progress  = components.string.progress,
     warnings  = components.string.warnings,
     errors    = components.string.errors
@@ -301,12 +304,12 @@ vim.g.lightline = {
     buffers = "tabsel",
     rtabs   = "tabsel"
   },
-  component_raw  = {
+  component_raw = {
     buffers = true
   },
   component_visible_condition = {
-    fileencoding = string.format("!%s()", components.string.narrow),
-    fileformat   = string.format("!%s()", components.string.narrow)
+    fileencoding = string.format("!%s()", components.string.is_narrow),
+    fileformat   = string.format("!%s()", components.string.is_narrow)
   },
   -- modify statusline and tabline
   separator    = {left = "▌", right = "▐"},
@@ -344,9 +347,9 @@ gitsigns.setup{
   signs = {
     add = {hl = "GitSignsAdd", text = vga_fallback("▌", "+")},
     change = {hl = "GitSignsChange", text = vga_fallback("▌", "≈")},
-    delete = {hl = "GitSignsDelete", text = vga_fallback("▁", "v")},
-    topdelete = {hl = "GitSignsDelete", text = vga_fallback("▔", "^")},
-    changedelete = {hl = "GitSignsChange", text = vga_fallback("▬", "±")},
+    delete = {hl = "GitSignsDelete", text = vga_fallback("▖", "v")},
+    topdelete = {hl = "GitSignsDelete", text = vga_fallback("▘", "^")},
+    changedelete = {hl = "GitSignsChange", text = vga_fallback("▌", "±")},
   }
 }
 
@@ -392,7 +395,8 @@ function vim.fn.telescope_cwd(picker)
 end
 
 keymap("n", "<leader>ff", "<cmd>lua vim.fn.telescope_cwd('find_files')<cr>", opts)
-keymap("n", "<leader>fg", "<cmd>lua vim.fn.telescope_cwd('live_grep')<cr>", opts)
+keymap("n", "<leader>lg", "<cmd>lua vim.fn.telescope_cwd('live_grep')<cr>", opts)
+keymap("n", "<leader>ws", "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<cr>", opts)
 
 -- }}}
 -- vim: foldmethod=marker foldmarker=--\ {{{,--\ }}}

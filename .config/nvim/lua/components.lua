@@ -3,30 +3,38 @@
 --]]
 
 local comps = {
+  opts = {
+    signs = {
+      edit     = "+",
+      lock     = "-",
+      git      = "↨",
+      error    = "‼",
+      warning  = "!",
+      filetype = "≡",
+      spinner  = {"-", "\\", "|", "/"}
+    },
+    narrow_width = 95,
+  },
   spinner = {
     index = 1,
     timer = vim.loop.new_timer(),
     status = ""
   },
-  signs = {
-    edit     = "+",
-    lock     = "-",
-    git      = "↨",
-    error    = "‼",
-    warning  = "!",
-    filetype = "≡",
-    spinner  = {"-", "\\", "|", "/"}
-  },
-  string = {}
+  string = {},
+  narrow = {
+    string = {}
+  }
 }
 
 function comps.get_sign(name)
-  local sign = comps.signs[name]
+  local sign = comps.opts.signs[name]
   return type(sign) == "function" and sign() or sign
 end
 
-function comps.narrow()
-  return vim.fn.winwidth(0) < 95
+-- check if the terminal is narrow, can be used to hide components based on
+-- window width through components.narrow.* methods
+function comps.is_narrow()
+  return vim.fn.winwidth(0) < comps.opts.narrow_width
 end
 
 -- filename in the same format as lightline-bufferline
@@ -39,11 +47,7 @@ end
 
 -- current git branch
 function comps.gitbranch()
-  if comps.narrow() then
-    return ""
-  else
-    return vim.b.gitsigns_head and comps.get_sign("git") .. " " .. vim.b.gitsigns_head or ""
-  end
+  return vim.b.gitsigns_head and comps.get_sign("git") .. " " .. vim.b.gitsigns_head or ""
 end
 
 -- lsp progress indicator
@@ -76,16 +80,30 @@ function comps.warnings()
   return warnings > 0 and comps.get_sign("warning") .. " " .. warnings or ""
 end
 
-function comps.setup(signs)
-  comps.signs = vim.tbl_extend("force", comps.signs, signs or {})
+function comps.setup(opts)
+  comps.opts = vim.tbl_extend("force", comps.opts, opts or {})
 
-  -- components.string.* returns string representations of components.* methods
-  -- in a format that is callable by viml
-  setmetatable(comps.string, {
+  -- components.string.* and components.narrow.string.* returns string
+  -- representations of components.* and components.narrow.* methods in a
+  -- format that is callable by viml
+  for _, components in ipairs{comps, comps.narrow} do
+    setmetatable(components.string, {
+      __index = function(table, key)
+        if components[key] and type(components[key]) == "function" then
+          vim.g["_lightline_" .. key] = components[key]
+          table[key] = "g:_lightline_" .. key
+          return table[key]
+        end
+      end
+    })
+  end
+
+  -- components.narrow.* returns wrappers around components.* methods which
+  -- auto hide components in narrow terminal windows
+  setmetatable(comps.narrow, {
     __index = function(table, key)
-      if comps[key] and type(comps[key]) == "function" then
-        vim.g["_lightline_" .. key] = comps[key]
-        table[key] = "g:_lightline_" .. key
+      if comps[key] then
+        table[key] = function() return comps.is_narrow() and "" or comps[key]() end
         return table[key]
       end
     end
