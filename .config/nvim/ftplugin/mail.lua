@@ -3,7 +3,7 @@
   (see http://www.mutt.org/doc/manual/#text-flowed)
 --]]
 
-if not vim.b.set_mail_format then
+if not vim.b.did_user_ftplugin then
   vim.opt_local.formatoptions:append("w")
-  vim.b.set_mail_format = true
+  vim.b.did_user_ftplugin = true
 end

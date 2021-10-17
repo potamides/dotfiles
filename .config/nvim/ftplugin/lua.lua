@@ -3,7 +3,7 @@
   awesome wm. Also set some filetype-specific options.
 --]]
 
-if not vim.b.loaded_python_lsp then
+if not vim.b.did_user_ftplugin then
   local sumneko = require("lspconfig").sumneko_lua
 
   if not sumneko.manager then
@@ -58,7 +58,7 @@ if not vim.b.loaded_python_lsp then
     }
 
     if not (sumneko.autostart == false) then
-      sumneko.manager.try_add()
+      sumneko.manager.try_add_wrapper()
     end
   end
 
@@ -67,5 +67,5 @@ if not vim.b.loaded_python_lsp then
     o = false,
   }
 
-  vim.b.loaded_python_lsp = true
+  vim.b.did_user_ftplugin = true
 end

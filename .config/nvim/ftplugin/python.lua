@@ -2,7 +2,7 @@
   Setup pyright language server. Also set some filetype-specific options.
 --]]
 
-if not vim.b.loaded_python_lsp then
+if not vim.b.did_user_ftplugin then
   local pyright = require("lspconfig").pyright
 
   if not pyright.manager then
@@ -10,14 +10,15 @@ if not vim.b.loaded_python_lsp then
       settings = {
         python = {
           analysis = {
-            typeCheckingMode = "off"
+            typeCheckingMode = "off",
+            autoImportCompletions = true
           }
         }
       }
     }
 
     if not (pyright.autostart == false) then
-      pyright.manager.try_add()
+      pyright.manager.try_add_wrapper()
     end
   end
 
@@ -28,5 +29,5 @@ if not vim.b.loaded_python_lsp then
     l = true
   }
 
-  vim.b.loaded_python_lsp = true
+  vim.b.did_user_ftplugin = true
 end
