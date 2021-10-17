@@ -6,6 +6,7 @@ $pdf_mode = 4;
 
 # Use qpdfview as pdf viewer
 $pdf_previewer = 'start qpdfview --unique %S';
+$always_view_file_via_temporary = 1;
 
 # Remove more files during cleanup
 $cleanup_includes_cusdep_generated = 1;
