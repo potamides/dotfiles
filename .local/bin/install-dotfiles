@@ -1,17 +1,38 @@
 #!/bin/bash
 
 ###############################################################################
-#  Install dotfiles as a bare git repository and override configuration files #
-#                                  in $HOME.                                  #
+#  Install dotfiles as a bare git repository. Conflicting files found during  #
+#              installation are moved to $HOME/dotfiles.backup.               #
 #                              Dependencies: git                              #
 ###############################################################################
 
 set -o errexit
-export GIT_WORK_TREE=$HOME
-export GIT_DIR=$GIT_WORK_TREE/.dotfiles
+export GIT_WORK_TREE="$HOME"
+export GIT_DIR="$GIT_WORK_TREE/.dotfiles"
+backupdir="$GIT_WORK_TREE/dotfiles.backup"
+repository="https://github.com/potamides/dotfiles.git"
+exclude=(".gitmodules" "README.md" "LICENSE" ".local/bin/install-*")
 
-git clone --bare https://github.com/potamides/dotfiles.git "$GIT_DIR"
-git config status.showUntrackedFiles no
-git checkout --force
-git submodule update --init
-git sparse-checkout set '*' '!.gitmodules' '!README.md' '!.local/bin/install-*'
+function clone(){
+  git clone --bare "$repository" "$GIT_DIR"
+}
+
+function backup(){
+  for file in $(git ls-tree -r --name-only HEAD); do
+    if [[ -e "$file" ]]; then
+      mkdir -p "$backupdir"
+      mv "$file" "$backupdir"
+    fi
+  done
+}
+
+function install(){
+  git checkout
+  git submodule update --init
+  git config status.showUntrackedFiles no
+  git sparse-checkout set "*" "${exclude[@]/#/\!}"
+}
+
+clone
+backup
+install

@@ -1,11 +1,7 @@
 <p align="center">
-  <img alt="🍚 Dotfiles" width="100%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/dotfiles-headline.svg"/>
-</p>
-
----
-
-<p align="center">
-  <img alt="CRT Monitor with rice" width="66%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/1146067037af8bc8f87850e36a06f63c1f365591/rice-crt.svg"/>
+  <a href="#readme">
+    <img alt="🍙 Dotfiles" width="100%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/dotfiles-headline.svg"/>
+  </a>
 </p>
 
 ---
@@ -15,6 +11,14 @@ on a daily basis. My goal is to find a satisfactory balance between
 functionality and design, while keeping an eye on resource consumption. I put a
 lot of care into a consistent look, that is easy on the eyes and try to use the
 [gruvbox](https://github.com/morhetz/gruvbox) colorscheme for everything.
+
+---
+
+<p align="center">
+  <a href="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/rice.png">
+    <img alt="CRT Monitor with rice" width="90%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/1146067037af8bc8f87850e36a06f63c1f365591/rice-crt.svg"/>
+  </a>
+</p>
 
 ## Installation
 **Disclaimer:** The steps below are highly tailored to my needs and I would
@@ -34,8 +38,9 @@ tools <sup> [1](https://news.ycombinator.com/item?id=11070797),
 [3](https://harfangk.github.io/2016/09/18/manage-dotfiles-with-a-git-bare-repository.html)
 </sup>. For that the project contains a [script](.local/bin/install-dotfiles),
 that places administrative files in `$HOME/.dotfiles` and updates configuration
-files in `$HOME` with the content of the repository (**warning:** this
-overwrites existing files). For convenience the script can be executed like so:
+files in `$HOME` with the content of the repository (conflicting files are
+moved to `$HOME/dotfiles.backup`). For convenience the script can be executed
+like so:
 ```sh
 bash <(curl -LfsS https://github.com/potamides/dotfiles/raw/master/.local/bin/install-dotfiles)
 ```
