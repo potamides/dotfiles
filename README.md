@@ -16,7 +16,7 @@ lot of care into a consistent look, that is easy on the eyes and try to use the
 
 <p align="center">
   <a href="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/rice.png">
-    <img alt="CRT Monitor with rice" width="90%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/1146067037af8bc8f87850e36a06f63c1f365591/rice-crt.svg"/>
+    <img alt="CRT Monitor with rice" width="100%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/rice-crt.svg"/>
   </a>
 </p>
 
