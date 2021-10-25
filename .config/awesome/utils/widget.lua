@@ -13,17 +13,17 @@ function widget.compose(args)
 
   for _, w in ipairs(args) do
     table.insert(widgets, {
-        {
-            w[1],
-            top = w.margin or nil,
-            bottom = w.margin or nil,
-            left = w.shape == shape.rightangled.left and beautiful.gap or beautiful.big_gap,
-            right = w.shape == shape.rightangled.right and beautiful.gap or beautiful.big_gap,
-            widget = wibox.container.margin
-        },
-        shape = w.shape,
-        bg = w.color,
-        widget = wibox.container.background
+      {
+        w[1],
+        top = w.margin or nil,
+        bottom = w.margin or nil,
+        left = w.shape == shape.rightangled.left and beautiful.gap or beautiful.big_gap,
+        right = w.shape == shape.rightangled.right and beautiful.gap or beautiful.big_gap,
+        widget = wibox.container.margin
+      },
+      shape = w.shape,
+      bg = w.color,
+      widget = wibox.container.background
     })
   end
 

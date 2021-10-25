@@ -195,20 +195,20 @@ end
 local mytextclock = wibox.widget.textclock(
 string.format("<span color=%q><b>%%H:%%M</b></span>", beautiful.bg_normal), 60)
 local month_calendar = awful.widget.calendar_popup.month {
-        long_weekdays = true,
-        margin = beautiful.gap
-    }
+  long_weekdays = true,
+  margin = beautiful.gap
+}
 
 mytextclock:connect_signal("mouse::enter", function()
-    month_calendar:call_calendar(0, "tr", awful.screen.focused())
-    month_calendar.visible = true
+  month_calendar:call_calendar(0, "tr", awful.screen.focused())
+  month_calendar.visible = true
 end)
 mytextclock:connect_signal("mouse::leave", function()
-    month_calendar.visible = false
+  month_calendar.visible = false
 end)
 mytextclock:buttons(gears.table.join(
-    awful.button({ }, 1, function() month_calendar:call_calendar(-1) end),
-    awful.button({ }, 3, function() month_calendar:call_calendar( 1) end)
+  awful.button({ }, 1, function() month_calendar:call_calendar(-1) end),
+  awful.button({ }, 3, function() month_calendar:call_calendar( 1) end)
 ))
 
 -- Wallpaper
@@ -303,12 +303,11 @@ awful.screen.connect_for_each_screen(function(s)
   set_wallpaper(s)
 
   -- Taglist
-  local ultrawide = s.geometry.width / s.geometry.height > 2
-  --awful.tag(tags, s, awful.layout.layouts[ultrawide and 2 or 1])
+  local ultrawide, high_res = s.geometry.width / s.geometry.height > 2, s.geometry.height >= 1440
   for index, tag in ipairs(tags) do
     awful.tag.add(tag, {
       layout   = awful.layout.layouts[ultrawide and 1 or 2],
-      gap      = ultrawide and beautiful.useless_gap or 0,
+      gap      = high_res and beautiful.useless_gap or 0,
       screen   = s,
       selected = index == 1,
     })
@@ -442,17 +441,17 @@ end)
 -------------------------------------------------------------------------------
 
 local clientbuttons = gears.table.join(
-    awful.button({ }, 1, function(c)
-        c:emit_signal("request::activate", "mouse_click", {raise = true})
-    end),
-    awful.button({ modkey }, 1, function(c)
-        c:emit_signal("request::activate", "mouse_click", {raise = true})
-        awful.mouse.client.move(c)
-    end),
-    awful.button({ modkey }, 3, function(c)
-        c:emit_signal("request::activate", "mouse_click", {raise = true})
-        awful.mouse.client.resize(c)
-    end)
+  awful.button({ }, 1, function(c)
+    c:emit_signal("request::activate", "mouse_click", {raise = true})
+  end),
+  awful.button({ modkey }, 1, function(c)
+    c:emit_signal("request::activate", "mouse_click", {raise = true})
+    awful.mouse.client.move(c)
+  end),
+  awful.button({ modkey }, 3, function(c)
+    c:emit_signal("request::activate", "mouse_click", {raise = true})
+    awful.mouse.client.resize(c)
+  end)
 )
 
 -- Initialize modalawesome & customize modes
@@ -691,69 +690,69 @@ modalawesome.init{
 
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
-    -- All clients will match this rule.
-    { rule = { },
-        properties = {
-            border_color = beautiful.border_normal,
-            focus = awful.client.focus.filter,
-            raise = true,
-            buttons = clientbuttons,
-            screen = awful.screen.preferred,
-            placement = awful.placement.no_overlap+awful.placement.no_offscreen,
-            size_hints_honor = false,
-        }
-    },
+  -- All clients will match this rule.
+  { rule = { },
+    properties = {
+      border_color = beautiful.border_normal,
+      focus = awful.client.focus.filter,
+      raise = true,
+      buttons = clientbuttons,
+      screen = awful.screen.preferred,
+      placement = awful.placement.no_overlap+awful.placement.no_offscreen,
+      size_hints_honor = false,
+    }
+  },
 
-    -- Browser & keepassxc always on tag 1
-    { rule_any = { class = { browser, "KeePassXC" }},
-      except_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }},
-      properties = { tag = tags[1] }},
+  -- Browser & keepassxc always on tag 1
+  { rule_any = { class = { browser, "KeePassXC" }},
+    except_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }},
+    properties = { tag = tags[1] }},
 
-    -- Spawn keepassxc prompts on tags were they were called (which they don't do by default)
-    { rule_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }},
-      properties = { tag = function() return awful.screen.focused().selected_tag end }},
+  -- Spawn keepassxc prompts on tags were they were called (which they don't do by default)
+  { rule_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }},
+    properties = { tag = function() return awful.screen.focused().selected_tag end }},
 
-    -- dirty hack to preven Ctrl-q from closing firefox
-    { rule = { class = browser },
-      properties = { keys = awful.key({ "Control" }, "q", function() end) }},
+  -- dirty hack to preven Ctrl-q from closing firefox
+  { rule = { class = browser },
+    properties = { keys = awful.key({ "Control" }, "q", function() end) }},
 
-    -- Make dragon sticky for easy drag and drop in ranger
-    { rule = { class = "Dragon-drag-and-drop" },
-      properties = { ontop = true, sticky = true }},
+  -- Make dragon sticky for easy drag and drop in ranger
+  { rule = { class = "Dragon-drag-and-drop" },
+    properties = { ontop = true, sticky = true }},
 
-    -- askpass has wrong height on multi-screen setups somehow
-    { rule = { class = "Git-gui--askpass" },
-      properties = { height = 200 }},
+  -- askpass has wrong height on multi-screen setups somehow
+  { rule = { class = "Git-gui--askpass" },
+    properties = { height = 200 }},
 
-    -- some applications like password prompt for keepassxc autotype should be floating and centered
-    { rule_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }, class = { "Git-gui--askpass" }},
-      properties = { floating = true, placement = awful.placement.centered }},
+  -- some applications like password prompt for keepassxc autotype should be floating and centered
+  { rule_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }, class = { "Git-gui--askpass" }},
+    properties = { floating = true, placement = awful.placement.centered }},
 
-    -- always put ncmpcpp on last tag
-    { rule = { name = "ncmpcpp.*" },
-      properties = { tag = tags[#tags] }},
+  -- always put ncmpcpp on last tag
+  { rule = { name = "ncmpcpp.*" },
+    properties = { tag = tags[#tags] }},
 
-    -- display keyboard (and mouse) status nicely
-    { rule = { class = "Key-mon" },
-      properties = { placement = awful.placement.bottom, sticky = true, floating = true, focusable = false }},
+  -- display keyboard (and mouse) status nicely
+  { rule = { class = "Key-mon" },
+    properties = { placement = awful.placement.bottom, sticky = true, floating = true, focusable = false }},
 
-    -- honor size hints of mpv video player
-    { rule = { class = "mpv" },
-      properties = { size_hints_honor = true }},
+  -- honor size hints of mpv video player
+  { rule = { class = "mpv" },
+    properties = { size_hints_honor = true }},
 
-    -- place conky in background on primary screen
-    { rule = { class = "conky" },
-      properties = { focusable = false, screen = function() return screen.primary end,
-        placement = awful.placement.restore, new_tag = { hide = true, volatile = true }},
-      callback = function()
-        if not awful.rules.conky_signals_connected then
-          awful.rules.conky_signals_connected = true
-          -- reload conky when geometry of a screen changes and on restarts of awesome
-          screen.connect_signal("property::geometry", function() awful.spawn("killall -SIGUSR1 conky", false) end)
-          awesome.connect_signal("exit", function() awful.spawn("killall -SIGUSR1 conky", false) end)
-        end
+  -- place conky in background on primary screen
+  { rule = { class = "conky" },
+    properties = { focusable = false, screen = function() return screen.primary end,
+      placement = awful.placement.restore, new_tag = { hide = true, volatile = true }},
+    callback = function()
+      if not awful.rules.conky_signals_connected then
+        awful.rules.conky_signals_connected = true
+        -- reload conky when geometry of a screen changes and on restarts of awesome
+        screen.connect_signal("property::geometry", function() awful.spawn("killall -SIGUSR1 conky", false) end)
+        awesome.connect_signal("exit", function() awful.spawn("killall -SIGUSR1 conky", false) end)
       end
-      },
+    end
+    },
 }
 
 -- filter for qpdfview to prevent focus stealing after compiling latex documents
