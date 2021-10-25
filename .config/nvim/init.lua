@@ -1,9 +1,9 @@
 --[[
-  Main Neovim configuration. Tries to be mostly language agnostic. Language
-  specific and buffer-local options were moved to corresponding ftplugins in
-  the directory "ftplugin" instead. Also, larger chunks of coherent code were
-  moved into libraries in "lua" or plugins in "plugin" to not clutter the main
-  configuration file.
+  Main Neovim configuration. Aims to be mostly language agnostic. Configuration
+  which is language specific and buffer-local was moved to corresponding
+  ftplugins in the directory "ftplugin" instead. Also, larger chunks of
+  coherent code were refactored into libraries in "lua" or plugins in "plugin"
+  to not clutter the main configuration file.
 --]]
 
 -------------------------------------------------------------------------------
@@ -160,7 +160,7 @@ vim.cmd([[command! Reload :luafile $MYVIMRC]]) -- reload config file with :Reloa
 local opts = {noremap = true, silent = true}
 
 local function keymap(...)
-  vim.api.nvim_set_keymap(...)
+  vim.api[type(...) == "number" and "nvim_buf_set_keymap" or "nvim_set_keymap"](...)
 end
 
 -- navigate buffers like tabs (gt & gT)
@@ -168,23 +168,25 @@ keymap("n", "gb", '"<cmd>bnext " . v:count1 . "<cr>"', {expr = true, unpack(opts
 keymap("n", "gB", '"<cmd>bprev " . v:count1 . "<cr>"', {expr = true, unpack(opts)})
 
 -- language server mappings
-keymap("n", 'gD',         '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
-keymap("n", 'gd',         '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-keymap("n", 'K',          '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-keymap("n", 'gi',         '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
-keymap("n", '<C-k>',      '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-keymap("n", '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<cr>', opts)
-keymap("n", '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<cr>', opts)
-keymap("n", '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<cr>', opts)
-keymap("n", '<leader>D',  '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
-keymap("n", '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-keymap("n", '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
-keymap("n", 'gr',         '<cmd>lua vim.lsp.buf.references()<cr>', opts)
-keymap("n", '<leader>e',  '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>', opts)
-keymap("n", '[d',         '<cmd>lua vim.lsp.diagnostic.goto_prev()<cr>', opts)
-keymap("n", ']d',         '<cmd>lua vim.lsp.diagnostic.goto_next()<cr>', opts)
-keymap("n", '<leader>q',  '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
-keymap("n", '<leader>f',  '<cmd>lua vim.lsp.buf.formatting()<cr>', opts)
+local function lsp_mappings(_, buf)
+  keymap(buf, "n", 'gd',         '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+  keymap(buf, "n", 'gD',         '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
+  keymap(buf, "n", '<leader>gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
+  keymap(buf, "n", '<leader>gt', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
+  keymap(buf, "n", 'K',          '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+  keymap(buf, "n", '<C-k>',      '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+  keymap(buf, "n", '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<cr>', opts)
+  keymap(buf, "n", '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<cr>', opts)
+  keymap(buf, "n", '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<cr>', opts)
+  keymap(buf, "n", '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+  keymap(buf, "n", '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+  keymap(buf, "n", '<leader>rf', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+  keymap(buf, "n", '<leader>ll', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
+  keymap(buf, "n", '<leader>ld', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>', opts)
+  keymap(buf, "n", '[d',         '<cmd>lua vim.lsp.diagnostic.goto_prev()<cr>', opts)
+  keymap(buf, "n", ']d',         '<cmd>lua vim.lsp.diagnostic.goto_next()<cr>', opts)
+  keymap(buf, "n", '<leader>fm', '<cmd>lua vim.lsp.buf.formatting()<cr>', opts)
+end
 
 -- Language Server Client
 -------------------------------------------------------------------------------
@@ -365,10 +367,14 @@ colorizer.setup(
 
 -- Lsp-config
 -------------------------------------------------------------------------------
-local lspconfig = require('lspconfig.util')
+local lsputil = require('lspconfig').util
 
 -- debounce 'didChange' notifications to the server
-lspconfig.default_config.flags = {debounce_text_changes = 150}
+lsputil.default_config.flags = {debounce_text_changes = 150}
+-- setup calls to specific language servers are located in ftplugins
+function lsputil.on_setup(config)
+  config.on_attach = lsputil.add_hook_before(config.on_attach, lsp_mappings)
+end
 
 -- LuaSnip
 -------------------------------------------------------------------------------

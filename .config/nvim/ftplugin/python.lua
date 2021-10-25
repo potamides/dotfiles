@@ -10,8 +10,8 @@ if not vim.b.did_user_ftplugin then
       settings = {
         python = {
           analysis = {
-            typeCheckingMode = "off",
-            autoImportCompletions = true
+            autoImportCompletions  = true,
+            useLibraryCodeForTypes = false
           }
         }
       }
@@ -21,6 +21,8 @@ if not vim.b.did_user_ftplugin then
       pyright.manager.try_add_wrapper()
     end
   end
+
+  vim.api.nvim_buf_set_keymap(0, "n", "<localleader>or", '<cmd>PyrightOrganizeImports<cr>', {silent=true})
 
   -- customize how automatic formatting is done
   vim.opt_local.formatoptions:append{

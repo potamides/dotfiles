@@ -7,10 +7,6 @@ if not vim.b.did_user_ftplugin then
   local sumneko = require("lspconfig").sumneko_lua
 
   if not sumneko.manager then
-    local runtime_path = vim.split(package.path, ';')
-    -- neovim lua modules
-    vim.list_extend(runtime_path, {"lua/?.lua", "lua/?/init.lua"})
-
     sumneko.setup {
       cmd = {"lua-language-server", "-E", "/usr/share/lua-language-server/main.lua"};
       settings = {
@@ -18,7 +14,10 @@ if not vim.b.did_user_ftplugin then
           runtime = {
             version = "LuaJIT",
             -- match the file name when entering require('XYZ')
-            path = runtime_path
+            path = vim.list_extend(
+              vim.split(package.path, ';'),
+              -- neovim lua modules
+              {"lua/?.lua", "lua/?/init.lua"})
           },
           diagnostics = {
             disable = {

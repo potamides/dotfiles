@@ -17,7 +17,7 @@ if not vim.b.did_user_ftplugin then
           },
           forwardSearch = {
             executable = "qpdfview",
-            args = {"--unique", "%p#src:%f:%l:1"}
+            args = {"--unique", "--instance", "tex_" .. vim.fn.localtime(), "%p#src:%f:%l:1"}
           },
           chktex = {
             onEdit = true,
@@ -52,14 +52,9 @@ if not vim.b.did_user_ftplugin then
     end
   end
 
-  local function set_keymap(lhs, rhs)
-    local template = '<cmd>lua require("lspconfig").texlab.commands.%s[1]()<CR>'
-    vim.api.nvim_buf_set_keymap(0, "n", lhs, string.format(template, rhs), {noremap=true, silent=true})
-  end
-
-  set_keymap("<localleader>bn", "TexlabBuild")
-  set_keymap("<localleader>fs", "TexlabForward")
-  set_keymap("<localleader>sl", "TexlabLog")
+  vim.api.nvim_buf_set_keymap(0, "n", "<localleader>bn", '<cmd>TexlabBuild<cr>', {silent=true})
+  vim.api.nvim_buf_set_keymap(0, "n", "<localleader>fs", '<cmd>TexlabForward<cr>', {silent=true})
+  vim.api.nvim_buf_set_keymap(0, "n", "<localleader>sl", '<cmd>TexlabLog<cr>', {silent=true})
 
   -- improve completion for labels which often have a prefix like 'sec:'
   vim.opt.iskeyword:append{":"}
