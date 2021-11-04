@@ -1,24 +1,38 @@
-<p align="center">
-  <a href="#readme">
-    <img alt="🍙 Dotfiles" width="100%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/dotfiles-headline.svg"/>
-  </a>
-</p>
+<a href="#readme">
+  <img alt="🍙 Dotfiles" width="100%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/dotfiles-headline.svg"/>
+</a>
 
 ---
 
-This is a repository for configuration files of various applications that I use
-on a daily basis. My goal is to find a satisfactory balance between
-functionality and design, while keeping an eye on resource consumption. I put a
-lot of care into a consistent look, that is easy on the eyes and try to use the
-[gruvbox](https://github.com/morhetz/gruvbox) colorscheme for everything.
+This repository contains my personal
+[dotfiles](https://wiki.archlinux.org/title/Dotfiles) for almost all the
+programs I use on a daily basis. Primarily, this allows me to organize my
+[rice](https://thatnixguy.github.io/posts/ricing/) and to easily set up the
+computing experience I enjoy on any machine I come across. However, it also
+allows me to share my preferences with others. I think there are some
+interesting things here worth discovering, and that's why I take the time to
+write (or at least try to write) sufficient comments and documentation.
+
+My principles are to find a satisfactory balance between functionality and
+design while keeping an eye on resource consumption. I prefer keyboard-focused
+control over everything else and place a high value on visual consistency. My
+preferred color scheme is [gruvbox](https://github.com/morhetz/gruvbox), and I
+use [Arch Linux](https://archlinux.org/) as my daily driver, but there
+shouldn't be much here requiring this specific distribution. Thus, using my
+configurations on other distros or, in the worst case, porting it shouldn't be
+too hard. I prefer a slightly retro design, but I don't shy away from
+occasionally using Unicode symbols and [Nerd Font](https://www.nerdfonts.com/)
+glyphs in my terminal applications. However, since I sometimes only work with
+the [Linux console](https://wiki.archlinux.org/title/Linux_console), I always
+make sure to revert to settings that look good in [VGA text
+mode](https://en.wikipedia.org/wiki/VGA_text_mode) with [code page
+437](https://en.wikipedia.org/wiki/Code_page_437), if that should be the case.
 
 ---
 
-<p align="center">
-  <a href="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/rice.png">
-    <img alt="CRT Monitor with rice" width="100%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/rice-crt.svg"/>
-  </a>
-</p>
+<a href="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/rice.png">
+  <img alt="CRT Monitor with rice" width="100%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/rice-crt.svg"/>
+</a>
 
 ## Installation
 **Disclaimer:** The steps below are highly tailored to my needs and I would
