@@ -32,7 +32,7 @@ local function parse_battery_info(content)
 
     charge = charge + batt.charge
   end
-  charge = charge / #battery_info
+  charge = math.min(charge / #battery_info, 100)
   time = 60 * time -- minutes
 
   return charge, status, time

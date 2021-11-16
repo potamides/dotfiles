@@ -178,8 +178,8 @@ local function clientmenu(filter, selected_tags_only)
   local menu, geom = awful.menu(items), scr.geometry
   menu:show{
     coords = {
-      y = (geom.height - menu.height) / 2,
-      x = (geom.width - menu.width) / 2
+      x = geom.x + (geom.width - menu.width) / 2,
+      y = geom.y + (geom.height - menu.height) / 2
     }
   }
 end
@@ -746,10 +746,16 @@ awful.rules.rules = {
       placement = awful.placement.restore, new_tag = { hide = true, volatile = true }},
     callback = function()
       if not awful.rules.conky_signals_connected then
+        local function conky_restart()
+          awful.spawn("killall -SIGUSR1 conky", false)
+        end
+
+        -- restart conky when a screen is removed or its geometry changes, or when awesome restarts
+        screen.connect_signal("property::geometry", conky_restart)
+        screen.connect_signal("removed", conky_restart)
+        awesome.connect_signal("exit", conky_restart)
+
         awful.rules.conky_signals_connected = true
-        -- reload conky when geometry of a screen changes and on restarts of awesome
-        screen.connect_signal("property::geometry", function() awful.spawn("killall -SIGUSR1 conky", false) end)
-        awesome.connect_signal("exit", function() awful.spawn("killall -SIGUSR1 conky", false) end)
       end
     end
     },
