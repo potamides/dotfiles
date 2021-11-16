@@ -5,12 +5,15 @@
 if not vim.b.did_user_ftplugin then
   local texlab = require("lspconfig").texlab
   local windows = require("lspconfig/ui/windows")
+  local util = require('lspconfig/util')
 
   if not texlab.manager then
     texlab.setup{
+      root_dir = function(f)
+        return util.root_pattern("latexmkrc")(f) or util.find_git_ancestor(f) or util.path.dirname(f)
+      end,
       settings = {
         texlab = {
-          auxDirectory = vim.fn.isdirectory("build") and "build" or ".",
           build = {
             args = {"-interaction=nonstopmode", "-synctex=1", "%f"},
             forwardSearchAfter = true
@@ -25,26 +28,34 @@ if not vim.b.did_user_ftplugin then
           }
         }
       },
-      commands = {
-        TexlabLog = {
-          function()
-            local auxdir, lines = vim.fn.isdirectory("build") and "build" or ".", {}
+      on_new_config = function(config, root_dir)
+        local build_dir = root_dir .. "/build"
 
-            for _, file in ipairs(vim.fn.globpath(auxdir, "*.log\\|blg", false, true)) do
-              vim.list_extend(lines, vim.fn.readfile(file))
-            end
+        if vim.fn.isdirectory(build_dir) == 1 then
+          config.settings.texlab.auxDirectory = build_dir
+        end
 
-            if not vim.tbl_isempty(lines) then
-              local info = windows.percentage_range_window(0.8, 0.7)
-              vim.api.nvim_buf_set_lines(info.bufnr, 0, -1, true, lines)
-              vim.api.nvim_buf_set_option(info.bufnr, "modifiable", false)
-              vim.api.nvim_buf_set_keymap(info.bufnr, "n", "<esc>", "<cmd>bd<CR>", {noremap = true})
-              vim.lsp.util.close_preview_autocmd({"BufHidden", "BufLeave"}, info.win_id)
-            end
-          end,
-          description = "Show content of log files in a floating window."
+        config.commands = {
+          TexlabLog = {
+            function()
+              local lines = {}
+
+              for _, file in ipairs(vim.fn.glob(build_dir .. "/*.log\\|blg", false, true)) do
+                vim.list_extend(lines, vim.fn.readfile(file))
+              end
+
+              if not vim.tbl_isempty(lines) then
+                local info = windows.percentage_range_window(0.8, 0.7)
+                vim.api.nvim_buf_set_lines(info.bufnr, 0, -1, true, lines)
+                vim.api.nvim_buf_set_option(info.bufnr, "modifiable", false)
+                vim.api.nvim_buf_set_keymap(info.bufnr, "n", "<esc>", "<cmd>bd<CR>", {noremap = true})
+                vim.lsp.util.close_preview_autocmd({"BufHidden", "BufLeave"}, info.win_id)
+              end
+            end,
+            description = "Show content of log files in a floating window."
+          }
         }
-      }
+      end
     }
 
     if not (texlab.autostart == false) then

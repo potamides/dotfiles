@@ -367,7 +367,7 @@ colorizer.setup(
 
 -- Lsp-config
 -------------------------------------------------------------------------------
-local lsputil = require('lspconfig').util
+local lsputil = require('lspconfig/util')
 
 -- debounce 'didChange' notifications to the server
 lsputil.default_config.flags = {debounce_text_changes = 150}
