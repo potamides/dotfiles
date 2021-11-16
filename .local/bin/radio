@@ -11,6 +11,7 @@ declare -A stations=(
   [Code Radio]=https://coderadio-admin.freecodecamp.org/radio/8010/radio.mp3
   [FUTURE FNK]=http://node-16.zeno.fm:80/etbbu6a3dnruv
   [Gensokyo Radio]=https://stream.gensokyoradio.net/1
+  [Hand of Doom Radio]=http://s5.nexuscast.com:8042/stream
   [Kohina]=http://kohina.duckdns.org:8000/stream.ogg
   [Nightride FM]=https://stream.nightride.fm/nightride.ogg
   [Nightwave Plaza]=https://radio.plaza.one/ogg
