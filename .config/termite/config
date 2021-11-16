@@ -6,7 +6,7 @@
 #cell_width_scale = 1.0
 #clickable_url = true
 #dynamic_title = true
-font = monospace 14
+font = monospace 13
 #fullscreen = true
 #icon_name = terminal
 mouse_autohide = true
@@ -113,7 +113,7 @@ color248 = #bdae93
 color250 = #d5c4a1
 
 [hints]
-font = monospace 14
+font = monospace 13
 foreground = #282828
 background = #fabd2f
 active_foreground = #282828
