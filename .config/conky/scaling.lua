@@ -1,48 +1,57 @@
--- This library adds basic scaling support to conky. It uses a new table
--- "conky.sizes", which should have vertical resolutios (e.g. 1080) as keys and
--- a table of sizes as values. These sizes can be used in the config through
--- the "<sizeN>" placeholder (where N is the index in the table). This library
--- then choses the correct sizes depending on the resolution of the screen. If
--- the resolution is not supported (not in the "conky.sizes" table), the
--- autoscale algorithm is used. For reference the primary screen is used.
--- "Xrandr" must be installed for this to work.
+-- This script adds basic scaling support to conky. It uses a new table
+-- "conky.sizes", which should have vertical resolutions (e.g. 1080) as keys
+-- and tables of sizes as values. Sizes can be specified as key, value pairs
+-- which can then be used in the config through the "<key>" placeholder (this
+-- is configurable). This script then chooses the correct sizes depending on
+-- the resolution of the screen. If the resolution is not supported (e.g. not
+-- in the "conky.sizes" table), the autoscale algorithm is used which
+-- calculates the sizes to use from the closest specified resolution. For
+-- reference the primary screen is used. "Xrandr" must be installed for this to
+-- work as intended.
 
 local scaling = {
+  format = "<%s>",
   resolution = tonumber(io.popen("xrandr"):read("*a"):match("primary %d+x(%d+)")) or 1080
 }
 
-function scaling.autoscale(num)
-  local fallback = math.maxinteger
+function scaling:autoscale()
+  local fallback, autosizes = math.maxinteger, {}
+
   for resolution, _ in pairs(conky.sizes) do
-    if math.abs(scaling.resolution - resolution) < math.abs(scaling.resolution - fallback) then
+    if math.abs(self.resolution - resolution) < math.abs(self.resolution - fallback) then
       fallback = resolution
     end
   end
-  local scaled = (scaling.resolution * conky.sizes[fallback][num]) / fallback
-  return scaled % 2 >= 0.5 and math.ceil(scaled) or math.floor(scaled)
+
+  for id, value in pairs(conky.sizes[fallback]) do
+    local scaled = (self.resolution * value) / fallback
+    autosizes[id] = scaled % 2 >= 0.5 and math.ceil(scaled) or math.floor(scaled)
+  end
+
+  return autosizes
 end
 
-function scaling.apply(str)
-  local item = string.gsub(str, "<size(%d+)>", function(num)
-    num = tonumber(num)
-    return conky.sizes[scaling.resolution] and conky.sizes[scaling.resolution][num] or scaling.autoscale(num)
-  end)
-  return tonumber(item) or item
+function scaling:apply(str)
+  for id, value in pairs(conky.sizes[self.resolution] or self:autoscale()) do
+    str = string.gsub(str, string.format(self.format, id), value)
+  end
+
+  return tonumber(str) or str
 end
 
-function scaling.scale(item)
+function scaling:scale(item)
   if conky.sizes then
     if type(item) == "table" then
       for index, value in pairs(item) do
         if type(value) == "string" then
-          item[index] = scaling.apply(value)
+          item[index] = self:apply(value)
         end
       end
     elseif type(item) == "string" then
-      item = scaling.apply(item)
+      item = self:apply(item)
     end
   end
   return item
 end
 
-conky = setmetatable({}, {__newindex = function(_, key, value) rawset(conky, key, scaling.scale(value)) end})
+_G.conky = setmetatable({}, {__newindex = function(_, key, value) rawset(conky, key, scaling:scale(value)) end})
