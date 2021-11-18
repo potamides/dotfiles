@@ -31,6 +31,7 @@ export XMODIFIERS="@im=fcitx"
 export WEECHAT_HOME="$HOME/.config/weechat"
 export GTK2_RC_FILES="$HOME/.config/gtk-2.0/gtkrc"
 export PYTHONSTARTUP="$HOME/.config/python/config.py"
+export INPUTRC="$HOME/.config/readline/inputrc"
 
 # force ptpython to use ansi colors everywhere
 export PROMPT_TOOLKIT_COLOR_DEPTH="DEPTH_4_BIT"
