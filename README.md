@@ -37,8 +37,8 @@ mode](https://en.wikipedia.org/wiki/VGA_text_mode) with [code page
 ## Installation
 **Disclaimer:** My dotfiles are heavily customized to my own needs. I,
 therefore, advise everyone not to use this repository blindly. Instead, I
-recommend checking each relevant component thoroughly before use to avoid
-unexpected complications.
+recommend at least checking each relevant component thoroughly before use to
+avoid unexpected complications.
 
 If you just want to hack at your own leisure, this repository and its
 submodules can be cloned with the following command:
@@ -47,15 +47,12 @@ git clone --recurse-submodules https://github.com/potamides/dotfiles
 ```
 For actual use, I recommend the installation as a bare Git repository. This
 makes it possible to manage dotfiles with git only in an uncomplicated and
-effective way without having to rely on additional external tools <sup>
-[1](https://news.ycombinator.com/item?id=11070797),
-[2](https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo/),
-[3](https://harfangk.github.io/2016/09/18/manage-dotfiles-with-a-git-bare-repository.html)
-</sup>. For this use case, the project contains a
-[script](.local/bin/install-dotfiles), that installs a bare git repository to
-`$HOME/.dotfiles` and updates configuration files in `$HOME` with its content
-(conflicting files are moved to `$HOME/dotfiles.backup`). For convenience the
-script can be executed as follows:
+effective way without having to rely on additional external tools[^1]. For this
+use case, I provide a [script](.local/bin/install-dotfiles) that installs a
+bare git repository to `$HOME/.dotfiles` and updates configuration files in
+`$HOME` with the contents of this project (conflicting files are moved to
+`$HOME/dotfiles.backup`). For convenience the script can be executed as
+follows:
 ```sh
 bash <(curl -LfsS https://github.com/potamides/dotfiles/raw/master/.local/bin/install-dotfiles)
 ```
@@ -65,17 +62,18 @@ project can then be managed like any other git repository:
 alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 ```
 This repository also contains a [script](.local/bin/install-packages) which can
-be used to install all required packages, note however that it is specific to
-[Arch Linux](https://www.archlinux.org/). When this script is sourced it
-defines the array variables `PKG`, `PIP` and `AUR`. You can then use `pacman`,
-`pip` and an [AUR helper](https://wiki.archlinux.org/index.php/AUR_helpers) of
-your choice to install everything:
+be used to install all required packages. However, please note that it is
+specific to [Arch Linux](https://www.archlinux.org/). When this script is
+sourced it defines the array variables `PKG`, `PIP` and `AUR`. You can then use
+`pacman`, `pip` and an [AUR
+helper](https://wiki.archlinux.org/index.php/AUR_helpers) of your choice to
+install everything:
 ```sh
 source <(curl -LfsS https://github.com/potamides/dotfiles/raw/master/.local/bin/install-packages)
 sudo pacman -S "${PKG[@]}" && yay -Sa "${AUR[@]}" && pip install "${PIP[@]}" --user
 ```
 
-## Contents
+## Content
 Configuration files and other information for the core components of this rice
 are listed in the following table. Many programs do not differ significantly
 from the default settings in terms of usage, which is why I simply refer to the
@@ -130,6 +128,28 @@ options through a new table `conky.sizes`, which can be used to specify
 different sizes for arbitrary screen resolutions. For unspecified screen
 resolutions, the plugin tries to calculate the best scaling automatically.
 
+### Neovim
+For my Neovim configuration, I made heavy use of the new features introduced
+with [Neovim 0.5](https://neovim.io/news/2021/07) and wrote it entirely in Lua.
+I wrote a small wrapper around the
+[packer.nvim](https://github.com/wbthomason/packer.nvim) plugin manager called
+[autopacker.lua](.config/nvim/lua/autopacker.lua), which makes sure to install
+itself and all specified plugins on its own on the first launch of Neovim,
+eliminating the need for any further setup steps. I tried to keep the main
+configuration file, [init.lua](.config/nvim/init.lua), mostly language
+agnostic. Therefore, I refactored language-specific and buffer-local code into
+stand-alone [ftplugins](.config/nvim/ftplugin). Similarly, I moved a lot of
+complex functionality into [libraries](.config/nvim/lua) and
+[plugins](.config/nvim/plugin) to keep the main configuration uncluttered and
+readable. Notable examples include
+[components.lua](.config/nvim/lua/components.lua), a collection of (mostly
+LSP-related) components for the
+[lightline.vim](https://github.com/itchyny/lightline.vim) status line, and
+[snipcomp.lua](.config/nvim/plugin/luasnip.lua), a companion plugin for the
+[LuaSnip](https://github.com/L3MON4D3/LuaSnip) snippet engine, which provides a
+snippet completion function for the built-in insert mode completion commands.
+Consult `:h ins-completion` for details.
+
 ### Mutt
 Mutt is configured for multiple email accounts. It makes use of the command
 line tool distributed with [KeePassXC](https://keepassxc.org/) to access
@@ -164,3 +184,32 @@ file. On subsequent launches of weechat this process can be manually invoked
 with the command `/confload <passphrase>`. Again you can use the
 `KEEPASSXC_DATABASE` and `KEEPASSXC_KEYFILE` environment variables for the
 locations of KeePassXC files.
+
+### Ptpython
+I configured ptpython to embed itself into the default Python REPL. That way,
+it can be started by simply executing the standard Python binary. This is
+realized through the environment variable `PYTHONSTARTUP`, which points to a
+setup [script](.config/python/config.py) that is executed when Python is
+launched in interactive mode.
+
+## Miscellaneous
+Besides the things mentioned above, this repository also contains configuration
+files for a number of other programs. However, these are only optionally
+required and perform specific tasks that are often not needed. Therefore, these
+programs are not included in the package installation script and must be
+installed manually. The corresponding Arch Linux packages and their function
+are listed below.
+* For Japanese Kana and Kanji input, install
+  [fcitx5-im](https://archlinux.org/groups/x86_64/fcitx5-im/) and
+  [fcitx5-mozc](https://archlinux.org/packages/community/x86_64/fcitx5-mozc/).
+* To enable automounting, install
+  [udiskie](https://archlinux.org/packages/community/any/udiskie/).
+* To compile L<sup>A</sup>T<sub>E</sub>X with Neovim using qpdfview as the
+  previewer, install [T<sub>E</sub>X
+  Live](https://wiki.archlinux.org/title/TeX_Live). For inverse search also
+  install [neovim-remote](https://aur.archlinux.org/packages/neovim-remote/)
+  and set `nvr --remote-silent +%2 %1` as the source editor in qpdfview.
+
+[^1]: [Ask HN: What do you use to manage dotfiles?](https://news.ycombinator.com/item?id=11070797)  
+  [The best way to store your dotfiles: A bare Git repository](https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo)  
+  [Manage Dotfiles With a Bare Git Repository](https://harfangk.github.io/2016/09/18/manage-dotfiles-with-a-git-bare-repository.html)  
