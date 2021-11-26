@@ -90,7 +90,7 @@ alias pacro='pacman -Qtd > /dev/null && sudo pacman -Rns $(pacman -Qtdq)'
 alias calc='ptpython -i <(echo "from math import *")'
 alias todo='$EDITOR +sil\ /^##\ $(date +%A) +noh +norm\ zz ~/Documents/TODO.md'
 alias server='python3 -m http.server 9999'
-alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+alias {dotfiles,dofi}='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 alias rec='ffmpeg -f x11grab -i $DISPLAY -f pulse -i 0 -y'
 alias backup="sudo snap-sync --config home --noconfirm --UUID \
   \"\$(lsblk -no UUID /dev/disk/by-label/backup)\""
