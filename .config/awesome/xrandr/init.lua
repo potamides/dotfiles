@@ -7,7 +7,8 @@ local naughty = require("naughty")
 local beautiful = require("beautiful")
 
 local xrandr = {
-  state = { cid = nil }
+  state = { cid = nil },
+  position = "below"
 }
 
 -- Get active outputs
@@ -57,14 +58,14 @@ local function menu()
   local _menu = {}
   local out = outputs()
   local choices = arrange(out)
-  local cmd = "xrandr"
 
   for _, choice in pairs(choices) do
+    local cmd = "xrandr"
     -- Enabled outputs
     for i, o in pairs(choice) do
-      cmd = cmd .. " --output " .. o .. " --auto"
+      cmd = cmd .. " --output " .. o .. " --primary --auto"
       if i > 1 then
-        cmd = cmd .. " --below " .. choice[i-1]
+        cmd = cmd .. string.format(" --%s ", xrandr.position) .. choice[i-1]
       end
     end
     -- Disabled outputs
