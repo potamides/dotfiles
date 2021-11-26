@@ -1,7 +1,8 @@
 --[[
   Companion plugin for the LuaSnip snippet engine. Defines a completion
-  function which can be used for insert mode completion or omni completion. See
-  'ins-completion' for details. After completion the snippet is expanded.
+  function which can be used for built-in insert mode completion (e.g. omni
+  completion). See 'ins-completion' for details. After completion the snippet
+  is expanded.
 --]]
 
 -- lazy load LuaSnip, only useful when LuaSnip wasn't already loaded elsewhere

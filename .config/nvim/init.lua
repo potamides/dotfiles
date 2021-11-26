@@ -1,9 +1,9 @@
 --[[
-  Main Neovim configuration. Aims to be mostly language agnostic. Configuration
-  which is language specific and buffer-local was moved to corresponding
-  ftplugins in the directory "ftplugin" instead. Also, larger chunks of
-  coherent code were refactored into libraries in "lua" or plugins in "plugin"
-  to not clutter the main configuration file.
+  Main Neovim configuration. Aims to be mostly language agnostic. Code which is
+  language specific and buffer-local was moved to corresponding ftplugins in
+  the directory "ftplugin" instead. Also, larger chunks of coherent code were
+  refactored into libraries in "lua" or plugins in "plugin" to not clutter the
+  main configuration file.
 --]]
 
 -------------------------------------------------------------------------------
@@ -18,8 +18,8 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
 -- syntax-based folding
-vim.opt.foldlevel = 99
 vim.opt.foldmethod = "syntax"
+vim.opt.foldlevel = 99
 
 -- tabs are 2 spaces
 vim.opt.tabstop = 2
@@ -33,32 +33,37 @@ vim.opt.colorcolumn = {80, 120}
 vim.opt.breakindent = true
 
 -- set list chars for horizontal scrolling
-vim.opt.list = true
 vim.opt.listchars:append{tab = "» ", precedes = "<", extends = ">"}
+vim.opt.list = true
 
 -- setup built-in completion
 vim.opt.completeopt:append{"menuone", "noinsert"}
 vim.opt.complete:remove{"t"}
 vim.opt.omnifunc = 'v:lua.vim.lsp.omnifunc'             -- neovim internal lsp completion
-vim.opt.completefunc = 'v:lua.vim.luasnip.completefunc' -- custom snippet completion defined in plugin/luasnip.lua
+vim.opt.completefunc = 'v:lua.vim.luasnip.completefunc' -- custom snippet completion defined in plugin/snipcomp.lua
 
 -- print line number in front of each line
 vim.opt.number = true
 vim.opt.relativenumber = true
 
 -- spell checking
-vim.opt.spell = true
 vim.opt.spelllang = {"en_us", "de_de", "cjk"}
+vim.opt.spell = true
 
 -- mouse and clipboard integration
 vim.opt.clipboard = "unnamedplus"
 vim.opt.mouse = "a"
+
+-- set an alternative layout that can be switched to in insert mode with CTRL-^
+vim.opt.keymap = "kana"
+vim.opt.iminsert = 0
 
 vim.opt.termguicolors = true   -- 24-bit RGB color in the TUI
 vim.opt.undofile = true        -- persistent undo history
 vim.opt.showmode = false       -- do not show mode message on last line
 vim.opt.hidden = true          -- switch buffers without having to save changes
 vim.opt.joinspaces = false     -- insert one space when joining two sentences
+vim.opt.confirm = true         -- raise dialog asking to save changes when commands like ':q' fail
 vim.opt.inccommand = "nosplit" -- show incremental changes of commands such as search & replace
 vim.opt.virtualedit = "block"  -- virtual editing in virutal block mode
 vim.opt.shortmess:append("I")  -- don't give intro message when starting vim
@@ -288,7 +293,7 @@ vim.g.lightline = {
   component = {
     lineinfo     = vga_fallback("", "↕") .. " %3l:%-2c",
     fileencoding = string.format('%%{%s() ? "" : &fenc!=#""?&fenc:&enc}', components.string.is_narrow),
-    fileformat   = string.format('%%{%s() ? "" : &ff}', components.string.is_narrow),
+    fileformat   = string.format('%%{%s() ? "" : &ff}', components.string.is_narrow)
   },
   component_function = {
     filename  = components.string.filename,
