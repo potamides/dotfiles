@@ -28,6 +28,13 @@ make sure to fall back to settings that look good in [VGA text
 mode](https://en.wikipedia.org/wiki/VGA_text_mode) with [code page
 437](https://en.wikipedia.org/wiki/Code_page_437), if that should be the case.
 
+<details><summary>Past Discussions</summary>
+
+  * [Streets of Gruvbox](https://www.reddit.com/r/unixporn/comments/i60b10/awesome_streets_of_gruvbox) (8. Aug. 2020)
+  * [Vi-like keybindings for awesome](https://www.reddit.com/r/awesomewm/comments/i4pj35/vilike_keybindings_for_awesome_with_motions_and) (6. Aug. 2020)
+  * [Confload](https://www.reddit.com/r/unixporn/comments/l1unqe/oc_confload_create_dotfilesmanageable_weechat) (21. Jan. 2021)
+</details>
+
 ---
 
 <a href="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/rice.png">
