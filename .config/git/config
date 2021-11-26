@@ -10,6 +10,8 @@
   mnemonicPrefix = true
 [pull]
   rebase = false
+[help]
+  autoCorrect = "prompt"
 [merge]
   tool = nvimdiff2
 [mergetool "unityyamlmerge"]
