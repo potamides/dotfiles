@@ -4,6 +4,9 @@ $bibtex_use = 1.5;
 # Generate pdf using lualatex
 $pdf_mode = 4;
 
+# directory in which output files are to be written by a run of *latex
+$out_dir = "build";
+
 # Use qpdfview as pdf viewer
 $pdf_previewer = 'start qpdfview --unique %S';
 $always_view_file_via_temporary = 1;
@@ -11,4 +14,3 @@ $always_view_file_via_temporary = 1;
 # Remove more files during cleanup
 $cleanup_includes_cusdep_generated = 1;
 $cleanup_includes_generated = 1;
-$clean_ext = 'pdfsync synctex.gz';
