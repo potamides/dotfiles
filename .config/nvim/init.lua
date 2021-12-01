@@ -42,9 +42,11 @@ vim.opt.complete:remove{"t"}
 vim.opt.omnifunc = 'v:lua.vim.lsp.omnifunc'             -- neovim internal lsp completion
 vim.opt.completefunc = 'v:lua.vim.luasnip.completefunc' -- custom snippet completion defined in plugin/snipcomp.lua
 
--- print line number in front of each line
+-- print line numbers and highlight cursor line number
 vim.opt.number = true
 vim.opt.relativenumber = true
+vim.opt.cursorline = true
+vim.opt.cursorlineopt = "number"
 
 -- spell checking
 vim.opt.spelllang = {"en_us", "de_de", "cjk"}
@@ -154,7 +156,7 @@ vim.cmd([[
 vim.cmd([[command! -complete=lua -nargs=* Print :lua print(vim.inspect(<args>))]])
 
 -- open new terminal at the bottom of the current tab
-vim.cmd([[command! -nargs=? Terminal :botright 12split | term <args>]])
+vim.cmd([[command! -nargs=? Terminal :botright 12split | setlocal winfixheight | term <args>]])
 
 vim.cmd([[command! Run :!"%:p"]])              -- Execute current file
 vim.cmd([[command! Config :e $MYVIMRC]])       -- open config file with :Config
@@ -186,24 +188,24 @@ local function lsp_mappings(_, buf)
   keymap(buf, "n", '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
   keymap(buf, "n", '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
   keymap(buf, "n", '<leader>rf', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
-  keymap(buf, "n", '<leader>ll', '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', opts)
-  keymap(buf, "n", '<leader>ld', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<cr>', opts)
-  keymap(buf, "n", '[d',         '<cmd>lua vim.lsp.diagnostic.goto_prev()<cr>', opts)
-  keymap(buf, "n", ']d',         '<cmd>lua vim.lsp.diagnostic.goto_next()<cr>', opts)
+  keymap(buf, "n", '<leader>ll', '<cmd>lua vim.diagnostic.setloclist()<cr>', opts)
+  keymap(buf, "n", '<leader>ld', '<cmd>lua vim.diagnostic.open_float()<cr>', opts)
+  keymap(buf, "n", '[d',         '<cmd>lua vim.diagnostic.goto_prev()<cr>', opts)
+  keymap(buf, "n", ']d',         '<cmd>lua vim.diagnostic.goto_next()<cr>', opts)
   keymap(buf, "n", '<leader>fm', '<cmd>lua vim.lsp.buf.formatting()<cr>', opts)
 end
 
 -- Language Server Client
 -------------------------------------------------------------------------------
-local prefix = "LspDiagnosticsSign"
+local prefix = "DiagnosticSign"
 
 -- when not on the console set some nice lsp signs
 if not vim.g.vga_compatible then
   vim.fn.sign_define{
     {name = prefix .. "Error",       text = "▌", texthl = prefix .. "Error"},
-    {name = prefix .. "Warning",     text = "▌", texthl = prefix .. "Warning"},
+    {name = prefix .. "Warn",     text = "▌", texthl = prefix .. "Warn"},
     {name = prefix .. "Hint",        text = "▌", texthl = prefix .. "Hint"},
-    {name = prefix .. "Information", text = "▌", texthl = prefix .. "Information"}
+    {name = prefix .. "Info", text = "▌", texthl = prefix .. "Info"}
   }
 end
 
@@ -336,13 +338,20 @@ vim.g["lightline#bufferline#min_tab_count"]    = 2
 
 -- Quick-Scope
 -------------------------------------------------------------------------------
-vim.cmd(string.format([[
+function vim.fn.qs_colors()
+  for group, color in pairs({QuickScopePrimary=10, QuickScopeSecondary=13}) do
+    vim.cmd(string.format("highlight %s guisp=%s gui=bold,underline ctermfg=%d cterm=bold,underline",
+      group, vim.g["terminal_color_" .. color], color))
+  end
+end
+
+vim.cmd([[
   augroup qs_colors
     autocmd!
-    autocmd ColorScheme * execute "highlight %s guisp=" . %s . " gui=bold,underline ctermfg=%d cterm=bold,underline"
-    autocmd ColorScheme * execute "highlight %s guisp=" . %s . " gui=bold,underline ctermfg=%d cterm=bold,underline"
+    autocmd ColorScheme * lua vim.fn.qs_colors()
+    autocmd VimEnter * lua vim.fn.qs_colors()
   augroup END
-]], "QuickScopePrimary", "g:terminal_color_10", 10, "QuickScopeSecondary", "g:terminal_color_13", 13))
+]])
 
 vim.g.qs_highlight_on_keys = {"f", "F", "t", "T"}
 
@@ -372,7 +381,7 @@ colorizer.setup(
 
 -- Lsp-config
 -------------------------------------------------------------------------------
-local lsputil = require('lspconfig/util')
+local lsputil = require('lspconfig.util')
 
 -- debounce 'didChange' notifications to the server
 lsputil.default_config.flags = {debounce_text_changes = 150}

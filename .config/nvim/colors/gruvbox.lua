@@ -8,21 +8,21 @@ vim.cmd("runtime! library/gruvbox.vim")
 -- add missing lsp highlighting groups (based on https://github.com/gruvbox-community/gruvbox)
 -- lua syntax api is still work in progress (see https://github.com/neovim/neovim/issues/9876)
 vim.cmd([[
-  hi! link LspDiagnosticsDefaultError GruvboxRed
-  hi! link LspDiagnosticsSignError GruvboxRedSign
-  hi! link LspDiagnosticsUnderlineError GruvboxRedUnderline
+  hi! link DiagnosticError GruvboxRed
+  hi! link DiagnosticSignError GruvboxRedSign
+  hi! link DiagnosticUnderlineError GruvboxRedUnderline
 
-  hi! link LspDiagnosticsDefaultWarning GruvboxYellow
-  hi! link LspDiagnosticsSignWarning GruvboxYellowSign
-  hi! link LspDiagnosticsUnderlineWarning GruvboxYellowUnderline
+  hi! link DiagnosticWarn GruvboxYellow
+  hi! link DiagnosticSignWarn GruvboxYellowSign
+  hi! link DiagnosticUnderlineWarn GruvboxYellowUnderline
 
-  hi! link LspDiagnosticsDefaultInformation GruvboxBlue
-  hi! link LspDiagnosticsSignInformation GruvboxBlueSign
-  hi! link LspDiagnosticsUnderlineInformation GruvboxBlueUnderline
+  hi! link DiagnosticInfo GruvboxBlue
+  hi! link DiagnosticSignInfo GruvboxBlueSign
+  hi! link DiagnosticUnderlineInfo GruvboxBlueUnderline
 
-  hi! link LspDiagnosticsDefaultHint GruvboxPurple
-  hi! link LspDiagnosticsSignHint GruvboxPurpleSign
-  hi! link LspDiagnosticsUnderlineHint GruvboxPurpleUnderline
+  hi! link DiagnosticHint GruvboxPurple
+  hi! link DiagnosticSignHint GruvboxPurpleSign
+  hi! link DiagnosticUnderlineHint GruvboxPurpleUnderline
 
   hi! link LspReferenceText GruvboxYellowBold
   hi! link LspReferenceRead GruvboxYellowBold

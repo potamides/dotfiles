@@ -1,5 +1,5 @@
 --[[
-  Custom component functions for lightline. Mainly LSP related.
+  Custom component functions for lightline. Mainly LSP/diagnostics related.
 --]]
 
 local comps = {
@@ -68,15 +68,15 @@ function comps.progress()
   return comps.spinner.status
 end
 
--- lsp errors
+-- error diagnostics
 function comps.errors()
-  local errors = vim.lsp.diagnostic.get_count(0, "Error")
+  local errors = #vim.diagnostic.get(0, {severity=vim.diagnostic.severity.ERROR})
   return errors > 0 and comps.get_sign("error") .. " " .. errors or ""
 end
 
--- lsp warnings
+-- warning diagnostics
 function comps.warnings()
-  local warnings = vim.lsp.diagnostic.get_count(0, "Warning")
+  local warnings = #vim.diagnostic.get(0, {severity=vim.diagnostic.severity.WARN})
   return warnings > 0 and comps.get_sign("warning") .. " " .. warnings or ""
 end
 
@@ -113,7 +113,8 @@ function comps.setup(opts)
   vim.cmd([[
     augroup lightline_diagnostics
       autocmd!
-      autocmd User LspDiagnosticsChanged,LspProgressUpdate call lightline#update()
+      autocmd User LspProgressUpdate call lightline#update()
+      autocmd DiagnosticChanged * call lightline#update()
     augroup END
   ]])
 end
