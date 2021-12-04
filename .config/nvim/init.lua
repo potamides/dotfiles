@@ -202,10 +202,10 @@ local prefix = "DiagnosticSign"
 -- when not on the console set some nice lsp signs
 if not vim.g.vga_compatible then
   vim.fn.sign_define{
-    {name = prefix .. "Error",       text = "▌", texthl = prefix .. "Error"},
-    {name = prefix .. "Warn",     text = "▌", texthl = prefix .. "Warn"},
-    {name = prefix .. "Hint",        text = "▌", texthl = prefix .. "Hint"},
-    {name = prefix .. "Info", text = "▌", texthl = prefix .. "Info"}
+    {name = prefix .. "Error", text = "▌", texthl = prefix .. "Error"},
+    {name = prefix .. "Warn",  text = "▌", texthl = prefix .. "Warn"},
+    {name = prefix .. "Hint",  text = "▌", texthl = prefix .. "Hint"},
+    {name = prefix .. "Info",  text = "▌", texthl = prefix .. "Info"}
   }
 end
 
