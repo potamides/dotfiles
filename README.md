@@ -152,7 +152,7 @@ readable. Notable examples include
 [components.lua](.config/nvim/lua/components.lua), a collection of (mostly
 LSP-related) components for the
 [lightline.vim](https://github.com/itchyny/lightline.vim) status line, and
-[snipcomp.lua](.config/nvim/plugin/luasnip.lua), a companion plugin for the
+[snipcomp.lua](.config/nvim/plugin/snipcomp.lua), a companion plugin for the
 [LuaSnip](https://github.com/L3MON4D3/LuaSnip) snippet engine, which provides a
 snippet completion function for the built-in insert mode completion commands.
 Consult `:h ins-completion` for details.

@@ -19,15 +19,22 @@ local function snippet2completion(snippet)
   }
 end
 
+local function snippetfilter(line_to_cursor, base)
+  return function(s)
+    return not s.hidden and vim.startswith(s.trigger, base) and s.show_condition(line_to_cursor)
+  end
+end
+
 -- Set 'completefunc' or 'omnifunc' to 'v:lua.vim.luasnip.completefunc' to get
 -- completion.
 function vim.luasnip.completefunc(findstart, base)
+  local line_to_cursor = vim.fn.getline("."):sub(1, vim.fn.col("."))
   if findstart == 1 then
-    return vim.fn.match(vim.fn.getline("."):sub(1, vim.fn.col(".")), '\\k*$')
+    return vim.fn.match(line_to_cursor, '\\k*$')
   end
 
   local snippets = vim.list_extend(vim.list_slice(luasnip.snippets.all), luasnip.snippets[vim.bo.filetype] or {})
-  snippets = vim.tbl_filter(function(snippet) return vim.startswith(snippet.trigger, base) end, snippets)
+  snippets = vim.tbl_filter(snippetfilter(line_to_cursor, base), snippets)
   snippets = vim.tbl_map(snippet2completion, snippets)
   table.sort(snippets, function(s1, s2) return s1.word < s2.word end)
   return snippets
