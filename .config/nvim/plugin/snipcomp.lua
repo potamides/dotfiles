@@ -10,11 +10,10 @@ local luasnip = setmetatable({}, {__index = function(_, key) return require("lua
 vim.luasnip = {}
 
 local function snippet2completion(snippet)
-  local docstring = snippet:get_docstring()
   return {
     word      = snippet.trigger,
     menu      = snippet.name,
-    info      = type(docstring) == "table" and table.concat(docstring, "\n") or docstring,
+    info      = vim.trim(table.concat(vim.tbl_flatten({snippet.dscr or "", "", snippet:get_docstring()}), "\n")),
     dup       = true,
     user_data = "luasnip"
   }
@@ -30,6 +29,7 @@ function vim.luasnip.completefunc(findstart, base)
   local snippets = vim.list_extend(vim.list_slice(luasnip.snippets.all), luasnip.snippets[vim.bo.filetype] or {})
   snippets = vim.tbl_filter(function(snippet) return vim.startswith(snippet.trigger, base) end, snippets)
   snippets = vim.tbl_map(snippet2completion, snippets)
+  table.sort(snippets, function(s1, s2) return s1.word < s2.word end)
   return snippets
 end
 
