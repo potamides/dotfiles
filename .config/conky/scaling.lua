@@ -25,7 +25,7 @@ function scaling:autoscale()
 
   for id, value in pairs(conky.sizes[fallback]) do
     local scaled = (self.resolution * value) / fallback
-    autosizes[id] = scaled % 2 >= 0.5 and math.ceil(scaled) or math.floor(scaled)
+    autosizes[id] = math.floor(scaled + 0.5)
   end
 
   return autosizes
