@@ -11,6 +11,8 @@ local gears = require("gears")
 require("awful.autofocus")
 -- Widget and layout library
 local wibox = require("wibox")
+-- low-level system libraries
+local glib = require("lgi").GLib
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
@@ -64,12 +66,18 @@ end
 -- Themes define colors, icons, font and wallpapers.
 beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua")
 
--- This is used later as the default terminal and editor to run.
-local terminal         = os.getenv("TERMCMD") or "termite"
-local browser          = os.getenv("BROWSER") or "firefox"
-local editor           = os.getenv("EDITOR") or "nvim"
-local editor_cmd       = terminal .. " -e " .. editor
-menubar.utils.terminal = terminal -- Set the terminal for applications that require it
+-- This is used later as the default terminal, browser and editor to run.
+local terminal = os.getenv("TERMCMD") or "termite"
+local browser  = os.getenv("BROWSER") or "firefox"
+local editor   = os.getenv("EDITOR") or "nvim"
+
+-- Set the terminal for applications that require it.
+menubar.utils.terminal = terminal
+
+-- Edit files with editor and make sure to quote arguments.
+local editor_cmd = setmetatable({},
+  {__concat = function(_, file) return terminal .. " -e " .. glib.shell_quote(editor .. " " .. file) end}
+)
 
 -- Default modkey.
 local modkey = "Mod4"
@@ -879,7 +887,7 @@ end)
 -------------------------------------------------------------------------------
 local function title_create(c)
   return wibox.widget {
-    markup = "<b>" .. (c.class or "client"):gsub("^.+%.", "") .. "</b>",
+    markup = "<b>" .. (c.class or "client") .. "</b>",
     align = "center",
     widget = wibox.widget.textbox,
   }
@@ -895,7 +903,7 @@ end
 
 local function title_update(c)
   if c.title then
-    c.title:set_markup("<b>" .. (c.class or "client"):gsub("^.+%.", "") .. "</b>")
+    c.title:set_markup("<b>" .. (c.class or "client") .. "</b>")
   end
 end
 
