@@ -17,10 +17,6 @@
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
--- syntax-based folding
-vim.opt.foldmethod = "syntax"
-vim.opt.foldlevel = 99
-
 -- tabs are 2 spaces
 vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
@@ -66,8 +62,9 @@ vim.opt.showmode = false       -- do not show mode message on last line
 vim.opt.hidden = true          -- switch buffers without having to save changes
 vim.opt.joinspaces = false     -- insert one space when joining two sentences
 vim.opt.confirm = true         -- raise dialog asking to save changes when commands like ':q' fail
+vim.opt.foldlevel = 99         -- do not automatically close folds when editing a file
 vim.opt.inccommand = "nosplit" -- show incremental changes of commands such as search & replace
-vim.opt.virtualedit = "block"  -- virtual editing in virutal block mode
+vim.opt.virtualedit = "block"  -- virtual editing in visual block mode
 vim.opt.shortmess:append("I")  -- don't give intro message when starting vim
 
 -- Variables
