@@ -12,7 +12,7 @@ local theme = {}
 
 theme.font            = "sans-serif 11"
 theme.revelation_font = "monospace 20"
-theme.icon_theme      = "Papirus-Dark"
+theme.icon_theme      = "gruvbox-dark-icons-gtk"
 
 -- crop to size where wallpaper repeats itself
 theme.wallpaper = usurface.crop(theme_path .. "wallpaper.png", 384, 0, 1920, 1080)

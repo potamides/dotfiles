@@ -1,5 +1,5 @@
-gtk-theme-name="Arc-Gruvbox"
-gtk-icon-theme-name="Papirus-Dark"
+gtk-theme-name="gruvbox-dark-gtk"
+gtk-icon-theme-name="gruvbox-dark-icons-gtk"
 gtk-font-name="sans-serif 11"
 gtk-cursor-theme-name="Adwaita"
 gtk-cursor-theme-size=0
@@ -11,4 +11,5 @@ gtk-enable-event-sounds=1
 gtk-enable-input-feedback-sounds=1
 gtk-xft-antialias=1
 gtk-xft-hinting=1
-gtk-xft-hintstyle="hintfull"
+gtk-xft-hintstyle="hintslight"
+gtk-xft-rgba="rgb"

@@ -21,7 +21,7 @@ PKG=(
   texlab pyright lua-language-server xclip
 
   # used by awesome
-  xorg-xinit papirus-icon-theme physlock scrot firefox redshift mpv
+  xorg-xinit physlock scrot firefox redshift mpv
 
   # used by awesome & conky
   xorg-xrandr
@@ -49,7 +49,7 @@ AUR=(
   bash-complete-alias
 
   # used by awesome
-  gtk-theme-arc-gruvbox-git qt5-styleplugins
+  gruvbox-dark-gtk gruvbox-dark-icons-gtk qt5-styleplugins
 
   # used by ranger
   dragon-drag-and-drop
