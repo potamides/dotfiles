@@ -61,8 +61,7 @@ function kill_container(){
   if is_running; then
     machinectl -q terminate "$label"
     # wait for other session to properly shut down
-    # shellcheck disable=SC2046
-    while [[ $(pgrep -cf "$0") -gt 1 ]]; do
+    while pidof -o %PPID -x "$0" > /dev/null; do
       sleep 1
     done
   fi
@@ -109,7 +108,7 @@ function launch_container(){
 function check_user(){
   # make sure that the script is run as root
   if [[ $EUID -ne 0 ]]; then
-      exec sudo -Es "$0" "$@"
+      exec sudo -E "$0" "$@"
   fi
 }
 
