@@ -3,7 +3,7 @@
 ## Set Environment Variables
 # -----------------------------------------------------------------------------
 
-export BROWSER="firefox"
+export BROWSER="qutebrowser"
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
 export TERMCMD="termite"

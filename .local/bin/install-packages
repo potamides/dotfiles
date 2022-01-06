@@ -10,6 +10,7 @@
 
 PKG=(
   awesome ranger neovim tmux ncmpcpp qpdfview mutt weechat conky when
+  qutebrowser
 
   # used by mutt & weechat
   keepassxc
@@ -21,7 +22,7 @@ PKG=(
   texlab pyright lua-language-server xclip
 
   # used by awesome
-  xorg-xinit physlock scrot firefox redshift mpv
+  xorg-xinit physlock scrot redshift mpv
 
   # used by awesome & conky
   xorg-xrandr
@@ -31,6 +32,9 @@ PKG=(
 
   # used by bash
   bash-completion fzf ripgrep
+
+  # used by qutebrowser
+  pdfjs python-adblock
 
   # terminal fonts
   adobe-source-code-pro-fonts ttf-nerd-fonts-symbols

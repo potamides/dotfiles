@@ -5,9 +5,9 @@
 ---
 
 This repository contains my personal
-[dotfiles](https://wiki.archlinux.org/title/Dotfiles) for most of the
-programs I use on a daily basis. Primarily, this allows me to organize my
-[rice](https://thatnixguy.github.io/posts/ricing/) and to easily set up the
+[dotfiles](https://wiki.archlinux.org/title/Dotfiles) for most of the programs
+I use on a daily basis. Primarily, this allows me to organize my
+[rice](https://thatnixguy.github.io/posts/ricing) and to easily set up the
 computing experience I enjoy on any machine I come across. However, it also
 allows me to share my preferences with others. I think there are some
 interesting things here worth discovering, and that's why I take the time to
@@ -17,11 +17,11 @@ My principles are to find a satisfactory balance between functionality and
 design while keeping an eye on resource consumption. I prefer keyboard-focused
 control over everything else and place a high value on visual consistency
 (preferably by using the [gruvbox](https://github.com/morhetz/gruvbox) color
-scheme). I use [Arch Linux](https://archlinux.org/) as my daily driver, but
+scheme). I use [Arch Linux](https://archlinux.org) as my daily driver, but
 there shouldn't be much here requiring this specific distribution, so using my
 configurations on other distros or, in the worst case, porting it shouldn't be
 too hard. I prefer a slightly retro design, but I don't shy away from
-occasionally using Unicode symbols and [Nerd Font](https://www.nerdfonts.com/)
+occasionally using Unicode symbols and [Nerd Font](https://www.nerdfonts.com)
 glyphs in my terminal applications. However, since I sometimes only work with
 the [Linux console](https://wiki.archlinux.org/title/Linux_console), I always
 make sure to fall back to settings that look good in [VGA text
@@ -30,9 +30,10 @@ mode](https://en.wikipedia.org/wiki/VGA_text_mode) with [code page
 
 <details><summary>Past Discussions</summary>
 
-  * [Streets of Gruvbox](https://www.reddit.com/r/unixporn/comments/i60b10/awesome_streets_of_gruvbox) (8. Aug. 2020)
   * [Vi-like keybindings for awesome](https://www.reddit.com/r/awesomewm/comments/i4pj35/vilike_keybindings_for_awesome_with_motions_and) (6. Aug. 2020)
-  * [Confload](https://www.reddit.com/r/unixporn/comments/l1unqe/oc_confload_create_dotfilesmanageable_weechat) (21. Jan. 2021)
+  * [Streets of Gruvbox](https://www.reddit.com/r/unixporn/comments/i60b10/awesome_streets_of_gruvbox) (8. Aug. 2020)
+  * [Confload: Create dotfiles-manageable weechat configs with password manager integration](https://www.reddit.com/r/unixporn/comments/l1unqe/oc_confload_create_dotfilesmanageable_weechat) (21. Jan. 2021)
+  * [Snipcomp.lua: LuaSnip companion plugin for omni completion](https://www.reddit.com/r/neovim/comments/rddugs/snipcomplua_luasnip_companion_plugin_for_omni) (10. Dec. 20221)
 </details>
 
 ---
@@ -44,8 +45,9 @@ mode](https://en.wikipedia.org/wiki/VGA_text_mode) with [code page
 ## Installation
 **Disclaimer:** My dotfiles are heavily customized to my own needs. I,
 therefore, advise everyone not to use this repository blindly. Instead, I
-recommend at least checking each relevant component thoroughly before use to
-avoid unexpected complications.
+recommend that you treat this project solely as a source of inspiration, or at
+least thoroughly check each relevant component before using it to avoid
+unexpected complications.
 
 If you just want to hack at your own leisure, this repository and its
 submodules can be cloned with the following command:
@@ -70,7 +72,7 @@ alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 ```
 This repository also contains a [script](.local/bin/install-packages) which can
 be used to install all required packages. However, please note that it is
-specific to [Arch Linux](https://www.archlinux.org/). When this script is
+specific to [Arch Linux](https://www.archlinux.org). When this script is
 sourced it defines the array variables `PKG`, `PIP` and `AUR`. You can then use
 `pacman`, `pip` and an [AUR
 helper](https://wiki.archlinux.org/index.php/AUR_helpers) of your choice to
@@ -88,19 +90,20 @@ respective homepages for further information. For applications where I
 developed a more individual workflow, I give additional instructions below.
 | | Name | Files & Directories | Links |
 |-| ---- | ------- | ----- |
-| **Shell**                | bash     | [.inputrc](.inputrc), [.bashrc](.bashrc), [.bash\_profile](.bash_profile) | [Repository](https://git.savannah.gnu.org/cgit/bash.git), [Homepage](https://www.gnu.org/software/bash/) |
-| **Window Manager**       | awesome  | [.config/awesome](.config/awesome), [.xinitrc](.xinitrc) | [Repository](https://github.com/awesomeWM/awesome), [Homepage](https://awesomewm.org/) |
-| **Editor**               | neovim   | [.config/nvim](.config/nvim) | [Repository](https://github.com/neovim/neovim), [Homepage](https://neovim.io/) |
-| **Terminal**             | termite  | [.config/termite](.config/termite) | [Repository](https://github.com/thestinger/termite) | 
-| **Terminal Multiplexer** | tmux     | [.config/tmux](.config/tmux) | [Repository](https://github.com/tmux/tmux), [Homepage](https://tmux.github.io) |
-| **Music Player**         | ncmpcpp  | [.config/ncmpcpp](.config/ncmpcpp) | [Repository](https://github.com/ncmpcpp/ncmpcpp), [Homepage](https://rybczak.net/ncmpcpp/) |
-| **System Monitor**       | conky    | [.config/conky](.config/conky) | [Repository](https://github.com/brndnmtthws/conky), [Homepage](https://github.com/brndnmtthws/conky/wiki) |
-| **Mail Client**          | mutt     | [.config/mutt](.config/mutt) | [Repository](https://gitlab.com/muttmua/mutt), [Homepage](http://www.mutt.org/) |
-| **IRC Client**           | weechat  | [.config/weechat](.config/weechat) | [Repository](https://github.com/weechat/weechat), [Homepage](https://weechat.org/) |
-| **File Manager**         | ranger   | [.config/ranger](.config/ranger) | [Repository](https://github.com/ranger/ranger), [Homepage](https://ranger.github.io/) |
-| **Calculator** ;-)       | ptpython | [.config/ptpython](.config/ptpython) | [Repository](https://github.com/prompt-toolkit/ptpython) |
-| **Calendar**             | when     | [.when](.when) | [Repository](https://github.com/bcrowell/when), [Homepage](http://www.lightandmatter.com/when/when.html) |
-| **Document Viewer**      | qpdfview | [.config/qpdfview](.config/qpdfview) | [Homepage](https://launchpad.net/qpdfview) |
+| **Shell**                | bash        | [.inputrc](.inputrc), [.bashrc](.bashrc), [.bash\_profile](.bash_profile) | [Repository](https://git.savannah.gnu.org/cgit/bash.git), [Homepage](https://www.gnu.org/software/bash) |
+| **Window Manager**       | awesome     | [.config/awesome](.config/awesome), [.xinitrc](.xinitrc) | [Repository](https://github.com/awesomeWM/awesome), [Homepage](https://awesomewm.org) |
+| **Editor**               | neovim      | [.config/nvim](.config/nvim) | [Repository](https://github.com/neovim/neovim), [Homepage](https://neovim.io) |
+| **Terminal**             | termite     | [.config/termite](.config/termite) | [Repository](https://github.com/thestinger/termite) | 
+| **Terminal Multiplexer** | tmux        | [.config/tmux](.config/tmux) | [Repository](https://github.com/tmux/tmux), [Homepage](https://tmux.github.io) |
+| **Music Player**         | ncmpcpp     | [.config/ncmpcpp](.config/ncmpcpp) | [Repository](https://github.com/ncmpcpp/ncmpcpp), [Homepage](https://rybczak.net/ncmpcpp) |
+| **System Monitor**       | conky       | [.config/conky](.config/conky) | [Repository](https://github.com/brndnmtthws/conky), [Homepage](https://github.com/brndnmtthws/conky/wiki) |
+| **Mail Client**          | mutt        | [.config/mutt](.config/mutt) | [Repository](https://gitlab.com/muttmua/mutt), [Homepage](http://www.mutt.org) |
+| **IRC Client**           | weechat     | [.config/weechat](.config/weechat) | [Repository](https://github.com/weechat/weechat), [Homepage](https://weechat.org) |
+| **File Manager**         | ranger      | [.config/ranger](.config/ranger) | [Repository](https://github.com/ranger/ranger), [Homepage](https://ranger.github.io) |
+| **Calculator** ;-)       | ptpython    | [.config/ptpython](.config/ptpython) | [Repository](https://github.com/prompt-toolkit/ptpython) |
+| **Calendar**             | when        | [.when](.when) | [Repository](https://github.com/bcrowell/when), [Homepage](http://www.lightandmatter.com/when/when.html) |
+| **Document Viewer**      | qpdfview    | [.config/qpdfview](.config/qpdfview) | [Homepage](https://launchpad.net/qpdfview) |
+| **Web Browser**          | qutebrowser | [.config/qutebrowser](.config/qutebrowser) | [Repository](https://github.com/qutebrowser/qutebrowser), [Homepage](https://qutebrowser.org) |
 
 Apart from the applications mentioned in the table, this repository also
 contains some additional [scripts](.local/bin) to automate or facilitate
@@ -114,9 +117,9 @@ keybindings, my awesome configuration uses
 keybindings with motions, counts and multiple modes. To understand how to
 control my awesome configuration, I recommend to check it out beforehand.
 
-Additionally, if an [mpd](https://www.musicpd.org/) server is running on
+Additionally, if an [mpd](https://www.musicpd.org) server is running on
 `$MPD_HOST:$MPD_PORT`, song information is displayed in the status bar. Songs
-are also played back via [mpv](https://mpv.io/) by listening on
+are also played back via [mpv](https://mpv.io) by listening on
 `$MPD_HOST:$MPD_STREAM_PORT`. In my case, all my audio files are located on a
 server and to connect to its mpd instance I use an ssh tunnel via a [systemd
 user service](.config/systemd/user/mpd-tunnel.service):
@@ -159,7 +162,7 @@ Consult `:h ins-completion` for details.
 
 ### Mutt
 Mutt is configured for multiple email accounts. It makes use of the command
-line tool distributed with [KeePassXC](https://keepassxc.org/) to access
+line tool distributed with [KeePassXC](https://keepassxc.org) to access
 passwords. The location of the password database and the keyfile can be
 controlled with the `KEEPASSXC_DATABASE` and `KEEPASSXC_KEYFILE` environment
 variables.
@@ -182,7 +185,7 @@ That's why I wrote the script
 [confload.py](.config/weechat/python/confload.py). It reads a configuration
 file called [weechatrc](.config/weechat/weechatrc) located in the weechat home
 directory. The file itself should be written in
-[m4](https://www.gnu.org/software/m4/) macro language and after processing
+[m4](https://www.gnu.org/software/m4) macro language and after processing
 should contain valid weechat commands. The script also provides the special
 macro `KEEPASS(<title>, <attr>)`, which can be used to obtain sensitive
 information managed with KeePassXC. When this script is loaded for the first
@@ -204,18 +207,22 @@ Besides the things mentioned above, this repository also contains configuration
 files for a number of other programs. However, these are only optionally
 required and perform specific tasks that are often not needed. Therefore, these
 programs are not included in the package installation script and must be
-installed manually. The corresponding Arch Linux packages and their function
-are listed below.
+installed manually. The corresponding packages and their functions are listed
+below:
 * For Japanese Kana and Kanji input, install
-  [fcitx5-im](https://archlinux.org/groups/x86_64/fcitx5-im/) and
-  [fcitx5-mozc](https://archlinux.org/packages/community/x86_64/fcitx5-mozc/).
+  [fcitx5-im](https://archlinux.org/groups/x86_64/fcitx5-im) and
+  [fcitx5-mozc](https://archlinux.org/packages/community/x86_64/fcitx5-mozc).
 * To enable automounting, install
-  [udiskie](https://archlinux.org/packages/community/any/udiskie/).
+  [udiskie](https://archlinux.org/packages/community/any/udiskie).
 * To compile L<sup>A</sup>T<sub>E</sub>X with Neovim using qpdfview as the
   previewer, install [T<sub>E</sub>X
   Live](https://wiki.archlinux.org/title/TeX_Live). For inverse search also
-  install [neovim-remote](https://aur.archlinux.org/packages/neovim-remote/)
+  install [neovim-remote](https://aur.archlinux.org/packages/neovim-remote)
   and set `nvr --remote-silent +%2 %1` as the source editor in qpdfview.
+* For Japanese pop-up dictionary search in qutebrowser install
+  [jamdict](https://pypi.org/project/jamdict) and
+  [jamdict-data](https://pypi.org/project/jamdict-data) (for further
+  information see [yomichad](https://github.com/potamides/yomichad)).
 
 [^1]: [Ask HN: What do you use to manage dotfiles?](https://news.ycombinator.com/item?id=11070797)  
   [The best way to store your dotfiles: A bare Git repository](https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo)  

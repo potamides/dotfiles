@@ -7,3 +7,6 @@
 [submodule "config/ranger/plugins/ranger_devicons"]
 	path = .config/ranger/plugins/ranger_devicons
 	url = https://github.com/alexanderjeurissen/ranger_devicons
+[submodule ".config/qutebrowser/userscripts/source/yomichad"]
+	path = .config/qutebrowser/userscripts/source/yomichad
+	url = https://github.com/potamides/yomichad.git
