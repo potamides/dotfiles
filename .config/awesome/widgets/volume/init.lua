@@ -3,62 +3,72 @@ local wibox = require("wibox")
 local spawn = require("awful.spawn")
 
 local volume = {}
-local volume_icon_name = "audio-volume-high-symbolic"
 
-local function parse_output(stdout)
-  local level = string.match(stdout, "(%d?%d?%d)%%")
-  if stdout:find("%[off%]") then
-    volume_icon_name = "audio-volume-muted-symbolic"
-    return "OFF"
-  end
-  level = tonumber(string.format("% 3d", level))
+local function set_volume(level)
+  local icon, state = "audio-volume-high-symbolic", level and (level .. "%") or "OFF"
 
-  if (level >= 0 and level < 25) then
-    volume_icon_name = "audio-volume-off-symbolic"
+  if not level then
+    icon = "audio-volume-muted-symbolic"
+  elseif (level >= 0 and level < 25) then
+    icon = "audio-volume-off-symbolic"
   elseif (level < 50) then
-    volume_icon_name = "audio-volume-low-symbolic"
+    icon = "audio-volume-low-symbolic"
   elseif (level < 75) then
-    volume_icon_name = "audio-volume-medium-symbolic"
-  else
-    volume_icon_name = "audio-volume-high-symbolic"
+    icon = "audio-volume-medium-symbolic"
   end
-  return level.."%"
+
+  volume.image.image = volume.path_to_icons .. icon .. ".svg"
+  volume.text:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, state))
 end
 
-local function exec_cmd_and_update(cmd)
-  spawn.easy_async(cmd, function(stdout)
-    local txt = parse_output(stdout)
-    volume.image.image = volume.path_to_icons .. volume_icon_name .. ".svg"
-    volume.text:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, txt))
+local function update_widget()
+  spawn.easy_async("pactl get-sink-mute @DEFAULT_SINK@", function(mute)
+    if mute:match("yes") then
+      set_volume(false)
+    else
+      spawn.easy_async("pactl get-sink-volume @DEFAULT_SINK@", function(vol)
+        set_volume(tonumber(vol:match("(%d+)%%")))
+      end)
+    end
   end)
 end
 
+local function subscribe()
+  local pid = spawn.with_line_callback("pactl subscribe", {stdout = function(event)
+    if event:match("change.*sink[^-]") then
+      update_widget()
+    end
+  end})
+
+  if type(pid) == "number" then
+    awesome.connect_signal("exit", function() spawn("kill " .. pid, false) end)
+  end
+end
+
 function volume.toggle()
-  exec_cmd_and_update('amixer ' .. volume.device .. ' sset Master toggle')
+  spawn.easy_async("pactl set-sink-mute @DEFAULT_SINK@ toggle", update_widget)
 end
 
 function volume.raise()
-  exec_cmd_and_update('amixer ' .. volume.device .. ' sset Master 5%+')
+  spawn.easy_async("pactl set-sink-volume @DEFAULT_SINK@ +" .. volume.step .. "%", update_widget)
 end
+
 function volume.lower()
-  exec_cmd_and_update('amixer ' .. volume.device .. ' sset Master 5%-')
+  spawn.easy_async("pactl set-sink-volume @DEFAULT_SINK@ -" .. volume.step .. "%", update_widget)
 end
 
 function volume.init(args)
   args = args or {}
-  args.volume_audio_controller = args.volume_audio_controller or 'pulse'
+  volume.step = args.step or 5
   volume.path_to_icons = args.path_to_icons or beautiful.theme_path .. "/widgets/volume/"
-  volume.device = args.volume_audio_controller == 'pulse' and '-D pulse' or ''
 
   volume.text = wibox.widget.textbox()
-  volume.text:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, "OFF"))
-  volume.image = wibox.widget{
-    image = volume.path_to_icons .. "audio-volume-muted-symbolic.svg",
-    widget = wibox.widget.imagebox,
-  }
+  volume.image = wibox.widget.imagebox()
+  set_volume(false)
+  update_widget()
+  subscribe()
 
-  exec_cmd_and_update('amixer ' .. volume.device .. ' sget Master')
-  volume.image:connect_signal("button::press", function(_,_,_,button)
+  volume.image:connect_signal("button::press", function(_, _, _, button)
     if     (button == 4) then volume.raise()
     elseif (button == 5) then volume.lower()
     elseif (button == 1) then volume.toggle()
