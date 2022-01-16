@@ -4,7 +4,6 @@ from os import getenv
 ## General
 # -----------------------------------------------------------------------------
 config.load_autoconfig(False)
-c.input.insert_mode.leave_on_load = True
 c.search.incremental = False
 c.spellcheck.languages = ["en-US", "de-DE"]
 
@@ -19,6 +18,7 @@ c.downloads.location.prompt = False
 
 c.tabs.last_close = "close"
 c.tabs.select_on_remove = "last-used"
+c.tabs.show = "multiple"
 
 c.content.cookies.store = False
 c.content.cookies.accept = "no-3rdparty"
@@ -33,8 +33,8 @@ config.source("colorschemes/gruvbox.py")
 ## Keybindings
 # -----------------------------------------------------------------------------
 for mode in ["normal", "caret"]:
-    config.bind('gs', 'spawn --userscript yomichad', mode=mode)
-    config.bind('gS', 'spawn --userscript yomichad --prefix-search', mode=mode)
+    config.bind("gs", "spawn --userscript yomichad", mode=mode)
+    config.bind("gS", "spawn --userscript yomichad --prefix-search", mode=mode)
 
-config.bind('<Ctrl-e>', 'scroll down')
-config.bind('<Ctrl-y>', 'scroll up')
+config.bind("<Ctrl-e>", "scroll down")
+config.bind("<Ctrl-y>", "scroll up")
