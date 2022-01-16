@@ -29,6 +29,7 @@ local mpd          = require("widgets.mpd")
 local net_widget   = require("widgets.net")
 local run_shell    = require("widgets.run-shell")
 local xrandr       = require("xrandr")
+local unpack       = unpack or table.unpack -- luacheck: globals unpack (compatibility with Lua 5.1)
 
 -- }}}
 -------------------------------------------------------------------------------
@@ -255,7 +256,7 @@ mpd.init{ widget_template = utils.widget.compose{{
 -- Taglist
 -------------------------------------------------------------------------------
 -- Each screen has its own tag table.
-local tags = { "❶", "❷", "❸", "❹", "❺", "❻"}
+local tags = { "❶", "❷", "❸", "❹", "❺", "❻" }
 
 -- Assign the buttons for the taglist
 local taglist_buttons = gears.table.join(
@@ -311,11 +312,11 @@ awful.screen.connect_for_each_screen(function(s)
   set_wallpaper(s)
 
   -- Taglist
-  local ultrawide, high_res = s.geometry.width / s.geometry.height > 2, s.geometry.height >= 1440
+  local ultrawide, highres = s.geometry.width / s.geometry.height > 2, s.geometry.height >= 1440
   for index, tag in ipairs(tags) do
     awful.tag.add(tag, {
       layout   = awful.layout.layouts[ultrawide and 1 or 2],
-      gap      = high_res and beautiful.useless_gap or 0,
+      gap      = highres and beautiful.useless_gap or 0,
       screen   = s,
       selected = index == 1,
     })
@@ -331,12 +332,12 @@ awful.screen.connect_for_each_screen(function(s)
   awful.button({ }, 5, function() awful.layout.inc(-1) end)))
   -- Create a taglist widget
   s.mytaglist = awful.widget.taglist{
-    screen  = s,
-    filter  = awful.widget.taglist.filter.all,
-    style   = {
+    screen = s,
+    filter = awful.widget.taglist.filter.all,
+    style  = {
       shape = utils.shape.parallelogram.left
     },
-    layout   = {
+    layout = {
       spacing = beautiful.negative_gap,
       layout  = wibox.layout.grid.horizontal
     },
@@ -674,10 +675,10 @@ modes.launcher = gears.table.join(
       description = "show the menubar",
       pattern = {'m'},
       handler = function()
-        local sgeo              = awful.screen.focused().geometry
+        local sgeo = awful.screen.focused().geometry
         menubar.show_categories = false
         menubar.geometry.height = beautiful.wibar_height
-        menubar.geometry.y      = sgeo.y + sgeo.height - menubar.geometry.height - 2 * beautiful.menubar_border_width
+        menubar.geometry.y = sgeo.y + sgeo.height - menubar.geometry.height - 2 * beautiful.menubar_border_width
         menubar.show()
       end
     },
@@ -747,6 +748,15 @@ awful.rules.rules = {
   -- honor size hints of mpv video player
   { rule = { class = "mpv" },
     properties = { size_hints_honor = true }},
+
+  -- quickfix for screen blanking inhibition in qutebrowser (https://github.com/qutebrowser/qutebrowser/issues/5504)
+  { rule = { class = "qutebrowser" },
+    callback = function(c)
+      c:connect_signal("property::fullscreen", function()
+        awful.spawn(c.fullscreen and "xset -dpms s off" or "xset +dpms s on", false)
+      end)
+    end
+  },
 
   -- place conky in background on primary screen
   { rule = { class = "conky" },
