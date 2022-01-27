@@ -15,7 +15,7 @@ local scaling = {
 }
 
 function scaling:autoscale()
-  local fallback, autosizes = math.maxinteger, {}
+  local fallback, autosizes = math.huge, {}
 
   for resolution, _ in pairs(conky.sizes) do
     if math.abs(self.resolution - resolution) < math.abs(self.resolution - fallback) then
