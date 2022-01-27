@@ -49,7 +49,10 @@ if not vim.b.did_user_ftplugin then
                 vim.api.nvim_buf_set_lines(info.bufnr, 0, -1, true, lines)
                 vim.api.nvim_buf_set_option(info.bufnr, "modifiable", false)
                 vim.api.nvim_buf_set_keymap(info.bufnr, "n", "<esc>", "<cmd>bd<CR>", {noremap = true})
-                vim.lsp.util.close_preview_autocmd({"BufHidden", "BufLeave"}, info.win_id)
+                vim.cmd(string.format(
+                  "autocmd BufHidden,BufLeave <buffer> ++once lua pcall(vim.api.nvim_win_close, %d, true)",
+                  info.win_id
+                ))
               end
             end,
             description = "Show content of log files in a floating window."
