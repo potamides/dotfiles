@@ -19,7 +19,7 @@ control over everything else and place a high value on visual consistency
 (preferably by using the [gruvbox](https://github.com/morhetz/gruvbox) color
 scheme). I use [Arch Linux](https://archlinux.org) as my daily driver, but
 there shouldn't be much here requiring this specific distribution, so using my
-configurations on other distros or, in the worst case, porting it shouldn't be
+configurations on other distros or, in the worst case, porting them shouldn't be
 too hard. I prefer a slightly retro design, but I don't shy away from
 occasionally using Unicode symbols and [Nerd Font](https://www.nerdfonts.com)
 glyphs in my terminal applications. However, since I sometimes only work with
