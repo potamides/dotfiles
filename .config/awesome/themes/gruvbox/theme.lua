@@ -11,7 +11,6 @@ local theme_path = awful.util.getdir("config").."/themes/gruvbox/"
 local theme = {}
 
 theme.font            = "sans-serif 11"
-theme.revelation_font = "monospace 20"
 theme.icon_theme      = "gruvbox-dark-icons-gtk"
 
 -- crop to size where wallpaper repeats itself

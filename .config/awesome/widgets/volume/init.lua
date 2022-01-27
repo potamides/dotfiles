@@ -51,7 +51,7 @@ local function subscribe()
   end})
 
   if type(pid) == "number" then
-    awesome.connect_signal("exit", function() awesome.kill(pid, awesome.unix_signal["SIGTERM"]) end)
+    awesome.connect_signal("exit", function() awesome.kill(pid, awesome.unix_signal.SIGTERM) end)
   end
 end
 
