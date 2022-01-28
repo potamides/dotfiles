@@ -28,7 +28,7 @@ local function display_volume(level)
   end
 
   volume.image.image = volume.path_to_icons .. icon .. ".svg"
-  volume.text:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, state))
+  volume.text:set_markup(beautiful.widget_markup:format(beautiful.bg_normal, state))
 end
 
 local function update_widget()

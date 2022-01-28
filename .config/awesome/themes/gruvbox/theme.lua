@@ -135,6 +135,9 @@ theme.titlebar_height  = dpi(20)
 -- Systray
 theme.systray_icon_spacing = theme.gap
 
+-- All Widgets
+theme.widget_markup = "<span color=%q><b>%s</b></span>"
+
 -- Playback Status Widget
 theme.playback_width     = dpi(200)
 theme.playback_bg_normal = theme.bg1

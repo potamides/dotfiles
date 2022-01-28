@@ -12,8 +12,7 @@ local function update_text(title, artist, state)
   if state == "play" and title then
     text = artist and artist .. " - " .. title or title
   end
-  playback.text:set_markup(string.format("<span color=%q><b>%s</b></span>",
-    beautiful.fg_normal, escape(text, text:len())))
+  playback.text:set_markup(beautiful.widget_markup:format(beautiful.fg_normal, escape(text, text:len())))
 end
 
 local function update_mpd_stream(host, port, socket, old_state, new_state)

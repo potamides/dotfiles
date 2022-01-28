@@ -38,12 +38,12 @@ function net_widget.init(args)
     widget = wibox.widget.imagebox,
   }
   net_widget.text = wibox.widget.textbox()
-  net_widget.text:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, "OFF"))
+  net_widget.text:set_markup(beautiful.widget_markup:format(beautiful.bg_normal, "OFF"))
 
   monitor("/proc/net/wireless", "/sys/class/net/" .. args.wired_interface .. "/operstate", function(content)
     local result = read_wireless(content, args.wireless_interface) or read_wired(content)
 
-    net_widget.text:set_markup(string.format("<span color=%q><b>%s</b></span>", beautiful.bg_normal, result[1]))
+    net_widget.text:set_markup(beautiful.widget_markup:format(beautiful.bg_normal, result[1]))
     net_widget.image:set_image(args.path_to_icons .. result[2])
   end, args.timeout)
 
