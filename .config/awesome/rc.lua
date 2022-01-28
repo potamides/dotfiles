@@ -25,7 +25,7 @@ local modalawesome = require("modalawesome")
 local utils        = require("utils")
 local battery      = require("widgets.battery")
 local volume       = require("widgets.volume")
-local mpd          = require("widgets.mpd")
+local playback     = require("widgets.playback")
 local net_widget   = require("widgets.net")
 local run_shell    = require("widgets.run-shell")
 local xrandr       = require("xrandr")
@@ -236,19 +236,19 @@ screen.connect_signal("property::geometry", set_wallpaper)
 volume.init()
 battery.init()
 net_widget.init()
-mpd.init{ widget_template = utils.widget.compose{{
+playback.init{ widget_template = utils.widget.compose{{
     {
       {
         id     = 'text_role',
         widget = wibox.widget.textbox,
       },
-      max_size = beautiful.mpd_widget_width,
+      max_size = beautiful.playback_widget_width,
       speed = 70,
       step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
       layout = wibox.container.scroll.horizontal,
     },
     shape = utils.shape.parallelogram.left,
-    color = beautiful.bg_normal,
+    color = beautiful.bg_focus,
     margin = beautiful.small_gap
   }}
 }
@@ -359,7 +359,7 @@ awful.screen.connect_for_each_screen(function(s)
     { -- Left widgets
       mylauncher,
       s.mytaglist,
-      mpd.widget,
+      playback.widget,
       spacing = beautiful.negative_gap,
       layout = wibox.layout.fixed.horizontal,
     },
@@ -611,7 +611,7 @@ modes.launcher = gears.table.join(
     {
       description = "toggle mpd playback",
       pattern = {'p'},
-      handler = function() mpd.toggle() end
+      handler = function() playback.mpd.toggle() end
     },
     {
       description = "lua execute prompt",

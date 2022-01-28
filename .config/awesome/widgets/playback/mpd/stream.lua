@@ -6,6 +6,7 @@ local Gio = lgi.Gio
 
 local stream = {}
 
+-- Connect to the built-in HTTP streaming daemon of mpd and play music via mpv
 function stream.new(host, port, socket)
   host   = host or os.getenv("MPD_HOST") or "localhost"
   port   = port or os.getenv("MPD_STREAM_PORT") or 8000
@@ -62,7 +63,7 @@ function stream:_connect()
 end
 
 function stream:_spawn_mpv()
-  local cmd = "mpv --no-config --idle=yes --no-terminal --cache-pause-initial=yes --input-ipc-server=%s %s"
+  local cmd = "mpv --idle=yes --no-terminal --cache-pause-initial=yes --input-ipc-server=%s %s"
   awful.spawn(cmd:format(self._socket, self._link), false)
   self._spawned = true
 end

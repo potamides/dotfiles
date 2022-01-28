@@ -1,11 +1,11 @@
 local gears = require("gears")
 local beautiful = require("beautiful")
 local wibox = require("wibox")
-local mpc = require("widgets.mpd.mpc")
-local stream = require("widgets.mpd.stream")
+local mpc = require("widgets.playback.mpd.client")
+local stream = require("widgets.playback.mpd.stream")
 local escape = require("lgi").GLib.markup_escape_text
 
-local mpd = {}
+local mpd = {mpd = {}}
 local stream_instance
 
 local function update_widget(title, artist, state)
@@ -40,7 +40,7 @@ local function error_handler()
   end)
 end
 
-function mpd.toggle()
+function mpd.mpd.toggle()
   mpd.connection:toggle_play()
 end
 

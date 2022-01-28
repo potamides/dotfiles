@@ -135,8 +135,8 @@ theme.titlebar_height  = dpi(20)
 -- Systray
 theme.systray_icon_spacing = theme.gap
 
--- MPD Status Widget
-theme.mpd_widget_width = dpi(200)
+-- Playback Status Widget
+theme.playback_widget_width = dpi(200)
 
 -- Layout
 theme.layout_tile       = theme_path .. "layouts/tile.svg"
