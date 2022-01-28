@@ -136,7 +136,10 @@ theme.titlebar_height  = dpi(20)
 theme.systray_icon_spacing = theme.gap
 
 -- Playback Status Widget
-theme.playback_widget_width = dpi(200)
+theme.playback_width     = dpi(200)
+theme.playback_bg_normal = theme.bg1
+theme.playback_bg_hover  = theme.bg2
+theme.playback_bg_press  = theme.bg3
 
 -- Layout
 theme.layout_tile       = theme_path .. "layouts/tile.svg"

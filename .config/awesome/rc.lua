@@ -236,22 +236,45 @@ screen.connect_signal("property::geometry", set_wallpaper)
 volume.init()
 battery.init()
 net_widget.init()
-playback.init{ widget_template = utils.widget.compose{{
+playback.init()
+
+-- create new widgets for each screen so that mouse feedback isn't shown on every screen
+function playback.create_widget()
+  local title = playback.text
+  local widget = wibox.widget(gears.table.crush(utils.widget.compose{{
     {
-      {
-        id     = 'text_role',
-        widget = wibox.widget.textbox,
-      },
-      max_size = beautiful.playback_widget_width,
+      title,
+      max_size = beautiful.playback_width,
       speed = 70,
       step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
       layout = wibox.container.scroll.horizontal,
     },
     shape = utils.shape.parallelogram.left,
     color = beautiful.bg_focus,
-    margin = beautiful.small_gap
-  }}
-}
+    margin = beautiful.small_gap,
+  }},
+  {
+    opacity = 0,
+    buttons = awful.button({ }, 1, function(self)
+      self.widget.bg = beautiful.playback_bg_press
+      if #title.text > 0 then
+        -- save titles of interesting songs for later, useful for radio streams
+        local songlist = io.open(os.getenv("HOME") .. "/Documents/Songlist", "a+")
+        if not string.find(songlist:read("*a"), title.text, 1, true) then
+          songlist:write(title.text .. "\n")
+        end
+        songlist:close()
+      end
+    end,
+    function(self) self.widget.bg = beautiful.playback_bg_hover end),
+  }))
+
+  widget:connect_signal('mouse::enter', function() widget.bg = beautiful.playback_bg_hover end)
+  widget:connect_signal('mouse::leave', function() widget.bg = beautiful.playback_bg_normal end)
+  title:connect_signal("widget::redraw_needed", function() widget.opacity = #title.text > 0 and 1 or 0 end)
+
+  return widget
+end
 
 -- Taglist
 -------------------------------------------------------------------------------
@@ -359,7 +382,7 @@ awful.screen.connect_for_each_screen(function(s)
     { -- Left widgets
       mylauncher,
       s.mytaglist,
-      playback.widget,
+      playback.create_widget(),
       spacing = beautiful.negative_gap,
       layout = wibox.layout.fixed.horizontal,
     },
