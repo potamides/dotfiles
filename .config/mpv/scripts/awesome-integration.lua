@@ -31,7 +31,7 @@ function playback.dbus_update()
     else
         local info = "dict:string:string:"
         for key, value in pairs(playback.info) do
-          info = info .. string.format("%s,%s,", key:gsub(",", ""), value:gsub(",", ""))
+          info = info .. string.format("%s,%s,", key, value:gsub(",", ""))
         end
         mp.commandv("run", "dbus-send", "--dest=" .. dest, path, interface .. "." .. member, info)
     end

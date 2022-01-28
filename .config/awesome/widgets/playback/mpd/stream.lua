@@ -63,7 +63,7 @@ function stream:_connect()
 end
 
 function stream:_spawn_mpv()
-  local cmd = "mpv --idle=yes --no-terminal --cache-pause-initial=yes --input-ipc-server=%s %s"
+  local cmd = "mpv --load-scripts=no --idle=yes --no-terminal --cache-pause-initial=yes --input-ipc-server=%s %s"
   awful.spawn(cmd:format(self._socket, self._link), false)
   self._spawned = true
 end
