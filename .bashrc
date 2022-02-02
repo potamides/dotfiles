@@ -160,11 +160,11 @@ function findfonts(){
 
 # fetch current weather report, with location as optional parameter
 function weather(){
-  local request="wttr.in/${*^}?F"
+  local request="wttr.in/${*^}?Fm"
   if [[ "$(tput cols)" -lt 125 ]]; then
     request+='n'
   fi
-  curl -H "Accept-Language: ${LANG%_*}" --compressed "$request"
+  curl -H "Accept-Language: ${LANG%_*}" --compressed "${request// /+}"
 }
 
 # Conveniently copy files to NAS
