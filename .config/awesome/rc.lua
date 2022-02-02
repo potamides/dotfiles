@@ -69,7 +69,7 @@ beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua"
 
 -- This is used later as the default terminal, browser and editor to run.
 local terminal = os.getenv("TERMCMD") or "termite"
-local browser  = os.getenv("BROWSER") or "firefox"
+local browser  = os.getenv("BROWSER") or "qutebrowser"
 local editor   = os.getenv("EDITOR") or "nvim"
 
 -- Set the terminal for applications that require it.
@@ -113,7 +113,7 @@ local myawesomemenu = {
 
 local mymainmenu = freedesktop.menu.build({
   icon_size = beautiful.menu_height,
-  before = {{ "Awesome", myawesomemenu, beautiful.awesome_icon } },
+  before = {{ "Awesome", myawesomemenu, beautiful.awesome_icon }},
 })
 
 local status_box = wibox.widget.textbox(modalawesome.active_mode.text)
@@ -238,7 +238,7 @@ battery.init()
 net_widget.init()
 playback.init()
 
--- create new widgets for each screen so that mouse feedback isn't shown on every screen
+-- create new playback widgets for each screen so that mouse feedback isn't shown in every wibar
 function playback.create_widget()
   local title = playback.text
   local widget = wibox.widget(gears.table.crush(utils.widget.compose{{
@@ -259,7 +259,7 @@ function playback.create_widget()
       self.widget.bg = beautiful.playback_bg_press
       if #title.text > 0 then
         -- save titles of interesting songs for later, useful for radio streams
-        local songlist = io.open(os.getenv("HOME") .. "/Documents/Songlist", "a+")
+        local songlist = io.open(os.getenv("HOME") .. "/Documents/songlist", "a+")
         if not string.find(songlist:read("*a"), title.text, 1, true) then
           songlist:write(title.text .. "\n")
         end
@@ -745,7 +745,7 @@ awful.rules.rules = {
     properties = { tag = function() return awful.screen.focused().selected_tag end }},
 
   -- dirty hack to preven Ctrl-q from closing firefox
-  { rule = { class = browser },
+  { rule = { class = "firefox" },
     properties = { keys = awful.key({ "Control" }, "q", function() end) }},
 
   -- Make dragon sticky for easy drag and drop in ranger
