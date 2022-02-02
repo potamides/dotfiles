@@ -219,6 +219,13 @@ below:
   Live](https://wiki.archlinux.org/title/TeX_Live). For inverse search also
   install [neovim-remote](https://aur.archlinux.org/packages/neovim-remote)
   and set `nvr --remote-silent +%2 %1` as the source editor in qpdfview.
+* Install [mythes](https://archlinux.org/packages/?sort=&q=mythes-) for
+  thesaurus lookup and
+  [languagetool-word2vec](https://aur.archlinux.org/packages/?K=languagetool-word2vec-)
+  and/or
+  [languagetool-ngrams](https://aur.archlinux.org/packages/?K=languagetool-ngrams-)
+  to detect confusion errors with [ltex](https://github.com/valentjn/ltex-ls)
+  in Neovim.
 * For Japanese pop-up dictionary search in qutebrowser install
   [jamdict](https://pypi.org/project/jamdict) and
   [jamdict-data](https://pypi.org/project/jamdict-data) (for further

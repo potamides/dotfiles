@@ -5,33 +5,19 @@
 -- load base gruvbox colorscheme installed as library with packer
 vim.cmd("runtime! library/gruvbox.vim")
 
--- add missing lsp highlighting groups (based on https://github.com/gruvbox-community/gruvbox)
+-- change some diagnostic and spelling highlight groups
 -- lua syntax api is still work in progress (see https://github.com/neovim/neovim/issues/9876)
 vim.cmd([[
-  hi! link DiagnosticError GruvboxRed
-  hi! link DiagnosticSignError GruvboxRedSign
-  hi! link DiagnosticUnderlineError GruvboxRedUnderline
-
-  hi! link DiagnosticWarn GruvboxYellow
-  hi! link DiagnosticSignWarn GruvboxYellowSign
-  hi! link DiagnosticUnderlineWarn GruvboxYellowUnderline
-
-  hi! link DiagnosticInfo GruvboxBlue
-  hi! link DiagnosticSignInfo GruvboxBlueSign
-  hi! link DiagnosticUnderlineInfo GruvboxBlueUnderline
-
   hi! link DiagnosticHint GruvboxPurple
   hi! link DiagnosticSignHint GruvboxPurpleSign
   hi! link DiagnosticUnderlineHint GruvboxPurpleUnderline
 
-  hi! link LspReferenceText GruvboxYellowBold
-  hi! link LspReferenceRead GruvboxYellowBold
-  hi! link LspReferenceWrite GruvboxOrangeBold
-
-  hi! link LspCodeLens GruvboxGray
+  hi! link SpellBad GruvboxBlueUnderline
+  hi! link SpellCap GruvboxOrangeUnderline
+  hi! link SpellRare GruvboxGreenUnderline
 ]])
 
--- slightly adapt gruvbox lightline colorscheme (when used)
+-- slightly adapt lightline tabline colors
 function vim.fn.patch_lightline_colorscheme()
   if vim.g.loaded_lightline and vim.fn.get(vim.g.lightline or {}, "colorscheme") == "gruvbox" then
     local palette = vim.g["lightline#colorscheme#gruvbox#palette"]

@@ -1,77 +1,100 @@
 --[[
-  Setup texlab language server.
+  Setup texlab language server for LaTeX editing and integrate ltex language
+  server for optional grammar, style and spell checking.
 --]]
 
 if not vim.b.did_user_ftplugin then
-  local texlab = require("lspconfig").texlab
-  local windows = require("lspconfig/ui/windows")
-  local util = require('lspconfig/util')
+  local lsputils = require("lsputils")
+  local windows = require("lspconfig.ui.windows")
+  local configs = require("lspconfig.configs")
 
-  if not texlab.manager then
-    texlab.setup{
-      root_dir = function(f)
-        return util.root_pattern("latexmkrc")(f) or util.find_git_ancestor(f) or util.path.dirname(f)
-      end,
-      settings = {
-        texlab = {
-          build = {
-            args = {"-interaction=nonstopmode", "-synctex=1", "%f"},
-            forwardSearchAfter = true
-          },
-          forwardSearch = {
-            executable = "qpdfview",
-            args = {"--unique", "--instance", "tex_" .. vim.fn.localtime(), "%p#src:%f:%l:1"}
-          },
-          chktex = {
-            onEdit = true,
-            onOpenAndSave = true
-          }
+  lsputils.texlab.setup{
+    settings = {
+      texlab = {
+        build = {
+          args = {"-interaction=nonstopmode", "-synctex=1", "%f"},
+          forwardSearchAfter = true
+        },
+        forwardSearch = {
+          executable = "qpdfview",
+          args = {"--unique", "--instance", "tex_" .. vim.fn.localtime(), "%p#src:%f:%l:1"}
+        },
+        chktex = {
+          onEdit = true,
+          onOpenAndSave = true
         }
-      },
-      on_new_config = function(config, root_dir)
-        local build_dir = root_dir .. "/build"
+      }
+    },
+    on_new_config = function(config, root_dir)
+      local build_dir = root_dir .. "/build"
 
-        if vim.fn.isdirectory(build_dir) == 1 then
-          config.settings.texlab.auxDirectory = build_dir
-        end
-
-        config.commands = {
-          TexlabLog = {
-            function()
-              local lines = {}
-
-              for _, file in ipairs(vim.fn.glob(build_dir .. "/*.log\\|blg", false, true)) do
-                vim.list_extend(lines, vim.fn.readfile(file))
-              end
-
-              if not vim.tbl_isempty(lines) then
-                local info = windows.percentage_range_window(0.8, 0.7)
-                vim.api.nvim_buf_set_lines(info.bufnr, 0, -1, true, lines)
-                vim.api.nvim_buf_set_option(info.bufnr, "modifiable", false)
-                vim.api.nvim_buf_set_keymap(info.bufnr, "n", "<esc>", "<cmd>bd<CR>", {noremap = true})
-                vim.cmd(string.format(
-                  "autocmd BufHidden,BufLeave <buffer> ++once lua pcall(vim.api.nvim_win_close, %d, true)",
-                  info.win_id
-                ))
-              end
-            end,
-            description = "Show content of log files in a floating window."
-          }
-        }
+      if vim.fn.isdirectory(build_dir) == 1 then
+        config.settings.texlab.auxDirectory = build_dir
       end
-    }
 
-    if not (texlab.autostart == false) then
-      texlab.manager.try_add_wrapper()
+      config.commands = {
+        TexlabLog = {
+          function()
+            local lines = {}
+
+            for _, file in ipairs(vim.fn.glob(build_dir .. "/*.log\\|blg", false, true)) do
+              vim.list_extend(lines, vim.fn.readfile(file))
+            end
+
+            if not vim.tbl_isempty(lines) then
+              local info = windows.percentage_range_window(0.8, 0.7)
+              vim.api.nvim_buf_set_lines(info.bufnr, 0, -1, true, lines)
+              vim.api.nvim_buf_set_option(info.bufnr, "modifiable", false)
+              vim.api.nvim_buf_set_keymap(info.bufnr, "n", "<esc>", "<cmd>bd<CR>", {noremap = true})
+              vim.cmd(string.format(
+                "autocmd BufHidden,BufLeave <buffer> ++once lua pcall(vim.api.nvim_win_close, %d, true)",
+                info.win_id
+              ))
+            end
+          end,
+          description = "Show content of log files in a floating window."
+        }
+      }
     end
-  end
+  }
 
+  -- Configure ltex so that it is not started automatically. Instead, it can be
+  -- started manually if needed (see keybindings below).
+  lsputils.ltex.setup{
+    autostart = false,
+    -- make ltex root directory the same as texlab
+    root_dir = configs.texlab.get_root_dir,
+    settings = {
+      ltex = {
+        language = "en-US",
+        checkFrequency = "save",
+        diagnosticSeverity = "hint",
+        completionEnabled = true,
+        additionalRules = {
+          motherTongue = "de-DE",
+          languageModel = "/usr/share/ngrams", -- aur/languagetool-ngrams-{en,de,..}
+          word2VecModel = "/usr/share/word2vec", -- aur/languagetool-word2vec-{en,de,..}
+          enablePickyRules = true
+        }
+      }
+    },
+    handlers = {
+      -- report ltex diagnostics similar to internal spell checking
+      ["textDocument/publishDiagnostics"] = vim.lsp.with(
+         vim.lsp.diagnostic.on_publish_diagnostics, {
+           underline = true,
+           virtual_text = false,
+           signs = false
+         }
+       )
+    }
+  }
+
+  -- define some keybindings for convenient access to some lsp commands
   vim.api.nvim_buf_set_keymap(0, "n", "<localleader>bn", '<cmd>TexlabBuild<cr>', {silent=true})
   vim.api.nvim_buf_set_keymap(0, "n", "<localleader>fs", '<cmd>TexlabForward<cr>', {silent=true})
   vim.api.nvim_buf_set_keymap(0, "n", "<localleader>sl", '<cmd>TexlabLog<cr>', {silent=true})
-
-  -- improve completion for labels which often have a prefix like 'sec:'
-  vim.opt.iskeyword:append{":"}
+  vim.api.nvim_buf_set_keymap(0, "n", "<localleader>lt", '<cmd>LspStart ltex<cr>', {silent=true})
 
   vim.b.did_user_ftplugin = true
 end

@@ -12,59 +12,36 @@ PKG=(
   awesome ranger neovim tmux ncmpcpp qpdfview mutt weechat conky when
   qutebrowser
 
-  # used by mutt & weechat
-  keepassxc
+  keepassxc # Required by: mutt  weechat
+  python-websocket-client # Required by: weechat
+  texlab pyright lua-language-server xclip # Required by: neovim
+  xorg-xinit physlock scrot redshift mpv # Required by: awesome
+  xorg-xrandr # Required by: awesome  conky
+  ueberzug # Required by: ranger
+  bash-completion fzf ripgrep # Required by: bash
+  pdfjs python-adblock # Required by: qutebrowser
 
-  # used by weechat
-  python-websocket-client
-
-  # used by neovim
-  texlab pyright lua-language-server xclip
-
-  # used by awesome
-  xorg-xinit physlock scrot redshift mpv
-
-  # used by awesome & conky
-  xorg-xrandr
-
-  # used by ranger
-  ueberzug
-
-  # used by bash
-  bash-completion fzf ripgrep
-
-  # used by qutebrowser
-  pdfjs python-adblock
-
-  # terminal fonts
   adobe-source-code-pro-fonts ttf-nerd-fonts-symbols
 )
 
 AUR=(
   ptpython termite
 
-  # used by conky
-  absolutely-proprietary
-
-  # used by mutt
-  pandoc-bin mutt-ics
-
-  # used by bash
-  bash-complete-alias
-
-  # used by awesome
-  gruvbox-dark-gtk gruvbox-dark-icons-gtk qt5-styleplugins
-
-  # used by ranger
-  dragon-drag-and-drop
+  absolutely-proprietary # Required by: conky
+  pandoc-bin mutt-ics # Required by: mutt
+  bash-complete-alias # Required by: bash
+  gruvbox-dark-gtk gruvbox-dark-icons-gtk # Required by: awesome
+  qt5-styleplugins # Required by: awesome
+  dragon-drag-and-drop # Required by: ranger
+  ltex-ls-bin # Required by: neovim
 )
 
 PIP=(
-  # used by mutt
-  pypandoc pynliner
+  pypandoc pynliner # Required by: mutt
 )
 
-# if this script is not sourced install packages
+# make this script a modulino, i.e. install packages automatically when it is
+# run instead of sourced
 if [[ "$BASH_SOURCE" == "$0" ]]; then
   set -o errexit
   sudo pacman -S --needed "${PKG[@]}"
