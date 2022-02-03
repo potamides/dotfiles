@@ -14,22 +14,26 @@ function vim.openoffice.thesaurusfunc(findstart, base)
     return vim.fn.match(line:sub(1, col), '\\k*$')
   end
 
-  local completions = {}
+  local completions, term = {}, base:lower() .. "|"
   for _, file in ipairs(vim.opt_local.thesaurus:get()) do
     if vim.fn.filereadable(file) == 1 then
       local iterator = io.lines(file)
+      iterator() -- skip first line
       for line in iterator do
-        local term, count = unpack(vim.split(line, "|"))
-        if base:lower() == term then
-          for _ = 1,tonumber(count) do
+        if vim.startswith(line, term) then
+          for _ = 1,tonumber(line:sub(#term + 1)) do
             local synonyms = vim.split(iterator(), "|")
-            local pos = table.remove(synonyms, 1):sub(2, -2)
-            for _, entry in ipairs(synonyms) do
-              local synonym, info = entry:match("^([^%p]+) ?%(?([^%p]*)%)?$")
-              table.insert(completions, {
-                word = synonym,
-                menu = table.concat(vim.tbl_filter(function(v) return v and v ~= "" end, {pos, info}), ", ")
-              })
+            local pos = table.remove(synonyms, 1)
+            for _, synonym in ipairs(synonyms) do
+              -- remove additional information for to be inserted word which is often given in parentheses
+              local insert = vim.trim(synonym:gsub("%(.-%)", ""):gsub(" +", " "))
+              if insert ~= base then
+                table.insert(completions, {
+                  abbr = synonym,
+                  word = insert,
+                  menu = not vim.tbl_contains({"-", ""}, pos) and (pos:match("^%((.+)%)$") or pos) or nil
+                })
+              end
             end
           end
         end
