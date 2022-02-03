@@ -10,7 +10,8 @@ vim.openoffice = {}
 
 function vim.openoffice.thesaurusfunc(findstart, base)
   if findstart == 1 then
-    return vim.fn.match(vim.fn.getline("."):sub(1, vim.fn.col(".")), '\\k*$')
+    local line, col = vim.api.nvim_get_current_line(), vim.api.nvim_win_get_cursor(0)[2]
+    return vim.fn.match(line:sub(1, col), '\\k*$')
   end
 
   local completions = {}

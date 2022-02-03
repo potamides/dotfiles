@@ -28,7 +28,9 @@ end
 -- Set 'completefunc' or 'omnifunc' to 'v:lua.vim.luasnip.completefunc' to get
 -- completion.
 function vim.luasnip.completefunc(findstart, base)
-  local line_to_cursor = vim.fn.getline("."):sub(1, vim.fn.col("."))
+  local line, col = vim.api.nvim_get_current_line(), vim.api.nvim_win_get_cursor(0)[2]
+  local line_to_cursor = line:sub(1, col)
+
   if findstart == 1 then
     return vim.fn.match(line_to_cursor, '\\k*$')
   end
