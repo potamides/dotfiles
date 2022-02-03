@@ -64,14 +64,14 @@ function battery_widget.init(args)
     widget = wibox.widget.imagebox,
   }
   battery_widget.text = wibox.widget.textbox()
-  battery_widget.text:set_markup(beautiful.widget_markup:format(beautiful.bg_normal, 0))
+  battery_widget.text:set_markup(beautiful.widget_markup:format(beautiful.bg_normal, "0%"))
 
   local last_battery_check = os.time()
   local batteryType = "battery-good-symbolic"
 
   monitor(unpack(merge(get_batteries(), {function(content)
     local charge, status, time = parse_battery_info(content)
-    battery_widget.text:set_markup(beautiful.widget_markup:format(beautiful.bg_normal, math.floor(charge)))
+    battery_widget.text:set_markup(beautiful.widget_markup:format(beautiful.bg_normal, math.floor(charge) .. "%"))
 
     if (charge >= 0 and charge < 15) then
       batteryType = "battery-empty%s-symbolic"
