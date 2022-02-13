@@ -5,8 +5,10 @@
 
 if not vim.b.did_user_ftplugin then
   local sumneko = require("lsputils").sumneko_lua
+  local util = require('lspconfig.util')
 
   sumneko.setup{
+    root_dir = function(f) return util.find_git_ancestor(f) or util.root_pattern('.luacheckrc')(f) end,
     settings = {
       Lua = {
         runtime = {
