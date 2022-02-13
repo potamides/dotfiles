@@ -101,11 +101,13 @@ vim.g.vga_compatible = vim.env.TERM == "linux" -- VGA textmode fallback (with CP
 -- unfortunately augroups and autocommands do not have a lua interface yet
 -- (see https://github.com/neovim/neovim/pull/14661)
 
--- jump to last position when reopening file
+-- jump to last position when opening a file, and start insert mode when
+-- opening a terminal
 vim.cmd([[
-  augroup last_position_jump
+  augroup vim_open
     autocmd!
     autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+    autocmd TermOpen * startinsert
   augroup END
 ]])
 
@@ -114,14 +116,6 @@ vim.cmd([[
   augroup yank_highlight
     autocmd!
     autocmd TextYankPost * silent! lua vim.highlight.on_yank()
-  augroup END
-]])
-
--- enter insert mode when opening a terminal
-vim.cmd([[
-  augroup term_enter
-    autocmd!
-    autocmd TermOpen * startinsert
   augroup END
 ]])
 
@@ -162,6 +156,7 @@ vim.cmd([[command! -complete=lua -nargs=* Print :lua print(vim.inspect(<args>))]
 -- open new terminal at the bottom of the current tab
 vim.cmd([[command! -nargs=? Terminal :botright 12split | setlocal winfixheight | term <args>]])
 
+vim.cmd([[command! Cd :cd %:p:h]])             -- set cwd to directory of current file
 vim.cmd([[command! Run :!"%:p"]])              -- Execute current file
 vim.cmd([[command! Config :e $MYVIMRC]])       -- open config file with :Config
 vim.cmd([[command! Reload :luafile $MYVIMRC]]) -- reload config file with :Reload
@@ -180,23 +175,24 @@ keymap("n", "gB", '"<cmd>bprev " . v:count1 . "<cr>"', {expr = true, unpack(opts
 
 -- language server mappings
 local function lsp_mappings(_, buf)
-  keymap(buf, "n", 'gd',         '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
-  keymap(buf, "n", 'gD',         '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
-  keymap(buf, "n", '<leader>gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
-  keymap(buf, "n", '<leader>gt', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
-  keymap(buf, "n", 'K',          '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-  keymap(buf, "n", '<C-k>',      '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-  keymap(buf, "n", '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<cr>', opts)
-  keymap(buf, "n", '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<cr>', opts)
-  keymap(buf, "n", '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<cr>', opts)
-  keymap(buf, "n", '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-  keymap(buf, "n", '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
-  keymap(buf, "n", '<leader>rf', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
-  keymap(buf, "n", '<leader>ll', '<cmd>lua vim.diagnostic.setloclist()<cr>', opts)
-  keymap(buf, "n", '<leader>ld', '<cmd>lua vim.diagnostic.open_float()<cr>', opts)
-  keymap(buf, "n", '[d',         '<cmd>lua vim.diagnostic.goto_prev()<cr>', opts)
-  keymap(buf, "n", ']d',         '<cmd>lua vim.diagnostic.goto_next()<cr>', opts)
-  keymap(buf, "n", '<leader>fm', '<cmd>lua vim.lsp.buf.formatting()<cr>', opts)
+  keymap(buf, "n", "gd",         "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
+  keymap(buf, "n", "gD",         "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
+  keymap(buf, "n", "<leader>gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
+  keymap(buf, "n", "<leader>gt", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
+  keymap(buf, "n", "K",          "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
+  keymap(buf, "n", "<C-k>",      "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
+  keymap(buf, "n", "<leader>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<cr>", opts)
+  keymap(buf, "n", "<leader>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<cr>", opts)
+  keymap(buf, "n", "<leader>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<cr>", opts)
+  keymap(buf, "n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
+  keymap(buf, "n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
+  keymap(buf, "n", "<leader>rf", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
+  keymap(buf, "n", "<leader>ll", "<cmd>lua vim.diagnostic.setloclist()<cr>", opts)
+  keymap(buf, "n", "<leader>ld", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
+  keymap(buf, "n", "[d",         "<cmd>lua vim.diagnostic.goto_prev()<cr>", opts)
+  keymap(buf, "n", "]d",         "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
+  keymap(buf, "n", "<leader>fm", "<cmd>lua vim.lsp.buf.formatting()<cr>", opts)
+  keymap(buf, "v", "<leader>fm", ":lua vim.lsp.buf.range_formatting()<cr>", opts)
 end
 
 -- Language Server Client
@@ -265,6 +261,7 @@ packer.autostartup{
 -------------------------------------------------------------------------------
 vim.g.gruvbox_contrast_dark = "medium"
 vim.g.gruvbox_italic = true
+vim.g.gruvbox_invert_selection = false
 
 -- only enable this color scheme when supported by terminal
 if not vim.g.vga_compatible then
@@ -370,7 +367,11 @@ gitsigns.setup{
     delete = {hl = "GitSignsDelete", text = vga_fallback("▖", "v")},
     topdelete = {hl = "GitSignsDelete", text = vga_fallback("▘", "^")},
     changedelete = {hl = "GitSignsChange", text = vga_fallback("▌", "±")},
-  }
+  },
+  on_attach = function(buf)
+    keymap(buf, "n", "]c", "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'", {expr=true, unpack(opts)})
+    keymap(buf, "n", "[c", "&diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'", {expr=true, unpack(opts)})
+  end
 }
 
 -- Colorizer
@@ -414,11 +415,11 @@ local telescope = setmetatable({}, {__index = function(_, k) return require("tel
 
 -- when a count N is given to a telescope mapping called through the following
 -- function, the search is started in the Nth parent directory
-function vim.fn.telescope_cwd(picker)
-  telescope[picker]{cwd = vim.fn["repeat"]("../", vim.v.count or 0) .. "."}
+function vim.fn.telescope_cwd(picker, args)
+  telescope[picker](vim.tbl_extend("error", args or {}, {cwd = ("../"):rep(vim.v.count or 0) .. "."}))
 end
 
-keymap("n", "<leader>ff", "<cmd>lua vim.fn.telescope_cwd('find_files')<cr>", opts)
+keymap("n", "<leader>ff", "<cmd>lua vim.fn.telescope_cwd('find_files', {hidden = true})<cr>", opts)
 keymap("n", "<leader>lg", "<cmd>lua vim.fn.telescope_cwd('live_grep')<cr>", opts)
 keymap("n", "<leader>ws", "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<cr>", opts)
 
