@@ -905,7 +905,7 @@ end
 client.connect_signal("property::screen", function(c, old_screen)
   update_borders_by_client(c)
   if old_screen and old_screen.selected_tag then
-    update_borders(old_screen, old_screen.selected_tag.layout.name)
+    update_borders(old_screen, old_screen.selected_tag)
   end
 end)
 
