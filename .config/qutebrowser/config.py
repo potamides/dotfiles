@@ -38,3 +38,13 @@ for mode in ["normal", "caret"]:
 
 config.bind("<Ctrl-e>", "scroll down")
 config.bind("<Ctrl-y>", "scroll up")
+
+## Per-domain
+# -----------------------------------------------------------------------------
+with config.pattern('jisho.org') as p:
+    p.input.insert_mode.leave_on_load = False
+with config.pattern('meet.jit.si') as p:
+    p.content.desktop_capture = True
+    p.content.media.audio_capture = True
+    p.content.media.video_capture = True
+    p.content.media.audio_video_capture = True
