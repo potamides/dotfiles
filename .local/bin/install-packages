@@ -21,7 +21,7 @@ PKG=(
   bash-completion fzf ripgrep # Required by: bash
   pdfjs python-adblock # Required by: qutebrowser
 
-  adobe-source-code-pro-fonts ttf-nerd-fonts-symbols
+  ttf-iosevka-nerd ttc-iosevka-ss09 ttc-iosevka-aile
 )
 
 AUR=(

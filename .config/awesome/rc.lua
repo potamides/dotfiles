@@ -141,11 +141,7 @@ local mylauncher = wibox.widget(utils.widget.compose{{
 }})
 
 modalawesome.active_mode:connect_signal("widget::redraw_needed", function()
-  local color
-  local text = modalawesome.active_mode.text
-
-  status_box:set_markup(string.format("<span color=%q><b>%s</b></span>",
-    beautiful.bg_normal, string.upper(text)))
+  local text, color = modalawesome.active_mode.text
 
   if     text == 'tag'      then color = beautiful.lightaqua
   elseif text == 'layout'   then color = beautiful.lightgreen
@@ -154,6 +150,7 @@ modalawesome.active_mode:connect_signal("widget::redraw_needed", function()
   end
 
   mylauncher:set_bg(color)
+  status_box:set_markup(beautiful.widget_markup:format(beautiful.bg_normal, string.upper(text)))
   beautiful.taglist_bg_focus = color
 
   -- use of undocumented function :(
@@ -201,8 +198,7 @@ end
 -- Clock
 -------------------------------------------------------------------------------
 -- Create a textclock widget and attach a calendar to it
-local mytextclock = wibox.widget.textclock(
-string.format("<span color=%q><b>%%H:%%M</b></span>", beautiful.bg_normal), 60)
+local mytextclock = wibox.widget.textclock(beautiful.widget_markup:format(beautiful.bg_normal, "%H:%M"), 60)
 local month_calendar = awful.widget.calendar_popup.month {
   long_weekdays = true,
   margin = beautiful.gap

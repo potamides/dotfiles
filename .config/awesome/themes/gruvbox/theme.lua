@@ -81,7 +81,7 @@ theme.taglist_bg_occupied = theme.bg1
 theme.taglist_bg_volatile = theme.lightpurple
 theme.taglist_bg_empty    = theme.bg1
 theme.taglist_bg_hover    = theme.bg2
-theme.taglist_font        = "DejaVu Sans Bold 18"
+theme.taglist_font        = "sans-serif:weight=heavy 13"
 
 -- Menu
 theme.menu_height       = dpi(16)
@@ -136,7 +136,7 @@ theme.titlebar_height  = dpi(20)
 theme.systray_icon_spacing = theme.gap
 
 -- All Widgets
-theme.widget_markup = "<span color=%q><b>%s</b></span>"
+theme.widget_markup = "<span weight='heavy' color=%q>%s</span>"
 
 -- Playback Status Widget
 theme.playback_width     = dpi(200)
