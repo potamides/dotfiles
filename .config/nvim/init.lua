@@ -27,6 +27,7 @@ vim.opt.expandtab = true
 vim.opt.textwidth = 79
 vim.opt.colorcolumn = {80, 120}
 vim.opt.breakindent = true
+vim.opt.linebreak = true
 
 -- set list chars for horizontal scrolling
 vim.opt.listchars:append{tab = "» ", precedes = "<", extends = ">"}
@@ -69,6 +70,7 @@ vim.opt.showmode = false       -- do not show mode message on last line
 vim.opt.hidden = true          -- switch buffers without having to save changes
 vim.opt.joinspaces = false     -- insert one space when joining two sentences
 vim.opt.confirm = true         -- raise dialog asking to save changes when commands like ':q' fail
+vim.opt.title = true           -- set terminal window title to something descriptive
 vim.opt.foldlevel = 99         -- do not automatically close folds when editing a file
 vim.opt.inccommand = "nosplit" -- show incremental changes of commands such as search & replace
 vim.opt.virtualedit = "block"  -- virtual editing in visual block mode
