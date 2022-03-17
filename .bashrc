@@ -234,6 +234,6 @@ fi
 # advise the terminal of the current working directory
 PROMPT_COMMAND+='printf "\e]7;file://%s%s\e\\" "$HOSTNAME" "$PWD";'
 
-# set window title to currently running command or running shell
-PROMPT_COMMAND+='[ -n "$BASH_COMMAND" ] && printf "\e]0;%s\a" "$SHELL";'
+# set window title to currently running command or current working directory
+PROMPT_COMMAND+='[ -n "$BASH_COMMAND" ] && printf "\e]0;%s\a" "$PWD";'
 trap 'printf "\e]0;%s\a" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
