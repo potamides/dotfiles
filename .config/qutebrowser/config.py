@@ -10,7 +10,7 @@ c.spellcheck.languages = ["en-US", "de-DE"]
 terminal, editor = getenv("TERMCMD", "alacritty"), getenv("EDITOR", "nvim")
 c.editor.command = [terminal, "-e", editor + " {file} +normal{line}G{column0}l"]
 
-c.confirm_quit = ["downloads"]
+c.confirm_quit = ["downloads", "multiple-tabs"]
 #c.auto_save.session = True
 
 c.downloads.location.directory = "~/Downloads"
