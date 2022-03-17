@@ -93,7 +93,7 @@ developed a more individual workflow, I give additional instructions below.
 | **Shell**                | bash        | [.inputrc](.inputrc), [.bashrc](.bashrc), [.bash\_profile](.bash_profile) | [Repository](https://git.savannah.gnu.org/cgit/bash.git), [Homepage](https://www.gnu.org/software/bash) |
 | **Window Manager**       | awesome     | [.config/awesome](.config/awesome), [.xinitrc](.xinitrc) | [Repository](https://github.com/awesomeWM/awesome), [Homepage](https://awesomewm.org) |
 | **Editor**               | neovim      | [.config/nvim](.config/nvim) | [Repository](https://github.com/neovim/neovim), [Homepage](https://neovim.io) |
-| **Terminal**             | termite     | [.config/termite](.config/termite) | [Repository](https://github.com/thestinger/termite) | 
+| **Terminal**             | alacritty   | [.config/alacritty](.config/alacritty) | [Repository](https://github.com/alacritty/alacritty), [Homepage](https://alacritty.org) |
 | **Terminal Multiplexer** | tmux        | [.config/tmux](.config/tmux) | [Repository](https://github.com/tmux/tmux), [Homepage](https://tmux.github.io) |
 | **Music Player**         | ncmpcpp     | [.config/ncmpcpp](.config/ncmpcpp) | [Repository](https://github.com/ncmpcpp/ncmpcpp), [Homepage](https://rybczak.net/ncmpcpp) |
 | **System Monitor**       | conky       | [.config/conky](.config/conky) | [Repository](https://github.com/brndnmtthws/conky), [Homepage](https://github.com/brndnmtthws/conky/wiki) |
@@ -102,7 +102,7 @@ developed a more individual workflow, I give additional instructions below.
 | **File Manager**         | ranger      | [.config/ranger](.config/ranger) | [Repository](https://github.com/ranger/ranger), [Homepage](https://ranger.github.io) |
 | **Calculator** ;-)       | ptpython    | [.config/ptpython](.config/ptpython) | [Repository](https://github.com/prompt-toolkit/ptpython) |
 | **Calendar**             | when        | [.when](.when) | [Repository](https://github.com/bcrowell/when), [Homepage](http://www.lightandmatter.com/when/when.html) |
-| **Document Viewer**      | qpdfview    | [.config/qpdfview](.config/qpdfview) | [Homepage](https://launchpad.net/qpdfview) |
+| **Document Viewer**      | qpdfview    | [.config/qpdfview](.config/qpdfview) | [Repository](https://launchpad.net/qpdfview) |
 | **Web Browser**          | qutebrowser | [.config/qutebrowser](.config/qutebrowser) | [Repository](https://github.com/qutebrowser/qutebrowser), [Homepage](https://qutebrowser.org) |
 
 Apart from the applications mentioned in the table, this repository also

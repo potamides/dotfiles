@@ -6,7 +6,7 @@
 export BROWSER="qutebrowser"
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
-export TERMCMD="termite"
+export TERMCMD="alacritty"
 
 # merge program for pacdiff
 export DIFFPROG="$EDITOR -d"
