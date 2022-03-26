@@ -35,7 +35,7 @@ function vim.luasnip.completefunc(findstart, base)
     return vim.fn.match(line_to_cursor, '\\k*$')
   end
 
-  local snippets = vim.list_extend(vim.list_slice(luasnip.snippets.all), luasnip.snippets[vim.bo.filetype] or {})
+  local snippets = vim.list_extend(vim.list_slice(luasnip.get_snippets("all")), luasnip.get_snippets(vim.bo.filetype))
   snippets = vim.tbl_filter(snippetfilter(line_to_cursor, base), snippets)
   snippets = vim.tbl_map(snippet2completion, snippets)
   table.sort(snippets, function(s1, s2) return s1.word < s2.word end)
