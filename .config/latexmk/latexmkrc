@@ -9,6 +9,7 @@ $out_dir = "build";
 
 # Use qpdfview as pdf viewer
 $pdf_previewer = 'start qpdfview --unique %S';
+$pdf_update_method = 0;
 $always_view_file_via_temporary = 1;
 
 # Remove more files during cleanup
