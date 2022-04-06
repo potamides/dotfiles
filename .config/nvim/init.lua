@@ -36,8 +36,8 @@ vim.opt.list = true
 -- setup built-in completion
 vim.opt.completeopt:append{"menuone", "noinsert"}
 vim.opt.complete:remove{"t"}
-vim.opt.omnifunc = 'v:lua.vim.lsp.omnifunc'             -- neovim internal lsp completion
-vim.opt.completefunc = 'v:lua.vim.luasnip.completefunc' -- custom snippet completion defined in plugin/snipcomp.lua
+vim.opt.omnifunc = "v:lua.vim.lsp.omnifunc"             -- neovim internal lsp completion
+vim.opt.completefunc = "v:lua.vim.luasnip.completefunc" -- custom snippet completion defined in plugin/snipcomp.lua
 
 -- print line numbers and highlight cursor line number
 vim.opt.number = true
@@ -201,11 +201,11 @@ local function lsp_mappings(_, buf)
   keymap(buf, "v", "<leader>fm", ":lua vim.lsp.buf.range_formatting()<cr>", opts)
 end
 
--- Language Server Client
+-- Diagnostics
 -------------------------------------------------------------------------------
 local prefix = "DiagnosticSign"
 
--- when not on the console set some nice lsp signs
+-- when not on the console set some nice signs
 if not vim.g.vga_compatible then
   vim.fn.sign_define{
     {name = prefix .. "Error", text = "▌", texthl = prefix .. "Error"},
