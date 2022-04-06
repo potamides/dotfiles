@@ -26,11 +26,8 @@ if not vim.b.did_user_ftplugin then
       }
     },
     on_new_config = function(config, root_dir)
-      local build_dir = root_dir .. "/build"
-
-      if vim.fn.isdirectory(build_dir) == 1 then
-        config.settings.texlab.auxDirectory = build_dir
-      end
+      local build_dir = vim.fn.globpath(root_dir, "build", nil, true)[1] or root_dir
+      config.settings.texlab.auxDirectory = build_dir
 
       config.commands = {
         TexlabLog = {
