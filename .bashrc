@@ -51,7 +51,7 @@ shopt -s dirspell                   # Tab comp can fix dir name typos
 shopt -s globstar                   # pattern ** also searches subdirectories
 shopt -s extglob                    # enable extended pattern matching features
 
-# reset cursor shape before executing a command (see .inputrc)
+# reset cursor shape before executing a command (see .config/readline/inputrc)
 if [[ $TERM = linux ]]; then
   PS0="\e[?8c"
 else
