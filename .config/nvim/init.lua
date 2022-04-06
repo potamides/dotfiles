@@ -184,7 +184,7 @@ keymap("n", "[d",         "<cmd>lua vim.diagnostic.goto_prev()<cr>", opts)
 keymap("n", "]d",         "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
 
 -- language server mappings
-local function lsp_mappings(_, buf)
+local function lsp_mappings(client, buf)
   keymap(buf, "n", "gd",         "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
   keymap(buf, "n", "gD",         "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
   keymap(buf, "n", "<leader>gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
@@ -199,6 +199,11 @@ local function lsp_mappings(_, buf)
   keymap(buf, "n", "<leader>rf", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
   keymap(buf, "n", "<leader>fm", "<cmd>lua vim.lsp.buf.formatting()<cr>", opts)
   keymap(buf, "v", "<leader>fm", ":lua vim.lsp.buf.range_formatting()<cr>", opts)
+
+  if client.resolved_capabilities.document_range_formatting then
+    -- Use LSP as the handler for 'gq' mapping
+    vim.api.nvim_buf_set_option(buf, 'formatexpr', 'v:lua.vim.lsp.formatexpr()')
+  end
 end
 
 -- Diagnostics
