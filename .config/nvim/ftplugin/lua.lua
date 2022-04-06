@@ -9,6 +9,9 @@ if not vim.b.did_user_ftplugin then
 
   sumneko.setup{
     root_dir = function(f) return util.find_git_ancestor(f) or util.root_pattern('.luacheckrc')(f) end,
+    -- currently formatting is experimental and must be enabled explicitly (see
+    -- https://github.com/sumneko/lua-language-server/issues/960)
+    cmd = {'lua-language-server', "--preview"},
     settings = {
       Lua = {
         runtime = {
@@ -23,6 +26,9 @@ if not vim.b.did_user_ftplugin then
           disable = {
             "unbalanced-assignments"
           },
+          --neededFileStatus = {
+          --  ["codestyle-check"] = "Any",
+          --},
           globals = {
             -- neovim globals
             "vim",
@@ -46,13 +52,24 @@ if not vim.b.did_user_ftplugin then
             "conky"
           },
         },
+        format = {
+          enable = true,
+          defaultConfig = {
+            -- default format options (i.e. without .editorconfig)
+            indent_style = vim.bo.expandtab and "space" or "tab",
+            indent_size = tostring(vim.bo.shiftwidth),
+            keep_one_space_between_table_and_bracket = "false",
+            quote_style = "double",
+          }
+        },
         workspace = {
           --preload global variables and classes
-          library = vim.list_extend(
+          library = {
             -- awesome wm library
-            {"/usr/share/awesome/lib"},
+            "/usr/share/awesome/lib",
             -- neovim stuff
-            vim.api.nvim_get_runtime_file("", true)),
+            unpack(vim.api.nvim_get_runtime_file("", true))
+          }
         }
       }
     }
