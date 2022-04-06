@@ -14,7 +14,7 @@ PKG=(
 
   keepassxc # Required by: mutt  weechat
   python-websocket-client # Required by: weechat
-  texlab pyright lua-language-server xclip # Required by: neovim
+  {bash,lua}-language-server texlab pyright xclip # Required by: neovim
   xorg-xinit physlock scrot redshift mpv # Required by: awesome
   xorg-xrandr # Required by: awesome  conky
   ueberzug # Required by: ranger
