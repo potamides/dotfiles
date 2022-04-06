@@ -177,6 +177,12 @@ end
 keymap("n", "gb", '"<cmd>bnext " . v:count1 . "<cr>"', {expr = true, unpack(opts)})
 keymap("n", "gB", '"<cmd>bprev " . v:count1 . "<cr>"', {expr = true, unpack(opts)})
 
+-- diagnostics mappings
+keymap("n", "<leader>ll", "<cmd>lua vim.diagnostic.setloclist()<cr>", opts)
+keymap("n", "<leader>ld", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
+keymap("n", "[d",         "<cmd>lua vim.diagnostic.goto_prev()<cr>", opts)
+keymap("n", "]d",         "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
+
 -- language server mappings
 local function lsp_mappings(_, buf)
   keymap(buf, "n", "gd",         "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
@@ -191,10 +197,6 @@ local function lsp_mappings(_, buf)
   keymap(buf, "n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
   keymap(buf, "n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
   keymap(buf, "n", "<leader>rf", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
-  keymap(buf, "n", "<leader>ll", "<cmd>lua vim.diagnostic.setloclist()<cr>", opts)
-  keymap(buf, "n", "<leader>ld", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
-  keymap(buf, "n", "[d",         "<cmd>lua vim.diagnostic.goto_prev()<cr>", opts)
-  keymap(buf, "n", "]d",         "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
   keymap(buf, "n", "<leader>fm", "<cmd>lua vim.lsp.buf.formatting()<cr>", opts)
   keymap(buf, "v", "<leader>fm", ":lua vim.lsp.buf.range_formatting()<cr>", opts)
 end
