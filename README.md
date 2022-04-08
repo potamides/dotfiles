@@ -1,5 +1,5 @@
 <a href="#readme">
-  <img alt="🍙 Dotfiles" width="100%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/dotfiles-headline.svg"/>
+  <img alt="🍙 Dotfiles" width="100%" src="https://user-images.githubusercontent.com/53401822/162452560-4addbc36-c894-47b0-8479-c99e7fb5818c.svg"/>
 </a>
 
 ---
@@ -38,8 +38,8 @@ mode](https://en.wikipedia.org/wiki/VGA_text_mode) with [code page
 
 ---
 
-<a href="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/rice.png">
-  <img alt="CRT Monitor with rice" width="100%" src="https://gist.githubusercontent.com/potamides/35387b4d0c47aea421f75aa0b9f78b5f/raw/rice-crt.svg"/>
+<a href="https://user-images.githubusercontent.com/53401822/162453427-35cd1699-0b5b-49b6-9023-783bbeea0ebf.png">
+  <img alt="CRT Monitor with rice" width="100%" src="https://user-images.githubusercontent.com/53401822/162453210-a2e00d8d-9f14-4ffa-a511-fbc99f99aecb.svg"/>
 </a>
 
 ## Installation
