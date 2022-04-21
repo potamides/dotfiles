@@ -96,5 +96,10 @@ if not vim.b.did_user_ftplugin then
   vim.keymap.set("n", "<localleader>sl", '<cmd>TexlabLog<cr>', {silent = true, buffer = true})
   vim.keymap.set("n", "<localleader>lt", '<cmd>LspStart ltex<cr>', {silent = true, buffer = true})
 
+  -- in insert mode do not break a line which already was longer than 'textwidth'
+  vim.opt_local.formatoptions:append{
+    l = true,
+  }
+
   vim.b.did_user_ftplugin = true
 end
