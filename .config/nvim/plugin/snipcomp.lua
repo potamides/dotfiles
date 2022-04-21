@@ -7,6 +7,7 @@
 
 -- lazy load LuaSnip, only useful when LuaSnip wasn't already loaded elsewhere
 local luasnip = setmetatable({}, {__index = function(_, key) return require("luasnip")[key] end})
+local au = require("au")
 vim.luasnip = {}
 
 local function snippet2completion(snippet)
@@ -42,15 +43,9 @@ function vim.luasnip.completefunc(findstart, base)
   return snippets
 end
 
-function vim.luasnip.completion_expand(item)
-  if item.user_data == "luasnip" and luasnip.expandable() then
+local luasnip_completion_expand = au("luasnip_completion_expand")
+function luasnip_completion_expand.CompleteDone()
+  if vim.v.completed_item.user_data == "luasnip" and luasnip.expandable() then
     luasnip.expand()
   end
 end
-
-vim.cmd([[
-  augroup luasnip_completion_expand
-    autocmd!
-    autocmd CompleteDone * call v:lua.vim.luasnip.completion_expand(v:completed_item)
-  augroup END
-]])

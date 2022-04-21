@@ -7,6 +7,7 @@ if not vim.b.did_user_ftplugin then
   local lsputils = require("lsputils")
   local windows = require("lspconfig.ui.windows")
   local configs = require("lspconfig.configs")
+  local au = require("au")
 
   lsputils.texlab.setup{
     settings = {
@@ -40,13 +41,15 @@ if not vim.b.did_user_ftplugin then
 
             if not vim.tbl_isempty(lines) then
               local info = windows.percentage_range_window(0.8, 0.7)
+              local autocmd = au()({"BufHidden", "BufLeave"}, {once = true, buffer = info.bufnr})
+
               vim.api.nvim_buf_set_lines(info.bufnr, 0, -1, true, lines)
               vim.api.nvim_buf_set_option(info.bufnr, "modifiable", false)
-              vim.api.nvim_buf_set_keymap(info.bufnr, "n", "<esc>", "<cmd>bd<CR>", {noremap = true})
-              vim.cmd(string.format(
-                "autocmd BufHidden,BufLeave <buffer> ++once lua pcall(vim.api.nvim_win_close, %d, true)",
-                info.win_id
-              ))
+              vim.keymap.set("n", "<esc>", "<cmd>bd<CR>", {noremap = true, buffer = info.bufnr})
+
+              function autocmd.handler()
+                pcall(vim.api.nvim_win_close, info.win_id, true)
+              end
             end
           end,
           description = "Show content of log files in a floating window."
@@ -88,10 +91,10 @@ if not vim.b.did_user_ftplugin then
   }
 
   -- define some keybindings for convenient access to some lsp commands
-  vim.api.nvim_buf_set_keymap(0, "n", "<localleader>bn", '<cmd>TexlabBuild<cr>', {silent=true})
-  vim.api.nvim_buf_set_keymap(0, "n", "<localleader>fs", '<cmd>TexlabForward<cr>', {silent=true})
-  vim.api.nvim_buf_set_keymap(0, "n", "<localleader>sl", '<cmd>TexlabLog<cr>', {silent=true})
-  vim.api.nvim_buf_set_keymap(0, "n", "<localleader>lt", '<cmd>LspStart ltex<cr>', {silent=true})
+  vim.keymap.set("n", "<localleader>bn", '<cmd>TexlabBuild<cr>', {silent = true, buffer = true})
+  vim.keymap.set("n", "<localleader>fs", '<cmd>TexlabForward<cr>', {silent = true, buffer = true})
+  vim.keymap.set("n", "<localleader>sl", '<cmd>TexlabLog<cr>', {silent = true, buffer = true})
+  vim.keymap.set("n", "<localleader>lt", '<cmd>LspStart ltex<cr>', {silent = true, buffer = true})
 
   vim.b.did_user_ftplugin = true
 end

@@ -17,7 +17,7 @@
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
--- tabs are 2 spaces
+-- tabs are two spaces
 vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
 vim.opt.shiftwidth = 2
@@ -101,104 +101,100 @@ vim.g.vga_compatible = vim.env.TERM == "linux" -- VGA textmode fallback (with CP
 
 -- Automatic commands
 -------------------------------------------------------------------------------
+local au = require("au") -- small wrapper around lua autocmd api
 
--- unfortunately augroups and autocommands do not have a lua interface yet
--- (see https://github.com/neovim/neovim/pull/14661)
+-- jump to last position when opening a file, and start insert mode when opening a terminal
+local open = au("user_open")
+function open.TermOpen()
+  vim.cmd("startinsert")
+end
 
--- jump to last position when opening a file, and start insert mode when
--- opening a terminal
-vim.cmd([[
-  augroup vim_open
-    autocmd!
-    autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-    autocmd TermOpen * startinsert
-  augroup END
-]])
+function open.BufReadPost()
+  local last_cursor_pos, last_line = vim.fn.line([['"]]), vim.fn.line("$")
+  if last_cursor_pos > 1 and last_cursor_pos <= last_line then
+    vim.fn.cursor(last_cursor_pos, 1)
+  end
+end
 
 -- briefly highlight a selection on yank
-vim.cmd([[
-  augroup yank_highlight
-    autocmd!
-    autocmd TextYankPost * silent! lua vim.highlight.on_yank()
-  augroup END
-]])
-
--- when a terminal window is narrow (below 80 lines) disable text wrapping
-vim.cmd([[
-  augroup auto_wrap
-    autocmd!
-    autocmd VimResized,VimEnter * if (&columns < 80) | set nowrap | else | set wrap | endif
-  augroup END
-]])
+local yank = au("user_yank")
+function yank.TextYankPost()
+  vim.highlight.on_yank()
+end
 
 -- automatically toggle between relative and absolute line numbers depending on mode
-vim.cmd([[
-  augroup number_toggle
-    autocmd!
-    autocmd BufEnter,FocusGained,InsertLeave,TermLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
-    autocmd BufLeave,FocusLost,InsertEnter,TermEnter,WinLeave   * if &nu                  | set nornu | endif
-  augroup END
-]])
+local number = au("user_number")
+local relative = number{"BufEnter", "FocusGained", "InsertLeave", "TermLeave", "WinEnter"}
+local absolute = number{"BufLeave", "FocusLost", "InsertEnter", "TermEnter", "WinLeave"}
 
--- disable preview window when completion is finished
-vim.cmd([[
-  augroup preview_close
-    autocmd!
-    autocmd CompleteDone * if pumvisible() == 0 | pclose | endif
-  augroup END
-]])
+function relative.handler()
+  if vim.opt_local.number:get() and vim.fn.mode() ~= "i" then
+    vim.opt_local.relativenumber = true
+  end
+end
+
+function absolute.handler()
+  if vim.opt_local.number:get() then
+    vim.opt_local.relativenumber = false
+  end
+end
+
+-- close preview window when completion is finished
+local preview = au("user_preview")
+function preview.CompleteDone()
+  if vim.fn.pumvisible() == 0 then
+    vim.cmd[[pclose]]
+  end
+end
 
 -- Commands
 -------------------------------------------------------------------------------
-
--- similar to autocmds, the lua interface of commands is also still work in progress
--- (see https://github.com/neovim/neovim/pull/11613)
-
--- pretty print lua code with :Print <code>
-vim.cmd([[command! -complete=lua -nargs=* Print :lua print(vim.inspect(<args>))]])
+local cmd = vim.api.nvim_create_user_command
 
 -- open new terminal at the bottom of the current tab
-vim.cmd([[command! -nargs=? Terminal :botright 12split | setlocal winfixheight | term <args>]])
+cmd("Terminal", function(tbl)
+    vim.cmd('botright 12new')
+    vim.opt_local.winfix_height = true
+    vim.fn.termopen(#tbl.args > 0 and tbl.args or vim.o.shell)
+  end, {nargs = "?"}
+)
 
-vim.cmd([[command! Cd :cd %:p:h]])             -- set cwd to directory of current file
-vim.cmd([[command! Run :!"%:p"]])              -- Execute current file
-vim.cmd([[command! Config :e $MYVIMRC]])       -- open config file with :Config
-vim.cmd([[command! Reload :luafile $MYVIMRC]]) -- reload config file with :Reload
+cmd("Cd", "cd %:p:h", {})            -- set cwd to directory of current file
+cmd("Run", '!"%:p"', {})             -- Execute current file
+cmd("Config", "edit $MYVIMRC", {})   -- open config file with :Config
+cmd("Reload", "source $MYVIMRC", {}) -- reload config file with :Reload
 
 -- Mappings
 -------------------------------------------------------------------------------
-local opts = {noremap = true, silent = true}
-
-local function keymap(...)
-  vim.api[type(...) == "number" and "nvim_buf_set_keymap" or "nvim_set_keymap"](...)
-end
+local map, opts = vim.keymap.set, {noremap = true, silent = true}
 
 -- navigate buffers like tabs (gt & gT)
-keymap("n", "gb", '"<cmd>bnext " . v:count1 . "<cr>"', {expr = true, unpack(opts)})
-keymap("n", "gB", '"<cmd>bprev " . v:count1 . "<cr>"', {expr = true, unpack(opts)})
+map("n", "gb", function() vim.cmd("bnext" .. vim.v.count1) end, opts)
+map("n", "gB", function() vim.cmd("bprev" .. vim.v.count1) end, opts)
 
 -- diagnostics mappings
-keymap("n", "<leader>ll", "<cmd>lua vim.diagnostic.setloclist()<cr>", opts)
-keymap("n", "<leader>ld", "<cmd>lua vim.diagnostic.open_float()<cr>", opts)
-keymap("n", "[d",         "<cmd>lua vim.diagnostic.goto_prev()<cr>", opts)
-keymap("n", "]d",         "<cmd>lua vim.diagnostic.goto_next()<cr>", opts)
+map("n", "<leader>ll", vim.diagnostic.setloclist, opts)
+map("n", "<leader>ld", vim.diagnostic.open_float, opts)
+map("n", "[d",         vim.diagnostic.goto_prev, opts)
+map("n", "]d",         vim.diagnostic.goto_next, opts)
 
 -- language server mappings
 local function lsp_mappings(client, buf)
-  keymap(buf, "n", "gd",         "<cmd>lua vim.lsp.buf.definition()<cr>", opts)
-  keymap(buf, "n", "gD",         "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
-  keymap(buf, "n", "<leader>gi", "<cmd>lua vim.lsp.buf.implementation()<cr>", opts)
-  keymap(buf, "n", "<leader>gt", "<cmd>lua vim.lsp.buf.type_definition()<cr>", opts)
-  keymap(buf, "n", "K",          "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-  keymap(buf, "n", "<C-k>",      "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
-  keymap(buf, "n", "<leader>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<cr>", opts)
-  keymap(buf, "n", "<leader>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<cr>", opts)
-  keymap(buf, "n", "<leader>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<cr>", opts)
-  keymap(buf, "n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
-  keymap(buf, "n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
-  keymap(buf, "n", "<leader>rf", "<cmd>lua vim.lsp.buf.references()<cr>", opts)
-  keymap(buf, "n", "<leader>fm", "<cmd>lua vim.lsp.buf.formatting()<cr>", opts)
-  keymap(buf, "v", "<leader>fm", ":lua vim.lsp.buf.range_formatting()<cr>", opts)
+  local bufopts = {buffer = buf, unpack(opts)}
+  map("n", "gd",         vim.lsp.buf.definition, bufopts)
+  map("n", "gD",         vim.lsp.buf.declaration, bufopts)
+  map("n", "<leader>gi", vim.lsp.buf.implementation, bufopts)
+  map("n", "<leader>gt", vim.lsp.buf.type_definition, bufopts)
+  map("n", "K",          vim.lsp.buf.hover, bufopts)
+  map("n", "<C-k>",      vim.lsp.buf.signature_help, bufopts)
+  map("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, bufopts)
+  map("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, bufopts)
+  map("n", "<leader>wl", function() vim.pretty_print(vim.lsp.buf.list_workspace_folders()) end, bufopts)
+  map("n", "<leader>rn", vim.lsp.buf.rename, bufopts)
+  map("n", "<leader>ca", vim.lsp.buf.code_action, bufopts)
+  map("n", "<leader>rf", vim.lsp.buf.references, bufopts)
+  map("n", "<leader>fm", vim.lsp.buf.formatting, bufopts)
+  map("v", "<leader>fm", ":lua vim.lsp.buf.range_formatting()<cr>", bufopts) -- return to normal mode
 
   if client.resolved_capabilities.document_range_formatting then
     -- Use LSP as the handler for 'gq' mapping
@@ -350,22 +346,15 @@ vim.g["lightline#bufferline#min_tab_count"]    = 2
 
 -- Quick-Scope
 -------------------------------------------------------------------------------
-function vim.fn.qs_colors()
+local quickscope = au("user_quickscope"){"ColorScheme", "VimEnter"}
+vim.g.qs_highlight_on_keys = {"f", "F", "t", "T"}
+
+function quickscope.handler()
   for group, color in pairs({QuickScopePrimary=10, QuickScopeSecondary=13}) do
     vim.cmd(string.format("highlight %s guisp=%s gui=bold,underline ctermfg=%d cterm=bold,underline",
       group, vim.g["terminal_color_" .. color], color))
   end
 end
-
-vim.cmd([[
-  augroup qs_colors
-    autocmd!
-    autocmd ColorScheme * lua vim.fn.qs_colors()
-    autocmd VimEnter * lua vim.fn.qs_colors()
-  augroup END
-]])
-
-vim.g.qs_highlight_on_keys = {"f", "F", "t", "T"}
 
 -- Gitsigns
 -------------------------------------------------------------------------------
@@ -379,9 +368,27 @@ gitsigns.setup{
     topdelete = {hl = "GitSignsDelete", text = vga_fallback("▘", "^")},
     changedelete = {hl = "GitSignsChange", text = vga_fallback("▌", "±")},
   },
+  preview_config = {
+    border = "none"
+  },
   on_attach = function(buf)
-    keymap(buf, "n", "]c", "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'", {expr=true, unpack(opts)})
-    keymap(buf, "n", "[c", "&diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'", {expr=true, unpack(opts)})
+    local bufopts = {buffer = buf, unpack(opts)}
+
+    local function jump(direction)
+      if vim.wo.diff then
+        return ']c'
+      end
+      vim.schedule(direction)
+      return '<Ignore>'
+    end
+
+    -- Navigation
+    map("n", "]c", function() return jump(gitsigns.next_hunk) end, {expr = true, unpack(bufopts)})
+    map("n", "[c", function() return jump(gitsigns.prev_hunk) end, {expr = true, unpack(bufopts)})
+
+    -- Actions
+    map({'n', 'v'}, '<leader>hr', ':Gitsigns reset_hunk<CR>', bufopts)
+    map('n', '<leader>hp', gitsigns.preview_hunk, bufopts)
   end
 }
 
@@ -399,8 +406,6 @@ colorizer.setup(
 -------------------------------------------------------------------------------
 local lsputil = require('lspconfig.util')
 
--- debounce 'didChange' notifications to the server
-lsputil.default_config.flags = {debounce_text_changes = 150}
 -- setup calls to specific language servers are located in ftplugins
 function lsputil.on_setup(config)
   config.on_attach = lsputil.add_hook_before(config.on_attach, lsp_mappings)
@@ -409,16 +414,21 @@ end
 -- LuaSnip
 -------------------------------------------------------------------------------
 require("luasnip.loaders.from_vscode").lazy_load()
+local luasnip = setmetatable({}, {__index = function(_, k) return require("luasnip")[k] end})
+
+local function try_change_choice(direction)
+  if luasnip.choice_active() then
+    luasnip.change_choice(direction)
+  end
+end
 
 -- we only define LuaSnip mappings for jumping around, expansion is handled by
 -- insert mode completion (see help-page for 'ins-completion' and
 -- 'completefunc' defined above).
-for _, mode in pairs{"i", "s"} do
-  keymap(mode, "<C-s><C-n>", "<cmd>lua require('luasnip').jump(1)<cr>", opts)
-  keymap(mode, "<C-s><C-p>", "<cmd>lua require('luasnip').jump(-1)<cr>", opts)
-  keymap(mode, "<C-s><C-j>", "luasnip#choice_active() ? '<Plug>luasnip-next-choice' : ''", {expr = true, unpack(opts)})
-  keymap(mode, "<C-s><C-k>", "luasnip#choice_active() ? '<Plug>luasnip-prev-choice' : ''", {expr = true, unpack(opts)})
-end
+map({"i", "s"}, "<C-s><C-n>", function() luasnip.jump(1) end, opts)
+map({"i", "s"}, "<C-s><C-p>", function() luasnip.jump(-1) end, opts)
+map({"i", "s"}, "<C-s><C-j>", function() try_change_choice(1) end, opts)
+map({"i", "s"}, "<C-s><C-k>", function() try_change_choice(-1) end, opts)
 
 -- Telescope
 -------------------------------------------------------------------------------
@@ -426,13 +436,13 @@ local telescope = setmetatable({}, {__index = function(_, k) return require("tel
 
 -- when a count N is given to a telescope mapping called through the following
 -- function, the search is started in the Nth parent directory
-function vim.fn.telescope_cwd(picker, args)
-  telescope[picker](vim.tbl_extend("error", args or {}, {cwd = ("../"):rep(vim.v.count or 0) .. "."}))
+local function telescope_cwd(picker, args)
+  telescope[picker](vim.tbl_extend("error", args or {}, {cwd = ("../"):rep(vim.v.count) .. "."}))
 end
 
-keymap("n", "<leader>ff", "<cmd>lua vim.fn.telescope_cwd('find_files', {hidden = true})<cr>", opts)
-keymap("n", "<leader>lg", "<cmd>lua vim.fn.telescope_cwd('live_grep')<cr>", opts)
-keymap("n", "<leader>ws", "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<cr>", opts)
+map("n", "<leader>ff", function() telescope_cwd('find_files', {hidden = true}) end, opts)
+map("n", "<leader>lg", function() telescope_cwd('live_grep') end, opts)
+map("n", "<leader>ws", function() telescope.lsp_dynamic_workspace_symbols() end, opts)
 
 -- }}}
 -- vim: foldmethod=marker foldmarker=--\ {{{,--\ }}}

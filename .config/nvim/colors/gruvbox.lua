@@ -2,24 +2,25 @@
   Small modifications to the gruvbox colorscheme.
 --]]
 
+local au = require("au")
+
 -- load base gruvbox colorscheme installed as library with packer
 vim.cmd("runtime! library/gruvbox.vim")
 
 -- change some diagnostic and spelling highlight groups
--- lua syntax api is still work in progress (see https://github.com/neovim/neovim/issues/9876)
-vim.cmd([[
-  hi! link DiagnosticHint GruvboxPurple
-  hi! link DiagnosticSignHint GruvboxPurpleSign
-  hi! link DiagnosticUnderlineHint GruvboxPurpleUnderline
+vim.api.nvim_set_hl(0, "DiagnosticHint", {link = "GruvboxPurple"})
+vim.api.nvim_set_hl(0, "DiagnosticSignHint", {link = "GruvboxPurpleSign"})
+vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", {link = "GruvboxPurpleUnderline"})
 
-  hi! link SpellBad GruvboxBlueUnderline
-  hi! link SpellCap GruvboxOrangeUnderline
-  hi! link SpellRare GruvboxGreenUnderline
-]])
+vim.api.nvim_set_hl(0, "SpellBad", {link = "GruvboxeUnderline"})
+vim.api.nvim_set_hl(0, "SpellCap", {link = "GruvboxOrangeUnderline"})
+vim.api.nvim_set_hl(0, "SpellRare", {link = "GruvboxGreenUnderline"})
 
 -- slightly adapt lightline tabline colors
-function vim.fn.patch_lightline_colorscheme()
-  if vim.g.loaded_lightline and vim.fn.get(vim.g.lightline or {}, "colorscheme") == "gruvbox" then
+local lightline_patch_colorscheme = au("lightline_patch_colorscheme")
+
+function lightline_patch_colorscheme.VimEnter()
+  if vim.g.loaded_lightline and vim.tbl_get(vim.g, "lightline", "colorscheme") == "gruvbox" then
     local palette = vim.g["lightline#colorscheme#gruvbox#palette"]
     if palette then
       palette.tabline.middle = palette.normal.middle
@@ -29,10 +30,3 @@ function vim.fn.patch_lightline_colorscheme()
     end
   end
 end
-
-vim.cmd([[
-  augroup lightline_patch_colorscheme
-    autocmd!
-    autocmd VimEnter * call v:lua.vim.fn.patch_lightline_colorscheme()
-  augroup END
-]])

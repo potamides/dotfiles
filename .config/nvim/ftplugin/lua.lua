@@ -5,10 +5,8 @@
 
 if not vim.b.did_user_ftplugin then
   local sumneko = require("lsputils").sumneko_lua
-  local util = require('lspconfig.util')
 
   sumneko.setup{
-    root_dir = function(f) return util.find_git_ancestor(f) or util.root_pattern('.luacheckrc')(f) end,
     -- currently formatting is experimental and must be enabled explicitly (see
     -- https://github.com/sumneko/lua-language-server/issues/960)
     cmd = {'lua-language-server', "--preview"},
@@ -75,7 +73,7 @@ if not vim.b.did_user_ftplugin then
     }
   }
 
-  -- customize how automatic formatting is done
+  -- auto insert current comment with 'o' or 'O'
   vim.opt_local.formatoptions:append{
     o = false,
   }

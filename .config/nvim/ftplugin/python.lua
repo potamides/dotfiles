@@ -16,18 +16,17 @@ if not vim.b.did_user_ftplugin then
     }
   }
 
-  vim.api.nvim_buf_set_keymap(0, "n", "<localleader>or", '<cmd>PyrightOrganizeImports<cr>', {silent=true})
+  vim.keymap.set("n", "<localleader>or", '<cmd>PyrightOrganizeImports<cr>', {silent = true, buffer = true})
 
   -- when black is installed use it for formatting with 'gq' operator
   if vim.fn.executable("black") == 1 then
     vim.opt_local.formatprg = "black --fast --quiet -"
   end
 
-  -- customize how internal formatting is done
   vim.opt_local.formatoptions:append{
-    t = false,
-    r = true,
-    l = true
+    t = false, -- auto-wrap text using textwidth
+    r = true,  -- auto insert comment leader after hitting <Enter>
+    l = true   -- when a line was longer than 'textwidth' when insert started, do not auto-format it
   }
 
   vim.b.did_user_ftplugin = true

@@ -2,6 +2,8 @@
   Custom component functions for lightline. Mainly LSP/diagnostics related.
 --]]
 
+local au = require("au")
+
 local comps = {
   opts = {
     signs = {
@@ -110,13 +112,16 @@ function comps.setup(opts)
   })
 
   -- update lsp diagnostics information inside lightline
-  vim.cmd([[
-    augroup lightline_diagnostics
-      autocmd!
-      autocmd User LspProgressUpdate call lightline#update()
-      autocmd DiagnosticChanged * call lightline#update()
-    augroup END
-  ]])
+  local lightline_diagnostics = au("lightline_diagnostics")
+  function lightline_diagnostics.DiagnosticChanged()
+    vim.fn["lightline#update"]()
+  end
+
+  function lightline_diagnostics.User(args)
+    if args.match == "LspProgressUpdate" then
+      vim.fn["lightline#update"]()
+    end
+  end
 end
 
 return comps
