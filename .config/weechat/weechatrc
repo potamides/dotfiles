@@ -46,7 +46,7 @@ dnl Script installation / advanced configuration
 dnl ---------------------------------------------------------------------------
 
 dnl Slack
-/secure set slack_token KEEPASS(HiWi-Slack, Token)
+/secure set slack_token KEEPASS("Slack - PhD", Token)
 /set plugins.var.python.slack.slack_api_token ${sec.data.slack_token}
 
 dnl Vimode
