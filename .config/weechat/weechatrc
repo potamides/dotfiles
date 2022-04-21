@@ -49,6 +49,11 @@ dnl Slack
 /secure set slack_token KEEPASS("Slack - PhD", Token)
 /set plugins.var.python.slack.slack_api_token ${sec.data.slack_token}
 
+dnl Slack emoji characters and tab completions of emoji names
+/exec -sh curl --output-dir "${WEECHAT_HOME:-~/.weechat}" -LO dnl
+  https://raw.githubusercontent.com/wee-slack/wee-slack/master/weemoji.json
+/set weechat.completion.default_template "%(nicks)|%(irc_channels)|%(emoji)"
+
 dnl Vimode
 /set plugins.var.python.vimode.mode_indicator_cmd_color        "cyan"
 /set plugins.var.python.vimode.mode_indicator_insert_color     "cyan"
