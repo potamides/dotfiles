@@ -33,11 +33,12 @@ vim.opt.linebreak = true
 vim.opt.listchars:append{tab = "» ", precedes = "<", extends = ">"}
 vim.opt.list = true
 
--- setup built-in completion
+-- built-in completion & tag search
 vim.opt.completeopt:append{"menuone", "noinsert"}
 vim.opt.complete:remove{"t"}
 vim.opt.omnifunc = "v:lua.vim.lsp.omnifunc"             -- neovim internal lsp completion
 vim.opt.completefunc = "v:lua.vim.luasnip.completefunc" -- custom snippet completion defined in plugin/snipcomp.lua
+vim.opt.tagfunc = "v:lua.vim.lsp.tagfunc"               -- interface to normal mode commands like CTRL-]
 
 -- print line numbers and highlight cursor line number
 vim.opt.number = true
