@@ -1,0 +1,9 @@
+#!/bin/bash
+# shellcheck disable=SC2128
+
+# http://mywiki.wooledge.org/BashFAQ/028
+if [[ $BASH_SOURCE = */* ]]; then
+  # We cannot simply symlink to qute-zotero as it is not executable. Instead
+  # we use this executable wrapper which runs it with the python interpreter.
+  exec python "${BASH_SOURCE%/*}/source/zotero/qute-zotero" "$@"
+fi

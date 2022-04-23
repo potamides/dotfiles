@@ -30,7 +30,7 @@ c.content.pdfjs = True
 c.colors.webpage.preferred_color_scheme = "dark"
 config.source("colorschemes/gruvbox.py")
 
-## Keybindings
+## Keybindings & Aliases
 # -----------------------------------------------------------------------------
 for mode in ["normal", "caret"]:
     config.bind("gs", "spawn --userscript yomichad", mode=mode)
@@ -38,6 +38,9 @@ for mode in ["normal", "caret"]:
 
 config.bind("<Ctrl-e>", "scroll down")
 config.bind("<Ctrl-y>", "scroll up")
+
+c.aliases['zotero'] = 'spawn --userscript zotero'
+c.aliases['Zotero'] = 'hint links userscript zotero'
 
 ## Per-domain
 # -----------------------------------------------------------------------------

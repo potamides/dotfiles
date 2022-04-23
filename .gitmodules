@@ -10,3 +10,6 @@
 [submodule ".config/qutebrowser/userscripts/source/yomichad"]
 	path = .config/qutebrowser/userscripts/source/yomichad
 	url = https://github.com/potamides/yomichad.git
+[submodule ".config/qutebrowser/userscripts/source/zotero"]
+	path = .config/qutebrowser/userscripts/source/zotero
+	url = https://github.com/parchd-1/qutebrowser-zotero
