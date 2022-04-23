@@ -61,7 +61,8 @@ function kill_container(){
   if is_running; then
     machinectl -q terminate "$label"
     # wait for other session to properly shut down
-    while pidof -o %PPID -x "$0" > /dev/null; do
+    # FIXME: avoid possible deadlock
+    while pidof -qo %PPID -x "$0"; do
       sleep 1
     done
   fi
