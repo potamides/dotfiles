@@ -155,7 +155,7 @@ local cmd = vim.api.nvim_create_user_command
 -- open new terminal at the bottom of the current tab
 cmd("Terminal", function(tbl)
     vim.cmd('botright 12new')
-    vim.opt_local.winfix_height = true
+    vim.opt_local.winfixheight = true
     vim.fn.termopen(#tbl.args > 0 and tbl.args or vim.o.shell)
   end, {nargs = "?"}
 )
