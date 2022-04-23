@@ -104,17 +104,24 @@ vim.g.vga_compatible = vim.env.TERM == "linux" -- VGA textmode fallback (with CP
 -------------------------------------------------------------------------------
 local au = require("au") -- small wrapper around lua autocmd api
 
--- jump to last position when opening a file, and start insert mode when opening a terminal
+-- start insert mode when opening a terminal
 local open = au("user_open")
 function open.TermOpen()
   vim.cmd("startinsert")
 end
 
+-- jump to last position when opening a file
 function open.BufReadPost()
   local last_cursor_pos, last_line = vim.fn.line([['"]]), vim.fn.line("$")
   if last_cursor_pos > 1 and last_cursor_pos <= last_line then
     vim.fn.cursor(last_cursor_pos, 1)
   end
+end
+
+-- quickfix for https://github.com/neovim/neovim/issues/11330
+function open.VimEnter()
+  local pid, WINCH = vim.fn.getpid(), vim.loop.constants.SIGWINCH
+  vim.defer_fn(function() vim.loop.kill(pid, WINCH) end, 20)
 end
 
 -- briefly highlight a selection on yank
