@@ -272,6 +272,10 @@ packer.autostartup{
   }
 }
 
+local function lazy_require(module)
+  return setmetatable({}, {__index = function(_, k) return require(module)[k] end})
+end
+
 -- Gruvbox
 -------------------------------------------------------------------------------
 vim.g.gruvbox_contrast_dark = "medium"
@@ -425,8 +429,8 @@ end
 
 -- LuaSnip
 -------------------------------------------------------------------------------
+local luasnip = lazy_require("luasnip")
 require("luasnip.loaders.from_vscode").lazy_load()
-local luasnip = setmetatable({}, {__index = function(_, k) return require("luasnip")[k] end})
 
 local function try_change_choice(direction)
   if luasnip.choice_active() then
@@ -444,17 +448,17 @@ map({"i", "s"}, "<C-s><C-k>", function() try_change_choice(-1) end, opts)
 
 -- Telescope
 -------------------------------------------------------------------------------
-local telescope = setmetatable({}, {__index = function(_, k) return require("telescope.builtin")[k] end})
+local builtin = lazy_require("telescope.builtin")
 
 -- when a count N is given to a telescope mapping called through the following
 -- function, the search is started in the Nth parent directory
 local function telescope_cwd(picker, args)
-  telescope[picker](vim.tbl_extend("error", args or {}, {cwd = ("../"):rep(vim.v.count) .. "."}))
+  builtin[picker](vim.tbl_extend("error", args or {}, {cwd = ("../"):rep(vim.v.count) .. "."}))
 end
 
 map("n", "<leader>ff", function() telescope_cwd('find_files', {hidden = true}) end, opts)
 map("n", "<leader>lg", function() telescope_cwd('live_grep') end, opts)
-map("n", "<leader>ws", function() telescope.lsp_dynamic_workspace_symbols() end, opts)
+map("n", "<leader>ws", function() builtin.lsp_dynamic_workspace_symbols() end, opts)
 
 -- }}}
 -- vim: foldmethod=marker foldmarker=--\ {{{,--\ }}}
