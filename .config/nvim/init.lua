@@ -240,10 +240,6 @@ packer.autostartup{
     "neovim/nvim-lspconfig",
     "tpope/vim-fugitive",
     {
-      'nvim-telescope/telescope.nvim',
-      requires = 'nvim-lua/plenary.nvim'
-    },
-    {
       "lewis6991/gitsigns.nvim",
       requires = "nvim-lua/plenary.nvim"
     },
@@ -258,7 +254,18 @@ packer.autostartup{
         "kyazdani42/nvim-web-devicons"
       }
     },
-    {"gruvbox-community/gruvbox",
+    {
+      "nvim-telescope/telescope.nvim",
+      requires = {
+        "nvim-lua/plenary.nvim",
+        {
+          "nvim-telescope/telescope-fzf-native.nvim",
+          run = "make"
+        }
+      }
+    },
+    {
+      "gruvbox-community/gruvbox",
       -- install colorscheme as library so that we can easily patch it
       run = "git mv -k colors library"
     },
@@ -456,7 +463,10 @@ map({"i", "s"}, "<C-s><C-k>", function() try_change_choice(-1) end, opts)
 
 -- Telescope
 -------------------------------------------------------------------------------
+local telescope = require("telescope")
 local builtin = lazy_require("telescope.builtin")
+
+telescope.load_extension('fzf')
 
 -- when a count N is given to a telescope mapping called through the following
 -- function, the search is started in the Nth parent directory
