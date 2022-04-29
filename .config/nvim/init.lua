@@ -160,10 +160,26 @@ end
 local cmd = vim.api.nvim_create_user_command
 
 -- open new terminal at the bottom of the current tab
+local termwin, termbuf = -1, -1
 cmd("Terminal", function(tbl)
-    vim.cmd('botright 12new')
-    vim.opt_local.winfixheight = true
-    vim.fn.termopen(#tbl.args > 0 and tbl.args or vim.o.shell)
+    local winvalid, bufvalid = vim.api.nvim_win_is_valid(termwin), vim.api.nvim_buf_is_valid(termbuf)
+    if not winvalid then
+      vim.cmd(('botright 12%s'):format(bufvalid and "split" or "new"))
+      vim.opt_local.winfixheight = true
+      termwin = vim.api.nvim_get_current_win()
+    else
+      vim.api.nvim_set_current_win(termwin)
+    end
+
+    if not bufvalid then
+      vim.fn.termopen(#tbl.args > 0 and tbl.args or vim.o.shell)
+      vim.opt_local.buflisted = false
+      vim.opt_local.bufhidden = "hide"
+      termbuf = vim.api.nvim_get_current_buf()
+    else
+      vim.api.nvim_set_current_buf(termbuf)
+      vim.cmd[[startinsert]]
+    end
   end, {nargs = "?"}
 )
 
