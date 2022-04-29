@@ -255,7 +255,7 @@ packer.autostartup{
       "itchyny/lightline.vim",
       requires = {
         "mgee/lightline-bufferline",
-        "ryanoasis/vim-devicons"
+        "kyazdani42/nvim-web-devicons"
       }
     },
     {"gruvbox-community/gruvbox",
@@ -290,9 +290,14 @@ end
 -- Lightline
 -------------------------------------------------------------------------------
 local components = require("components")
+local devicons = require("nvim-web-devicons")
 
 local function vga_fallback(regular, fallback)
   return vim.g.vga_compatible and fallback or regular
+end
+
+local function get_icon()
+  return devicons.get_icon(vim.fn.expand("%:t"), nil, {default = true})
 end
 
 -- signs for custom lightline components defined in lua/components.lua
@@ -303,7 +308,7 @@ components.setup{
     git      = vga_fallback("", "↨"),
     error    = vga_fallback("", "‼"),
     warning  = vga_fallback("", "!"),
-    filetype = vga_fallback(vim.fn.WebDevIconsGetFileTypeSymbol, "≡"),
+    filetype = vga_fallback(get_icon, "≡"),
     spinner  = vga_fallback({'⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'}, {"-", "\\", "|", "/"})
   }
 }
@@ -355,6 +360,9 @@ vim.g["lightline#bufferline#clickable"]       = true
 -- the minimum number of buffers & tabs needed to automatically show the tabline
 vim.g["lightline#bufferline#min_buffer_count"] = 2
 vim.g["lightline#bufferline#min_tab_count"]    = 2
+
+-- set default icon to same as vim-devicons
+devicons.set_default_icon("")
 
 -- Quick-Scope
 -------------------------------------------------------------------------------
