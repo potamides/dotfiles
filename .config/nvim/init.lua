@@ -359,8 +359,12 @@ vim.g.qs_highlight_on_keys = {"f", "F", "t", "T"}
 
 function quickscope.handler()
   for group, color in pairs({QuickScopePrimary=10, QuickScopeSecondary=13}) do
-    vim.cmd(string.format("highlight %s guisp=%s gui=bold,underline ctermfg=%d cterm=bold,underline",
-      group, vim.g["terminal_color_" .. color], color))
+    vim.api.nvim_set_hl(0, group, {
+      sp = vim.g["terminal_color_" .. color],
+      ctermfg = color,
+      bold = true,
+      underline = true
+    })
   end
 end
 
