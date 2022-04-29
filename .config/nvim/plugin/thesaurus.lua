@@ -15,7 +15,7 @@ function vim.openoffice.thesaurusfunc(findstart, base)
   end
 
   local completions, term = {}, base:lower() .. "|"
-  for _, file in ipairs(vim.opt_local.thesaurus:get()) do
+  for _, file in ipairs(vim.opt.thesaurus:get()) do
     if vim.fn.filereadable(file) == 1 then
       local iterator = io.lines(file)
       iterator() -- skip first line
