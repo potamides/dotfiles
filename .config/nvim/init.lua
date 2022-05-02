@@ -220,7 +220,7 @@ local function lsp_mappings(client, buf)
   map("n", "<leader>fm", vim.lsp.buf.formatting, bufopts)
   map("v", "<leader>fm", ":lua vim.lsp.buf.range_formatting()<cr>", bufopts) -- return to normal mode
 
-  if client.resolved_capabilities.document_range_formatting then
+  if client.server_capabilities.documentRangeFormattingProvider then
     -- Use LSP as the handler for 'gq' mapping
     vim.api.nvim_buf_set_option(buf, 'formatexpr', 'v:lua.vim.lsp.formatexpr()')
   end
