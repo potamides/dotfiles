@@ -1,0 +1,86 @@
+#!/bin/bash
+
+###############################################################################
+#   Wrapper for Neovim that takes a lua (or vimscript) file as argument and   #
+#     executes it. This essentially makes it possible to use Neovim as a      #
+#   standalone interpreter and enables regular scripts to benefit from the    #
+#    Neovim API (e.g. when used as a shebang). Without any arguments this     #
+#                   wrapper starts an interactive lua REPL.                   #
+###############################################################################
+
+set -o errexit -o pipefail -o nounset
+histfile=${XDG_DATA_HOME:-~/.local/share}/nvim/neopret_history
+
+function send(){
+  printf "%s\n" "$*" >& "${COPROC[1]}"
+}
+
+function hist(){
+  case "$1" in
+    load)
+      mkdir -p "$(dirname "$histfile")"
+      touch "$histfile"
+      history -r "$histfile"
+      ;;
+    append)
+      history -s "$2"
+      history -a "$histfile"
+  esac
+}
+
+function repl(){
+  local cmd
+  while [[ -z "${cmd:-}" ]]; do
+    read -rep '> ' || exit 0
+    cmd=$REPLY
+    # Extremely ugly hack to find out if statement should continue on next
+    # line. Luajit error messages which expect statements to continue seem to
+    # end with '<eof>'.
+    while [[ $(luajit -e "$cmd" 2>&1) == *"'<eof>'" ]]; do
+      read -rep '>> ' || { repl && return; }
+      cmd+=$'\n'$REPLY
+    done
+  done
+  hist append "$cmd"
+  send verbose lua "${cmd//$'\n'/ }"
+  # Use SIGUSR1 to find out when vim finished processing cmd to continue the
+  # repl
+  send "!kill -USR1 $BASHPID"
+}
+
+# https://stackoverflow.com/a/52944692
+function get_cursor_pos(){
+    IFS='[;' read -p $'\e[6n' -d R -rs _ y x _
+    printf '%s\n' "$x:$y"
+}
+
+function add_newline(){
+  # vim doesn't insert newlines on eol, so we have to do it ourselves
+  if [[ $(get_cursor_pos) != 1:* ]]; then
+    printf '\n'
+  fi
+}
+
+case "${1:-}" in
+  "") # without arguments start interactive repl
+    hist load
+    nvim --version | sed '/^$/,$d'
+    coproc nvim -es -i NONE
+    trap "add_newline && repl" SIGUSR1
+    repl
+    # use a loop as wait returns when a signal with a trap is received
+    until wait; do
+      :
+    done
+    ;;
+  --help|-h)
+    printf "%s\n%s\n  %s\n%s\n" \
+      "usage: $(basename "$0") [options] [script [args]]" \
+      "Available options are:" \
+      "-h  print this help message and exit (also --help)" \
+      "Consult ':help argv()' on how to retrieve args."
+    ;;
+  *) # treat arg as a file
+    # https://vim.fandom.com/wiki/Vim_as_a_system_interpreter_for_vimscript
+    exec nvim --headless -S "$1" -i NONE -n -c 'echo""|qall!' -- "${@:2}"
+esac
