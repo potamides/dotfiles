@@ -29,20 +29,27 @@ function hist(){
 }
 
 function repl(){
-  local cmd
+  local cmd prefix
   while [[ -z "${cmd:-}" ]]; do
     read -rep '> ' || exit 0
     cmd=$REPLY
-    # Extremely ugly hack to find out if statement should continue on next
-    # line. Luajit error messages which expect statements to continue seem to
-    # end with '<eof>'.
-    while [[ $(luajit -e "$cmd" 2>&1) == *"'<eof>'" ]]; do
-      read -rep '>> ' || { repl && return; }
-      cmd+=$'\n'$REPLY
-    done
+    # hack to find out if the line can be interpreted as an expression to print
+    # its value, similar to what lua 5.3 does (see
+    # http://www.lua.org/manual/5.3/manual.html#7).
+    if luajit -e "assert(function() return $cmd end)" 2>/dev/null; then
+      prefix="="
+    else
+      # Extremely ugly hack to find out if statement should continue on next
+      # line. Luajit error messages which expect statements to continue seem to
+      # end with "'<eof>'".
+      while [[ $(luajit -e "$cmd" 2>&1) == *"'<eof>'" ]]; do
+        read -rep '>> ' || { repl && return; }
+        cmd+=$'\n'$REPLY
+      done
+    fi
   done
   hist append "$cmd"
-  send verbose lua "${cmd//$'\n'/ }"
+  send verbose lua "${prefix:-}${cmd//$'\n'/ }"
   # Use SIGUSR1 to find out when vim finished processing cmd to continue the
   # repl
   send "!kill -USR1 $BASHPID"
