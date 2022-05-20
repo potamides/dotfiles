@@ -63,9 +63,11 @@ local function menu()
     local cmd = "xrandr"
     -- Enabled outputs
     for i, o in pairs(choice) do
-      cmd = cmd .. " --output " .. o .. " --primary --auto"
+      cmd = cmd .. " --output " .. o .. " --auto"
       if i > 1 then
         cmd = cmd .. string.format(" --%s ", xrandr.position) .. choice[i-1]
+      else
+        cmd = cmd .. " --primary"
       end
     end
     -- Disabled outputs
