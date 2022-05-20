@@ -40,7 +40,7 @@ vim.opt.omnifunc = "v:lua.vim.lsp.omnifunc"             -- neovim internal lsp c
 vim.opt.completefunc = "v:lua.vim.luasnip.completefunc" -- custom snippet completion defined in plugin/snipcomp.lua
 vim.opt.tagfunc = "v:lua.vim.lsp.tagfunc"               -- interface to normal mode commands like CTRL-]
 
--- print line numbers and highlight cursor line number
+-- show line numbers and highlight cursor line number
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.cursorline = true
@@ -152,6 +152,19 @@ local preview = au("user_preview")
 function preview.CompleteDone()
   if vim.fn.pumvisible() == 0 then
     vim.cmd[[pclose]]
+  end
+end
+
+-- restore view of current window when switching buffers
+local view = au("user_view")
+function view.BufWinLeave()
+  vim.b.view = vim.fn.winsaveview()
+end
+
+function view.BufWinEnter()
+  if vim.b.view then
+    vim.fn.winrestview(vim.b.view)
+    vim.b.view = nil
   end
 end
 
