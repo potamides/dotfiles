@@ -27,6 +27,7 @@ if not vim.b.did_user_ftplugin then
       }
     },
     on_new_config = function(config, root_dir)
+      -- FIXME: this can fail on the first run when "build" doesn't yet exit
       local build_dir = vim.fn.globpath(root_dir, "build", nil, true)[1] or root_dir
       config.settings.texlab.auxDirectory = build_dir
 
