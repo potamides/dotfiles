@@ -12,7 +12,7 @@ vim.api.nvim_set_hl(0, "DiagnosticHint", {link = "GruvboxPurple"})
 vim.api.nvim_set_hl(0, "DiagnosticSignHint", {link = "GruvboxPurpleSign"})
 vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", {link = "GruvboxPurpleUnderline"})
 
-vim.api.nvim_set_hl(0, "SpellBad", {link = "GruvboxeUnderline"})
+vim.api.nvim_set_hl(0, "SpellBad", {link = "GruvboxBlueUnderline"})
 vim.api.nvim_set_hl(0, "SpellCap", {link = "GruvboxOrangeUnderline"})
 vim.api.nvim_set_hl(0, "SpellRare", {link = "GruvboxGreenUnderline"})
 
