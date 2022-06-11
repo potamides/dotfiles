@@ -1,5 +1,6 @@
 unalternates *
 unmailboxes *
+unmy_hdr *
 
 # set smtp and imap stuff
 set imap_user = "$my_studmail_user"
@@ -8,14 +9,15 @@ set imap_pass = "$my_studmail_pass"
 set smtp_pass = "$my_studmail_pass"
 set folder    = "imaps://imap.stud.tu-darmstadt.de:993"
 set smtp_url  = "smtps://$my_studmail_user@smtp.tu-darmstadt.de:465"
+unset smtp_authenticators
 
 # specify some special mailboxes
-set spoolfile = "+INBOX"
+set spoolfile = "+Inbox"
 set postponed = "+Drafts"
 set record    = "+Sent"
 set trash     = "+Trash"
 
-# check this mailboxes for new messages periodically & display them in sidebar
-mailboxes +INBOX +Junk +Drafts +Sent +Archives +Trash
+# check these mailboxes for new messages periodically & display them in sidebar
+mailboxes +Inbox +Junk +Drafts +Sent +Archives +Trash
 
 # vim: filetype=muttrc

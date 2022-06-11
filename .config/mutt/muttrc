@@ -37,7 +37,7 @@ unset imap_passive
 # -----------------------------------------------------------------------------
 
 # Retrieve secrets
-source "$my_folder/scripts/keepassxc-mutt.sh Posteo Google Studmail |"
+source "$my_folder/scripts/keepassxc-mutt.sh Posteo PRISMA Studmail Google |"
 source $my_folder/accounts/posteo # Default account
 
 # switch accounts easily
@@ -46,10 +46,14 @@ $my_folder/accounts/posteo<enter><check-stats><change-folder>!<enter>\
 <browse-mailboxes><change-dir><kill-line>=<enter><exit>'
 
 macro index,pager <f3> '<sync-mailbox><enter-command> source \
-$my_folder/accounts/studmail<enter><check-stats><change-folder>!<enter>\
+$my_folder/accounts/prisma<enter><check-stats><change-folder>!<enter>\
 <browse-mailboxes><change-dir><kill-line>=<enter><exit>'
 
 macro index,pager <f4> '<sync-mailbox><enter-command> source \
+$my_folder/accounts/studmail<enter><check-stats><change-folder>!<enter>\
+<browse-mailboxes><change-dir><kill-line>=<enter><exit>'
+
+macro index,pager <f5> '<sync-mailbox><enter-command> source \
 $my_folder/accounts/google<enter><check-stats><change-folder>!<enter>\
 <browse-mailboxes><change-dir><kill-line>=<enter><exit>'
 

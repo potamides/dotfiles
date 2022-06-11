@@ -1,0 +1,27 @@
+unalternates *
+unmailboxes *
+
+# set smtp and imap stuff
+set imap_user = "$my_prisma_mail"
+set from      = "$my_prisma_mail"
+set imap_pass = "$my_prisma_pass"
+set smtp_pass = "$my_prisma_pass"
+set folder    = "imaps://imap.uni-bielefeld.de:993"
+set smtp_url  = "smtp://$my_prisma_mail@smtp.uni-bielefeld.de:587"
+set smtp_authenticators = "login"
+
+# specify some special mailboxes
+set spoolfile = "+Inbox"
+set postponed = "+Entwürfe"
+set record    = "+Gesendete Elemente"
+set trash     = "+Gelöschte Elemente"
+
+# recognize techfak domains...
+alternates '^'$my_prisma_user'@techfak\.(uni-bielefeld\.)?de$'
+my_hdr From:$from # ...but use normal address in From header
+
+# check these mailboxes for new messages periodically & display them in sidebar
+mailboxes +Inbox +Junk-E-Mail +Entwürfe "+Gesendete Elemente" +Notizen \
+  "+Gelöschte Elemente"
+
+# vim: filetype=muttrc
