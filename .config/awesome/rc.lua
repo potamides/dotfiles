@@ -71,14 +71,10 @@ beautiful.init(gears.filesystem.get_dir("config") .. "/themes/gruvbox/theme.lua"
 local terminal = os.getenv("TERMCMD") or "alacritty"
 local browser  = os.getenv("BROWSER") or "qutebrowser"
 local editor   = os.getenv("EDITOR") or "nvim"
+local editor_cmd = terminal .. " -e " .. editor .. " "
 
 -- Set the terminal for applications that require it.
 menubar.utils.terminal = terminal
-
--- Edit files with editor and make sure to quote arguments.
-local editor_cmd = setmetatable({},
-  {__concat = function(_, file) return terminal .. " -e " .. glib.shell_quote(editor .. " " .. file) end}
-)
 
 -- Default modkey.
 local modkey = "Mod4"
@@ -102,7 +98,7 @@ awful.layout.layouts = {
 -- Create a launcher widget and a main menu
 local myawesomemenu = {
   { "Hotkeys", function() return false, hotkeys_popup.show_help end},
-  { "Edit Config", editor_cmd .. " " .. awesome.conffile },
+  { "Edit Config", editor_cmd .. awesome.conffile },
   { "Restart", awesome.restart },
   { "Quit", function() awesome.quit() end},
   { "Open Terminal", terminal },
@@ -495,7 +491,7 @@ local keybindings = {
   {{}, "XF86MonBrightnessDown", function() awful.spawn("xbacklight -dec 10") end},
   {{}, "XF86MonBrightnessUp", function() awful.spawn("xbacklight -inc 10") end},
   {{}, "XF86Display", xrandr.show},
-  {{}, "XF86Tools", function() awful.spawn(editor_cmd .. " " .. awesome.conffile) end},
+  {{}, "XF86Tools", function() awful.spawn(editor_cmd .. awesome.conffile) end},
 }
 
 modes.tag = gears.table.join(
@@ -624,7 +620,7 @@ modes.launcher = gears.table.join(
         local host = os.getenv("MPD_HOST") or "localhost"
         local port = os.getenv("MPD_PORT") or 6600
 
-        awful.spawn.raise_or_spawn(terminal .. " -e 'ncmpcpp --host " .. host .. " --port " .. port .. "'")
+        awful.spawn.raise_or_spawn(terminal .. " -e ncmpcpp --host " .. host .. " --port " .. port)
       end
     },
     {
