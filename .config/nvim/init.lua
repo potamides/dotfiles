@@ -374,6 +374,7 @@ vim.g.lightline = {
 
 vim.g["lightline#bufferline#unicode_symbols"] = not vim.g.vga_compatible
 vim.g["lightline#bufferline#enable_devicons"] = not vim.g.vga_compatible
+vim.g["lightline#bufferline#unnamed"]         = "[No Name]"
 vim.g["lightline#bufferline#clickable"]       = true
 
 -- the minimum number of buffers & tabs needed to automatically show the tabline

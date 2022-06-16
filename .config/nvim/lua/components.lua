@@ -41,7 +41,7 @@ end
 
 -- filename in the same format as lightline-bufferline
 function comps.filename()
-  local filename = vim.fn.expand("%:t", false, true)[1] or "*"
+  local filename = vim.fn.expand("%:t", false, true)[1] or "[No Name]"
   local editable = vim.o.modifiable and not vim.o.readonly
   local suffix = editable and (vim.o.modified and " " .. comps.get_sign("edit") or "") or " " .. comps.get_sign("lock")
   return comps.get_sign("filetype") .. " " .. filename .. suffix
