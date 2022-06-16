@@ -14,28 +14,31 @@ fi
 
 boldblue='\e[1;34m'
 boldred='\e[1;31m'
+white='\e[37m'
 reset='\e[m'
 # echo return code on failure
 returncode="\$(exit=\$?; [ \$exit -ne 0 ] && echo \"$boldred\$exit \")"
 # root user is red, other users are blue
 user="\$([ \$EUID -eq 0 ] && echo \"$boldred\"\u || echo \"$boldblue\"\u)"
-dir="$reset@\h \w"
+dir="$reset@\h $white\w$reset"
 
 # prompt stuff that should come before and after git integration
 firstline=$returncode$user$dir
-secondline='\n\$ '
+secondline='\n> '
 
 # integrate git into prompt via PROMPT_COMMAND
 if [[ -r /usr/share/git/git-prompt.sh ]]; then
   source /usr/share/git/git-prompt.sh
   GIT_PS1_SHOWCOLORHINTS=1
+  # when using PROMPT_COMMAND we have to manually integrate python virtualenvs
+  firstline=\$VIRTUAL_ENV_PROMPT$firstline
   PROMPT_COMMAND="__git_ps1 '$firstline' '$secondline';"
 else
-  # if the file doesn't exist create prompt directly with PS1
+  # if git-promt.sh doesn't exist create prompt directly with PS1
   PS1="$firstline$secondline"
 fi
 
-unset boldblue boldred reset returncode user dir firstline secondline
+unset boldblue boldred white reset returncode user dir firstline secondline
 
 ## general shell behavior
 # -----------------------------------------------------------------------------
