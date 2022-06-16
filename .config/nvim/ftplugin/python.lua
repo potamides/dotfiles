@@ -9,8 +9,8 @@ if not vim.b.did_user_ftplugin then
     settings = {
       python = {
         analysis = {
-          autoImportCompletions  = true,
-          useLibraryCodeForTypes = false
+          autoImportCompletions  = false, -- does't work with omnifunc
+          useLibraryCodeForTypes = true,
         }
       }
     }
@@ -22,6 +22,10 @@ if not vim.b.did_user_ftplugin then
   if vim.fn.executable("black") == 1 then
     vim.opt_local.formatprg = "black --fast --quiet -"
   end
+
+  -- /usr/share/nvim/runtime/ftplugin/python.vim unconditionally overwrites
+  -- omnifunc, so we have to reset it >:(
+  vim.opt_local.omnifunc = vim.opt_global.omnifunc:get()
 
   vim.opt_local.formatoptions:append{
     t = false, -- auto-wrap text using textwidth
