@@ -11,6 +11,7 @@ if not vim.b.did_user_ftplugin then
         analysis = {
           autoImportCompletions  = false, -- does't work with omnifunc
           useLibraryCodeForTypes = true,
+          diagnosticMode = "openFilesOnly" -- "workspace" is too slow for big projects
         }
       }
     }
