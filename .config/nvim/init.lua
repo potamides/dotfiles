@@ -432,6 +432,9 @@ gitsigns.setup{
     -- Actions
     map({'n', 'v'}, '<leader>hr', ':Gitsigns reset_hunk<CR>', bufopts)
     map('n', '<leader>hp', gitsigns.preview_hunk, bufopts)
+
+    -- highlight deleted lines in hunk previews in gitsigns.nvim
+    vim.api.nvim_set_hl(0, "GitSignsDeleteLn", {link = "GitSignsDeleteVirtLn"})
   end
 }
 
