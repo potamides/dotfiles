@@ -14,7 +14,18 @@ if not vim.b.did_user_ftplugin then
           diagnosticMode = "openFilesOnly" -- "workspace" is too slow for big projects
         }
       }
-    }
+    },
+    on_new_config = function(config, root_dir)
+      -- If we have a folder in the root directory whose name contains the
+      -- string "venv" treat it as a virtual env folder and activate it.
+      local venv = vim.fn.globpath(root_dir, ".*venv*\\|*venv*", nil, true)[1]
+      if venv then
+        config.cmd_env = {
+          PATH = ("%s/bin:%s"):format(venv, vim.env.PATH),
+          VIRTUAL_ENV = venv,
+        }
+      end
+    end
   }
 
   vim.keymap.set("n", "<localleader>or", '<cmd>PyrightOrganizeImports<cr>', {silent = true, buffer = true})
