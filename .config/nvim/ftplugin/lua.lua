@@ -7,9 +7,6 @@ if not vim.b.did_user_ftplugin then
   local sumneko = require("lsputils").sumneko_lua
 
   sumneko.setup{
-    -- currently formatting is experimental and must be enabled explicitly (see
-    -- https://github.com/sumneko/lua-language-server/issues/960)
-    cmd = {'lua-language-server', "--preview"},
     settings = {
       Lua = {
         runtime = {
