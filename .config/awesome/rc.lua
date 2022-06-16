@@ -253,10 +253,12 @@ function playback.create_widget()
       if #title.text > 0 then
         -- save titles of interesting songs for later, useful for radio streams
         local songlist = io.open(os.getenv("HOME") .. "/Documents/songlist", "a+")
-        if not string.find(songlist:read("*a"), title.text, 1, true) then
-          songlist:write(title.text .. "\n")
+        if songlist then
+          if not string.find(songlist:read("*a"), title.text, 1, true) then
+            songlist:write(title.text .. "\n")
+          end
+          songlist:close()
         end
-        songlist:close()
       end
     end,
     function(self) self.widget.bg = beautiful.playback_bg_hover end),
