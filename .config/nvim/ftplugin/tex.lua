@@ -13,12 +13,12 @@ if not vim.b.did_user_ftplugin then
     settings = {
       texlab = {
         build = {
-          args = {"-interaction=nonstopmode", "-synctex=1", "%f"},
-          forwardSearchAfter = true
+          args = {"-interaction=nonstopmode", "-synctex=1", "-pv", "%f"},
+          --forwardSearchAfter = true
         },
         forwardSearch = {
           executable = "qpdfview",
-          args = {"--unique", "--instance", "tex_" .. vim.fn.localtime(), "%p#src:%f:%l:1"}
+          args = {"--unique", "%p#src:%f:%l:1"}
         },
         chktex = {
           onEdit = true,
