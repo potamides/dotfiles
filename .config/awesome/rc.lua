@@ -795,7 +795,30 @@ awful.rules.rules = {
         awful.rules.conky_signals_connected = true
       end
     end
-    },
+  },
+
+  -- super ugly hack to hide menubar in qpdfview which is not possible (yet)
+  -- through its configuration options (see https://answers.launchpad.net/qpdfview/+question/681572)
+  { rule = { class = "qpdfview" },
+    callback = function(c)
+      if not c.transient_for then
+        local function hide_menu_bar()
+          -- we need to do wait until the end of the next main loop because
+          -- the actual SetInputFocus request is only send to the X11 server at
+          -- the end of the current main loop iteration (thanks psychon for
+          -- figuring this out)
+          utils.timer.next_main_loop(function()
+            local kb = awful.keygrabber.current_instance
+            if kb then kb:stop() end
+            -- execute qpdfview keybinding which hides menu bar
+            awful.key.execute({"Control"}, "m")
+            if kb then kb:start() end
+          end)
+          c:disconnect_signal("focus", hide_menu_bar)
+        end
+        c:connect_signal("focus", hide_menu_bar)
+      end
+  end}
 }
 
 -- filter for qpdfview to prevent focus stealing after compiling latex documents
