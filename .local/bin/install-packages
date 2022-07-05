@@ -14,7 +14,8 @@ PKG=(
 
   keepassxc # Required by: mutt  weechat
   python-websocket-client # Required by: weechat
-  {bash,lua}-language-server texlab pyright xclip # Required by: neovim
+  bash-language-server lua-language-server texlab pyright # Required by: neovim
+  python-debugpy xclip # Required by: neovim
   xorg-xinit physlock scrot redshift mpv # Required by: awesome
   xorg-xrandr # Required by: awesome  conky
   ueberzug # Required by: ranger
@@ -40,8 +41,8 @@ PIP=(
   pypandoc pynliner # Required by: mutt
 )
 
-# make this script a modulino, i.e. install packages automatically when it is
-# run instead of sourced
+# make this script a modulino, i.e., install packages automatically when it is
+# run instead of being sourced
 if [[ "$BASH_SOURCE" == "$0" ]]; then
   set -o errexit
   sudo pacman -S --needed "${PKG[@]}"

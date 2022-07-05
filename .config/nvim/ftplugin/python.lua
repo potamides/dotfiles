@@ -1,9 +1,17 @@
 --[[
-  Setup pyright language server. Also set some filetype-specific options.
+  Setup pyright language server and debugpy debug adapter. Also set some
+  filetype-specific options.
 --]]
 
 if not vim.b.did_user_ftplugin then
+  local dap = require('dap')
   local pyright = require("lsputils").pyright
+
+  dap.adapters.python = {
+    type = 'executable',
+    command = vim.g.python3_host_prog,
+    args = {'-m', 'debugpy.adapter'}
+  }
 
   pyright.setup{
     settings = {
@@ -25,6 +33,18 @@ if not vim.b.did_user_ftplugin then
           VIRTUAL_ENV = venv,
         }
       end
+
+      -- we also use the virtual env for debugpy
+      dap.configurations.python = {
+        {
+          type = 'python',
+          request = 'launch',
+          name = "Launch file",
+
+          program = "${file}", -- launch the current file
+          pythonPath = venv and ("%s/bin/python"):format(venv) or vim.g.python3_host_prog
+        }
+      }
     end
   }
 

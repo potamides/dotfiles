@@ -249,6 +249,7 @@ packer.autostartup{
     "unblevable/quick-scope",
     "DarwinSenior/nvim-colorizer.lua",
     "neovim/nvim-lspconfig",
+    "mfussenegger/nvim-dap",
     "tpope/vim-fugitive",
     {
       "lewis6991/gitsigns.nvim",
@@ -457,6 +458,28 @@ local lsputil = require('lspconfig.util')
 function lsputil.on_setup(config)
   config.on_attach = lsputil.add_hook_before(config.on_attach, lsp_mappings)
 end
+
+-- Nvim-DAP
+-------------------------------------------------------------------------------
+local dap = require("dap")
+
+vim.fn.sign_define{
+  {name = "DapBreakpoint", texthl = "debugBreakpoint"},
+  {name = "DapBreakpointCondition", texthl = "debugBreakpoint"},
+  {name = "DapLogPoint", texthl = "debugBreakpoint"},
+  {name = "DapBreakpointRejected", texthl = "debugBreakpoint"},
+  {name = "DapStopped", texthl = "debugBreakpoint"}
+}
+
+map("n", "<leader>cc", dap.continue, opts)
+map("n", "<leader>ss", dap.step_over, opts)
+map("n", "<leader>si", dap.step_into, opts)
+map("n", "<leader>so", dap.step_out, opts)
+map("n", "<leader>br", dap.toggle_breakpoint, opts)
+map("n", "<leader>bc", function() dap.set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, opts)
+map("n", "<leader>bl", function() dap.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end, opts)
+map("n", "<leader>ro", function() dap.repl.open({winfixheight=true}, "botright 12split") end, opts)
+map("n", "<leader>rl", dap.run_last, opts)
 
 -- LuaSnip
 -------------------------------------------------------------------------------
