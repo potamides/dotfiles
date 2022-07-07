@@ -40,8 +40,10 @@ if not vim.b.did_user_ftplugin then
           type = 'python',
           request = 'launch',
           name = "Launch file",
+          console = "integratedTerminal",
 
-          program = "${file}", -- launch the current file
+          program = "${file}", -- launch the current file...
+          cwd = function() return vim.fn.expand("%:p:h") end, -- ...in its directory
           pythonPath = venv and ("%s/bin/python"):format(venv) or vim.g.python3_host_prog
         }
       }
