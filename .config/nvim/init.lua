@@ -247,6 +247,7 @@ packer.autostartup{
     "neovim/nvim-lspconfig",
     "mfussenegger/nvim-dap",
     "tpope/vim-fugitive",
+    "potamides/pantran.nvim",
     {
       "lewis6991/gitsigns.nvim",
       requires = "nvim-lua/plenary.nvim"
@@ -534,6 +535,30 @@ map("n", "<leader>ff", function() telescope_cwd('find_files', {hidden = true}) e
 map("n", "<leader>lg", function() telescope_cwd('live_grep') end, opts)
 map("n", "<leader>ds", builtin.lsp_document_symbols, opts)
 map("n", "<leader>ws", builtin.lsp_dynamic_workspace_symbols, opts)
+
+-- Pantran
+-------------------------------------------------------------------------------
+local pantran = require("pantran")
+
+pantran.setup{
+  engines = {
+    default_engine = "deepl"
+  },
+  controls = {
+    mappings = {
+      edit = {
+        n = {
+          ["j"] = "gj",
+          ["k"] = "gk"
+        }
+      }
+    }
+  }
+}
+
+map("n", "<leader>tr", pantran.motion_translate, {expr = true, unpack(opts)})
+map("n", "<leader>trr", function() return pantran.motion_translate() .. "_" end, {expr = true, unpack(opts)})
+map("x", "<leader>tr", pantran.motion_translate, {expr = true, unpack(opts)})
 
 -- }}}
 -- vim: foldmethod=marker foldmarker=--\ {{{,--\ }}}
