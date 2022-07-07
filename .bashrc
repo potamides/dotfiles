@@ -1,5 +1,10 @@
 # shellcheck shell=bash disable=SC1091,SC2034,SC2139
 
+# If not running interactively, don't do anything
+if [[ $- != *i* ]]; then
+  return
+fi
+
 ## show greeter
 # -----------------------------------------------------------------------------
 
