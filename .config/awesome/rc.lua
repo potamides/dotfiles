@@ -177,7 +177,7 @@ local function clientmenu(filter, selected_tags_only)
     })
   end
 
-  table.sort(items, function(a, b) return a[1] <= b[1] end)
+  table.sort(items, function(a, b) return a[1] < b[1] end)
   local menu, geom = awful.menu(items), scr.geometry
   menu:show{
     coords = {
