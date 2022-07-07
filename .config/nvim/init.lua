@@ -104,13 +104,8 @@ vim.g.vga_compatible = vim.env.TERM == "linux" -- VGA textmode fallback (with CP
 -------------------------------------------------------------------------------
 local au = require("au") -- small wrapper around lua autocmd api
 
--- start insert mode when opening a terminal
-local open = au("user_open")
-function open.TermOpen()
-  vim.cmd("startinsert")
-end
-
 -- jump to last position when opening a file
+local open = au("user_open")
 function open.BufReadPost()
   local last_cursor_pos, last_line = vim.fn.line([['"]]), vim.fn.line("$")
   if last_cursor_pos > 1 and last_cursor_pos <= last_line then
@@ -174,7 +169,7 @@ local cmd = vim.api.nvim_create_user_command
 
 -- open (new) terminal at the bottom of the current tab
 cmd("Terminal", function(tbl)
-    require("term").open(#tbl.args > 0 and tbl.args or nil)
+    require("term"):open{cmd = #tbl.args > 0 and tbl.args or nil}
   end, {nargs = "?"}
 )
 
@@ -293,7 +288,10 @@ packer.autostartup{
 }
 
 local function lazy_require(module)
-  return setmetatable({}, {__index = function(_, k) return require(module)[k] end})
+  return setmetatable({}, {
+    __index = function(_, k) return require(module)[k] end,
+    __newindex = function(_, k, v) require(module)[k] =v end
+  })
 end
 
 -- Gruvbox
@@ -462,6 +460,8 @@ end
 -- Nvim-DAP
 -------------------------------------------------------------------------------
 local dap = require("dap")
+local session = require("dap.session")
+local dapterm = require("term").instance()
 
 vim.fn.sign_define{
   {name = "DapBreakpoint", texthl = "debugBreakpoint"},
@@ -471,6 +471,18 @@ vim.fn.sign_define{
   {name = "DapStopped", texthl = "debugBreakpoint"}
 }
 
+-- integrate our own terminal wrapper with dap
+function dap.defaults.fallback.terminal_win_cmd()
+  return dapterm:open{cmd = false, nofocus = true}
+end
+
+local function repl_open()
+  dap.repl.open(nil, "lua require('term'):open{noinsert = true}")
+end
+
+-- hack: make sure we use a new terminal when (re)starting a session
+session.spawn = lsputil.add_hook_before(session.spawn, function() dapterm:destroy() end)
+
 map("n", "<leader>cc", dap.continue, opts)
 map("n", "<leader>ss", dap.step_over, opts)
 map("n", "<leader>si", dap.step_into, opts)
@@ -478,8 +490,12 @@ map("n", "<leader>so", dap.step_out, opts)
 map("n", "<leader>br", dap.toggle_breakpoint, opts)
 map("n", "<leader>bc", function() dap.set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, opts)
 map("n", "<leader>bl", function() dap.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end, opts)
-map("n", "<leader>ro", function() dap.repl.open({winfixheight=true}, "botright 12split") end, opts)
+map("n", "<leader>bd", dap.clear_breakpoints, opts)
+map("n", "<leader>bs", function() dap.list_breakpoints() vim.cmd[[copen]] end, opts)
+map("n", "<leader>ro", function() if dap.session() then repl_open() end end, opts)
+map("n", "<leader>to", function() if dap.session() then dapterm:open{nofocus = true} end end, opts)
 map("n", "<leader>rl", dap.run_last, opts)
+map("n", "<leader>te", dap.terminate, opts)
 
 -- LuaSnip
 -------------------------------------------------------------------------------
