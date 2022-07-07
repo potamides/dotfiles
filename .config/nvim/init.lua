@@ -175,6 +175,7 @@ cmd("Terminal", function(tbl)
 
 cmd("Cd", "cd %:p:h", {})            -- set cwd to directory of current file
 cmd("Run", '!"%:p"', {})             -- Execute current file
+cmd("Bd", "bp|bd #", {})             -- delete buffer without closing split
 cmd("Config", "edit $MYVIMRC", {})   -- open config file with :Config
 cmd("Reload", "source $MYVIMRC", {}) -- reload config file with :Reload
 
@@ -531,7 +532,8 @@ end
 
 map("n", "<leader>ff", function() telescope_cwd('find_files', {hidden = true}) end, opts)
 map("n", "<leader>lg", function() telescope_cwd('live_grep') end, opts)
-map("n", "<leader>ws", function() builtin.lsp_dynamic_workspace_symbols() end, opts)
+map("n", "<leader>ds", builtin.lsp_document_symbols, opts)
+map("n", "<leader>ws", builtin.lsp_dynamic_workspace_symbols, opts)
 
 -- }}}
 -- vim: foldmethod=marker foldmarker=--\ {{{,--\ }}}
