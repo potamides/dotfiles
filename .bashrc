@@ -21,10 +21,11 @@ boldblue='\e[1;34m'
 boldred='\e[1;31m'
 white='\e[37m'
 reset='\e[m'
+
 # echo return code on failure
-returncode="\$(exit=\$?; [ \$exit -ne 0 ] && echo \"$boldred\$exit \")"
+returncode="\$(exit=\$?; [[ \$exit -ne 0 ]] && echo \"$boldred\$exit \")"
 # root user is red, other users are blue
-user="\$([ \$EUID -eq 0 ] && echo \"$boldred\"\u || echo \"$boldblue\"\u)"
+user="\$([[ \$EUID -eq 0 ]] && echo \"$boldred\"\u || echo \"$boldblue\"\u)"
 dir="$reset@\h $white\w$reset"
 
 # prompt stuff that should come before and after git integration
@@ -42,6 +43,8 @@ else
   # if git-promt.sh doesn't exist create prompt directly with PS1
   PS1="$firstline$secondline"
 fi
+
+PS2=">> "
 
 unset boldblue boldred white reset returncode user dir firstline secondline
 
