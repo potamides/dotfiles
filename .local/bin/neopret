@@ -23,7 +23,7 @@ function hist(){
       history -r "$histfile"
       ;;
     append)
-      history -s "$2"
+      history -s -- "$2"
       history -a "$histfile"
   esac
 }
@@ -31,8 +31,8 @@ function hist(){
 function repl(){
   local cmd prefix
   while [[ -z "${cmd:-}" ]]; do
-    read -rep '> ' || exit 0
-    cmd=$REPLY
+    read -rep '> ' -d $'\r' || exit 0
+    cmd=$REPLY prefix=""
     # hack to find out if the line can be interpreted as an expression to print
     # its value, similar to what lua 5.3 does (see
     # http://www.lua.org/manual/5.3/manual.html#7).
@@ -43,7 +43,7 @@ function repl(){
       # line. Luajit error messages which expect statements to continue seem to
       # end with "'<eof>'".
       while [[ $(luajit -e "$cmd" 2>&1) == *"'<eof>'" ]]; do
-        read -rep '>> ' || { repl && return; }
+        read -rep '>> ' -d $'\r' || { cmd=''; break; }
         cmd+=$'\n'$REPLY
       done
     fi
