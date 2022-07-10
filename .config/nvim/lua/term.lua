@@ -5,11 +5,12 @@
 local term = {
   termwin = -1,
   termbuf = -1,
-  height = 12,
+  height = 15,
   augroup = vim.api.nvim_create_augroup("toggleterm", {}),
 }
 
 function term:open(args)
+  args = args or {}
   if not vim.api.nvim_win_is_valid(self.termwin) then
     vim.cmd(('botright %dsplit'):format(self.height))
     vim.opt_local.winfixheight = true
