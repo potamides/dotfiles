@@ -7,10 +7,23 @@ if not vim.b.did_user_ftplugin then
   local dap = require('dap')
   local pyright = require("lsputils").pyright
 
-  dap.adapters.python = {
+  dap.adapters.debugpy = dap.adapters.debugpy or {
     type = 'executable',
     command = vim.g.python3_host_prog,
     args = {'-m', 'debugpy.adapter'}
+  }
+
+  dap.configurations.python = dap.configurations.python or {
+    {
+      type = 'debugpy',
+      request = 'launch',
+      name = "Launch file",
+
+      console = "integratedTerminal",
+      program = "${file}", -- launch the current file...
+      cwd = "${fileDirname}", -- ...in its directory
+      --justMyCode = false
+    }
   }
 
   pyright.setup{
@@ -32,21 +45,11 @@ if not vim.b.did_user_ftplugin then
           PATH = ("%s/bin:%s"):format(venv, vim.env.PATH),
           VIRTUAL_ENV = venv,
         }
+        -- we also use the virtual env for debugpy
+        for _, dapconf in ipairs(dap.configurations.python) do
+          dapconf.python = ("%s/bin/python"):format(venv)
+        end
       end
-
-      -- we also use the virtual env for debugpy
-      dap.configurations.python = {
-        {
-          type = 'python',
-          request = 'launch',
-          name = "Launch file",
-          console = "integratedTerminal",
-
-          program = "${file}", -- launch the current file...
-          cwd = function() return vim.fn.expand("%:p:h") end, -- ...in its directory
-          pythonPath = venv and ("%s/bin/python"):format(venv) or vim.g.python3_host_prog
-        }
-      }
     end
   }
 
