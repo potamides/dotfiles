@@ -484,6 +484,9 @@ end
 
 -- hack: make sure we use a new terminal when (re)starting a session
 session.spawn = lsputil.add_hook_before(session.spawn, function() dapterm:destroy() end)
+local function try_call(func, ...)
+  if dap.session() then func(...) else vim.notify('No active session') end
+end
 
 map("n", "<leader>cc", dap.continue, opts)
 map("n", "<leader>ss", dap.step_over, opts)
@@ -495,8 +498,8 @@ map("n", "<leader>bc", function() dap.set_breakpoint(vim.fn.input('Breakpoint co
 map("n", "<leader>bl", function() dap.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end, opts)
 map("n", "<leader>bd", dap.clear_breakpoints, opts)
 map("n", "<leader>bs", function() dap.list_breakpoints() vim.cmd[[copen]] end, opts)
-map("n", "<leader>ro", function() if dap.session() then repl_open() end end, opts)
-map("n", "<leader>to", function() if dap.session() then dapterm:open{nofocus = true} end end, opts)
+map("n", "<leader>ro", function() try_call(repl_open) end, opts)
+map("n", "<leader>to", function() try_call(function() dapterm:open{nofocus = true} end) end, opts)
 map("n", "<leader>rl", dap.run_last, opts)
 map("n", "<leader>te", dap.terminate, opts)
 
