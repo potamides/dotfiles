@@ -542,9 +542,7 @@ map("n", "<leader>ws", builtin.lsp_dynamic_workspace_symbols, opts)
 local pantran = require("pantran")
 
 pantran.setup{
-  engines = {
-    default_engine = "deepl"
-  },
+  default_engine = vim.env.DEEPL_AUTH_KEY and "deepl" or nil,
   controls = {
     mappings = {
       edit = {
