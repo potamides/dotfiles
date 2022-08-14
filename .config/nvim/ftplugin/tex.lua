@@ -10,6 +10,10 @@ if not vim.b.did_user_ftplugin then
   local au = require("au")
 
   lsputils.texlab.setup{
+    cmd_env = {
+      -- trick to help neovim-remote find this neovim instance
+      NVIM_LISTEN_ADDRESS = vim.v.servername
+    },
     settings = {
       texlab = {
         build = {
@@ -71,6 +75,7 @@ if not vim.b.did_user_ftplugin then
         checkFrequency = "save",
         diagnosticSeverity = "hint",
         completionEnabled = true,
+        --languageToolHttpServerUri = "https://api.languagetool.org",
         additionalRules = {
           motherTongue = "de-DE",
           languageModel = "/usr/share/ngrams", -- aur/languagetool-ngrams-{en,de,..}
