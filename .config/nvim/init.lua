@@ -243,7 +243,7 @@ packer.autostartup{
   {
     "wbthomason/packer.nvim",
     "unblevable/quick-scope",
-    "DarwinSenior/nvim-colorizer.lua",
+    "NvChad/nvim-colorizer.lua",
     "neovim/nvim-lspconfig",
     "mfussenegger/nvim-dap",
     "tpope/vim-fugitive",
