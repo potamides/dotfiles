@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -o errexit -o pipefail -o nounset
+
+if [[ -n "${1:-}" ]]; then
+  case $(file --mime-type -b "$1") in
+    application/pdf)
+      setsid -f qpdfview --unique --instance qutebrowser "$1"
+      ;;
+    *)
+      rifle -f "$1"
+      ;;
+  esac
+fi

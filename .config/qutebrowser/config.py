@@ -1,5 +1,6 @@
 # pyright: reportUndefinedVariable=false
 from os import getenv
+from os.path import join
 
 ## General
 # -----------------------------------------------------------------------------
@@ -15,6 +16,7 @@ c.confirm_quit = ["downloads", "multiple-tabs"]
 
 c.downloads.location.directory = "~/Downloads"
 c.downloads.location.prompt = False
+c.downloads.open_dispatcher = join(config.configdir, "userscripts/dispatcher")
 
 c.tabs.last_close = "close"
 c.tabs.select_on_remove = "last-used"
@@ -22,7 +24,7 @@ c.tabs.show = "multiple"
 
 c.content.cookies.store = False
 c.content.cookies.accept = "no-3rdparty"
-c.content.pdfjs = True
+#c.content.pdfjs = True
 #c.content.javascript.enabled = False
 
 ## Colorscheme
@@ -38,6 +40,7 @@ for mode in ["normal", "caret"]:
 
 config.bind("<Ctrl-e>", "scroll down")
 config.bind("<Ctrl-y>", "scroll up")
+config.bind('ao', 'download-open')
 
 c.aliases['zotero'] = 'spawn --userscript zotero'
 c.aliases['Zotero'] = 'hint links userscript zotero'
