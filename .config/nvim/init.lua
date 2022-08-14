@@ -462,7 +462,6 @@ end
 -- Nvim-DAP
 -------------------------------------------------------------------------------
 local dap = require("dap")
-local session = require("dap.session")
 local dapterm = require("term").instance()
 
 vim.fn.sign_define{
@@ -482,8 +481,6 @@ local function repl_open()
   dap.repl.open(nil, "lua require('term'):open{noinsert = true}")
 end
 
--- hack: make sure we use a new terminal when (re)starting a session
-session.spawn = lsputil.add_hook_before(session.spawn, function() dapterm:destroy() end)
 local function try_call(func, ...)
   if dap.session() then func(...) else vim.notify('No active session') end
 end
