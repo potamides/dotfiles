@@ -20,7 +20,7 @@ PKG=(
   xorg-xrandr # Required by: awesome  conky
   ueberzug # Required by: ranger
   bash-completion fzf ripgrep # Required by: bash
-  pdfjs python-adblock # Required by: qutebrowser
+  python-adblock # Required by: qutebrowser
 
   ttf-iosevka-nerd ttc-iosevka-ss09 ttc-iosevka-aile
 )
