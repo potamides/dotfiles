@@ -47,6 +47,8 @@ c.aliases['Zotero'] = 'hint links userscript zotero'
 
 ## Per-domain
 # -----------------------------------------------------------------------------
+with config.pattern('www.duden.de') as p:
+    p.content.blocking.enabled = False
 with config.pattern('jisho.org') as p:
     p.input.insert_mode.leave_on_load = False
 with config.pattern('meet.jit.si') as p:
