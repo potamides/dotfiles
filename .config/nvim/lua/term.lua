@@ -12,12 +12,13 @@ local term = {
 function term:open(args)
   args = args or {}
   if not vim.api.nvim_win_is_valid(self.termwin) then
-    vim.cmd(('botright %dsplit'):format(self.height))
+    vim.cmd.split{range = {self.height}, mods = {split = "botright"}}
     vim.opt_local.winfixheight = true
     self.termwin = vim.api.nvim_get_current_win()
   else
     vim.api.nvim_set_current_win(self.termwin)
-    vim.cmd(("wincmd J | resize %d"):format(self.height))
+    vim.cmd.wincmd("J")
+    vim.cmd.resize(self.height)
   end
 
   if not vim.api.nvim_buf_is_valid(self.termbuf) then
@@ -33,7 +34,7 @@ function term:open(args)
   if args.nofocus then
     vim.api.nvim_set_current_win(vim.fn.win_getid(vim.fn.winnr("#")))
   elseif not args.noinsert then
-    vim.cmd[[startinsert]]
+    vim.cmd.startinsert()
   end
 
   return self.termbuf, self.termwin

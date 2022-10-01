@@ -5,7 +5,7 @@
 local au = require("au")
 
 -- load base gruvbox colorscheme installed as library with packer
-vim.cmd("runtime! library/gruvbox.vim")
+vim.cmd.runtime{"library/gruvbox.vim", bang = true}
 
 -- change some diagnostic and spelling highlight groups
 vim.api.nvim_set_hl(0, "DiagnosticHint", {link = "GruvboxPurple"})

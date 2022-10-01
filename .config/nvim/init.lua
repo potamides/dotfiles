@@ -36,9 +36,7 @@ vim.opt.list = true
 -- built-in completion & tag search
 vim.opt.completeopt:append{"menuone", "noinsert"}
 vim.opt.complete:remove{"t"}
-vim.opt.omnifunc = "v:lua.vim.lsp.omnifunc"             -- neovim internal lsp completion
 vim.opt.completefunc = "v:lua.vim.luasnip.completefunc" -- custom snippet completion defined in plugin/snipcomp.lua
-vim.opt.tagfunc = "v:lua.vim.lsp.tagfunc"               -- interface to normal mode commands like CTRL-]
 
 -- show line numbers and highlight cursor line number
 vim.opt.number = true
@@ -146,7 +144,7 @@ end
 local preview = au("user_preview")
 function preview.CompleteDone()
   if vim.fn.pumvisible() == 0 then
-    vim.cmd[[pclose]]
+    vim.cmd.pclose()
   end
 end
 
@@ -184,8 +182,8 @@ cmd("Reload", "source $MYVIMRC", {}) -- reload config file with :Reload
 local map, opts = vim.keymap.set, {noremap = true, silent = true}
 
 -- navigate buffers like tabs (gt & gT)
-map("n", "gb", function() vim.cmd("bnext" .. vim.v.count1) end, opts)
-map("n", "gB", function() vim.cmd("bprev" .. vim.v.count1) end, opts)
+map("n", "gb", function() vim.cmd.bnext{count = vim.v.count1} end, opts)
+map("n", "gB", function() vim.cmd.bprev{count = vim.v.count1} end, opts)
 
 -- diagnostics mappings
 map("n", "<leader>ll", vim.diagnostic.setloclist, opts)
@@ -194,7 +192,7 @@ map("n", "[d",         vim.diagnostic.goto_prev, opts)
 map("n", "]d",         vim.diagnostic.goto_next, opts)
 
 -- language server mappings
-local function lsp_mappings(client, buf)
+local function lsp_mappings(_, buf)
   local bufopts = {buffer = buf, unpack(opts)}
   map("n", "gd",         vim.lsp.buf.definition, bufopts)
   map("n", "gD",         vim.lsp.buf.declaration, bufopts)
@@ -210,11 +208,6 @@ local function lsp_mappings(client, buf)
   map("n", "<leader>rf", vim.lsp.buf.references, bufopts)
   map("n", "<leader>fm", vim.lsp.buf.formatting, bufopts)
   map("v", "<leader>fm", ":lua vim.lsp.buf.range_formatting()<cr>", bufopts) -- return to normal mode
-
-  if client.server_capabilities.documentRangeFormattingProvider then
-    -- Use LSP as the handler for 'gq' mapping
-    vim.api.nvim_buf_set_option(buf, 'formatexpr', 'v:lua.vim.lsp.formatexpr()')
-  end
 end
 
 -- Diagnostics
@@ -304,7 +297,7 @@ vim.g.gruvbox_invert_selection = false
 
 -- only enable this color scheme when supported by terminal
 if not vim.g.vga_compatible then
-  vim.cmd("colorscheme gruvbox")
+  vim.cmd.colorscheme("gruvbox")
 end
 
 -- Lightline
@@ -445,10 +438,14 @@ gitsigns.setup{
 local colorizer = require("colorizer")
 
 -- colorize color specifications like '#aabbcc' in virtualtext
-colorizer.setup(
-  {'*'},
-  {names = false, mode = 'virtualtext'}
-)
+colorizer.setup{
+  filetypes = { "*" },
+  user_default_options = {
+    names = false,
+    mode = 'virtualtext'
+  }
+}
+
 
 -- Lsp-config
 -------------------------------------------------------------------------------
@@ -494,7 +491,7 @@ map("n", "<leader>br", dap.toggle_breakpoint, opts)
 map("n", "<leader>bc", function() dap.set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, opts)
 map("n", "<leader>bl", function() dap.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end, opts)
 map("n", "<leader>bd", dap.clear_breakpoints, opts)
-map("n", "<leader>bs", function() dap.list_breakpoints() vim.cmd[[copen]] end, opts)
+map("n", "<leader>bs", function() dap.list_breakpoints() vim.cmd.copen() end, opts)
 map("n", "<leader>ro", function() try_call(repl_open) end, opts)
 map("n", "<leader>to", function() try_call(function() dapterm:open{nofocus = true} end) end, opts)
 map("n", "<leader>rl", dap.run_last, opts)

@@ -4,7 +4,7 @@
 ]]
 if not vim.b.did_user_ftplugin then
   -- same behavior like quickfix window
-  vim.cmd("runtime! ftplugin/qf.lua")
+  vim.cmd.runtime{"ftplugin/qf.lua", bang = true}
 
   vim.api.nvim_create_autocmd("BufWinEnter", {
     group = vim.api.nvim_create_augroup(vim.bo.filetype, {clear = false}),
