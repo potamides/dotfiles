@@ -16,6 +16,7 @@ if not vim.b.did_user_ftplugin then
       vim.opt_local.spell = false
       vim.opt_local.winfixheight=true
       vim.opt_local.list = false
+      vim.opt_local.textwidth = 0
 
       -- set same options as dap-terminal
       vim.opt_local.signcolumn = "no"
