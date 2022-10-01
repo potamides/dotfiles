@@ -7,11 +7,11 @@ local usurface = require("utils.surface")
 local dpi = require("beautiful.xresources").apply_dpi
 local theme_assets = require("beautiful.theme_assets")
 
-local theme_path = awful.util.getdir("config").."/themes/gruvbox/"
+local theme_path = awful.util.getdir("config") .. "/themes/gruvbox/"
 local theme = {}
 
-theme.font            = "sans-serif 11"
-theme.icon_theme      = "gruvbox-dark-icons-gtk"
+theme.font       = "sans-serif 11"
+theme.icon_theme = "gruvbox-dark-icons-gtk"
 
 -- crop to size where wallpaper repeats itself
 theme.wallpaper = usurface.crop(theme_path .. "wallpaper.png", 384, 0, 1920, 1080)
