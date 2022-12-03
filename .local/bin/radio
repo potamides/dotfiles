@@ -8,7 +8,7 @@ declare -x IFS=$'\n'
 declare -A stations=(
   [9128.live]=https://streams.radio.co/s0aa1e6f4a/listen
   [CEU Medieval Radio]=http://stream3.virtualisan.net:7020
-  [Chilled Cow]=https://youtu.be/5qap5aO4i9A
+  [Chilled Cow]=https://youtu.be/jfKfPfyJRdk
   [Code Radio]=https://coderadio-admin.freecodecamp.org/radio/8010/radio.mp3
   [Final Fantasy Radio]=http://finalfantasystation.com:8000/stream
   [FUTURE FNK]=http://node-16.zeno.fm:80/etbbu6a3dnruv
@@ -20,6 +20,7 @@ declare -A stations=(
   [No-Life Radio]=http://listen.nolife-radio.com:8000
   [Radio 1920]=https://radio1920.stream.laut.fm/radio1920
   [Radio Monacensis]=https://monacensis.stream.laut.fm/monacensis
+  [Radio PARALAX]=http://radio-paralax.de:8000
   [Rapture Radio]=http://192.111.140.6:8411
   [Shonan Beach FM]=http://shonanbeachfm.out.airtime.pro:8000/shonanbeachfm_c
 )
