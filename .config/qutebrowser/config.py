@@ -49,8 +49,13 @@ config.bind("<Ctrl-e>", "scroll down")
 config.bind("<Ctrl-y>", "scroll up")
 config.bind("ao", "download-open")
 
-c.aliases['zotero'] = 'spawn --userscript zotero'
-c.aliases['Zotero'] = 'hint links userscript zotero'
+c.aliases.update({
+    "zotero": "spawn --userscript zotero",
+    "Zotero": "hint links userscript zotero",
+
+    "proxy": "spawn ssh proxy ;; set -t content.proxy socks5://localhost:8080",
+    "noproxy": "spawn ssh -O exit proxy ;; config-unset -t content.proxy"
+})
 
 ## Per-domain
 # -----------------------------------------------------------------------------
