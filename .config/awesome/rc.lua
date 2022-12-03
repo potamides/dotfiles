@@ -490,9 +490,9 @@ local keybindings = {
   {{}, "XF86AudioMute", volume.toggle},
   {{}, "XF86AudioLowerVolume", volume.lower},
   {{}, "XF86AudioRaiseVolume", volume.raise},
-  {{}, "XF86AudioMicMute", function() awful.spawn("amixer set Capture toggle") end},
-  {{}, "XF86MonBrightnessDown", function() awful.spawn("xbacklight -dec 10") end},
-  {{}, "XF86MonBrightnessUp", function() awful.spawn("xbacklight -inc 10") end},
+  {{}, "XF86AudioMicMute", function() awful.spawn("amixer set Capture toggle", false) end},
+  {{}, "XF86MonBrightnessDown", function() awful.spawn("xbacklight -dec 10", false) end},
+  {{}, "XF86MonBrightnessUp", function() awful.spawn("xbacklight -inc 10", false) end},
   {{}, "XF86Display", xrandr.show},
   {{}, "XF86Tools", function() awful.spawn(editor_cmd .. awesome.conffile) end},
 }
