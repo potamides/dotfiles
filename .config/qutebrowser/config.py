@@ -27,6 +27,13 @@ c.content.cookies.accept = "no-3rdparty"
 #c.content.pdfjs = True
 #c.content.javascript.enabled = False
 
+## Search Engines
+# -----------------------------------------------------------------------------
+c.url.open_base_url = True
+
+for bang in ["!jt", "!jotoba"]:
+    c.url.searchengines[bang] = 'https://jotoba.de/search/{quoted}'
+
 ## Colorscheme
 # -----------------------------------------------------------------------------
 c.colors.webpage.preferred_color_scheme = "dark"
@@ -40,18 +47,18 @@ for mode in ["normal", "caret"]:
 
 config.bind("<Ctrl-e>", "scroll down")
 config.bind("<Ctrl-y>", "scroll up")
-config.bind('ao', 'download-open')
+config.bind("ao", "download-open")
 
 c.aliases['zotero'] = 'spawn --userscript zotero'
 c.aliases['Zotero'] = 'hint links userscript zotero'
 
 ## Per-domain
 # -----------------------------------------------------------------------------
-with config.pattern('www.duden.de') as p:
+with config.pattern("www.duden.de") as p:
     p.content.blocking.enabled = False
-with config.pattern('jisho.org') as p:
+with config.pattern("jisho.org") as p:
     p.input.insert_mode.leave_on_load = False
-with config.pattern('meet.jit.si') as p:
+with config.pattern("meet.jit.si") as p:
     p.content.desktop_capture = True
     p.content.media.audio_capture = True
     p.content.media.video_capture = True
