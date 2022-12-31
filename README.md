@@ -209,9 +209,11 @@ required and perform specific tasks that are often not needed. Therefore, these
 programs are not included in the package installation script and must be
 installed manually. The corresponding packages and their functions are listed
 below:
-* For Japanese Kana and Kanji input, install
-  [fcitx5-im](https://archlinux.org/groups/x86_64/fcitx5-im) and
-  [fcitx5-mozc](https://archlinux.org/packages/community/x86_64/fcitx5-mozc).
+* For Kana, Kanji, and Hangul input, install
+  [fcitx5-im](https://archlinux.org/groups/x86_64/fcitx5-im),
+  [fcitx5-mozc](https://archlinux.org/packages/community/x86_64/fcitx5-mozc),
+  and
+  [fcitx5-hangul](https://archlinux.org/packages/community/x86_64/fcitx5-hangul).
 * To enable automounting, install
   [udiskie](https://archlinux.org/packages/community/any/udiskie).
 * To compile L<sup>A</sup>T<sub>E</sub>X with Neovim using qpdfview as the
