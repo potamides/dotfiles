@@ -58,6 +58,7 @@ if not vim.b.did_user_ftplugin then
           }
         },
         workspace = {
+          checkThirdParty = false,
           --preload global variables and classes
           library = {
             -- awesome wm library

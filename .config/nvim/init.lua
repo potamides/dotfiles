@@ -285,7 +285,7 @@ packer.autostartup{
 local function lazy_require(module)
   return setmetatable({}, {
     __index = function(_, k) return require(module)[k] end,
-    __newindex = function(_, k, v) require(module)[k] =v end
+    __newindex = function(_, k, v) require(module)[k]  =v end
   })
 end
 
@@ -405,6 +405,7 @@ gitsigns.setup{
     delete = {hl = "GitSignsDelete", text = vga_fallback("▖", "v")},
     topdelete = {hl = "GitSignsDelete", text = vga_fallback("▘", "^")},
     changedelete = {hl = "GitSignsChange", text = vga_fallback("▌", "±")},
+    untracked    = {hl = 'GitSignsAdd'   , text = vga_fallback("▌", "+")},
   },
   preview_config = {
     border = "none"
