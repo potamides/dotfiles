@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2128
+
+###############################################################################
+# Makeshift KakaoTalk client for Linux. Launches KakaoTalk on an ADB-enabled  #
+# Android device connected via USB and displays the application screen using  #
+#     scrcpy. Also has rudamentary support for forwarding notifications.      #
+###############################################################################
+
+set -o errexit -o nounset -o pipefail
+shopt -s nullglob
+
+name=com.kakao.talk
+interval=10 # in seconds
+icon=(/usr/share/icons/*/32x32/*/KakaoTalk.svg)
+
+function forward_notifications(){
+  local tstamp notif="${name//./\\.}\\|[[:digit:]]+ -> -[[:alnum:]]+ ago$"
+
+  while read -r; do
+    if [[ $REPLY =~ $notif ]]; then
+      tstamp=$(sed 's/h/*360+/;s/m/*60+/;s/s.*//' <<< "${REPLY##*-> -}")
+      if (( ${tstamp%+} <= interval )); then
+        notify-send --icon="$icon" "Received KakaoTalk message!"
+      fi
+    fi
+  done < <(adb shell "while sleep $interval; do dumpsys notification; done")
+}
+
+adb shell monkey -p "$name" 1
+forward_notifications&
+trap "kill 0" EXIT
+scrcpy --hid-keyboard --stay-awake --turn-screen-off
