@@ -30,7 +30,7 @@ if not vim.b.did_user_ftplugin then
     settings = {
       python = {
         analysis = {
-          autoImportCompletions  = false, -- does't work with omnifunc
+          autoImportCompletions  = false, -- doesn't work with omnifunc
           useLibraryCodeForTypes = true,
           diagnosticMode = "openFilesOnly" -- "workspace" is too slow for big projects
         }

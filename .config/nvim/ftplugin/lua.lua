@@ -1,12 +1,12 @@
 --[[
-  Setup sumneko language server. It is primarily configured for use with neovim
-  and awesome wm. Also set some filetype-specific options.
+  Setup lua language server. It is primarily configured for use with neovim and
+  awesome wm. Also set some filetype-specific options.
 --]]
 
 if not vim.b.did_user_ftplugin then
-  local sumneko = require("lsputils").sumneko_lua
+  local lua_ls = require("lsputils").lua_ls
 
-  sumneko.setup{
+  lua_ls.setup{
     settings = {
       Lua = {
         runtime = {
