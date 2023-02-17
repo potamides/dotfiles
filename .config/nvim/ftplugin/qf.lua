@@ -1,6 +1,5 @@
 --[[
-  Remove the quickfix window from the buffer list and close nvim when qf is
-  last window.
+  Remove the quickfix window from the buffer list.
 ]]
 if not vim.b.did_user_ftplugin then
   vim.opt_local.buflisted = false

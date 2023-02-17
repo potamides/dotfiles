@@ -228,64 +228,39 @@ end
 -------------------------------------------------------------------------------
 -- {{{ Plugin-Specific Configuration
 -------------------------------------------------------------------------------
-local packer = require("autopacker")
+local autopaq = require("autopaq")
 
--- small, custom wrapper around packer.startup which installs packer
+-- small, custom wrapper around paq-nvim which installs paq
 -- automatically when it is missing
-packer.autostartup{
-  {
-    "wbthomason/packer.nvim",
-    "unblevable/quick-scope",
-    "NvChad/nvim-colorizer.lua",
-    "neovim/nvim-lspconfig",
-    "mfussenegger/nvim-dap",
-    "tpope/vim-fugitive",
-    "potamides/pantran.nvim",
-    {
-      "lewis6991/gitsigns.nvim",
-      requires = "nvim-lua/plenary.nvim"
-    },
-    {
-      "L3MON4D3/LuaSnip",
-      requires = "rafamadriz/friendly-snippets"
-    },
-    {
-      "itchyny/lightline.vim",
-      requires = {
-        "mgee/lightline-bufferline",
-        "kyazdani42/nvim-web-devicons"
-      }
-    },
-    {
-      "nvim-telescope/telescope.nvim",
-      requires = {
-        "nvim-lua/plenary.nvim",
-        "kyazdani42/nvim-web-devicons",
-        {
-          "nvim-telescope/telescope-fzf-native.nvim",
-          run = "make"
-        }
-      }
-    },
-    {
-      "gruvbox-community/gruvbox",
-      -- install colorscheme as library so that we can easily patch it
-      run = "git mv -k colors library"
-    },
-  },
-  config = {
-    git = {
-      subcommands = {
-        update = packer.config.git.subcommands.update .. " --autostash"
-      }
-    }
-  }
+autopaq.bootstrap{
+  "savq/paq-nvim",
+  "unblevable/quick-scope",
+  "NvChad/nvim-colorizer.lua",
+  "neovim/nvim-lspconfig",
+  "mfussenegger/nvim-dap",
+  "tpope/vim-fugitive",
+  "potamides/pantran.nvim",
+  "lewis6991/gitsigns.nvim",
+  "L3MON4D3/LuaSnip",
+  "itchyny/lightline.vim",
+  "nvim-telescope/telescope.nvim",
+  "gruvbox-community/gruvbox",
+
+  -- dependencies
+  "rafamadriz/friendly-snippets",                             -- LuaSnip
+  "mgee/lightline-bufferline",                                -- lightline.nvim
+  "kyazdani42/nvim-web-devicons",                             -- lightline.nvim
+  "nvim-lua/plenary.nvim",                                    -- gitsigns.nvim, telescope.nvim
+  {"nvim-telescope/telescope-fzf-native.nvim", run = "make"}, -- telescope.nvim
 }
+
+-- shorthand for updating packages with paq-nvim and showing (new) updates
+cmd("Update", "silent PaqLogClean | PaqSync | autocmd User PaqDoneSync ++once ++nested PaqLogOpen", {})
 
 local function lazy_require(module)
   return setmetatable({}, {
     __index = function(_, k) return require(module)[k] end,
-    __newindex = function(_, k, v) require(module)[k]  =v end
+    __newindex = function(_, k, v) require(module)[k] = v end
   })
 end
 
@@ -297,7 +272,7 @@ vim.g.gruvbox_invert_selection = false
 
 -- only enable this color scheme when supported by terminal
 if not vim.g.vga_compatible then
-  vim.cmd.colorscheme("gruvbox")
+  vim.cmd.colorscheme("groovebox") -- customized gruvbox in colors/groovebox.lua
 end
 
 -- Lightline
