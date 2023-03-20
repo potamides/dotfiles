@@ -143,7 +143,7 @@ end
 -- close preview window when completion is finished
 local preview = au("user_preview")
 function preview.CompleteDone()
-  if vim.fn.pumvisible() == 0 then
+  if vim.fn.pumvisible() == 0 and vim.fn.getcmdwintype() == "" then
     vim.cmd.pclose()
   end
 end
