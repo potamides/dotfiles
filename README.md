@@ -33,7 +33,7 @@ mode](https://en.wikipedia.org/wiki/VGA_text_mode) with [code page
   * [Vi-like keybindings for awesome](https://www.reddit.com/r/awesomewm/comments/i4pj35/vilike_keybindings_for_awesome_with_motions_and) (6. Aug. 2020)
   * [Streets of Gruvbox](https://www.reddit.com/r/unixporn/comments/i60b10/awesome_streets_of_gruvbox) (8. Aug. 2020)
   * [Confload: Create dotfiles-manageable weechat configs with password manager integration](https://www.reddit.com/r/unixporn/comments/l1unqe/oc_confload_create_dotfilesmanageable_weechat) (21. Jan. 2021)
-  * [Snipcomp.lua: LuaSnip companion plugin for omni completion](https://www.reddit.com/r/neovim/comments/rddugs/snipcomplua_luasnip_companion_plugin_for_omni) (10. Dec. 20221)
+  * [Snipcomp.lua: LuaSnip companion plugin for omni completion](https://www.reddit.com/r/neovim/comments/rddugs/snipcomplua_luasnip_companion_plugin_for_omni) (10. Dec. 2021)
 </details>
 
 ---
@@ -141,12 +141,11 @@ resolutions, the plugin tries to calculate the best scaling automatically.
 ### Neovim
 For my Neovim configuration, I made heavy use of the new features introduced
 with [Neovim 0.5](https://neovim.io/news/2021/07) and wrote it entirely in Lua.
-I wrote a small wrapper around the
-[packer.nvim](https://github.com/wbthomason/packer.nvim) plugin manager called
-[autopacker.lua](.config/nvim/lua/autopacker.lua), which makes sure to install
-itself and all specified plugins on its own on the first launch of Neovim,
-eliminating the need for any further setup steps. I tried to keep the main
-configuration file, [init.lua](.config/nvim/init.lua), mostly language
+I wrote a small wrapper around the [paq-nvim](https://github.com/savq/paq-nvim)
+plugin manager called [autopaq.lua](.config/nvim/lua/autopaq.lua), which makes
+sure to install itself and all specified plugins on its own on the first launch
+of Neovim, eliminating the need for any further setup steps. I tried to keep
+the main configuration file, [init.lua](.config/nvim/init.lua), mostly language
 agnostic. Therefore, I refactored language-specific and buffer-local code into
 stand-alone [ftplugins](.config/nvim/ftplugin). Similarly, I moved a lot of
 complex functionality into [libraries](.config/nvim/lua) and
