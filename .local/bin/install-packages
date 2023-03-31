@@ -33,7 +33,7 @@ AUR=(
   bash-complete-alias # Required by: bash
   gruvbox-dark-gtk gruvbox-dark-icons-gtk # Required by: awesome
   qt5-styleplugins # Required by: awesome
-  dragon-drag-and-drop # Required by: ranger
+  dragon-drop # Required by: ranger
   ltex-ls-bin # Required by: neovim
 )
 
