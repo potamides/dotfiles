@@ -1,4 +1,4 @@
-calendar = ~/.when/calendar
+calendar = ~/.local/when/calendar
 editor = $EDITOR
 monday_first = 1
 ampm = 0
