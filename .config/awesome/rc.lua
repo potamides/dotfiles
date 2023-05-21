@@ -744,7 +744,7 @@ awful.rules.rules = {
     properties = { keys = awful.key({ "Control" }, "q", function() end) }},
 
   -- Make dragon sticky for easy drag and drop in ranger
-  { rule = { class = "Dragon-drag-and-drop" },
+  { rule = { class = "Dragon-drop" },
     properties = { ontop = true, sticky = true }},
 
   -- askpass has wrong height on multi-screen setups somehow
