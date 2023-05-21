@@ -10,7 +10,9 @@ local term = {
 }
 
 function term:open(args)
+  local current = vim.fn.win_getid()
   args = args or {}
+
   if not vim.api.nvim_win_is_valid(self.termwin) then
     vim.cmd.split{range = {self.height}, mods = {split = "botright"}}
     vim.opt_local.winfixheight = true
@@ -32,7 +34,7 @@ function term:open(args)
   end
 
   if args.nofocus then
-    vim.api.nvim_set_current_win(vim.fn.win_getid(vim.fn.winnr("#")))
+    vim.api.nvim_set_current_win(current)
   elseif not args.noinsert then
     vim.cmd.startinsert()
   end
