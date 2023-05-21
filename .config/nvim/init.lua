@@ -202,12 +202,12 @@ local function lsp_mappings(_, buf)
   map("n", "<C-k>",      vim.lsp.buf.signature_help, bufopts)
   map("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, bufopts)
   map("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, bufopts)
-  map("n", "<leader>wl", function() vim.pretty_print(vim.lsp.buf.list_workspace_folders()) end, bufopts)
+  map("n", "<leader>wl", function() vim.print(vim.lsp.buf.list_workspace_folders()) end, bufopts)
   map("n", "<leader>rn", vim.lsp.buf.rename, bufopts)
   map("n", "<leader>ca", vim.lsp.buf.code_action, bufopts)
   map("n", "<leader>rf", vim.lsp.buf.references, bufopts)
-  map("n", "<leader>fm", vim.lsp.buf.formatting, bufopts)
-  map("v", "<leader>fm", ":lua vim.lsp.buf.range_formatting()<cr>", bufopts) -- return to normal mode
+  map("n", "<leader>fm", function() vim.lsp.buf.format{async = true} end, bufopts)
+  map("v", "<leader>fm", ":lua vim.lsp.formatexpr()<cr>", bufopts) -- return to normal mode
 end
 
 -- Diagnostics
