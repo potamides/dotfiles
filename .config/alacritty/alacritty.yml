@@ -4,7 +4,6 @@ env:
 # Misc
 draw_bold_text_with_bright_colors: true
 live_config_reload: true
-alt_send_esc: true
 ipc_socket: true
 
 scrolling:
