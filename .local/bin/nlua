@@ -5,11 +5,11 @@
 #     executes it. This essentially makes it possible to use Neovim as a      #
 #   standalone interpreter and enables regular scripts to benefit from the    #
 #    Neovim API (e.g. when used as a shebang). Without any arguments this     #
-#                   wrapper starts an interactive lua REPL.                   #
+#                wrapper starts an interactive nvim lua REPL.                 #
 ###############################################################################
 
 set -o errexit -o pipefail -o nounset
-histfile=${XDG_DATA_HOME:-~/.local/share}/nvim/neopret_history
+histfile=${XDG_DATA_HOME:-~/.local/share}/nvim/$(basename "$0")_history
 
 function send(){
   printf "%s\n" "$*" >& "${COPROC[1]}"
