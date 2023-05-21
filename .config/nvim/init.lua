@@ -451,7 +451,9 @@ function dap.defaults.fallback.terminal_win_cmd()
 end
 
 local function repl_open()
-  dap.repl.open(nil, "lua require('term'):open{noinsert = true}")
+  local _, win = dap.repl.open(nil, "lua require('term'):open{noinsert = true}")
+  vim.api.nvim_set_current_win(win)
+  vim.cmd.startinsert()
 end
 
 local function try_call(func, ...)
