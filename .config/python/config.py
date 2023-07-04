@@ -21,3 +21,4 @@ if "ptpython" not in getenv("_", "") and find_spec("ptpython"):
 else:
     # make primary prompt shorter because ~/.config/readline/inputrc shows vi editing mode
     sys.ps1 = "> "
+    sys.ps2 = "» "

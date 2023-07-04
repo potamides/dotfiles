@@ -55,7 +55,7 @@ class ViPrompt(PromptStyle):
         return [("", f"{self._get_mode_text()}> ")]
 
     def in2_prompt(self, width: int):
-        return [("ansigray", "...")]
+        return [("ansigray", ">>>")]
 
     def out_prompt(self):
         return []

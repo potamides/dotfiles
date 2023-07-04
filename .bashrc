@@ -44,7 +44,7 @@ else
   PS1="$firstline$secondline"
 fi
 
-PS2=">> "
+PS2="» "
 
 unset boldblue boldred white reset returncode user dir firstline secondline
 
