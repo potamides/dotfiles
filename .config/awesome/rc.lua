@@ -11,8 +11,6 @@ local gears = require("gears")
 require("awful.autofocus")
 -- Widget and layout library
 local wibox = require("wibox")
--- low-level system libraries
-local glib = require("lgi").GLib
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
@@ -234,19 +232,24 @@ playback.init()
 -- create new playback widgets for each screen so that mouse feedback isn't shown in every wibar
 function playback.create_widget()
   local title = playback.text
-  local widget = wibox.widget(gears.table.crush(utils.widget.compose{{
+  local widget = wibox.widget{
     {
-      title,
-      max_size = beautiful.playback_width,
-      speed = 70,
-      step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
-      layout = wibox.container.scroll.horizontal,
+      {
+        title,
+        max_size = beautiful.playback_width,
+        speed = 70,
+        step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
+        layout = wibox.container.scroll.horizontal,
+      },
+      top = beautiful.small_gap,
+      bottom = beautiful.small_gap,
+      left = beautiful.med_gap,
+      right = beautiful.med_gap,
+      widget = wibox.container.margin
     },
-    shape = utils.shape.parallelogram.left,
-    color = beautiful.bg_focus,
-    margin = beautiful.small_gap,
-  }},
-  {
+    shape = gears.shape.rectangle,
+    bg = beautiful.bg_focus,
+    widget = wibox.container.background,
     opacity = 0,
     buttons = awful.button({ }, 1, function(self)
       self.widget.bg = beautiful.playback_bg_press
@@ -262,7 +265,7 @@ function playback.create_widget()
       end
     end,
     function(self) self.widget.bg = beautiful.playback_bg_hover end),
-  }))
+  }
 
   widget:connect_signal('mouse::enter', function() widget.bg = beautiful.playback_bg_hover end)
   widget:connect_signal('mouse::leave', function() widget.bg = beautiful.playback_bg_normal end)
@@ -300,14 +303,15 @@ local widget_template = {
       id     = 'text_role',
       widget = wibox.widget.textbox,
     },
-    left  = beautiful.big_gap,
-    right = beautiful.big_gap,
+    id     = 'text_margin_role',
+    left   = beautiful.big_gap,
+    right  = beautiful.big_gap,
     widget = wibox.container.margin
   },
   id     = 'background_role',
   widget = wibox.container.background,
-  -- Add support for hover colors
-  create_callback = function(self, tag)
+  create_callback = function(self, tag, index, taglist)
+    -- Add support for hover colors
     local bg_empty = table.concat{gears.color(beautiful.taglist_bg_empty):get_rgba()}
     local bg_occupied = table.concat{gears.color(beautiful.taglist_bg_occupied):get_rgba()}
     local bg_hover = table.concat{gears.color(beautiful.taglist_bg_hover):get_rgba()}
@@ -322,6 +326,14 @@ local widget_template = {
         self.bg = #tag:clients() == 0 and beautiful.taglist_bg_empty or beautiful.taglist_bg_occupied
       end
     end)
+
+    -- modify the shape of the last tag
+    if index == #taglist then
+      self:get_children_by_id('text_margin_role')[1]:set_right(beautiful.med_gap)
+      self:connect_signal("widget::redraw_needed", function()
+        self:set_shape(utils.shape.rightangled.right_mirrored)
+      end)
+    end
   end,
 }
 
@@ -357,6 +369,7 @@ awful.screen.connect_for_each_screen(function(s)
     },
     layout = {
       spacing = beautiful.negative_gap,
+      homogeneous = false,
       layout  = wibox.layout.grid.horizontal
     },
     widget_template = widget_template,
@@ -377,7 +390,7 @@ awful.screen.connect_for_each_screen(function(s)
     { -- Left widgets
       mylauncher,
       s.mytaglist,
-      playback.create_widget(),
+      wibox.container.margin(playback.create_widget(), beautiful.pgram_slope),
       spacing = beautiful.negative_gap,
       layout = wibox.layout.fixed.horizontal,
     },
@@ -393,7 +406,7 @@ awful.screen.connect_for_each_screen(function(s)
         {
           net_widget.text,
           color = beautiful.fg_normal,
-          shape = utils.shape.parallelogram.right
+          shape = utils.shape.rightangled.left_mirrored
         },
         {
           net_widget.image,

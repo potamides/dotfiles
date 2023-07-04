@@ -124,11 +124,13 @@ theme.calendar_normal_border_color      = theme.bg0_h
 theme.calendar_focus_border_color       = theme.bg0_h
 
 -- Custom sizes
-theme.small_gap        = dpi(2)
+theme.pgram_slope      = dpi(10)
 theme.gap              = dpi(4)
-theme.big_gap          = dpi(14)
-theme.negative_gap     = dpi(-6)
-theme.big_negative_gap = dpi(-10)
+theme.big_gap          = theme.gap + theme.pgram_slope
+theme.med_gap          = theme.gap + 0.5 * theme.pgram_slope
+theme.small_gap        = theme.gap / 2
+theme.big_negative_gap = -theme.pgram_slope
+theme.negative_gap     = theme.big_negative_gap + theme.gap
 theme.wibar_height     = dpi(21)
 theme.titlebar_height  = dpi(20)
 

@@ -1,9 +1,27 @@
 local beautiful = require("beautiful")
 local wibox     = require("wibox")
-local shape     = require("utils.shape")
+local ushape     = require("utils.shape")
 
 
 local widget = {}
+
+local function get_margin(shape, side)
+  if side == "left" then
+    if shape == ushape.rightangled.left then
+      return beautiful.gap
+    elseif shape == ushape.rightangled.left_mirrored then
+      return beautiful.med_gap
+    end
+  elseif side == "right" then
+    if shape == ushape.rightangled.right then
+      return beautiful.gap
+    elseif shape == ushape.rightangled.right_mirrored then
+      return beautiful.med_gap
+    end
+  end
+
+  return beautiful.big_gap
+end
 
 function widget.compose(args)
   local widgets = {
@@ -17,8 +35,8 @@ function widget.compose(args)
         w[1],
         top = w.margin or nil,
         bottom = w.margin or nil,
-        left = w.shape == shape.rightangled.left and beautiful.gap or beautiful.big_gap,
-        right = w.shape == shape.rightangled.right and beautiful.gap or beautiful.big_gap,
+        left = get_margin(w.shape, "left"),
+        right = get_margin(w.shape, "right"),
         widget = wibox.container.margin
       },
       shape = w.shape,
