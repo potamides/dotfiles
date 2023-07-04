@@ -1,8 +1,6 @@
 <a href="#readme">
-  <img alt="🍙 Dotfiles" width="100%" src="https://user-images.githubusercontent.com/53401822/162452560-4addbc36-c894-47b0-8479-c99e7fb5818c.svg"/>
+  <h1><img alt="🍙 Dotfiles" width="100%" src="https://user-images.githubusercontent.com/53401822/162452560-4addbc36-c894-47b0-8479-c99e7fb5818c.svg"/></h1>
 </a>
-
----
 
 This repository contains my personal
 [dotfiles](https://wiki.archlinux.org/title/Dotfiles) for most of the programs
@@ -35,8 +33,6 @@ mode](https://en.wikipedia.org/wiki/VGA_text_mode) with [code page
   * [Confload: Create dotfiles-manageable weechat configs with password manager integration](https://www.reddit.com/r/unixporn/comments/l1unqe/oc_confload_create_dotfilesmanageable_weechat) (21. Jan. 2021)
   * [Snipcomp.lua: LuaSnip companion plugin for omni completion](https://www.reddit.com/r/neovim/comments/rddugs/snipcomplua_luasnip_companion_plugin_for_omni) (10. Dec. 2021)
 </details>
-
----
 
 <a href="https://user-images.githubusercontent.com/53401822/162453427-35cd1699-0b5b-49b6-9023-783bbeea0ebf.png">
   <img alt="CRT Monitor with rice" width="100%" src="https://user-images.githubusercontent.com/53401822/162453210-a2e00d8d-9f14-4ffa-a511-fbc99f99aecb.svg"/>
