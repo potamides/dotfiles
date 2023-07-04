@@ -13,11 +13,20 @@ if not vim.b.did_user_ftplugin then
           version = "LuaJIT",
           -- match the file name when entering require('XYZ')
           path = vim.list_extend(
-            vim.split(package.path, ';'),
+            vim.split(package.path, ';'), {
             -- neovim lua modules
-            {"lua/?.lua", "lua/?/init.lua"})
+            "lua/?.lua", "lua/?/init.lua",
+            -- awesome wm lib
+            "/usr/share/awesome/lib/?/?.lua"
+          })
+        },
+        semantic = {
+          enable = false,
+          annotation = false,
+          variable = false
         },
         diagnostics = {
+          libraryFiles = "Enable",
           disable = {
             "unbalanced-assignments"
           },
@@ -48,7 +57,6 @@ if not vim.b.did_user_ftplugin then
           },
         },
         format = {
-          enable = true,
           defaultConfig = {
             -- default format options (i.e. without .editorconfig)
             indent_style = vim.bo.expandtab and "space" or "tab",
