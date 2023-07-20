@@ -499,6 +499,13 @@ map({"i", "s"}, "<C-s><C-k>", function() try_change_choice(-1) end, opts)
 local telescope = require("telescope")
 local builtin = lazy_require("telescope.builtin")
 
+telescope.setup{
+  defaults = {
+    borderchars = {"─", "│", "─", "│", "┌", "┐", "┘", "└"}
+  }
+}
+
+vim.api.nvim_set_hl(0, "TelescopeTitle", {link = "PantranTitle"})
 telescope.load_extension('fzf')
 
 -- when a count N is given to a telescope mapping called through the following
