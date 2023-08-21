@@ -124,17 +124,18 @@ function yank.TextYankPost()
 end
 
 -- automatically toggle between relative and absolute line numbers depending on mode
-local number = au("user_number")
-local relative = number{"BufEnter", "FocusGained", "InsertLeave", "TermLeave", "WinEnter"}
-local absolute = number{"BufLeave", "FocusLost", "InsertEnter", "TermEnter", "WinLeave"}
+local number = au{"user_number",
+  Relative={"BufEnter", "FocusGained", "InsertLeave", "TermLeave", "WinEnter"},
+  Absolute={"BufLeave", "FocusLost", "InsertEnter", "TermEnter", "WinLeave"}
+}
 
-function relative.handler()
+function number.Relative()
   if vim.opt_local.number:get() and vim.fn.mode() ~= "i" then
     vim.opt_local.relativenumber = true
   end
 end
 
-function absolute.handler()
+function number.Absolute()
   if vim.opt_local.number:get() then
     vim.opt_local.relativenumber = false
   end
@@ -355,10 +356,10 @@ devicons.set_default_icon("")
 
 -- Quick-Scope
 -------------------------------------------------------------------------------
-local quickscope = au("user_quickscope"){"ColorScheme", "VimEnter"}
+local quickscope = au{"user_quickscope", LoadPost={"ColorScheme", "VimEnter"}}
 vim.g.qs_highlight_on_keys = {"f", "F", "t", "T"}
 
-function quickscope.handler()
+function quickscope.LoadPost()
   for group, color in pairs({QuickScopePrimary=10, QuickScopeSecondary=13}) do
     vim.api.nvim_set_hl(0, group, {
       sp = vim.g["terminal_color_" .. color],

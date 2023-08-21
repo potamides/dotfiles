@@ -2,31 +2,32 @@
 Small wrapper around autocmd functions.
 --]]
 
+local autocmd_opts = {"group", "pattern", "buffer", "desc", "callback", "command", "once", "nested"}
+
 -- Create an augroup and return a table for defining autocmds in this augroup.
-local function au(group)
-  local augroup = {_mt = {}}
+local function au(args)
+  local augroup, shorthands, group, opts = {_mt = {}}, {}
+
+  if type(args) == "table" then
+    group, opts = table.remove(args, 1), args
+  else
+    group, opts = args, {}
+  end
+
+  for key, value in pairs(opts) do
+    if not vim.tbl_contains(autocmd_opts, key) then
+      shorthands[key] = value
+      opts[key] = nil
+    end
+  end
 
   -- Define new autocmds with au("<group>").<event> = function() ... end.
   function augroup._mt.__newindex(_, event, handler)
-    vim.api.nvim_create_autocmd(event, {
+    event = shorthands[event] and shorthands[event] or event
+    vim.api.nvim_create_autocmd(event, vim.tbl_extend("error", opts, {
       group = group,
       callback = handler
-    })
-  end
-
-  -- With multiple events, or specific opts use au("<group>")(<event>, [<opts>])...
-  function augroup._mt.__call(_, event, opts)
-    opts = opts or {}
-    local autocmd = {_mt = {}}
-
-    -- ... and then define a handler in the returned table, the key doesn't matter.
-    function autocmd._mt.__newindex(_, _, handler)
-      opts.group = group
-      opts.callback = handler
-      vim.api.nvim_create_autocmd(event, opts)
-    end
-
-    return setmetatable(autocmd, autocmd._mt)
+    }))
   end
 
   if group then

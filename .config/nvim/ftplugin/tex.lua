@@ -46,13 +46,13 @@ if not vim.b.did_user_ftplugin then
 
             if not vim.tbl_isempty(lines) then
               local info = windows.percentage_range_window(0.8, 0.7)
-              local autocmd = au()({"BufHidden", "BufLeave"}, {once = true, buffer = info.bufnr})
+              local autocmd = au{once = true, buffer = info.bufnr, BufExit = {"BufHidden", "BufLeave"}}
 
               vim.api.nvim_buf_set_lines(info.bufnr, 0, -1, true, lines)
               vim.api.nvim_buf_set_option(info.bufnr, "modifiable", false)
               vim.keymap.set("n", "<esc>", "<cmd>bd<CR>", {noremap = true, buffer = info.bufnr})
 
-              function autocmd.handler()
+              function autocmd.BufExit()
                 pcall(vim.api.nvim_win_close, info.win_id, true)
               end
             end
