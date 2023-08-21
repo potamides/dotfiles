@@ -129,6 +129,25 @@ if not vim.b.did_user_ftplugin then
     },
   }
 
+  local function ltex_command(setting, id)
+    return function(command, ctx)
+        local client = vim.lsp.get_client_by_id(ctx.client_id)
+        local values = client.config.settings.ltex[setting] or {}
+
+        for lang, new in pairs(command.arguments[1][id]) do
+            values[lang] = vim.list_extend(values[lang] or {}, new)
+        end
+
+        client.config.settings.ltex[setting] = values
+        return client.notify("workspace/didChangeConfiguration", client.config.settings)
+    end
+  end
+
+  -- implement ltex commands which must be handled by neovim
+  vim.lsp.commands["_ltex.hideFalsePositives"] = ltex_command("hiddenFalsePositives", "falsePositives")
+  vim.lsp.commands["_ltex.disableRules"] = ltex_command("disabledRules", "ruleIds")
+  vim.lsp.commands["_ltex.addToDictionary"] = ltex_command("dictionary", "words")
+
   -- define some keybindings for convenient access to some lsp commands
   vim.keymap.set("n", "<localleader>bn", '<cmd>TexlabBuild<cr>', {silent = true, buffer = true})
   vim.keymap.set("n", "<localleader>fs", '<cmd>TexlabForward<cr>', {silent = true, buffer = true})
