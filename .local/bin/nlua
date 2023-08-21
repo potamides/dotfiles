@@ -81,13 +81,12 @@ case "${1:-}" in
     done
     ;;
   --help|-h)
-    printf "%s\n%s\n  %s\n%s\n" \
+    printf "%s\n%s\n  %s\n" \
       "usage: $(basename "$0") [options] [script [args]]" \
       "Available options are:" \
-      "-h  print this help message and exit (also --help)" \
-      "Consult ':help argv()' on how to retrieve args."
+      "-h  print this help message and exit (also --help)"
     ;;
   *) # treat arg as a file
-    # https://vim.fandom.com/wiki/Vim_as_a_system_interpreter_for_vimscript
-    exec nvim --headless -S "$1" -i NONE -n -c 'echo""|qall!' -- "${@:2}"
+    # use 'echo""' to append a final end-of-line indicator
+    exec nvim -c 'autocmd VimLeave * :echo ""' -l "$@"
 esac
