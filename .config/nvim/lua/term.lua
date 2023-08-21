@@ -18,14 +18,24 @@ function term:open(args)
   local current = vim.fn.win_getid()
   args = args or {}
 
+  -- if term is not valid open a new one
   if not vim.api.nvim_win_is_valid(self.termwin) then
     vim.cmd.split{range = {self.height}, mods = {split = "botright"}}
     vim.opt_local.winfixheight = true
     self.termwin = vim.api.nvim_get_current_win()
   else
+    -- if someone stole our window but there is only one window in total create
+    -- a new split before taking our old window back
+    if #vim.api.nvim_list_wins() == 1 and vim.api.nvim_win_get_buf(self.termwin) ~= self.termbuf then
+      vim.cmd.split()
+    end
+    -- take our window back, just in case
     vim.api.nvim_set_current_win(self.termwin)
-    vim.cmd.wincmd("J")
-    vim.cmd.resize(self.height)
+    -- only resize if there are more then one windows
+    if #vim.api.nvim_list_wins() > 1 then
+      vim.cmd.wincmd("J")
+      vim.cmd.resize(self.height)
+    end
   end
 
   if not vim.api.nvim_buf_is_valid(self.termbuf) then
