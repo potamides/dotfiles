@@ -111,12 +111,6 @@ function open.BufReadPost()
   end
 end
 
--- quickfix for https://github.com/neovim/neovim/issues/11330
-function open.VimEnter()
-  local pid, WINCH = vim.fn.getpid(), vim.loop.constants.SIGWINCH
-  vim.defer_fn(function() vim.loop.kill(pid, WINCH) end, 20)
-end
-
 -- briefly highlight a selection on yank
 local yank = au("user_yank")
 function yank.TextYankPost()
