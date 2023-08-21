@@ -134,6 +134,7 @@ fi
 
 # colored manpages
 function man(){
+  GROFF_NO_SGR=1 \
   LESS_TERMCAP_md=$'\e[01;31m' \
   LESS_TERMCAP_me=$'\e[0m' \
   LESS_TERMCAP_se=$'\e[0m' \
