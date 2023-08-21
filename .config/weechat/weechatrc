@@ -13,7 +13,7 @@ dnl Add and configure servers
 dnl ---------------------------------------------------------------------------
 /server add liberachat                   "irc.libera.chat"
 /set irc.server.liberachat.addresses     "irc.libera.chat/6697"
-/set irc.server.liberachat.ssl           "on"
+/set irc.server.liberachat.tls           "on"
 /set irc.server.liberachat.nicks         KEEPASS(Libera.Chat, Nicks)
 /set irc.server.liberachat.sasl_username KEEPASS(Libera.Chat, Username)
 /secure set liberachat_pw                KEEPASS(Libera.Chat, Password)
@@ -23,7 +23,7 @@ dnl ---------------------------------------------------------------------------
 
 /server add oftc                   "irc.oftc.net"
 /set irc.server.oftc.addresses     "irc.oftc.net/6697"
-/set irc.server.oftc.ssl           "on"
+/set irc.server.oftc.tls           "on"
 /set irc.server.oftc.nicks         KEEPASS(OFTC, Nicks)
 /secure set oftc_pw                KEEPASS(OFTC, Password)
 /set irc.server.oftc.command_delay "5"
@@ -33,7 +33,7 @@ dnl ---------------------------------------------------------------------------
 
 /server add freenode                   "chat.freenode.net"
 /set irc.server.freenode.addresses     "chat.freenode.net/6697"
-/set irc.server.freenode.ssl           "on"
+/set irc.server.freenode.tls           "on"
 /set irc.server.freenode.nicks         KEEPASS(Freenode, Nicks)
 /set irc.server.freenode.sasl_username KEEPASS(Freenode, Username)
 /secure set freenode_pw                KEEPASS(Freenode, Password)
@@ -46,13 +46,23 @@ dnl Script installation / advanced configuration
 dnl ---------------------------------------------------------------------------
 
 dnl Slack
-/secure set slack_token KEEPASS("Slack - PhD", Token)
+/secure set slack_token KEEPASS("Slack - Semantic Computing", Token)
 /set plugins.var.python.slack.slack_api_token ${sec.data.slack_token}
 
 dnl Slack emoji characters and tab completions of emoji names
 /exec -sh curl --output-dir "${WEECHAT_HOME:-~/.weechat}" -LO dnl
   https://raw.githubusercontent.com/wee-slack/wee-slack/master/weemoji.json
 /set weechat.completion.default_template "%(nicks)|%(irc_channels)|%(emoji)"
+
+dnl Autosort
+/set irc.look.server_buffer "independent"
+/set buflist.format.indent  "${color:green}dnl
+${if:${buffer.next_buffer.local_variables.type}=~^(channel|private)$?├─:└─}"
+
+dnl Show notifications for all messages on select channels
+/trigger set beep conditions "${tg_displayed} && ${tg_tags} !!- dnl
+,notify_none, && (${tg_highlight} || ${tg_msg_pv} || ${buffer.full_name} == dnl
+irc.oftc.#awesome)"
 
 dnl Vimode
 /set plugins.var.python.vimode.mode_indicator_cmd_color        "cyan"
@@ -72,8 +82,9 @@ dnl Vimode
 [input_search],[input_paste],input_text,[vi_buffer]"
 /set weechat.bar.status.items "[time],[buffer_last_number],[buffer_plugin],dnl
 buffer_number+:+buffer_name+(buffer_modes)+{buffer_nicklist_count}dnl
-+buffer_zoom+buffer_filter,scroll,[lag],[hotlist],completion,dnl
-slack_typing_notice,cmd_completion"
++buffer_zoom+buffer_filter,mouse_status,scroll,[lag],[hotlist],[typing],dnl
+completion,slack_typing_notice,cmd_completion"
+
 /trigger addreplace vimode signal "python_script_loaded" "${tg_signal_data} dnl
 ==* */vimode.py" "" "/window refresh; /vimode bind_keys" "ok" "delete"
 
@@ -89,5 +100,57 @@ irc.oftc.#awesome)"
 
 dnl Install all scripts lastly, because some depend on previously set options
 /script install vimode.py autosort.py slack.py
+
+dnl Colorscheme (revert to old colorscheme)
+dnl ---------------------------------------------------------------------------
+/set fset.color.description                       "default"
+/set fset.color.description_selected              "white"
+/set fset.color.line_marked_bg1                   "default"
+/set fset.color.line_marked_bg2                   "default"
+/set fset.color.line_selected_bg1                 "blue"
+/set fset.color.line_selected_bg2                 "red"
+/set fset.color.name_changed                      "brown"
+/set fset.color.type                              "green"
+/set fset.color.type_selected                     "lightgreen"
+/set fset.color.value                             "cyan"
+/set fset.color.value_changed                     "brown"
+/set fset.color.value_selected                    "lightcyan"
+/set irc.color.reason_quit                        "default"
+/set irc.color.topic_new                          "white"
+/set irc.color.topic_old                          "default"
+/set logger.color.backlog_end                     "default"
+/set logger.color.backlog_line                    "default"
+/set script.color.status_autoloaded               "cyan"
+/set script.color.text_bg_selected                "red"
+/set script.color.text_date                       "default"
+/set script.color.text_date_selected              "white"
+/set script.color.text_delimiters                 "default"
+/set script.color.text_description                "default"
+/set script.color.text_extension                  "default"
+/set script.color.text_extension_selected         "white"
+/set script.color.text_name                       "cyan"
+/set script.color.text_name_selected              "lightcyan"
+/set script.color.text_version                    "magenta"
+/set script.color.text_version_loaded             "default"
+/set script.color.text_version_selected           "lightmagenta"
+/set weechat.bar.status.color_bg                  "blue"
+/set weechat.bar.status.color_bg_inactive         "darkgray"
+/set weechat.bar.title.color_bg                   "blue"
+/set weechat.bar.title.color_bg_inactive          "darkgray"
+/set weechat.color.chat_delimiters                "green"
+/set weechat.color.chat_highlight_bg              "magenta"
+/set weechat.color.chat_inactive_window           "default"
+/set weechat.color.chat_nick_offline              "default"
+/set weechat.color.chat_nick_offline_highlight_bg "blue"
+/set weechat.color.chat_prefix_buffer             "brown"
+/set weechat.color.chat_prefix_suffix             "green"
+/set weechat.color.emphasized_bg                  "magenta"
+/set weechat.color.nicklist_away                  "cyan"
+/set weechat.color.separator                      "blue"
+
+/set buflist.format.buffer_current "${color:,blue}${format_buffer}"
+/set fset.format.option2 "${color:darkgray}"
+/set weechat.color.chat_nick_colors "cyan,magenta,green,brown,lightblue,dnl
+default,lightcyan,lightmagenta,lightgreen,blue"
 
 dnl vim: filetype=config
