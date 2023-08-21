@@ -86,7 +86,7 @@ vim.g.maplocalleader = " "
 vim.g.sh_no_error = true
 vim.g.readline_has_bash = true
 vim.g.tex_flavor = "latex"
-vim.g.markdown_fenced_languages = {"sh", "python", "lua"}
+vim.g.markdown_fenced_languages = {"bash=sh", "python", "lua"}
 
 -- setup netrw and viewer for 'gx' mapping
 vim.g.netrw_banner = 0
