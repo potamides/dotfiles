@@ -186,10 +186,9 @@ key_bindings:
   - { key: PageDown,  mods: Shift,   mode: ~Alt,        action: ScrollPageDown }
   - { key: Home,      mods: Shift,   mode: ~Alt,        action: ScrollToTop,   }
   - { key: End,       mods: Shift,   mode: ~Alt,        action: ScrollToBottom }
-  - { key: T,              mods: Control|Shift,                   action: CreateNewWindow  }
   - { key: V,              mods: Control|Shift, mode: ~Vi,        action: Paste            }
   - { key: C,              mods: Control|Shift,                   action: Copy             }
-  - { key: F,              mods: Control|Shift, mode: ~Search,    action: SearchForward    }
+  - { key: R,              mods: Control|Shift, mode: ~Search,    action: SearchForward    }
   - { key: B,              mods: Control|Shift, mode: ~Search,    action: SearchBackward   }
   - { key: C,              mods: Control|Shift, mode: Vi|~Search, action: ClearSelection   }
   - { key: Insert,         mods: Shift,                           action: PasteSelection   }
@@ -199,6 +198,8 @@ key_bindings:
   - { key: NumpadAdd,      mods: Control,                         action: IncreaseFontSize }
   - { key: Minus,          mods: Control,                         action: DecreaseFontSize }
   - { key: NumpadSubtract, mods: Control,                         action: DecreaseFontSize }
+  - { key: T,              mods: Control|Shift,                   action: CreateNewWindow  }
+  - { key: F, mods: Control|Shift, command: { program: sh, args: [-c, 'alacritty msg create-window --command ranger "$PWD"'] } }
 
   # Vi Mode
   - { key: Space,  mods: Shift|Control, mode: ~Search,    action: ToggleViMode            }
