@@ -104,7 +104,7 @@ if not vim.b.did_user_ftplugin then
     root_dir = configs.texlab.get_root_dir,
     settings = {
       ltex = {
-        language = "en-US",
+        language = "auto", -- using "auto" also disables spell checking (for which we use vim)
         checkFrequency = "save",
         diagnosticSeverity = "hint",
         completionEnabled = true,
@@ -114,7 +114,7 @@ if not vim.b.did_user_ftplugin then
           languageModel = "/usr/share/ngrams", -- aur/languagetool-ngrams-{en,de,..}
           word2VecModel = "/usr/share/word2vec", -- aur/languagetool-word2vec-{en,de,..}
           enablePickyRules = true
-        }
+        },
       }
     },
     handlers = {
@@ -126,7 +126,7 @@ if not vim.b.did_user_ftplugin then
            signs = false
          }
        )
-    }
+    },
   }
 
   -- define some keybindings for convenient access to some lsp commands
