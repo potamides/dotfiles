@@ -163,7 +163,7 @@ local cmd = vim.api.nvim_create_user_command
 -- open (new) terminal at bottom of the current tab (using default instance)
 cmd("Terminal", function(tbl)
     require("term"):open{cmd = #tbl.fargs > 0 and tbl.fargs or nil}
-  end, {nargs = "*"}
+  end, {nargs = "*", complete = "shellcmd"}
 )
 
 cmd("Cd", "cd %:p:h", {})            -- set cwd to directory of current file
