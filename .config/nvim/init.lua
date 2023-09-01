@@ -47,7 +47,7 @@ vim.opt.cursorlineopt = "number"
 -- spell checking
 vim.opt.spell = true
 vim.opt.spelllang = {"en_us", "de_de", "cjk"}
-vim.opt.spellfile = vim.fn.expand("~/.local/share/nvim/site/spell/spf.%s.add"):format(vim.o.encoding)
+vim.opt.spellfile = ("%s/spell/spf.%s.add"):format(vim.fn.stdpath("config"), vim.o.encoding)
 vim.opt.thesaurusfunc = "v:lua.require'mythes'" -- support openoffice thesauri, see lua/mythes.lua
 vim.opt.thesaurus = {
   -- archlinux packages extra/mythes-{en,de,..}
