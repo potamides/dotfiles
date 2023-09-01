@@ -58,10 +58,13 @@ if not vim.b.did_user_ftplugin then
         },
         format = {
           defaultConfig = {
-            -- default format options (i.e. without .editorconfig)
+            -- default format options (i.e., without .editorconfig)
             indent_style = vim.bo.expandtab and "space" or "tab",
             indent_size = tostring(vim.bo.shiftwidth),
             keep_one_space_between_table_and_bracket = "false",
+            call_arg_parentheses = "remove_table_only",
+            space_before_function_call_single_arg = "false",
+            space_around_table_field_list = "false",
             quote_style = "double",
           }
         },
@@ -71,8 +74,8 @@ if not vim.b.did_user_ftplugin then
           library = {
             -- awesome wm library
             "/usr/share/awesome/lib",
-            -- neovim stuff
-            unpack(vim.api.nvim_get_runtime_file("", true))
+            -- neovim runtime
+            vim.env.VIMRUNTIME
           }
         }
       }
