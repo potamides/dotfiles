@@ -423,9 +423,9 @@ colorizer.setup{
 local lsputil = require('lspconfig.util')
 
 -- setup calls to specific language servers are located in ftplugins
-function lsputil.on_setup(config)
+lsputil.on_setup = lsputil.add_hook_before(lsputil.on_setup, function(config)
   config.on_attach = lsputil.add_hook_before(config.on_attach, lsp_mappings)
-end
+end)
 
 -- Nvim-DAP
 -------------------------------------------------------------------------------
