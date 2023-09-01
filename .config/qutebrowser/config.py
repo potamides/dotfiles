@@ -54,7 +54,9 @@ c.aliases.update({
     "Zotero": "hint links userscript zotero",
 
     "proxy": "spawn ssh proxy ;; set -t content.proxy socks5://localhost:8080",
-    "noproxy": "spawn ssh -O exit proxy ;; config-unset -t content.proxy"
+    "noproxy": "spawn ssh -O exit proxy ;; config-unset -t content.proxy",
+
+    "login": "open -p http://neverssl.com",
 })
 
 ## Per-domain
