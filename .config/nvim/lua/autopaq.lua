@@ -42,6 +42,6 @@ function paq.bootstrap(plugins)
 end
 
 return setmetatable({}, {
-  __call = paq.bootstrap,
+  __call = function(_, ...) paq.bootstrap(...) end,
   __index = paq
 })
