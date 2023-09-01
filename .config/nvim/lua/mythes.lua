@@ -1,12 +1,12 @@
 --[[
-  This plugin defines a 'thesaurusfunc' which can read thesauri written in the
-  openoffice.org mythes format. When 'thesaurusfunc' is set to this function,
-  this allows users to add such thesauri to the 'thesaurus' option.
+  This plugin defines a 'thesaurusfunc' which can read the mythes thesauri used
+  by openoffice. When 'thesaurusfunc' is set to this function, this allows
+  users to add such thesauri to the 'thesaurus' option.
 
   See https://wiki.services.openoffice.org/wiki/Dictionaries
 --]]
 
-vim.openoffice = {}
+local mythes = {}
 
 -- Emulate lazy evaluation. Could be made better with __pairs, __ipairs and
 -- __len metatable events from lua 5.2+ (which we don't have in Neovim).
@@ -55,7 +55,7 @@ local function parse_entry(iterator, length, base)
   return completions
 end
 
-function vim.openoffice.thesaurusfunc(findstart, base)
+function mythes.thesaurusfunc(findstart, base)
   if findstart == 1 then
     local line, col = vim.api.nvim_get_current_line(), vim.api.nvim_win_get_cursor(0)[2]
     return vim.fn.match(line:sub(1, col), '\\k*$')
@@ -91,3 +91,5 @@ function vim.openoffice.thesaurusfunc(findstart, base)
 
   return completions
 end
+
+return setmetatable(mythes, {__call = function(_, ...) return mythes.thesaurusfunc(...) end})

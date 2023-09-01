@@ -36,7 +36,7 @@ vim.opt.list = true
 -- built-in completion & tag search
 vim.opt.completeopt:append{"menuone", "noinsert"}
 vim.opt.complete:remove{"t"}
-vim.opt.completefunc = "v:lua.vim.luasnip.completefunc" -- custom snippet completion defined in plugin/snipcomp.lua
+vim.opt.completefunc = "v:lua.require'snipcomp'" -- custom snippet completion defined in lua/snipcomp.lua
 
 -- show line numbers and highlight cursor line number
 vim.opt.number = true
@@ -48,7 +48,7 @@ vim.opt.cursorlineopt = "number"
 vim.opt.spell = true
 vim.opt.spelllang = {"en_us", "de_de", "cjk"}
 vim.opt.spellfile = vim.fn.expand("~/.local/share/nvim/site/spell/spf.%s.add"):format(vim.o.encoding)
-vim.opt.thesaurusfunc = "v:lua.vim.openoffice.thesaurusfunc" -- support openoffice thesauri, see plugin/thesaurus.lua
+vim.opt.thesaurusfunc = "v:lua.require'mythes'" -- support openoffice thesauri, see lua/mythes.lua
 vim.opt.thesaurus = {
   -- archlinux packages extra/mythes-{en,de,..}
   "/usr/share/mythes/th_en_US_v2.dat",

@@ -8,7 +8,7 @@
 -- lazy load LuaSnip, only useful when LuaSnip wasn't already loaded elsewhere
 local luasnip = setmetatable({}, {__index = function(_, key) return require("luasnip")[key] end})
 local au = require("au")
-vim.luasnip = {}
+local snipcomp = {}
 
 local function snippet2completion(snippet)
   return {
@@ -26,9 +26,9 @@ local function snippetfilter(line_to_cursor, base)
   end
 end
 
--- Set 'completefunc' or 'omnifunc' to 'v:lua.vim.luasnip.completefunc' to get
+-- Set 'completefunc' or 'omnifunc' to "v:lua.require'snipcomp'.completefunc" to get
 -- completion.
-function vim.luasnip.completefunc(findstart, base)
+function snipcomp.completefunc(findstart, base)
   local line, col = vim.api.nvim_get_current_line(), vim.api.nvim_win_get_cursor(0)[2]
   local line_to_cursor = line:sub(1, col)
 
@@ -49,3 +49,5 @@ function luasnip_completion_expand.CompleteDone()
     luasnip.expand()
   end
 end
+
+return setmetatable(snipcomp, {__call = function(_, ...) return snipcomp.completefunc(...) end})
