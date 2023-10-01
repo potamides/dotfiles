@@ -1,6 +1,8 @@
 <a href="#readme">
-  <h1><img alt="🍙 Dotfiles" width="100%" src="https://user-images.githubusercontent.com/53401822/162452560-4addbc36-c894-47b0-8479-c99e7fb5818c.svg"/></h1>
+  <img alt="🍙 Dotfiles" width="100%" src="https://user-images.githubusercontent.com/53401822/162452560-4addbc36-c894-47b0-8479-c99e7fb5818c.svg"/>
 </a>
+
+---
 
 This repository contains my personal
 [dotfiles](https://wiki.archlinux.org/title/Dotfiles) for most of the programs
