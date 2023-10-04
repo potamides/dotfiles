@@ -92,8 +92,10 @@ vim.g.markdown_fenced_languages = {"bash=sh", "python", "lua"}
 vim.g.netrw_banner = 0
 vim.g.netrw_liststyle = 3
 vim.g.netrw_browse_split = 4
-vim.g.netrw_winsize = 25
+vim.g.netrw_winsize = -30
 vim.g.netrw_browsex_viewer = "xdg-open"
+vim.g.netrw_list_hide = [[\(^\|\s\s\)\zs\.\S\+]]
+vim.g.netrw_sort_options = "i"
 
 vim.g.python3_host_prog = "/usr/bin/python3"   -- use system python (useful when working with virualenvs)
 vim.g.vga_compatible = vim.env.TERM == "linux" -- VGA textmode fallback (with CP437 character set) for legacy terminals
@@ -185,6 +187,9 @@ map("n", "<leader>ll", vim.diagnostic.setloclist, opts)
 map("n", "<leader>ld", vim.diagnostic.open_float, opts)
 map("n", "[d",         vim.diagnostic.goto_prev, opts)
 map("n", "]d",         vim.diagnostic.goto_next, opts)
+
+-- toggle netrw file explorer
+map("n", "<leader>fe", vim.cmd.Lexplore, opts)
 
 -- language server mappings
 local function lsp_mappings(_, buf)
