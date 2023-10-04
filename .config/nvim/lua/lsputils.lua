@@ -11,7 +11,7 @@ function lspsetup.setup(server, config)
   if server ~= nil and not server.manager then
     server.setup(config)
     if server.autostart then
-      server.manager.try_add_wrapper(vim.api.nvim_get_current_buf())
+      server.manager:try_add_wrapper(vim.api.nvim_get_current_buf())
     end
   end
 end

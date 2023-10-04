@@ -6,6 +6,9 @@ local lsputil = require('lspconfig.util')
 local luasnip = setmetatable({}, {__index = function(_, key) return require("luasnip")[key] end})
 local au = require("au")
 
+-- enable snippets for all language servers by default
+lsputil.default_config.capabilities.textDocument.completion.completionItem.snippetSupport = true
+
 local luasnip_completion_expand = au("luasnip_lsp_completion_expand")
 function luasnip_completion_expand.CompleteDonePre()
   local lsp_info = vim.tbl_get(vim.v.completed_item, 'user_data', 'nvim', 'lsp', 'completion_item')
@@ -18,8 +21,3 @@ function luasnip_completion_expand.CompleteDonePre()
     luasnip.lsp_expand(lsp_info.insertText or lsp_info.textEdit.newText)
   end
 end
-
--- enable snippets for all language servers by default
-lsputil.on_setup = lsputil.add_hook_before(lsputil.on_setup, function(config)
-  config.capabilities.textDocument.completion.completionItem.snippetSupport = true
-end)
