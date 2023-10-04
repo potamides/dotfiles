@@ -241,10 +241,10 @@ autopaq.bootstrap{
   "tpope/vim-fugitive",
   "potamides/pantran.nvim",
   "lewis6991/gitsigns.nvim",
-  "L3MON4D3/LuaSnip",
   "nvim-lualine/lualine.nvim",
   "nvim-telescope/telescope.nvim",
   "ellisonleao/gruvbox.nvim",
+  {"L3MON4D3/LuaSnip", run = "make install_jsregexp"},
 
   -- dependencies
   "rafamadriz/friendly-snippets",                             -- LuaSnip
@@ -324,7 +324,7 @@ statusline.setup{
   }
 }
 
--- Quick-Scope
+-- quick-scope
 -------------------------------------------------------------------------------
 local quickscope = au{"user_quickscope", LoadPost={"ColorScheme", "VimEnter"}}
 vim.g.qs_highlight_on_keys = {"f", "F", "t", "T"}
@@ -340,7 +340,7 @@ function quickscope.LoadPost()
   end
 end
 
--- Gitsigns
+-- gitsigns.nvim
 -------------------------------------------------------------------------------
 local gitsigns = require("gitsigns")
 
@@ -374,13 +374,11 @@ gitsigns.setup{
     -- Actions
     map({'n', 'v'}, '<leader>hr', ':Gitsigns reset_hunk<CR>', bufopts)
     map('n', '<leader>hp', gitsigns.preview_hunk, bufopts)
-
-    -- highlight deleted lines in hunk previews in gitsigns.nvim
-    vim.api.nvim_set_hl(0, "GitSignsDeleteLn", {link = "GitSignsDeleteVirtLn"})
+    map('n', '<leader>bl', gitsigns.blame_line, bufopts)
   end
 }
 
--- Colorizer
+-- nvim-colorizer.lua
 ------------------------------------------------------------------------------
 local colorizer = require("colorizer")
 
@@ -393,8 +391,7 @@ colorizer.setup{
   }
 }
 
-
--- Lsp-config
+-- nvim-lspconfig
 -------------------------------------------------------------------------------
 local lsputil = require('lspconfig.util')
 
@@ -403,7 +400,7 @@ lsputil.on_setup = lsputil.add_hook_before(lsputil.on_setup, function(config)
   config.on_attach = lsputil.add_hook_before(config.on_attach, lsp_mappings)
 end)
 
--- Nvim-DAP
+-- nvim-dap
 -------------------------------------------------------------------------------
 local dap = require("dap")
 local dapterm = require("term").instance()
@@ -460,12 +457,12 @@ end
 -- we only define LuaSnip mappings for jumping around, expansion is handled by
 -- insert mode completion (see help-page for 'ins-completion' and
 -- 'completefunc' defined above).
-map({"i", "s"}, "<C-s><C-n>", function() luasnip.jump(1) end, opts)
-map({"i", "s"}, "<C-s><C-p>", function() luasnip.jump(-1) end, opts)
-map({"i", "s"}, "<C-s><C-j>", function() try_change_choice(1) end, opts)
-map({"i", "s"}, "<C-s><C-k>", function() try_change_choice(-1) end, opts)
+map({"n", "i", "s"}, "<C-s><C-n>", function() luasnip.jump(1) end, opts)
+map({"n", "i", "s"}, "<C-s><C-p>", function() luasnip.jump(-1) end, opts)
+map({"n", "i", "s"}, "<C-s><C-j>", function() try_change_choice(1) end, opts)
+map({"n", "i", "s"}, "<C-s><C-k>", function() try_change_choice(-1) end, opts)
 
--- Telescope
+-- telescope.nvim
 -------------------------------------------------------------------------------
 local telescope = require("telescope")
 local builtin = lazy_require("telescope.builtin")
@@ -486,11 +483,12 @@ local function telescope_cwd(picker, args)
 end
 
 map("n", "<leader>ff", function() telescope_cwd('find_files', {hidden = true}) end, opts)
-map("n", "<leader>lg", function() telescope_cwd('live_grep') end, opts)
+map("n", "<leader>gr", function() telescope_cwd('live_grep') end, opts)
 map("n", "<leader>ds", builtin.lsp_document_symbols, opts)
 map("n", "<leader>ws", builtin.lsp_dynamic_workspace_symbols, opts)
+map("n", "<leader>ts", "<cmd>Telescope<cr>", opts)
 
--- Pantran
+-- pantran.nvim
 -------------------------------------------------------------------------------
 local pantran = require("pantran")
 
@@ -508,9 +506,8 @@ pantran.setup{
   }
 }
 
-map("n", "<leader>tr", pantran.motion_translate, {expr = true, unpack(opts)})
+map({"n", "v"}, "<leader>tr", pantran.motion_translate, {expr = true, unpack(opts)})
 map("n", "<leader>trr", function() return pantran.motion_translate() .. "_" end, {expr = true, unpack(opts)})
-map("x", "<leader>tr", pantran.motion_translate, {expr = true, unpack(opts)})
 
 -- }}}
 -- vim: foldmethod=marker foldmarker=--\ {{{,--\ }}}
