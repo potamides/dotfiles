@@ -242,14 +242,13 @@ autopaq.bootstrap{
   "potamides/pantran.nvim",
   "lewis6991/gitsigns.nvim",
   "L3MON4D3/LuaSnip",
-  "itchyny/lightline.vim",
+  "nvim-lualine/lualine.nvim",
   "nvim-telescope/telescope.nvim",
-  "gruvbox-community/gruvbox",
+  "ellisonleao/gruvbox.nvim",
 
   -- dependencies
   "rafamadriz/friendly-snippets",                             -- LuaSnip
-  "mgee/lightline-bufferline",                                -- lightline.nvim
-  "kyazdani42/nvim-web-devicons",                             -- lightline.nvim
+  "nvim-tree/nvim-web-devicons",                              -- lualine.nvim, telescope.nvim
   "nvim-lua/plenary.nvim",                                    -- gitsigns.nvim, telescope.nvim
   {"nvim-telescope/telescope-fzf-native.nvim", run = "make"}, -- telescope.nvim
 }
@@ -264,94 +263,66 @@ local function lazy_require(module)
   })
 end
 
--- Gruvbox
+-- gruvbox.nvim
 -------------------------------------------------------------------------------
-vim.g.gruvbox_contrast_dark = "medium"
-vim.g.gruvbox_italic = true
-vim.g.gruvbox_invert_selection = false
+local gruvbox = require("gruvbox")
 
--- only enable this color scheme when supported by terminal
-if not vim.g.vga_compatible then
-  vim.cmd.colorscheme("groovebox") -- customized gruvbox in colors/groovebox.lua
-end
+gruvbox.setup{
+  italic = {strings = false},
+  overrides = {
+    -- diagnostic highlighting
+    DiagnosticHint            = {link = "GruvboxPurple"},
+    DiagnosticSignHint        = {link = "GruvboxPurpleSign"},
+    DiagnosticUnderlineHint   = {link = "GruvboxPurpleUnderline"},
+    DiagnosticFloatingHint    = {link = "GruvboxPurple"},
+    DiagnosticVirtualTextHint = {link = "GruvboxPurple"},
 
--- Lightline
--------------------------------------------------------------------------------
-local components = require("components")
-local devicons = require("nvim-web-devicons")
+    -- spelling highlighting
+    SpellBad  = {link = "GruvboxBlueUnderline"},
+    SpellCap  = {link = "GruvboxOrangeUnderline"},
+    SpellRare = {link = "GruvboxGreenUnderline"},
 
-local function vga_fallback(regular, fallback)
-  return vim.g.vga_compatible and fallback or regular
-end
+    -- syntax highlighting
+    pythonOperator = {link = "Operator"},
 
-local function get_icon()
-  return devicons.get_icon(vim.fn.expand("%:t"), nil, {default = true})
-end
-
--- signs for custom lightline components defined in lua/components.lua
-components.setup{
-  signs = {
-    edit     = vga_fallback("✎", "+"),
-    lock     = vga_fallback("", "-"),
-    git      = vga_fallback("", "↨"),
-    error    = vga_fallback("", "‼"),
-    warning  = vga_fallback("", "!"),
-    filetype = vga_fallback(get_icon, "≡"),
-    spinner  = vga_fallback({'⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'}, {"-", "\\", "|", "/"})
+    -- https://github.com/ellisonleao/gruvbox.nvim/issues/283
+    debugPC = {bg = gruvbox.palette.faded_blue}
   }
 }
 
-vim.g.lightline = {
-  -- use same colorscheme as the one loaded by neovim with sensible fallback
-  colorscheme = vim.g.colors_name or "16color",
-  -- register new components
-  component = {
-    lineinfo     = vga_fallback("", "↕") .. " %3l:%-2c",
-    fileencoding = string.format('%%{%s() ? "" : &fenc!=#""?&fenc:&enc}', components.string.is_narrow),
-    fileformat   = string.format('%%{%s() ? "" : &ff}', components.string.is_narrow)
+-- only enable this color scheme when supported by terminal
+if not vim.g.vga_compatible then
+  vim.cmd.colorscheme("gruvbox")
+end
+
+-- lualine.nvim
+-------------------------------------------------------------------------------
+local statusline = require("statusline")
+
+local function vga_fallback(regular, fallback)
+  if vim.g.vga_compatible then return fallback else return regular end
+end
+
+statusline.setup{
+  theme = vim.g.colors_name or "16color",
+  icons_enabled = not vim.g.vga_compatible,
+  separators = {
+    component = { left = '│', right = '│'},
+    section = { left = '▌', right = '▐'},
   },
-  component_function = {
-    filename  = components.string.filename,
-    gitbranch = components.narrow.string.gitbranch,
-    progress  = components.string.progress,
-    warnings  = components.string.warnings,
-    errors    = components.string.errors
-  },
-  component_expand = {
-    buffers = "lightline#bufferline#buffers",
-    rtabs   = "{ -> reverse(lightline#tabs())}"
-  },
-  -- adjust components
-  component_type = {
-    buffers = "tabsel",
-    rtabs   = "tabsel"
-  },
-  component_raw = {
-    buffers = true
-  },
-  component_visible_condition = {
-    fileencoding = string.format("!%s()", components.string.is_narrow),
-    fileformat   = string.format("!%s()", components.string.is_narrow)
-  },
-  -- modify statusline and tabline
-  separator    = {left = "▌", right = "▐"},
-  subseparator = {left = "│", right = "│"},
-  active       = {left = {{"mode", "paste"}, {"filename"}, {"progress", "gitbranch", "errors", "warnings"}}},
-  tabline      = {left = {{"buffers"}}, right = {{"rtabs"}}},
-  tab          = {active = {"tabnum"}, inactive = {"tabnum"}}
+  symbols = {
+    edit    = vga_fallback("✎"),
+    lock    = vga_fallback(""),
+    git     = vga_fallback(""),
+    line    = vga_fallback(""),
+    error   = vga_fallback(""),
+    warning = vga_fallback(""),
+    info    = vga_fallback(""),
+    hint    = vga_fallback(""),
+    dap     = vga_fallback(""),
+    spinner = vga_fallback{'⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'}
+  }
 }
-
-vim.g["lightline#bufferline#unicode_symbols"] = not vim.g.vga_compatible
-vim.g["lightline#bufferline#enable_devicons"] = not vim.g.vga_compatible
-vim.g["lightline#bufferline#unnamed"]         = "[No Name]"
-vim.g["lightline#bufferline#clickable"]       = true
-
--- the minimum number of buffers & tabs needed to automatically show the tabline
-vim.g["lightline#bufferline#min_buffer_count"] = 2
-vim.g["lightline#bufferline#min_tab_count"]    = 2
-
--- set default icon to same as vim-devicons
-devicons.set_default_icon("")
 
 -- Quick-Scope
 -------------------------------------------------------------------------------
