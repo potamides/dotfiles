@@ -243,6 +243,7 @@ autopaq.bootstrap{
   "lewis6991/gitsigns.nvim",
   "nvim-lualine/lualine.nvim",
   "nvim-telescope/telescope.nvim",
+  "robitx/gp.nvim",
   "ellisonleao/gruvbox.nvim",
   {"L3MON4D3/LuaSnip", run = "make install_jsregexp"},
 
@@ -508,6 +509,57 @@ pantran.setup{
 
 map({"n", "v"}, "<leader>tr", pantran.motion_translate, {expr = true, unpack(opts)})
 map("n", "<leader>trr", function() return pantran.motion_translate() .. "_" end, {expr = true, unpack(opts)})
+
+-- gp.nvim
+-------------------------------------------------------------------------------
+local gp = require("gp")
+
+gp.setup{
+  chat_user_prefix = "## User",
+  chat_assistant_prefix = "## Assistant",
+  command_prompt_prefix = "Prompt: ",
+  chat_confirm_delete = false,
+  chat_model = {model = "gpt-4", temperature = 0.7, top_p = 1},
+  command_model = {model = "gpt-4", temperature = 0.7, top_p = 1},
+  chat_shortcut_respond = {modes = {"n", "v"}, shortcut = "<cr>"},
+  chat_shortcut_delete = {modes = {"n", "v"}, shortcut = "<leader>gd"},
+  chat_shortcut_new = {modes = {"n", "v"}, shortcut = "<leader>gn"},
+}
+
+for mode, key in pairs{n = "<cmd>", v = ":"} do
+  map(mode, "<leader>gn", key .. "GpChatNew<cr>", opts)
+  map(mode, "<leader>go", key .. "GpChatToggle<cr>", opts)
+  map(mode, "<leader>gO", key .. "GpPopup<cr>", opts)
+  map(mode, "<leader>g/", key .. "GpChatFinder<cr>", opts)
+
+  map(mode, "<leader>gs", key .. "GpRewrite<cr>", opts)
+  map(mode, "<leader>gp", key .. "GpAppend<cr>", opts)
+  map(mode, "<leader>gP", key .. "GpPrepend<cr>", opts)
+
+  map(mode, "<leader>gx", "<cmd>GpStop<cr>", opts)
+end
+
+ -- see :h :map-operator
+local function motion_cmd(command)
+  return function()
+    vim.opt.operatorfunc = ([[{ -> execute("'[,']%s")}]]):format(command)
+    return 'g@'
+  end
+end
+
+map({"n", "v"}, "<leader>gI", motion_cmd("GpImplement"), {expr = true, unpack(opts)})
+map("n", "<leader>gII", function() return motion_cmd("GpImplement") .. "_" end, {expr = true, unpack(opts)})
+
+-- hack to modify style and behavior of popup window
+local create_popup = gp._H.create_popup
+function gp._H.create_popup(optbuf, title, ...)
+  local buf, win, close, resize = create_popup(optbuf, (" %s "):format(title), ...)
+  map("n", "<esc>", "<cmd>close<cr>", {buffer = buf, unpack(opts)})
+  vim.cmd.call{("setbufvar(%d, '&buflisted', 0)"):format(buf), mods={noautocmd=true}}
+  vim.api.nvim_win_set_option(win, "winhighlight",
+    "Normal:PantranNormal,FloatTitle:PantranTitle,FloatBorder:PantranBorder")
+  return buf, win, close, resize
+end
 
 -- }}}
 -- vim: foldmethod=marker foldmarker=--\ {{{,--\ }}}
