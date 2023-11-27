@@ -41,11 +41,12 @@ mode](https://en.wikipedia.org/wiki/VGA_text_mode) with [code page
 </a>
 
 ## Installation
-**Disclaimer:** My dotfiles are heavily customized to my own needs. I,
-therefore, advise everyone not to use this repository blindly. Instead, I
-recommend that you treat this project solely as a source of inspiration, or at
-least thoroughly check each relevant component before using it to avoid
-unexpected complications.
+> [!CAUTION]
+>My dotfiles are heavily customized to my own needs. I, therefore, advise
+>everyone not to use this repository blindly. Instead, I recommend that you
+>treat this project solely as a source of inspiration, or at least thoroughly
+>check each relevant component before using it to avoid unexpected
+>complications.
 
 If you just want to hack at your own leisure, this repository and its
 submodules can be cloned with the following command:
@@ -172,11 +173,11 @@ script to conveniently create `multipart/alternative` emails when the need
 arises.
 
 ### Weechat
->Weechat keeps a lot of separate configuration files, which contain both
->default options and options altered by the user. Also some of the files
->contain highly sensitive information. Combined with the fact, that weechat
->doesn't support standalone password managers to obtain secrets, this makes it
->hard to manage a weechat config with a dotfiles repository.
+Weechat keeps a lot of separate configuration files, which contain both default
+options and options altered by the user. Also some of the files contain highly
+sensitive information. Combined with the fact, that weechat doesn't support
+standalone password managers to obtain secrets, this makes it hard to manage a
+weechat config with a dotfiles repository.
 
 That's why I wrote the script
 [confload.py](.config/weechat/python/confload.py). It reads a configuration
