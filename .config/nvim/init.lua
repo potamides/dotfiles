@@ -245,16 +245,14 @@ autopaq.bootstrap{
   "potamides/pantran.nvim",
   "lewis6991/gitsigns.nvim",
   "nvim-lualine/lualine.nvim",
-  "nvim-telescope/telescope.nvim",
+  "ibhagwan/fzf-lua",
   "robitx/gp.nvim",
   "ellisonleao/gruvbox.nvim",
   {"L3MON4D3/LuaSnip", build = "make install_jsregexp"},
 
   -- dependencies
-  "rafamadriz/friendly-snippets",                             -- LuaSnip
-  "nvim-tree/nvim-web-devicons",                              -- lualine.nvim, telescope.nvim
-  "nvim-lua/plenary.nvim",                                    -- gitsigns.nvim, telescope.nvim
-  {"nvim-telescope/telescope-fzf-native.nvim", run = "make"}, -- telescope.nvim
+  "rafamadriz/friendly-snippets", -- LuaSnip
+  "nvim-tree/nvim-web-devicons",  -- lualine.nvim, fzf-lua
 }
 
 -- shorthand for updating packages with paq-nvim and showing (new) updates
@@ -471,31 +469,69 @@ map({"n", "i", "s"}, "<C-s><C-p>", function() luasnip.jump(-1) end, opts)
 map({"n", "i", "s"}, "<C-s><C-j>", function() try_change_choice(1) end, opts)
 map({"n", "i", "s"}, "<C-s><C-k>", function() try_change_choice(-1) end, opts)
 
--- telescope.nvim
+-- fzf-lua
 -------------------------------------------------------------------------------
-local telescope = require("telescope")
-local builtin = lazy_require("telescope.builtin")
+local fzf = require('fzf-lua')
 
-telescope.setup{
-  defaults = {
-    borderchars = {"─", "│", "─", "│", "┌", "┐", "┘", "└"}
-  }
+fzf.setup{
+  hls = {
+    title = "PantranTitle",
+    preview_title = "PantranTitle"
+  },
+  winopts = {
+    border = "single",
+    preview = {
+      scrollbar = false,
+      vertical = "up:45%",
+      winopts = {number = false}
+    },
+    on_close = function()
+      -- make lualine return to normal mode immediately
+      vim.api.nvim_input("<Ignore>")
+    end
+  },
+  diagnostics = {
+    signs = {
+      Error = {text = statusline.opts.symbols.error,   texthl = "DiagnosticError"},
+      Warn  = {text = statusline.opts.symbols.warning, texthl = "DiagnosticWarn"},
+      Info  = {text = statusline.opts.symbols.info,    texthl = "DiagnosticInfo"},
+      Hint  = {text = statusline.opts.symbols.hint,    texthl = "DiagnosticHint"},
+    }
+  },
+  lsp = {jump_to_single_result = true},
+  fzf_opts = {["--layout"] = "default"},
+  defaults = {file_icons = not vim.g.vga_compatible}
 }
 
-vim.api.nvim_set_hl(0, "TelescopeTitle", {link = "PantranTitle"})
-telescope.load_extension('fzf')
-
--- when a count N is given to a telescope mapping called through the following
+-- when a count N is given to a fzf mapping called through the following
 -- function, the search is started in the Nth parent directory
-local function telescope_cwd(picker, args)
-  builtin[picker](vim.tbl_extend("error", args or {}, {cwd = ("../"):rep(vim.v.count) .. "."}))
+local function fzf_cwd(picker, args)
+  local target_dir = vim.loop.fs_realpath(("../"):rep(vim.v.count) .. ".")
+  fzf[picker](vim.tbl_extend("error", args or {}, {cwd = target_dir}))
 end
 
-map("n", "<leader>ff", function() telescope_cwd('find_files', {hidden = true}) end, opts)
-map("n", "<leader>gr", function() telescope_cwd('live_grep') end, opts)
-map("n", "<leader>ds", builtin.lsp_document_symbols, opts)
-map("n", "<leader>ws", builtin.lsp_dynamic_workspace_symbols, opts)
-map("n", "<leader>ts", "<cmd>Telescope<cr>", opts)
+map("n", "<leader>ff", function() fzf_cwd('files') end, opts)
+map("n", "<leader>rg", function() fzf_cwd('live_grep') end, opts)
+map("n", "<leader>ds", fzf.lsp_document_symbols, opts)
+map("n", "<leader>ws", fzf.lsp_live_workspace_symbols, opts)
+map("n", "<leader>fz", fzf.builtin, opts)
+
+-- if fzf binary is available patch ui.select and some previous mappings
+if vim.fn.executable("fzf") == 1 then
+  fzf.register_ui_select()
+  map("n", "<leader>ll", fzf.diagnostics_document, opts)
+  map("n", "<leader>bs", fzf.dap_breakpoints, opts)
+
+  lsp_mappings = lsputil.add_hook_after(lsp_mappings, function(_, buf)
+    local bufopts = {buffer = buf, unpack(opts)}
+    map("n", "gd",         fzf.lsp_definitions, bufopts)
+    map("n", "gD",         fzf.lsp_declarations, bufopts)
+    map("n", "<leader>gi", fzf.lsp_implementations, bufopts)
+    map("n", "<leader>gt", fzf.lsp_typedefs, bufopts)
+    map("n", "<leader>ca", fzf.lsp_code_actions, bufopts)
+    map("n", "<leader>rf", fzf.lsp_references, bufopts)
+  end)
+end
 
 -- pantran.nvim
 -------------------------------------------------------------------------------
