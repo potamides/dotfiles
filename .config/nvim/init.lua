@@ -551,6 +551,7 @@ pantran.setup{
 
 map({"n", "v"}, "<leader>tr", pantran.motion_translate, {expr = true, unpack(opts)})
 map("n", "<leader>trr", function() return pantran.motion_translate() .. "_" end, {expr = true, unpack(opts)})
+map("n", "<leader>tro", vim.cmd.Pantran, opts)
 
 -- gp.nvim
 -------------------------------------------------------------------------------
