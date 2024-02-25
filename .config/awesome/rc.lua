@@ -520,7 +520,7 @@ modes.tag = gears.table.join(
     {
       description = "show all clients on current tag",
       pattern = {'s', 't'},
-      handler = function() clientmenu({}, true) end
+      handler = function() clientmenu({focusable = true}, true) end
     },
     {
       description = "hide all visible clients until keypress",
