@@ -300,11 +300,16 @@ end
 
 -- lualine.nvim
 -------------------------------------------------------------------------------
-local statusline = require("statusline")
+local statusline, devicons = require("statusline"), require("nvim-web-devicons")
 
 local function vga_fallback(regular, fallback)
   if vim.g.vga_compatible then return fallback else return regular end
 end
+
+devicons.setup{
+  default = true,
+  override = {default_icon = {icon = ""}}
+}
 
 statusline.setup{
   theme = vim.g.colors_name or "16color",

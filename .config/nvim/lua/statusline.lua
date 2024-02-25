@@ -7,7 +7,6 @@ local lualine = require("lualine")
 local component = require("lualine.component")
 local buffer = require("lualine.components.buffers.buffer")
 local gruvbox_dark = require("lualine.themes.gruvbox_dark")
-local devicons = require("nvim-web-devicons")
 local palette = require("gruvbox").palette
 
 local patches, components = {}, {}
@@ -45,15 +44,19 @@ end
 
 -- By default, lualine hides unlisted buffers, but it makes an exception when
 -- the unlisted buffer is the current one. This hack removes this exception and
--- make the behavior more similar to lightline-bufferline.
-function patches.buffer()
+-- makes the behavior more similar to lightline-bufferline.
+function patches.buffer(opts)
   local render, name = buffer.render, buffer.name
   function buffer:render(...)
     if is_listed(self.bufnr) then
-      return render(self, ...)
-    else
-      self.len = 0
+      local line, more = render(self, ...), opts.symbols.more
+      if self.ellipse and more then
+        self.len = self.len - 3 + vim.fn.strchars(more)
+        line = line:gsub('%.%.%.(%s%%T)$', more .. '%1')
+      end
+      return line
     end
+    self.len = 0
   end
   function buffer:name(...)
     local bufname = name(self, ...)
@@ -115,14 +118,19 @@ function components:setup(opts)
   self.dap = {function() return require("dap").status() end, icon = opts.symbols.dap}
   self.tabs = {
     "tabs",
-    max_length = function() return vim.o.columns / 4 end,
+    tablen = 4,
+    show_modified_status = false,
+    max_length = function() return vim.o.columns end,
     tabs_color = {active = "lualine_z_normal", inactive = "lualine_b_normal"}
   }
   self.buffers = {
     "buffers",
-    max_length = function() return vim.o.columns * 3 / 4 end,
+    buflen = vim.fn.strchars(opts.symbols.more or "...") + 3,
     symbols = {alternate_file = "", modified = " " .. opts.symbols.edit},
-    buffers_color = {active = "lualine_z_normal", inactive = "lualine_b_normal"}
+    buffers_color = {active = "lualine_z_normal", inactive = "lualine_b_normal"},
+    max_length = function()
+      return vim.o.columns - self.buffers.buflen * 2 - self.tabs.tablen * vim.fn.tabpagenr("$")
+    end
   }
   self.diagnostics = {
     "diagnostics",
@@ -136,7 +144,7 @@ function components:setup(opts)
 
   if opts.icons_enabled then
     function self.filename.fmt(str)
-      return ("%s %s"):format(get_icon(), str)
+      return vim.trim(("%s %s"):format(get_icon(), str))
     end
   end
 
@@ -145,6 +153,7 @@ function components:setup(opts)
     self.super.init(self, ...)
     self.index = 1
     self.timer = vim.loop.new_timer()
+    self.timeout = 75
   end
 
   function lsp_progress.update_status()
@@ -158,7 +167,7 @@ function components:setup(opts)
   function lsp_progress:apply_icon()
     if #self.status > 0 then
       if self.timer:get_due_in() == 0 then
-        self.timer:start(75, 0, vim.schedule_wrap(function()
+        self.timer:start(self.timeout, 0, vim.schedule_wrap(function()
           self.index = self.index % #opts.symbols.spinner + 1
           lualine.refresh{scope = "window"}
         end))
@@ -170,18 +179,15 @@ function components:setup(opts)
   end
 
   self.lsp_progress = {lsp_progress}
-  setmetatable(self, {__index = function(tbl, key)
-    tbl[key] = {key}
-    return tbl[key]
-  end})
+  setmetatable(self, {__index = function(_, key) return key end})
 end
 
 function statusline.setup(opts)
   opts = vim.tbl_deep_extend("force", statusline.default_opts, opts or {})
+  statusline.opts = opts
 
   components:setup(opts)
-  devicons.setup{default = true, override = {default_icon = {icon = ""}}}
-  patches.buffer()
+  patches.buffer(opts)
   patches.colorscheme()
 
   -- hide components when the window is narrow
@@ -220,7 +226,7 @@ function statusline.setup(opts)
     sections = {
       lualine_a = {components.mode},
       lualine_b = {components.filename},
-      lualine_c = {hide(components.branch), components.lsp_progress, components.dap, components.diagnostics},
+      lualine_c = {hide(components.branch), components.lsp_progress, hide(components.dap), components.diagnostics},
       lualine_x = {hide(components.fileformat), hide(components.encoding), components.filetype},
       lualine_y = {components.progress},
       lualine_z = {components.location}
