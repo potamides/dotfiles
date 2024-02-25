@@ -190,8 +190,9 @@ map("n", "<leader>ld", vim.diagnostic.open_float, opts)
 map("n", "[d",         vim.diagnostic.goto_prev, opts)
 map("n", "]d",         vim.diagnostic.goto_next, opts)
 
--- toggle netrw file explorer
+-- open netrw file explorer and terminal
 map("n", "<leader>fe", vim.cmd.Lexplore, opts)
+map("n", "<leader>tm", vim.cmd.Terminal, opts)
 
 -- language server mappings
 local function lsp_mappings(_, buf)
