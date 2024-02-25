@@ -83,16 +83,18 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 -- syntax related global variables
+vim.g.is_bash	= true
 vim.g.sh_no_error = true
 vim.g.readline_has_bash = true
 vim.g.tex_flavor = "latex"
-vim.g.markdown_fenced_languages = {"sh", "python", "lua", "tex"}
+vim.g.markdown_fenced_languages = {"python", "lua", "sh", "bash", "tex", "latex=tex"}
 
 -- setup netrw and viewer for 'gx' mapping
 vim.g.netrw_banner = 0
 vim.g.netrw_liststyle = 3
 vim.g.netrw_browse_split = 4
 vim.g.netrw_winsize = -30
+vim.g.netrw_special_syntax = 1
 vim.g.netrw_browsex_viewer = "xdg-open"
 vim.g.netrw_list_hide = [[\(^\|\s\s\)\zs\.\S\+]]
 vim.g.netrw_sort_options = "i"
