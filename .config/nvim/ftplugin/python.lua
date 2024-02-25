@@ -22,7 +22,7 @@ if not vim.b.did_user_ftplugin then
       console = "integratedTerminal",
       program = "${file}", -- launch the current file...
       cwd = "${fileDirname}", -- ...in its directory
-      --justMyCode = false
+      justMyCode = false
     }
   }
 
@@ -31,7 +31,7 @@ if not vim.b.did_user_ftplugin then
       python = {
         analysis = {
           autoSearchPaths = true,
-          autoImportCompletions  = false, -- doesn't work with omnifunc
+          autoImportCompletions  = true, -- doesn't work with omnifunc
           useLibraryCodeForTypes = true, -- can get slow for big projects
           diagnosticMode = "workspace"
         }
