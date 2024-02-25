@@ -233,8 +233,8 @@ end
 -------------------------------------------------------------------------------
 local autopaq = require("autopaq")
 
--- small, custom wrapper around paq-nvim which installs paq
--- automatically when it is missing
+-- small, custom wrapper around paq-nvim which installs paq automatically when
+-- it is missing
 autopaq.bootstrap{
   "savq/paq-nvim",
   "unblevable/quick-scope",
@@ -248,7 +248,7 @@ autopaq.bootstrap{
   "nvim-telescope/telescope.nvim",
   "robitx/gp.nvim",
   "ellisonleao/gruvbox.nvim",
-  {"L3MON4D3/LuaSnip", run = "make install_jsregexp"},
+  {"L3MON4D3/LuaSnip", build = "make install_jsregexp"},
 
   -- dependencies
   "rafamadriz/friendly-snippets",                             -- LuaSnip
