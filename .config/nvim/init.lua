@@ -331,11 +331,11 @@ statusline.setup{
 
 -- quick-scope
 -------------------------------------------------------------------------------
-local quickscope = au{"user_quickscope", LoadPost={"ColorScheme", "VimEnter"}}
+local quickscope = au{"user_quickscope", LoadPost = {"ColorScheme", "VimEnter"}}
 vim.g.qs_highlight_on_keys = {"f", "F", "t", "T"}
 
 function quickscope.LoadPost()
-  for group, color in pairs({QuickScopePrimary=10, QuickScopeSecondary=13}) do
+  for group, color in pairs{QuickScopePrimary = 10, QuickScopeSecondary = 13} do
     vim.api.nvim_set_hl(0, group, {
       sp = vim.g["terminal_color_" .. color],
       ctermfg = color,
