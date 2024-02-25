@@ -1,0 +1,152 @@
+## general
+# -----------------------------------------------------------------------------
+
+[env]
+WINIT_X11_SCALE_FACTOR = "1.0"
+
+[font]
+size = 13
+
+[scrolling]
+history = 10000
+
+[mouse]
+hide_when_typing = true
+
+[cursor]
+vi_mode_style = "Block"
+
+## keybindings
+# -----------------------------------------------------------------------------
+
+[[keyboard.bindings]]
+action = "SearchForward"
+key = "R"
+mode = "~Search"
+mods = "Control|Shift"
+
+[[keyboard.bindings]]
+action = "CreateNewWindow"
+key = "T"
+mods = "Control|Shift"
+
+[[keyboard.bindings]]
+key = "F"
+mods = "Control|Shift"
+command.program = "sh"
+command.args = ["-c", "alacritty msg create-window --command ranger \"$PWD\""]
+
+[[hints.enabled]]
+binding = { key = "X", mods = "Control|Shift" } # "U" conflicts with fcitx
+command = "xdg-open"
+hyperlinks = true
+post_processing = true
+mouse.enabled = true
+regex = """
+(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|file:|
+git://|ssh:|ftp://)[^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`]+"""
+
+
+## colors
+# -----------------------------------------------------------------------------
+
+[colors]
+draw_bold_text_with_bright_colors = true
+indexed_colors = [
+  { index = 24, color = "#076678" },
+  { index = 66, color = "#458588" },
+  { index = 72, color = "#689d6a" },
+  { index = 88, color = "#9d0006" },
+  { index = 96, color = "#8f3f71" },
+  { index = 100, color = "#79740e" },
+  { index = 106, color = "#98971a" },
+  { index = 108, color = "#8ec07c" },
+  { index = 109, color = "#83a598" },
+  { index = 124, color = "#cc241d" },
+  { index = 130, color = "#af3a03" },
+  { index = 132, color = "#b16286" },
+  { index = 136, color = "#b57614" },
+  { index = 142, color = "#b8bb26" },
+  { index = 166, color = "#d65d0e" },
+  { index = 167, color = "#fb4934" },
+  { index = 172, color = "#d79921" },
+  { index = 175, color = "#d3869b" },
+  { index = 208, color = "#fe8019" },
+  { index = 214, color = "#fabd2f" },
+  { index = 223, color = "#ebdbb2" },
+  { index = 228, color = "#f2e5bc" },
+  { index = 229, color = "#fbf1c7" },
+  { index = 230, color = "#f9f5d7" },
+  { index = 234, color = "#1d2021" },
+  { index = 235, color = "#282828" },
+  { index = 236, color = "#32302f" },
+  { index = 237, color = "#3c3836" },
+  { index = 239, color = "#504945" },
+  { index = 241, color = "#665c54" },
+  { index = 243, color = "#7c6f64" },
+  { index = 244, color = "#928374" },
+  { index = 245, color = "#928374" },
+  { index = 246, color = "#a89984" },
+  { index = 248, color = "#bdae93" },
+  { index = 250, color = "#d5c4a1" }
+]
+
+[colors.normal]
+black = "#282828"
+blue = "#458588"
+cyan = "#689d6a"
+green = "#98971a"
+magenta = "#b16286"
+red = "#cc241d"
+white = "#a89984"
+yellow = "#d79921"
+
+[colors.bright]
+black = "#928374"
+blue = "#83a598"
+cyan = "#8ec07c"
+green = "#b8bb26"
+magenta = "#d3869b"
+red = "#fb4934"
+white = "#ebdbb2"
+yellow = "#fabd2f"
+
+[colors.primary]
+background = "#282828"
+foreground = "#ebdbb2"
+
+[colors.cursor]
+cursor = "CellForeground"
+text = "CellBackground"
+
+[colors.vi_mode_cursor]
+cursor = "CellForeground"
+text = "CellBackground"
+
+[colors.selection]
+background = "#665c54"
+text = "CellForeground"
+
+[colors.search.matches]
+background = "#fabd2f"
+foreground = "#282828"
+
+[colors.search.focused_match]
+background = "#fe8019"
+foreground = "#282828"
+
+[colors.hints.start]
+background = "#fabd2f"
+foreground = "#282828"
+
+[colors.line_indicator]
+background = "None"
+foreground = "None"
+
+[colors.footer_bar]
+background = "#282828"
+foreground = "#ebdbb2"
+
+[colors.hints.end]
+background = "#282828"
+foreground = "#fabd2f"
