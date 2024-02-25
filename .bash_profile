@@ -42,8 +42,7 @@ export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case --glob \
 # also use custom color configuration and keybindings
 export FZF_DEFAULT_OPTS="--color 16,fg:15,bg:0,hl:11,fg+:15,bg+:237,hl+:11 \
   --color info:12,prompt:248,spinner:11,pointer:12,marker:208,header:241 \
-  --color border:7 \
-  --bind ctrl-a:select-all,ctrl-d:deselect-all,ctrl-t:toggle-all"
+  --color border:7 --bind alt-a:toggle-all"
 
 # source environment variables which are not under version control
 if [[ -r ~/.bash_profile.local ]]; then
