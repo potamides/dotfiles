@@ -284,11 +284,8 @@ gruvbox.setup{
     SpellCap  = {link = "GruvboxOrangeUnderline"},
     SpellRare = {link = "GruvboxGreenUnderline"},
 
-    -- syntax highlighting
-    pythonOperator = {link = "Operator"},
-
-    -- https://github.com/ellisonleao/gruvbox.nvim/issues/283
-    debugPC = {bg = gruvbox.palette.faded_blue}
+    -- misc
+    NormalFloat = {link = "Pmenu"},
   }
 }
 
