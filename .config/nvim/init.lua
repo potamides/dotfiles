@@ -298,7 +298,7 @@ end
 -------------------------------------------------------------------------------
 local statusline, devicons = require("statusline"), require("nvim-web-devicons")
 
-local function vga_fallback(regular, fallback)
+local function vga(regular, fallback)
   if vim.g.vga_compatible then return fallback else return regular end
 end
 
@@ -315,16 +315,17 @@ statusline.setup{
     section = { left = '▌', right = '▐'},
   },
   symbols = {
-    edit    = vga_fallback("✎"),
-    lock    = vga_fallback(""),
-    git     = vga_fallback(""),
-    line    = vga_fallback(""),
-    error   = vga_fallback(""),
-    warning = vga_fallback(""),
-    info    = vga_fallback(""),
-    hint    = vga_fallback(""),
-    dap     = vga_fallback(""),
-    spinner = vga_fallback{'⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'}
+    edit    = vga("󰐕"),
+    lock    = vga(""),
+    git     = vga(""),
+    line    = vga(""),
+    error   = vga(""),
+    warning = vga(""),
+    info    = vga(""),
+    hint    = vga(""),
+    dap     = vga(""),
+    more    = vga("…"),
+    spinner = vga{'⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'}
   }
 }
 
@@ -350,12 +351,12 @@ local gitsigns = require("gitsigns")
 
 gitsigns.setup{
   signs = {
-    add = {hl = "GitSignsAdd", text = vga_fallback("▌", "+")},
-    change = {hl = "GitSignsChange", text = vga_fallback("▌", "≈")},
-    delete = {hl = "GitSignsDelete", text = vga_fallback("▖", "v")},
-    topdelete = {hl = "GitSignsDelete", text = vga_fallback("▘", "^")},
-    changedelete = {hl = "GitSignsChange", text = vga_fallback("▌", "±")},
-    untracked    = {hl = 'GitSignsAdd'   , text = vga_fallback("▌", "+")},
+    add = {hl = "DiagnosticOk", text = vga("▌", "+")},
+    change = {hl = "CocHintSign", text = vga("▌", "≈")},
+    delete = {hl = "CocErrorSign", text = vga("▖", "v")},
+    topdelete = {hl = "CocErrorSign", text = vga("▘", "^")},
+    changedelete = {hl = "CocHintSign", text = vga("▌", "±")},
+    untracked    = {hl = 'DiagnosticOk', text = vga("▌", "+")},
   },
   preview_config = {
     border = "none"
@@ -410,11 +411,11 @@ local dap = require("dap")
 local dapterm = require("term").instance()
 
 vim.fn.sign_define{
-  {name = "DapBreakpoint", texthl = "debugBreakpoint"},
-  {name = "DapBreakpointCondition", texthl = "debugBreakpoint"},
-  {name = "DapLogPoint", texthl = "debugBreakpoint"},
-  {name = "DapBreakpointRejected", texthl = "debugBreakpoint"},
-  {name = "DapStopped", texthl = "debugBreakpoint"}
+  {name = "DapBreakpoint", texthl = "debugBreakpoint", text = vga("")},
+  {name = "DapBreakpointCondition", texthl = "debugBreakpoint", text = vga("")},
+  {name = "DapLogPoint", texthl = "debugBreakpoint", text = vga("")},
+  {name = "DapBreakpointRejected", texthl = "debugBreakpoint", text = vga("")},
+  {name = "DapStopped", texthl = "debugBreakpoint", text = vga("󰁕")}
 }
 
 -- integrate our own terminal wrapper with dap
