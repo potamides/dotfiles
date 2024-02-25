@@ -32,8 +32,12 @@
   process = git-lfs filter-process
   required = true
 [url "ssh://git@github.com/"]
-	pushInsteadOf = https://github.com/
+  pushInsteadOf = https://github.com/
 [url "ssh://git@gitlab.com/"]
-	pushInsteadOf = https://gitlab.com/
+  pushInsteadOf = https://gitlab.com/
+[url "ssh://git@hf.co/"]
+  pushInsteadOf = https://huggingface.co/
 [include]
   path = config.local
+[protocol "file"]
+	allow = always
