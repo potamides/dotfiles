@@ -160,6 +160,9 @@ function view.BufWinEnter()
   end
 end
 
+-- enable syntax highlighting for bash's edit-and-execute-command
+vim.filetype.add{pattern = {["bash%-fc%.%w+"] = "sh"}}
+
 -- Commands
 -------------------------------------------------------------------------------
 local cmd = vim.api.nvim_create_user_command
