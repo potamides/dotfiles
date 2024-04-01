@@ -115,21 +115,6 @@ alias tron='ssh sshtron.zachlatta.com'
 alias nyancat="mpv --no-terminal --no-video --loop ytdl://QH2-TGUlwu4 & \
   telnet rainbowcat.acc.umu.se; kill %%"
 
-## Bash-completions
-# -----------------------------------------------------------------------------
-
-if [[ -r /usr/share/bash-completion/bash_completion ]]; then
-  source /usr/share/bash-completion/bash_completion
-fi
-
-# external alias completion, progcomp_alias shopt builtin sadly doesn't work
-# https://github.com/scop/bash-completion/issues/383
-if [[ -r /usr/share/bash-complete-alias/complete_alias ]]; then
-  COMPAL_AUTO_UNMASK=1
-  source /usr/share/bash-complete-alias/complete_alias
-  complete -F _complete_alias "${!BASH_ALIASES[@]}"
-fi
-
 ## Functions
 # -----------------------------------------------------------------------------
 
@@ -189,56 +174,56 @@ function ncp(){
 ## FZF config for interactive use
 # -----------------------------------------------------------------------------
 
-if [[ -r /usr/share/fzf/key-bindings.bash && \
-      -r /usr/share/fzf/completion.bash ]]; then
-  source /usr/share/fzf/key-bindings.bash
-  source /usr/share/fzf/completion.bash
-
-  # fzf preserves previous completions, but this would break complete-alias
-  for cmd in "${!BASH_ALIASES[@]}"; do
-    unset "_fzf_orig_completion_$cmd"
-  done
-
+if [[ -n $(type -t fzf) ]]; then
+  eval "$(fzf --bash)"
   # syntax highlight matches and preview directories
   FZF_COMPLETION_OPTS="--preview '{ pygmentize -f terminal {} || cat {} ||
     tree -C {}; } 2> /dev/null | head -200'"
-
   # To apply the command to CTRL-T as well
   FZF_CTRL_T_OPTS="$FZF_COMPLETION_OPTS"
-  FZF_CTRL_T_COMMAND=_fzf_compgen_path
-
   # Preview directories with tree
   FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
-  FZF_ALT_C_COMMAND=_fzf_compgen_dir
-
   # preview long commands with "?"
   FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap \
     --bind '?:toggle-preview'"
 
-  # Use rg instead of the default find command for listing path candidates.
-  function _fzf_compgen_path(){
-    eval "$FZF_DEFAULT_COMMAND" '"${1-.}"' 2> /dev/null
-  }
+  # https://github.com/junegunn/fzf/blob/master/ADVANCED.md#ripgrep-integration
+  function lgrep(){
+    rm -f /tmp/rg-fzf-{r,f}
+    local rg_prefix="rg --column --line-number --no-heading --color=always \
+      --smart-case --hidden --glob '!{.git,node_modules,.venv}'"
+    local switch='%s(change)+change-prompt(%s> )+%s+transform-query: \
+      echo \{q} > /tmp/rg-fzf-%s; cat /tmp/rg-fzf-%s\n'
 
-  # Use rg to generate the list for directory completion
-  function _fzf_compgen_dir(){
-    eval "$FZF_DEFAULT_COMMAND" --null '"${1-.}"' 2> /dev/null |
-      xargs -0 dirname | awk '!h[$0]++'
+    : | fzf --ansi --multi --disabled --query "${*:-}" \
+      --bind "start:reload:$rg_prefix {q} || true" \
+      --bind "change:reload:sleep 0.1; $rg_prefix {q} || true" \
+      --bind "ctrl-g:transform:[[ ! \$FZF_PROMPT =~ regex ]] &&
+        printf ${switch@Q} rebind regex disable-search f r ||
+        printf ${switch@Q} unbind fuzzy enable-search r f" \
+      --color "hl:-1:underline,hl+:-1:underline:reverse" \
+      --prompt 'regex> ' \
+      --delimiter : \
+      --header 'ctrl-g to switch between fuzzy/regex search' \
+      --preview "pygmentize -f terminal {1} || cat {1}" \
+      --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
+      --bind "enter:become($EDITOR {+1} +{2})"
   }
+fi
 
-  # Functions which make use of fzf but are not internally used by it:
-  # Search file contents with fzf and ripgrep
-  function fif(){
-    eval "${FZF_DEFAULT_COMMAND/--files}" -l --no-messages '"${@}"' |
-      fzf --exit-0 --multi --preview "pygmentize -f terminal {} 2> /dev/null |
-      ${FZF_DEFAULT_COMMAND/--files} --pretty --context 10 -- ${!#@Q} ||
-      ${FZF_DEFAULT_COMMAND/--files} --pretty --context 10 -- ${!#@Q} {}"
-  }
+## Bash-completions
+# -----------------------------------------------------------------------------
 
-  # Edit files found with fif in editor
-  function fifo(){
-    fif "$@" | xargs -rd "\n" "$EDITOR"
-  }
+if [[ -r /usr/share/bash-completion/bash_completion ]]; then
+  source /usr/share/bash-completion/bash_completion
+fi
+
+# external alias completion, progcomp_alias shopt builtin sadly doesn't work
+# https://github.com/scop/bash-completion/issues/383
+if [[ -r /usr/share/bash-complete-alias/complete_alias ]]; then
+  COMPAL_AUTO_UNMASK=1
+  source /usr/share/bash-complete-alias/complete_alias
+  complete -F _complete_alias "${!BASH_ALIASES[@]}"
 fi
 
 ## window title and current working directory

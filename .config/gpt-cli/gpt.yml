@@ -1,8 +1,0 @@
-show_price: False
-assistants:
-    general:
-      model: claude-2
-    bash:
-      model: claude-2
-    dev:
-      model: claude-2
