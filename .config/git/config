@@ -40,4 +40,4 @@
 [include]
   path = config.local
 [protocol "file"]
-	allow = always
+  allow = always
