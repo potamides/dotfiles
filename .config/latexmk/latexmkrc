@@ -8,7 +8,7 @@ $pdf_mode = 4;
 $out_dir = "build";
 
 # Use qpdfview as pdf viewer
-$pdf_previewer = 'start qpdfview --unique %S';
+$pdf_previewer = "start qpdfview --unique %S --instance pdf_$ENV{'WINDOWID'}";
 $pdf_update_method = 0;
 $always_view_file_via_temporary = 1;
 
