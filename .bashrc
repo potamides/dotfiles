@@ -115,6 +115,66 @@ alias tron='ssh sshtron.zachlatta.com'
 alias nyancat="mpv --no-terminal --no-video --loop ytdl://QH2-TGUlwu4 & \
   telnet rainbowcat.acc.umu.se; kill %%"
 
+## Bash-completions
+# -----------------------------------------------------------------------------
+
+if [[ -r /usr/share/bash-completion/bash_completion ]]; then
+  source /usr/share/bash-completion/bash_completion
+fi
+
+# sourcing order is important, see
+# https://github.com/cykerway/complete-alias/issues/46
+if [[ -n $(type -t fzf) ]]; then
+  eval "$(fzf --bash)"
+fi
+
+# external alias completion, progcomp_alias shopt builtin sadly doesn't work
+# https://github.com/scop/bash-completion/issues/383
+if [[ -r /usr/share/bash-complete-alias/complete_alias ]]; then
+  COMPAL_AUTO_UNMASK=1
+  source /usr/share/bash-complete-alias/complete_alias
+  complete -F _complete_alias "${!BASH_ALIASES[@]}"
+fi
+
+## FZF config for interactive use
+# -----------------------------------------------------------------------------
+
+if [[ -n $(type -t fzf) ]]; then
+  # syntax highlight matches and preview directories
+  FZF_COMPLETION_OPTS="--preview '{ pygmentize -f terminal {} || cat {} ||
+    tree -C {}; } 2> /dev/null | head -200'"
+  # To apply the command to CTRL-T as well
+  FZF_CTRL_T_OPTS="$FZF_COMPLETION_OPTS"
+  # Preview directories with tree
+  FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
+  # preview long commands with "?"
+  FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap \
+    --bind '?:toggle-preview'"
+
+  # https://github.com/junegunn/fzf/blob/master/ADVANCED.md#ripgrep-integration
+  function lgrep(){
+    rm -f /tmp/rg-fzf-{r,f}
+    local rg_prefix="rg --column --line-number --no-heading --color=always \
+      --smart-case --hidden --glob '!{.git,node_modules,.venv}'"
+    local switch='%s(change)+change-prompt(%s> )+%s+transform-query: \
+      echo \{q} > /tmp/rg-fzf-%s; cat /tmp/rg-fzf-%s\n'
+
+    : | fzf --ansi --multi --disabled --query "${*:-}" \
+      --bind "start:reload:$rg_prefix {q} || true" \
+      --bind "change:reload:sleep 0.1; $rg_prefix {q} || true" \
+      --bind "ctrl-g:transform:[[ ! \$FZF_PROMPT =~ regex ]] &&
+        printf ${switch@Q} rebind regex disable-search f r ||
+        printf ${switch@Q} unbind fuzzy enable-search r f" \
+      --color "hl:-1:underline,hl+:-1:underline:reverse" \
+      --prompt 'regex> ' \
+      --delimiter : \
+      --header 'ctrl-g to switch between fuzzy/regex search' \
+      --preview "pygmentize -f terminal {1} || cat {1}" \
+      --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
+      --bind "enter:become($EDITOR {+1} +{2})"
+  }
+fi
+
 ## Functions
 # -----------------------------------------------------------------------------
 
@@ -170,61 +230,6 @@ function ncp(){
   rsync --info=progress2 --recursive --protect-args --times --perms \
     --chmod=D775,F664 "${1%/}" "${2:+NAS:/media/storage/$2}"
 }
-
-## FZF config for interactive use
-# -----------------------------------------------------------------------------
-
-if [[ -n $(type -t fzf) ]]; then
-  eval "$(fzf --bash)"
-  # syntax highlight matches and preview directories
-  FZF_COMPLETION_OPTS="--preview '{ pygmentize -f terminal {} || cat {} ||
-    tree -C {}; } 2> /dev/null | head -200'"
-  # To apply the command to CTRL-T as well
-  FZF_CTRL_T_OPTS="$FZF_COMPLETION_OPTS"
-  # Preview directories with tree
-  FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
-  # preview long commands with "?"
-  FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap \
-    --bind '?:toggle-preview'"
-
-  # https://github.com/junegunn/fzf/blob/master/ADVANCED.md#ripgrep-integration
-  function lgrep(){
-    rm -f /tmp/rg-fzf-{r,f}
-    local rg_prefix="rg --column --line-number --no-heading --color=always \
-      --smart-case --hidden --glob '!{.git,node_modules,.venv}'"
-    local switch='%s(change)+change-prompt(%s> )+%s+transform-query: \
-      echo \{q} > /tmp/rg-fzf-%s; cat /tmp/rg-fzf-%s\n'
-
-    : | fzf --ansi --multi --disabled --query "${*:-}" \
-      --bind "start:reload:$rg_prefix {q} || true" \
-      --bind "change:reload:sleep 0.1; $rg_prefix {q} || true" \
-      --bind "ctrl-g:transform:[[ ! \$FZF_PROMPT =~ regex ]] &&
-        printf ${switch@Q} rebind regex disable-search f r ||
-        printf ${switch@Q} unbind fuzzy enable-search r f" \
-      --color "hl:-1:underline,hl+:-1:underline:reverse" \
-      --prompt 'regex> ' \
-      --delimiter : \
-      --header 'ctrl-g to switch between fuzzy/regex search' \
-      --preview "pygmentize -f terminal {1} || cat {1}" \
-      --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
-      --bind "enter:become($EDITOR {+1} +{2})"
-  }
-fi
-
-## Bash-completions
-# -----------------------------------------------------------------------------
-
-if [[ -r /usr/share/bash-completion/bash_completion ]]; then
-  source /usr/share/bash-completion/bash_completion
-fi
-
-# external alias completion, progcomp_alias shopt builtin sadly doesn't work
-# https://github.com/scop/bash-completion/issues/383
-if [[ -r /usr/share/bash-complete-alias/complete_alias ]]; then
-  COMPAL_AUTO_UNMASK=1
-  source /usr/share/bash-complete-alias/complete_alias
-  complete -F _complete_alias "${!BASH_ALIASES[@]}"
-fi
 
 ## window title and current working directory
 # -----------------------------------------------------------------------------
