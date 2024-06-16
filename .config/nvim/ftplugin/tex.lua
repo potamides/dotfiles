@@ -12,7 +12,7 @@ if not vim.b.did_user_ftplugin then
   lsputils.texlab.setup{
     cmd_env = {
       -- trick to help neovim-remote find this neovim instance
-      NVIM_LISTEN_ADDRESS = vim.v.servername
+      NVIM_LISTEN_ADDRESS = vim.v.servername,
     },
     settings = {
       texlab = {
@@ -22,7 +22,7 @@ if not vim.b.did_user_ftplugin then
         },
         forwardSearch = {
           executable = "qpdfview",
-          args = {"--unique", "%p#src:%f:%l:1"}
+          args = {"--unique", "--instance", "pdf_" .. (vim.env.WINDOWID or ""), "%p#src:%f:%l:1"}
         },
         chktex = {
           onEdit = true,
