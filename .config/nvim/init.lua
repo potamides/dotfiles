@@ -451,6 +451,7 @@ map("n", "<leader>ro", function() try_call(repl_open) end, opts)
 map("n", "<leader>to", function() try_call(function() dapterm:open{nofocus = true} end) end, opts)
 map("n", "<leader>rl", dap.run_last, opts)
 map("n", "<leader>te", dap.terminate, opts)
+map("n", "<leader>dp", function() require("dap.ui.widgets").hover(nil, {border = "none"}) end, opts)
 
 -- LuaSnip
 -------------------------------------------------------------------------------
