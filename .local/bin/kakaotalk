@@ -30,4 +30,4 @@ function forward_notifications(){
 adb shell monkey -p "$name" 1
 forward_notifications&
 trap "kill 0" EXIT
-scrcpy --hid-keyboard --stay-awake --turn-screen-off
+scrcpy --keyboard=uhid --stay-awake --turn-screen-off
