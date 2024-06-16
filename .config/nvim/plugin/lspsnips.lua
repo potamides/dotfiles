@@ -18,6 +18,6 @@ function luasnip_completion_expand.CompleteDonePre()
     vim.api.nvim_buf_set_text(0, row - 1, col - #vim.v.completed_item.word, row - 1, col, {""})
     vim.api.nvim_win_set_cursor(0, {row, col - vim.fn.strwidth(vim.v.completed_item.word)})
     -- expand snippet
-    luasnip.lsp_expand(lsp_info.insertText or lsp_info.textEdit.newText)
+    luasnip.lsp_expand(vim.tbl_get(lsp_info, "textEdit", "newText") or lsp_info.insertText or lsp_info.label)
   end
 end

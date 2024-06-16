@@ -28,13 +28,15 @@ vim.opt.textwidth = 79
 vim.opt.colorcolumn = {80, 120}
 vim.opt.breakindent = true
 vim.opt.linebreak = true
+vim.opt.smoothscroll = true
+vim.opt.showbreak = "> "
 
 -- set list chars for horizontal scrolling
 vim.opt.listchars:append{tab = "» ", precedes = "<", extends = ">"}
 vim.opt.list = true
 
 -- built-in completion & tag search
-vim.opt.completeopt:append{"menuone", "noinsert"}
+vim.opt.completeopt:append{"menuone", "noinsert", "popup"}
 vim.opt.complete:remove{"t"}
 vim.opt.completefunc = "v:lua.require'snipcomp'" -- custom snippet completion defined in lua/snipcomp.lua
 
@@ -63,7 +65,6 @@ vim.opt.mouse = "a"
 vim.opt.keymap = "kana"
 vim.opt.iminsert = 0
 
-vim.opt.termguicolors = true   -- 24-bit RGB color in the TUI
 vim.opt.undofile = true        -- persistent undo history
 vim.opt.showmode = false       -- do not show mode message on last line
 vim.opt.hidden = true          -- switch buffers without having to save changes

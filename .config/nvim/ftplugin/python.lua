@@ -31,7 +31,7 @@ if not vim.b.did_user_ftplugin then
       python = {
         analysis = {
           autoSearchPaths = true,
-          autoImportCompletions  = true, -- doesn't work with omnifunc
+          autoImportCompletions  = true,
           useLibraryCodeForTypes = true, -- can get slow for big projects
           diagnosticMode = "workspace"
         }

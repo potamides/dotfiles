@@ -26,7 +26,7 @@ if not vim.b.did_user_ftplugin then
           variable = false
         },
         diagnostics = {
-          libraryFiles = "Enable",
+          libraryFiles = "Opened",
           disable = {
             "unbalanced-assignments"
           },

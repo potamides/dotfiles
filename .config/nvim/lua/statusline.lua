@@ -157,11 +157,12 @@ function components:setup(opts)
   end
 
   function lsp_progress.update_status()
-    local message = vim.lsp.util.get_progress_messages()[1]
-    if message then
-      return vim.tbl_contains({"", "empty title"}, message.title) and "Loading" or message.title
+    for _, client in ipairs(vim.lsp.get_clients()) do
+      if not vim.tbl_isempty(client.progress.pending) then
+        local msg = vim.tbl_values(client.progress.pending)[1]
+        return #msg > 0 and msg or "Loading"
+      end
     end
-    return ""
   end
 
   function lsp_progress:apply_icon()
