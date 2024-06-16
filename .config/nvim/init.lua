@@ -570,13 +570,20 @@ gp.setup{
   chat_confirm_delete = false,
   chat_shortcut_respond = {modes = {"n", "v"}, shortcut = "<cr>"},
   chat_shortcut_delete = {modes = {"n", "v"}, shortcut = "<leader>gd"},
-  chat_shortcut_stop = {modes = {"n", "v"}, shortcut = "<leader>gs"},
+  chat_shortcut_stop = {modes = {"n", "v"}, shortcut = "<leader>gx"},
   chat_shortcut_new = {modes = {"n", "v"}, shortcut = "<leader>gn"},
 }
 
+for _, agent in pairs(gp.agents) do
+  if agent.chat then
+    agent.system_prompt = "You are a helpful assistant"
+  end
+end
+
 for mode, key in pairs{n = "<cmd>", v = ":"} do
-  map(mode, "<leader>go", key .. "GpChatToggle popup<cr>", opts)
-  map(mode, "<leader>gO", key .. "GpChatToggle vsplit<cr>", opts)
+  map(mode, "<leader>gp", key .. "GpChatToggle popup<cr>", opts)
+  map(mode, "<leader>gg", key .. "GpPopup<cr>", opts)
+  map(mode, "<leader>gs", key .. "GpChatToggle vsplit<cr>", opts)
   map(mode, "<leader>g/", key .. "GpChatFinder<cr>", opts)
 
   map(mode, "<leader>gm", "<cmd>GpImage<cr>", opts)
@@ -584,28 +591,23 @@ for mode, key in pairs{n = "<cmd>", v = ":"} do
 end
 
 -- see :h :map-operator
-local function motion_cmd(command)
+local function motion_cmd(command, suffix)
   return function()
     vim.opt.operatorfunc = ([[{ -> execute("'[,']%s")}]]):format(command)
-    return 'g@'
+    return 'g@' .. (suffix or '')
   end
 end
 
 for mapping, key in pairs{GpImplement = "<leader>gc", GpChatPaste = "<leader>gy"} do
   map({"n", "v"}, key, motion_cmd(mapping), {expr = true, unpack(opts)})
-  map("n", key .. key:sub(-1), function() return motion_cmd(mapping)() .. "_" end, {expr = true, unpack(opts)})
+  map("n", key .. key:sub(-1), motion_cmd(mapping, "_"), {expr = true, unpack(opts)})
 end
 
 -- hack to modify style of popup window
 local create_popup = gp._H.create_popup
 function gp._H.create_popup(optbuf, title, ...)
   local buf, win, close, resize = create_popup(optbuf, (" %s "):format(title), ...)
-  if not optbuf then
-    vim.cmd.lua{"vim.bo.buflisted = false", mods = {noautocmd = true}}
-    vim.bo.filetype = "markdown"
-  end
-  vim.api.nvim_win_set_option(win, "winhighlight",
-    "Normal:PantranNormal,FloatTitle:PantranTitle,FloatBorder:PantranBorder")
+  vim.opt_local.winhighlight = {Normal = "PantranNormal", FloatTitle = "PantranTitle", FloatBorder = "PantranBorder"}
   return buf, win, close, resize
 end
 
