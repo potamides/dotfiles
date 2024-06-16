@@ -27,6 +27,6 @@ declare -A stations=(
 
 select station in $(sort <<< "${!stations[@]}"); do
   if [[ -n "$station" ]]; then
-    exec mpv --no-video "${stations[$station]}"
+    exec mpv --no-video "$@" "${stations[$station]}"
   fi
 done
