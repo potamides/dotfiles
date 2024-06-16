@@ -289,6 +289,7 @@ gruvbox.setup{
 
     -- misc
     NormalFloat = {link = "Pmenu"},
+    Todo        = {link = "htmlBoldItalic"},
   }
 }
 
