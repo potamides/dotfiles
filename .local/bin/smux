@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2128
+
+###############################################################################
+# Launch a tmux server on a slurm node and interact with it from a login node #
+#  (particularly useful when a slurm cluster has multiple login nodes). Has   #
+# the same command line interface as tmux with an additional 'batch' command  #
+#   which starts the tmux server using sbatch. Options are forwarded to the   #
+#                         underlying sbatch command.                          #
+###############################################################################
+
+set -o errexit -o nounset -o pipefail
+
+NAME="$(basename "$BASH_SOURCE")"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/smux"
+JOB_ID_FILE="$STATE_DIR/jobid"
+
+mkdir -p "$STATE_DIR"
+touch "$JOB_ID_FILE"
+
+function job_id(){
+  cat "$JOB_ID_FILE"
+}
+
+function job_state(){
+  [[ -n $(squeue -ht "$1" -j "$(job_id)" 2>/dev/null) ]]
+}
+
+function batch(){
+  if job_state running; then
+    scancel "$(job_id)"
+  fi
+  sbatch --parsable --job-name="$NAME" "$@" --wrap 'tmux -D' >"$JOB_ID_FILE"
+}
+
+function multiplex(){
+  srun --pty --jobid "$(job_id)" tmux "$@"
+}
+
+if [[ "$BASH_SOURCE" == "$0" ]]; then
+  case "${1-}" in
+    batch)
+      batch "${@:2}"
+      ;;
+    *)
+      while job_state pending; do
+        sleep 1
+      done
+      if job_state running; then
+        multiplex "$@"
+      else
+        echo "No server running on any slurm node!" \
+          "Run '$NAME batch [options]' first." >&2
+        exit 1
+      fi
+      ;;
+  esac
+fi
