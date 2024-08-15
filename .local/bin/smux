@@ -27,7 +27,7 @@ function job_state(){
 }
 
 function batch(){
-  if job_state running; then
+  if job_state running,pending; then
     scancel "$(job_id)"
   fi
   sbatch --parsable --job-name="$NAME" "$@" --wrap 'tmux -D' >"$JOB_ID_FILE"
