@@ -11,12 +11,13 @@
 
 set -o errexit -o nounset -o pipefail
 
-NAME="$(basename "$BASH_SOURCE")"
-STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/smux"
+SBATCH_JOB_NAME="$(basename "$BASH_SOURCE")"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/$SBATCH_JOB_NAME"
 JOB_ID_FILE="$STATE_DIR/jobid"
 
 mkdir -p "$STATE_DIR"
 touch "$JOB_ID_FILE"
+export SBATCH_JOB_NAME
 
 function job_id(){
   cat "$JOB_ID_FILE"
@@ -26,33 +27,39 @@ function job_state(){
   [[ -n $(squeue -ht "$1" -j "$(job_id)" 2>/dev/null) ]]
 }
 
-function batch(){
+function cancel(){
   if job_state running,pending; then
     scancel "$(job_id)"
   fi
-  sbatch --parsable --job-name="$NAME" "$@" --wrap 'tmux -D' >"$JOB_ID_FILE"
+  truncate -s 0 "$JOB_ID_FILE"
 }
 
 function multiplex(){
-  srun --pty --jobid "$(job_id)" tmux "$@"
+  while job_state pending; do
+    sleep 1
+  done
+  if job_state running; then
+    srun --pty --jobid "$(job_id)" tmux "$@"
+  else
+    echo "No server running on any slurm node!" \
+      "Run '$SBATCH_JOB_NAME batch [options]' first." >&2
+    exit 1
+  fi
 }
 
 if [[ "$BASH_SOURCE" == "$0" ]]; then
-  case "${1-}" in
+  case "${1:-}" in
     batch)
-      batch "${@:2}"
+      sbatch --parsable "${@:2}" --wrap 'tmux -D' >"$JOB_ID_FILE"
+      ;;
+    switch)
+      echo "${2:-$(job_id)}" >"$JOB_ID_FILE"
+      ;;
+    cancel)
+      cancel
       ;;
     *)
-      while job_state pending; do
-        sleep 1
-      done
-      if job_state running; then
-        multiplex "$@"
-      else
-        echo "No server running on any slurm node!" \
-          "Run '$NAME batch [options]' first." >&2
-        exit 1
-      fi
+      multiplex "$@"
       ;;
   esac
 fi
