@@ -363,13 +363,14 @@ end
 local gitsigns = require("gitsigns")
 
 gitsigns.setup{
+  signs_staged_enable = false,
   signs = {
-    add = {hl = "DiagnosticOk", text = vga("▌", "+")},
-    change = {hl = "CocHintSign", text = vga("▌", "≈")},
-    delete = {hl = "CocErrorSign", text = vga("▖", "v")},
-    topdelete = {hl = "CocErrorSign", text = vga("▘", "^")},
-    changedelete = {hl = "CocHintSign", text = vga("▌", "±")},
-    untracked    = {hl = 'DiagnosticOk', text = vga("▌", "+")},
+    add          = {text = vga("▌")},
+    change       = {text = vga("▌")},
+    delete       = {text = vga("▖")},
+    topdelete    = {text = vga("▘")},
+    changedelete = {text = vga("▌")},
+    untracked    = {text = vga("▌")},
   },
   preview_config = {
     border = "none"
