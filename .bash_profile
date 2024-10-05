@@ -50,7 +50,7 @@ fi
 ## Start session
 # -----------------------------------------------------------------------------
 
-if [[ -z $DISPLAY && $(tty) = /dev/tty1 ]]; then
+if [[ -z $DISPLAY && -n $(type -t startx) && $(tty) = /dev/tty1 ]]; then
   exec systemd-cat startx -- -keeptty
 elif [[ -r ~/.bashrc ]]; then
   source ~/.bashrc
