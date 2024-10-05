@@ -566,6 +566,8 @@ map("n", "<leader>tro", vim.cmd.Pantran, opts)
 
 -- gp.nvim
 -------------------------------------------------------------------------------
+local def = require("gp.defaults")
+def.chat_system_prompt = (def.chat_system_prompt):match("(.-)\n")
 local gp = require("gp")
 
 gp.setup{
@@ -581,12 +583,6 @@ gp.setup{
   chat_shortcut_stop = {modes = {"n", "v"}, shortcut = "<leader>gx"},
   chat_shortcut_new = {modes = {"n", "v"}, shortcut = "<leader>gn"},
 }
-
-for _, agent in pairs(gp.agents) do
-  if agent.chat then
-    agent.system_prompt = "You are a helpful assistant"
-  end
-end
 
 for mode, key in pairs{n = "<cmd>", v = ":"} do
   map(mode, "<leader>gp", key .. "GpChatToggle popup<cr>", opts)
