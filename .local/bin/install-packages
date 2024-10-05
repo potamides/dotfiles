@@ -9,7 +9,7 @@
 ###############################################################################
 
 PKG=(
-  awesome ranger neovim tmux ncmpcpp qpdfview mutt weechat conky when
+  awesome ranger neovim tmux ncmpcpp mutt weechat conky when
   qutebrowser alacritty
 
   keepassxc # Required by: mutt  weechat
@@ -26,7 +26,7 @@ PKG=(
 )
 
 AUR=(
-  ptpython
+  ptpython qpdfview
 
   absolutely-proprietary # Required by: conky
   pandoc-bin mutt-ics # Required by: mutt
