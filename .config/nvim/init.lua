@@ -229,6 +229,9 @@ if not vim.g.vga_compatible then
     {name = prefix .. "Hint",  text = "▌", texthl = prefix .. "Hint"},
     {name = prefix .. "Info",  text = "▌", texthl = prefix .. "Info"}
   }
+  vim.diagnostic.config{
+    virtual_text = {prefix = "▪"}
+  }
 end
 
 -- }}}
