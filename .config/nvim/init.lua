@@ -84,7 +84,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 -- syntax related global variables
-vim.g.is_bash	= true
+vim.g.is_bash = true
 vim.g.sh_no_error = true
 vim.g.readline_has_bash = true
 vim.g.tex_flavor = "latex"
@@ -124,8 +124,8 @@ end
 
 -- automatically toggle between relative and absolute line numbers depending on mode
 local number = au{"user_number",
-  Relative={"BufEnter", "FocusGained", "InsertLeave", "TermLeave", "WinEnter"},
-  Absolute={"BufLeave", "FocusLost", "InsertEnter", "TermEnter", "WinLeave"}
+  Relative = {"BufEnter", "FocusGained", "InsertLeave", "TermLeave", "WinEnter"},
+  Absolute = {"BufLeave", "FocusLost", "InsertEnter", "TermEnter", "WinLeave"}
 }
 
 function number.Relative()
@@ -282,15 +282,20 @@ gruvbox.setup{
     DiagnosticUnderlineHint   = {link = "GruvboxPurpleUnderline"},
     DiagnosticFloatingHint    = {link = "GruvboxPurple"},
     DiagnosticVirtualTextHint = {link = "GruvboxPurple"},
-
     -- spelling highlighting
-    SpellBad  = {link = "GruvboxBlueUnderline"},
-    SpellCap  = {link = "GruvboxOrangeUnderline"},
-    SpellRare = {link = "GruvboxGreenUnderline"},
-
+    SpellBad                  = {link = "GruvboxBlueUnderline"},
+    SpellCap                  = {link = "GruvboxOrangeUnderline"},
+    SpellRare                 = {link = "GruvboxGreenUnderline"},
+    -- git signs
+    GitSignsAdd               = {link = "GruvboxGreenSign"},
+    GitSignsChange            = {link = "GruvboxAquaSign"},
+    GitSignsDelete            = {link = "GruvboxRedSign"},
+    GitSignsTopdelete         = {link = "GruvboxRedSign"},
+    GitSignsChangedelete      = {link = "GruvboxAquaSign"},
+    GitSignsUntracked         = {link = "GruvboxGreenSign"},
     -- misc
-    NormalFloat = {link = "Pmenu"},
-    Todo        = {link = "htmlBoldItalic"},
+    NormalFloat               = {link = "Pmenu"},
+    Todo                      = {link = "htmlBoldItalic"},
   }
 }
 
@@ -316,8 +321,8 @@ statusline.setup{
   theme = vim.g.colors_name or "16color",
   icons_enabled = not vim.g.vga_compatible,
   separators = {
-    component = { left = '│', right = '│'},
-    section = { left = '▌', right = '▐'},
+    component = {left = "│", right = "│"},
+    section = {left = "▌", right = "▐"},
   },
   symbols = {
     edit    = vga("󰐕"),
@@ -330,7 +335,7 @@ statusline.setup{
     hint    = vga(""),
     dap     = vga(""),
     more    = vga("…"),
-    spinner = vga{'⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'}
+    spinner = vga{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
   }
 }
 
@@ -371,10 +376,10 @@ gitsigns.setup{
 
     local function jump(direction)
       if vim.wo.diff then
-        return ']c'
+        return "]c"
       end
       vim.schedule(direction)
-      return '<Ignore>'
+      return "<Ignore>"
     end
 
     -- Navigation
@@ -382,9 +387,9 @@ gitsigns.setup{
     map("n", "[c", function() return jump(gitsigns.prev_hunk) end, {expr = true, unpack(bufopts)})
 
     -- Actions
-    map({'n', 'v'}, '<leader>hr', ':Gitsigns reset_hunk<CR>', bufopts)
-    map('n', '<leader>hp', gitsigns.preview_hunk, bufopts)
-    map('n', '<leader>bl', gitsigns.blame_line, bufopts)
+    map({"n", "v"}, "<leader>hr", ":Gitsigns reset_hunk<CR>", bufopts)
+    map("n", "<leader>hp", gitsigns.preview_hunk, bufopts)
+    map("n", "<leader>bl", gitsigns.blame_line, bufopts)
   end
 }
 
@@ -394,16 +399,16 @@ local colorizer = require("colorizer")
 
 -- colorize color specifications like '#aabbcc' in virtualtext
 colorizer.setup{
-  filetypes = { "*" },
+  filetypes = {"*"},
   user_default_options = {
     names = false,
-    mode = 'virtualtext'
+    mode = "virtualtext"
   }
 }
 
 -- nvim-lspconfig
 -------------------------------------------------------------------------------
-local lsputil = require('lspconfig.util')
+local lsputil = require("lspconfig.util")
 
 -- setup calls to specific language servers are located in ftplugins
 lsputil.on_setup = lsputil.add_hook_before(lsputil.on_setup, function(config)
@@ -435,7 +440,7 @@ local function repl_open()
 end
 
 local function try_call(func, ...)
-  if dap.session() then func(...) else vim.notify('No active session') end
+  if dap.session() then func(...) else vim.notify("No active session") end
 end
 
 map("n", "<leader>cc", dap.continue, opts)
@@ -444,8 +449,8 @@ map("n", "<leader>si", dap.step_into, opts)
 map("n", "<leader>so", dap.step_out, opts)
 map("n", "<leader>rc", dap.run_to_cursor, opts)
 map("n", "<leader>br", dap.toggle_breakpoint, opts)
-map("n", "<leader>bc", function() dap.set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, opts)
-map("n", "<leader>bl", function() dap.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end, opts)
+map("n", "<leader>bc", function() dap.set_breakpoint(vim.fn.input("Breakpoint condition: ")) end, opts)
+map("n", "<leader>bl", function() dap.set_breakpoint(nil, nil, vim.fn.input("Log point message: ")) end, opts)
 map("n", "<leader>bd", dap.clear_breakpoints, opts)
 map("n", "<leader>bs", function() dap.list_breakpoints() vim.cmd.copen() end, opts)
 map("n", "<leader>ro", function() try_call(repl_open) end, opts)
@@ -475,7 +480,7 @@ map({"n", "i", "s"}, "<C-s><C-k>", function() try_change_choice(-1) end, opts)
 
 -- fzf-lua
 -------------------------------------------------------------------------------
-local fzf = require('fzf-lua')
+local fzf = require("fzf-lua")
 
 fzf.setup{
   hls = {
@@ -514,8 +519,8 @@ local function fzf_cwd(picker, args)
   fzf[picker](vim.tbl_extend("error", args or {}, {cwd = target_dir}))
 end
 
-map("n", "<leader>ff", function() fzf_cwd('files') end, opts)
-map("n", "<leader>rg", function() fzf_cwd('live_grep') end, opts)
+map("n", "<leader>ff", function() fzf_cwd("files") end, opts)
+map("n", "<leader>rg", function() fzf_cwd("live_grep") end, opts)
 map("n", "<leader>ds", fzf.lsp_document_symbols, opts)
 map("n", "<leader>ws", fzf.lsp_live_workspace_symbols, opts)
 map("n", "<leader>fz", fzf.builtin, opts)
@@ -597,7 +602,7 @@ end
 local function motion_cmd(command, suffix)
   return function()
     vim.opt.operatorfunc = ([[{ -> execute("'[,']%s")}]]):format(command)
-    return 'g@' .. (suffix or '')
+    return "g@" .. (suffix or "")
   end
 end
 
