@@ -101,6 +101,7 @@ alias pacro='pacman -Qtd > /dev/null && sudo pacman -Rns $(pacman -Qtdq)'
 alias calc='ptpython -i <(echo "from math import *; from statistics import *")'
 alias todo='$EDITOR +sil\ /^##\ $(date +%A) +noh +norm\ zz ~/Documents/TODO.md'
 alias {vim,nvim}="$EDITOR"
+alias ring="printf '\a'"
 alias server='python3 -m http.server 9999'
 alias {dotfiles,dofi}='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 alias rec='ffmpeg -f x11grab -i $DISPLAY -f pulse -i default -y'
