@@ -488,6 +488,7 @@ fzf.setup{
     preview_title = "PantranTitle"
   },
   winopts = {
+    backdrop = 100,
     border = "single",
     preview = {
       scrollbar = false,
