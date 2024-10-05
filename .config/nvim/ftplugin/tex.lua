@@ -58,39 +58,6 @@ if not vim.b.did_user_ftplugin then
             end
           end,
           description = "Show content of log files in a floating window."
-        },
-        ChangeEnvironment = {
-          function()
-            vim.ui.input({prompt = 'New Name: '}, function(new_name)
-              if not new_name or #new_name == 0 then
-                return
-              end
-
-              local pos = vim.api.nvim_win_get_cursor(0)
-              vim.lsp.buf.execute_command{
-                command = "texlab.changeEnvironment",
-                arguments = {{
-                  textDocument = {uri = vim.uri_from_bufnr(0)},
-                  position = {line = pos[1] - 1, character = pos[2]},
-                  newName = new_name,
-                }}
-              }
-            end)
-          end,
-          description = "Change the name of the inner-most environment."
-        },
-        CleanAuxiliary = {
-          function()
-              vim.lsp.buf.execute_command{
-                command = "texlab.cleanAuxiliary",
-                arguments = {{uri = vim.uri_from_bufnr(0)}},
-              }
-          end,
-          description = "Remove the auxiliary files produced by compiling the specified LaTeX document."
-        },
-        CancelBuild = {
-          function() vim.lsp.buf.execute_command{command = "texlab.cancelBuild"} end,
-          description = "Cancel all currently active build requests."
         }
       }
     end
@@ -152,9 +119,9 @@ if not vim.b.did_user_ftplugin then
   vim.keymap.set("n", "<localleader>bn", '<cmd>TexlabBuild<cr>', {silent = true, buffer = true})
   vim.keymap.set("n", "<localleader>fs", '<cmd>TexlabForward<cr>', {silent = true, buffer = true})
   vim.keymap.set("n", "<localleader>sl", '<cmd>TexlabLog<cr>', {silent = true, buffer = true})
-  vim.keymap.set("n", "<localleader>ce", '<cmd>ChangeEnvironment<cr>', {silent = true, buffer = true})
-  vim.keymap.set("n", "<localleader>cl", '<cmd>CleanAuxiliary<cr>', {silent = true, buffer = true})
-  vim.keymap.set("n", "<localleader>cn", '<cmd>CancelBuild<cr>', {silent = true, buffer = true})
+  vim.keymap.set("n", "<localleader>ce", '<cmd>TexlabChangeEnvironment<cr>', {silent = true, buffer = true})
+  vim.keymap.set("n", "<localleader>cl", '<cmd>TexlabCleanAuxiliary<cr>', {silent = true, buffer = true})
+  vim.keymap.set("n", "<localleader>cn", '<cmd>TexlabCancelBuild<cr>', {silent = true, buffer = true})
   vim.keymap.set("n", "<localleader>lt", '<cmd>LspStart ltex<cr>', {silent = true, buffer = true})
 
   -- in insert mode do not break a line which already was longer than 'textwidth'
