@@ -26,6 +26,7 @@ c.content.cookies.store = False
 c.content.cookies.accept = "no-3rdparty"
 #c.content.pdfjs = True
 #c.content.javascript.enabled = False
+#content.javascript.clipboard = True
 
 ## Search Engines
 # -----------------------------------------------------------------------------
@@ -48,6 +49,14 @@ for mode in ["normal", "caret"]:
 config.bind("<Ctrl-e>", "scroll down")
 config.bind("<Ctrl-y>", "scroll up")
 config.bind("ao", "download-open")
+
+optval = "content.javascript.clipboard access access-paste none ;; reload"
+config.bind("tXH", " ".join(["config-cycle -pu *://*.{url:host}/*", optval]))
+config.bind("tXh", " ".join(["config-cycle -pu *://{url:host}/*", optval]))
+config.bind("tXu", " ".join(["config-cycle -pu {url}", optval]))
+config.bind("txH", " ".join(["config-cycle -ptu *://*.{url:host}/*", optval]))
+config.bind("txh", " ".join(["config-cycle -ptu *://{url:host}/*", optval]))
+config.bind("txu", " ".join(["config-cycle -ptu {url}", optval]))
 
 c.aliases.update({
     "zotero": "spawn --userscript zotero",
