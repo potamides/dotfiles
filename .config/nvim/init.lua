@@ -579,8 +579,8 @@ gp.setup{
   chat_user_prefix = "## User",
   chat_assistant_prefix = {"## Assistant", " ({{agent}})"},
   command_prompt_prefix_template = "{{agent}}: ",
-  image_prompt_prefix_template = "{{agent}}: ",
-  image_prompt_save = "Directory: ",
+  prompt_prefix_template = "{{agent}}: ",
+  prompt_save = "Directory: ",
   toggle_target = "popup",
   chat_confirm_delete = false,
   chat_shortcut_respond = {modes = {"n", "v"}, shortcut = "<cr>"},
@@ -613,9 +613,9 @@ for mapping, key in pairs{GpImplement = "<leader>gc", GpChatPaste = "<leader>gy"
 end
 
 -- hack to modify style of popup window
-local create_popup = gp._H.create_popup
-function gp._H.create_popup(optbuf, title, ...)
-  local buf, win, close, resize = create_popup(optbuf, (" %s "):format(title), ...)
+local popup = gp.render.popup
+function gp.render.popup(optbuf, title, ...)
+  local buf, win, close, resize = popup(optbuf, (" %s "):format(title), ...)
   vim.opt_local.winhighlight = {Normal = "PantranNormal", FloatTitle = "PantranTitle", FloatBorder = "PantranBorder"}
   return buf, win, close, resize
 end
