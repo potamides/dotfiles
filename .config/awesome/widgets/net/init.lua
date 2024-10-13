@@ -28,10 +28,13 @@ end
 function net_widget.init(args)
   args = args or {}
 
-  args.wireless_interface = args.wireless_interface or "wlp5s0"
-  args.wired_interface    = args.wired_interface or "enp3s0"
-  args.path_to_icons      = args.path_to_icons or beautiful.theme_path .. "/widgets/net/"
-  args.timeout            = args.timeout or 15
+  args.path_to_icons = args.path_to_icons or beautiful.theme_path .. "/widgets/net/"
+  args.timeout       = args.timeout or 15
+
+  for line in io.lines("/proc/net/dev") do
+    args.wireless_interface = args.wireless_interface or line:match("^(wlp%w+):")
+    args.wired_interface    = args.wired_interface or line:match("^(enp%w+):")
+  end
 
   net_widget.image = wibox.widget {
     image  = args.path_to_icons .. "wired_na.svg",
