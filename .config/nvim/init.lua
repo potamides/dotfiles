@@ -83,12 +83,14 @@ vim.opt.shortmess:append("I")  -- don't give intro message when starting vim
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
--- syntax related global variables
+-- syntax/indent related global variables
 vim.g.is_bash = true
 vim.g.sh_no_error = true
 vim.g.readline_has_bash = true
+vim.g.tex_stylish = true
 vim.g.tex_flavor = "latex"
 vim.g.markdown_fenced_languages = {"python", "lua", "sh", "bash", "tex", "latex=tex"}
+vim.g.python_indent = {open_paren = "shiftwidth()", continue = "shiftwidth()", closed_paren_align_last_line = false}
 
 -- setup netrw and viewer for 'gx' mapping
 vim.g.netrw_banner = 0
