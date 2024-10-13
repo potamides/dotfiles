@@ -85,6 +85,9 @@ function launch_container(){
     --user=$user \
     --setenv=DISPLAY="$DISPLAY" \
     --setenv=DRI_PRIME="$DRI_PRIME" \
+    --setenv=__NV_PRIME_RENDER_OFFLOAD="$__NV_PRIME_RENDER_OFFLOAD" \
+    --setenv=__VK_LAYER_NV_optimus="$__VK_LAYER_NV_optimus" \
+    --setenv=__GLX_VENDOR_LIBRARY_NAME="$__GLX_VENDOR_LIBRARY_NAME" \
     --setenv=PULSE_SERVER=unix:/run/user/host/pulse/native \
     --bind=/run/user/1000/pulse:/run/user/host/pulse \
     --bind=/tmp/.X11-unix \

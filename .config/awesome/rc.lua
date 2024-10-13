@@ -678,6 +678,13 @@ modes.launcher = gears.table.join(
           hooks = {
             -- Launch command on dedicated GPU
             {{'Shift'}, 'Return', function(command)
+              if gears.filesystem.is_dir("/sys/module/nvidia") then
+                -- variables copied from prime-run utility
+                return "__NV_PRIME_RENDER_OFFLOAD=1 " ..
+                  "__VK_LAYER_NV_optimus=NVIDIA_only " ..
+                  "__GLX_VENDOR_LIBRARY_NAME=nvidia " ..
+                  command
+              end
               return  "DRI_PRIME=1 " .. command
             end},
           }
