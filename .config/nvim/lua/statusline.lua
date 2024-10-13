@@ -112,7 +112,6 @@ function components:setup(opts)
   self.encoding = {'%{&fenc!=#""?&fenc:&enc}'}
   self.branch = {"branch", icon = opts.symbols.git}
   self.location = {"location", icon = opts.symbols.line}
-  self.tabs = {"tabs", tabs_color = {active = "lualine_z_normal", inactive = "lualine_b_normal"}}
   self.filename = {"filename", symbols = {modified = opts.symbols.edit, readonly = opts.symbols.lock}}
   self.cwd = {function() return vim.fn.fnamemodify(vim.b.netrw_curdir or vim.fn.getcwd(), ":~") end}
   self.dap = {function() return require("dap").status() end, icon = opts.symbols.dap}

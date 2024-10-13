@@ -321,7 +321,7 @@ devicons.setup{
 }
 
 statusline.setup{
-  theme = vim.g.colors_name or "16color",
+  theme = vim.g.colors_name or "ansi",
   icons_enabled = not vim.g.vga_compatible,
   separators = {
     component = {left = "│", right = "│"},
