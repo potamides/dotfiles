@@ -5,14 +5,15 @@
 
 if not vim.b.did_user_ftplugin then
   local lsputils = require("lsputils")
-  local windows = require("lspconfig.ui.windows")
+  local render = require("gp.render")
   local configs = require("lspconfig.configs")
-  local au = require("au")
 
   lsputils.texlab.setup{
     cmd_env = {
       -- trick to help neovim-remote find this neovim instance
       NVIM_LISTEN_ADDRESS = vim.v.servername,
+      -- nicer formatting of logs
+      max_print_line = 1000
     },
     settings = {
       texlab = {
@@ -31,35 +32,38 @@ if not vim.b.did_user_ftplugin then
       }
     },
     on_new_config = function(config, root_dir)
-      -- FIXME: this can fail on the first run when "build" doesn't yet exit
-      local build_dir = vim.fn.globpath(root_dir, "build", nil, true)[1] or root_dir
-      config.settings.texlab.auxDirectory = build_dir
+      local function TexlabLog(aux_dir)
+        local lines = {}
 
-      config.commands = {
-        TexlabLog = {
-          function()
-            local lines = {}
+        for _, file in ipairs(vim.fn.glob(aux_dir .. "/*.log\\|blg", false, true)) do
+          vim.list_extend(lines, vim.fn.readfile(file))
+        end
 
-            for _, file in ipairs(vim.fn.glob(build_dir .. "/*.log\\|blg", false, true)) do
-              vim.list_extend(lines, vim.fn.readfile(file))
-            end
+        if not vim.tbl_isempty(lines) then
+          local function size_func(w, h)
+            return .8 * w, .7 * h, (.3 * h) * .4, (.2 * w) * .5
+          end
 
-            if not vim.tbl_isempty(lines) then
-              local info = windows.percentage_range_window(0.8, 0.7)
-              local autocmd = au{once = true, buffer = info.bufnr, BufExit = {"BufHidden", "BufLeave"}}
+          local buf = render.popup(nil, "Texlab Log", size_func, {on_leave = true, escape = true})
+          vim.api.nvim_buf_set_lines(buf, 0, -1, true, lines)
+          vim.api.nvim_set_option_value("modifiable", false, {buf = buf})
+          vim.api.nvim_set_option_value("filetype", "plaintex", {buf = buf})
+        end
+      end
 
-              vim.api.nvim_buf_set_lines(info.bufnr, 0, -1, true, lines)
-              vim.api.nvim_buf_set_option(info.bufnr, "modifiable", false)
-              vim.keymap.set("n", "<esc>", "<cmd>bd<CR>", {noremap = true, buffer = info.bufnr})
-
-              function autocmd.BufExit()
-                pcall(vim.api.nvim_win_close, info.win_id, true)
-              end
-            end
-          end,
-          description = "Show content of log files in a floating window."
-        }
-      }
+      vim.system(
+        {config.settings.texlab.build.executable, "-dir-report-only"},
+        {text = true},
+        vim.schedule_wrap(function(obj)
+          -- find actual aux_dir following latexmk approach: https://github.com/latex-lsp/texlab/pull/968
+          local aux_dir = obj.stdout:match("Normalized aux dir and out dir: '(.-)', '.-'")
+          vim.api.nvim_create_user_command(
+            "TexlabLog",
+            function() TexlabLog(vim.fs.joinpath(root_dir, aux_dir)) end,
+            {desc = "Show content of log files in a floating window."}
+          )
+        end)
+      )
     end
   }
 
