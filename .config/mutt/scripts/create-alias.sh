@@ -24,6 +24,7 @@ function create_alias(){
         2|3) nickname=${words[1],,} ;;
         *)   nickname=${words[-2],,}-${words[1],,} ;;
       esac
+      mapfile
       break
     fi
   done
