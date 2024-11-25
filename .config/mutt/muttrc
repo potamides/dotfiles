@@ -56,19 +56,24 @@ $my_folder/accounts/prisma<enter><check-stats><change-folder>!<enter>\
 # sidebar
 # -----------------------------------------------------------------------------
 
-set mail_check_stats     = yes
-set sidebar_visible      = yes
-set sidebar_format       = '%B%?F? [%F]?%* %?N?%N/?%S'
-set sidebar_divider_char = '│'
+set mail_check_stats      = yes
+set sidebar_visible       = yes
+set sidebar_short_path    = yes
+set sidebar_folder_indent = yes
+set sidebar_format        = '%B%?F? [%F]?%* %?N?%N/?%S'
+set sidebar_divider_char  = '│'
+set sidebar_indent_string = '└─'
 
 # alias management
 # -----------------------------------------------------------------------------
 
-set display_filter = $my_folder/scripts/create-alias.sh # auto create aliases
-set alias_file     = $my_folder/aliases
-set sort_alias     = alias
-set reverse_alias  = yes
+set alias_file    = $my_folder/aliases
+set sort_alias    = alias
+set reverse_alias = yes
 source "cat $alias_file 2> /dev/null |" # only source if file exists
+# auto create aliases
+set display_filter = "$my_folder/scripts/create-alias.sh | \
+  $my_folder/scripts/arxiv-filter.py"
 
 # index settings
 # -----------------------------------------------------------------------------

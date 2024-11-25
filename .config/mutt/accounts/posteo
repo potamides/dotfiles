@@ -21,6 +21,6 @@ set trash     = "+Trash"
 alternates '^'$my_posteo_user'\+.*@posteo\.net$' '^potamides\+.*@posteo\.net$'
 
 # check these mailboxes for new messages periodically & display them in sidebar
-mailboxes +Inbox +Junk +Drafts +Sent +Archive +Trash
+mailboxes +Inbox +Inbox.ArXiv +Junk +Drafts +Sent +Archive +Trash
 
 # vim: filetype=muttrc
