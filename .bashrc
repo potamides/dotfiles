@@ -155,21 +155,21 @@ if [[ -n $(type -t fzf) ]]; then
   # https://github.com/junegunn/fzf/blob/master/ADVANCED.md#ripgrep-integration
   function lgrep(){
     rm -f /tmp/rg-fzf-{r,f}
-    local rg_prefix="rg --column --line-number --no-heading --color=always \
-      --smart-case --hidden --glob '!{.git,node_modules,.venv}'"
-    local switch='%s(change)+change-prompt(%s> )+%s+transform-query: \
-      echo \{q} > /tmp/rg-fzf-%s; cat /tmp/rg-fzf-%s\n'
+    local rg_prefix="rg --column --line-number --no-heading --color=always"
+    rg_prefix+=" --smart-case --hidden --glob '!{.git,node_modules,.venv}'"
+    local switch='%s(change)+change-prompt(%s> )+%s+transform-query:"'
+    switch+='echo \{q} > /tmp/rg-fzf-%s; cat /tmp/rg-fzf-%s\n'
 
-    : | fzf --ansi --multi --disabled --query "${*:-}" \
+    fzf --ansi --multi --disabled --query "${*:-}" \
       --bind "start:reload:$rg_prefix {q} || true" \
       --bind "change:reload:sleep 0.1; $rg_prefix {q} || true" \
-      --bind "ctrl-g:transform:[[ ! \$FZF_PROMPT =~ regex ]] &&
+      --bind "ctrl-t:transform:[[ ! \$FZF_PROMPT =~ regex ]] &&
         printf ${switch@Q} rebind regex disable-search f r ||
         printf ${switch@Q} unbind fuzzy enable-search r f" \
       --color "hl:-1:underline,hl+:-1:underline:reverse" \
       --prompt 'regex> ' \
       --delimiter : \
-      --header 'ctrl-g to switch between fuzzy/regex search' \
+      --header 'ctrl-t to switch between fuzzy/regex search' \
       --preview "pygmentize -f terminal {1} || cat {1}" \
       --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
       --bind "enter:become($EDITOR {+1} +{2})"
