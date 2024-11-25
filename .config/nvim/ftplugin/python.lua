@@ -22,7 +22,11 @@ if not vim.b.did_user_ftplugin then
       console = "integratedTerminal",
       program = "${file}", -- launch the current file...
       cwd = "${fileDirname}", -- ...in its directory
-      justMyCode = false
+      justMyCode = false,
+
+      args = function()
+        return vim.split(vim.fn.expandcmd(vim.fn.input('Arguments: ')), " +")
+      end;
     }
   }
 
