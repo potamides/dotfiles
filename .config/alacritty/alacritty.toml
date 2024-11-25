@@ -2,7 +2,10 @@
 # -----------------------------------------------------------------------------
 
 [env]
+# disable font scaling
 WINIT_X11_SCALE_FACTOR = "1.0"
+# make prompt_toolkit applications (e.g., ptpython) use true colors
+PROMPT_TOOLKIT_COLOR_DEPTH="DEPTH_24_BIT"
 
 [font]
 size = 13

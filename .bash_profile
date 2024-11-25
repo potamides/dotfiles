@@ -33,9 +33,6 @@ export GTK2_RC_FILES="$HOME/.config/gtk-2.0/gtkrc"
 export PYTHONSTARTUP="$HOME/.config/python/config.py"
 export INPUTRC="$HOME/.config/readline/inputrc"
 
-# force ptpython to use true colors everywhere
-export PROMPT_TOOLKIT_COLOR_DEPTH="DEPTH_24_BIT"
-
 # custom fzf color configuration and keybindings
 export FZF_DEFAULT_OPTS="--color 16,fg:15,bg:0,hl:11,fg+:15,bg+:237,hl+:11 \
   --color info:12,prompt:248,spinner:11,pointer:12,marker:208,header:241 \
