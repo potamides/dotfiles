@@ -56,7 +56,12 @@ if not vim.b.did_user_ftplugin then
         {text = true},
         vim.schedule_wrap(function(obj)
           -- find actual aux_dir following latexmk approach: https://github.com/latex-lsp/texlab/pull/968
-          local aux_dir = obj.stdout:match("Normalized aux dir and out dir: '(.-)', '.-'")
+          local aux_dir, out_dir = obj.stdout:match("Normalized aux dir and out dir: '(.-)', '(.-)'")
+          -- even when using --dir-report-only latexmk still creates these
+          -- directories which might not be what we want
+          for _, path in ipairs{aux_dir, out_dir} do
+            os.remove(path)
+          end
           vim.api.nvim_create_user_command(
             "TexlabLog",
             function() TexlabLog(vim.fs.joinpath(root_dir, aux_dir)) end,
