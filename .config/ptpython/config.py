@@ -113,8 +113,8 @@ class GruvboxUIStyle(Style):
         "selected": "bg:#665c54 noreverse",
         # Highlighting of matching brackets.
         "matching-bracket": "",
-        "matching-bracket.other": "#ebdbb2 bg:#665c54",
-        "matching-bracket.cursor": "#ebdbb2 bg:#665c54",
+        "matching-bracket.other": "default bg:#665c54 bold",
+        "matching-bracket.cursor": "default bg:#665c54 bold",
         # Validation toolbar.
         "validation-toolbar": "bg:#fb4934 #282828 bold",
         "window-too-small": "bg:#fb4934 #282828 bold",
@@ -206,7 +206,7 @@ def configure(repl):
     # Highlight matching parentheses.
     repl.highlight_matching_parenthesis = True
     # Mouse support.
-    repl.enable_mouse_support = True
+    repl.enable_mouse_support = False
     # Don't insert a blank line after the output
     repl.insert_blank_line_after_output = False
     # Show completions in popup window.
@@ -225,10 +225,8 @@ def configure(repl):
     # -------------------------------------------------------------------------
     repl.install_code_colorscheme("gruvbox", style_from_pygments_cls(FixedGruvboxCodeStyle))
     repl.install_ui_colorscheme("gruvbox", GruvboxUIStyle())
-    repl.use_code_colorscheme("gruvbox")
 
-    if getenv("TERM") != "linux" and getenv("COLORTERM") is not None:
+    # set in ~/.bash_profile
+    if getenv("PROMPT_TOOLKIT_COLOR_DEPTH", repl.color_depth) == "DEPTH_24_BIT":
+        repl.use_code_colorscheme("gruvbox")
         repl.use_ui_colorscheme("gruvbox")
-        repl.color_depth = 'DEPTH_24_BIT'
-    else:
-        repl.color_depth = 'DEPTH_4_BIT'
