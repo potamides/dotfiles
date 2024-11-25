@@ -37,4 +37,5 @@ conky --daemonize
 fcitx5 -d
 udiskie &
 redshift &
+alacritty --daemon &
 exec awesome --no-argb

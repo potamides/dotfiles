@@ -6,7 +6,7 @@
 export BROWSER="qutebrowser"
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
-export TERMCMD="alacritty"
+export TERMCMD="alacritty msg create-window"
 
 # merge program for pacdiff
 export DIFFPROG="$EDITOR -d"
