@@ -21,6 +21,7 @@ PKG=(
   ueberzug # Required by: ranger
   bash-completion fzf ripgrep # Required by: bash
   python-adblock # Required by: qutebrowser
+  gtk-engine-murrine # Required by: theme
 
   ttf-iosevka-nerd ttc-iosevka-ss09 ttc-iosevka-aile
 )
@@ -28,11 +29,15 @@ PKG=(
 AUR=(
   ptpython qpdfview
 
+  # gruvbox theme
+  gruvbox-plus-icon-theme
+  colloid-gruvbox-gtk-theme-git
+  xcursor-simp1e-gruvbox-dark
+
   absolutely-proprietary # Required by: conky
   pandoc-bin mutt-ics # Required by: mutt
   bash-complete-alias # Required by: bash
-  gruvbox-dark-gtk gruvbox-dark-icons-gtk # Required by: awesome
-  qt5-styleplugins # Required by: awesome
+  qt5-styleplugins # Required by: theme
   dragon-drop # Required by: ranger
   ltex-ls-bin # Required by: neovim
 )

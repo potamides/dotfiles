@@ -6,9 +6,9 @@
 #             Sends a desktop notification when the tea is ready.             #
 ###############################################################################
 
-shopt -s nullglob
+shopt -s nullglob globstar
 
-iconpath="/usr/share/icons/*/32x32/*"
+iconpath="/usr/share/icons/**/32*/**"
 icon=(
   # stuff that looks like tea, first match is used
   $iconpath/kteatime.svg

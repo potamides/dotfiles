@@ -5,7 +5,8 @@ local utils = {
   wallpaper = require("utils.wallpaper"),
   surface   = require("utils.surface"),
   layout    = require("utils.layout"),
-  timer     = require("utils.timer")
+  timer     = require("utils.timer"),
+  icon      = require("utils.icon")
 }
 
 return utils

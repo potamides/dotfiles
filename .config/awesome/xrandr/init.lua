@@ -4,7 +4,7 @@
 local gtable  = require("gears.table")
 local spawn  = require("awful.spawn")
 local naughty = require("naughty")
-local beautiful = require("beautiful")
+local mutils = require("menubar.utils")
 
 local xrandr = {
   state = { cid = nil },
@@ -124,7 +124,7 @@ function xrandr.show()
   end
   xrandr.state.cid = naughty.notify({
     text        = label,
-    icon        = "/usr/share/icons/" .. beautiful.icon_theme .. "/32x32/devices/display.svg",
+    icon        = mutils.lookup_icon("display"),
     timeout     = 4,
     screen      = mouse.screen,
     replaces_id = xrandr.state.cid,

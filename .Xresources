@@ -80,7 +80,7 @@ Xft.dpi:            96
 !! xcursor theme
 ! -----------------------------------------------------------------------------
 
-Xcursor.theme: Adwaita
+Xcursor.theme: Simp1e-Gruvbox-Dark
 Xcursor.size:  32
 
 !! git askpass theme

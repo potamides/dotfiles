@@ -6,12 +6,13 @@ local awful = require("awful")
 local usurface = require("utils.surface")
 local dpi = require("beautiful.xresources").apply_dpi
 local theme_assets = require("beautiful.theme_assets")
+local icon_utils = require("utils.icon")
 
 local theme_path = awful.util.getdir("config") .. "/themes/gruvbox/"
 local theme = {}
 
 theme.font       = "sans-serif 11"
-theme.icon_theme = "gruvbox-dark-icons-gtk"
+theme.icon_theme = icon_utils.convert_theme("Gruvbox-Plus-Dark")
 
 -- crop to size where wallpaper repeats itself
 theme.wallpaper = usurface.crop(theme_path .. "wallpaper.png", 384, 0, 1920, 1080)
@@ -102,7 +103,8 @@ theme.hotkeys_border_color = theme.bg4
 theme.menubar_border_width = theme.border_width
 
 -- Notifications
-theme.notification_opacity = 0.75
+theme.notification_opacity   = 0.75
+theme.notification_icon_size = 32
 
 -- Calendar
 theme.calendar_year_fg_color        = theme.fg1
