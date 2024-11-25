@@ -39,7 +39,7 @@ function multiplex(){
     sleep 1
   done
   if job_state running; then
-    srun --pty --jobid "$(job_id)" tmux "$@"
+    srun --overlap --pty --jobid "$(job_id)" tmux "$@"
   else
     echo "No server running on any slurm node!" \
       "Run '$SBATCH_JOB_NAME batch [options]' first." >&2
