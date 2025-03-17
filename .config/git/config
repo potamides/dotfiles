@@ -13,19 +13,10 @@
 [help]
   autoCorrect = "prompt"
 [merge]
-  tool = nvimdiff2
-[mergetool "unityyamlmerge"]
-  binary = true
-  trustExitCode = false
-  cmd = UnityYAMLMerge merge -p "$BASE" "$REMOTE" "$LOCAL" "$MERGED"
-  keepTemporaries = true
-  keepBackup = false
-[merge "unityyamlmerge"]
-  name = Unity SmartMerge (UnityYamlMerge)
-  driver = UnityYAMLMerge merge -h -p --force %O %B %A %A
-  recursive = binary
-  keepTemporaries = true
-  keepBackup = false
+  # tool = nvimdiff2
+  tool = fugitive
+[mergetool "fugitive"]
+  cmd = nvim -c "Gvdiffsplit!" "$MERGED"
 [filter "lfs"]
   clean = git-lfs clean -- %f
   smudge = git-lfs smudge -- %f
@@ -37,7 +28,7 @@
   pushInsteadOf = https://gitlab.com/
 [url "ssh://git@hf.co/"]
   pushInsteadOf = https://huggingface.co/
-[include]
-  path = config.local
 [protocol "file"]
   allow = always
+[include]
+  path = config.local
