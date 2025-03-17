@@ -163,13 +163,13 @@ if [[ -n $(type -t fzf) ]]; then
     fzf --ansi --multi --disabled --query "${*:-}" \
       --bind "start:reload:$rg_prefix {q} || true" \
       --bind "change:reload:sleep 0.1; $rg_prefix {q} || true" \
-      --bind "ctrl-t:transform:[[ ! \$FZF_PROMPT =~ regex ]] &&
+      --bind "ctrl-g:transform:[[ ! \$FZF_PROMPT =~ regex ]] &&
         printf ${switch@Q} rebind regex disable-search f r ||
         printf ${switch@Q} unbind fuzzy enable-search r f" \
       --color "hl:-1:underline,hl+:-1:underline:reverse" \
       --prompt 'regex> ' \
       --delimiter : \
-      --header 'ctrl-t to switch between fuzzy/regex search' \
+      --header 'ctrl-g to switch between fuzzy/regex search' \
       --preview "pygmentize -f terminal {1} || cat {1}" \
       --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
       --bind "enter:become($EDITOR {+1} +{2})"
