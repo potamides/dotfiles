@@ -42,6 +42,9 @@ export FZF_DEFAULT_OPTS="--color 16,fg:15,bg:0,hl:11,fg+:15,bg+:237,hl+:11 \
 # use old python repl which supports vi mode
 export PYTHON_BASIC_REPL="true"
 
+# set up LS_COLORS environment variable
+eval "$(dircolors)"
+
 # source environment variables which are not under version control
 if [[ -r ~/.bash_profile.local ]]; then
   source ~/.bash_profile.local
