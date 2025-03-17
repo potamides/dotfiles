@@ -69,6 +69,15 @@ if not vim.b.did_user_ftplugin then
           )
         end)
       )
+
+      -- also find python virtualenvs (for minted, matplotlib, etc)
+      local venv = vim.fn.globpath(root_dir, ".*venv*\\|*venv*", nil, true)[1]
+      if venv then
+        config.cmd_env = {
+          PATH = ("%s/bin:%s"):format(venv, vim.env.PATH),
+          VIRTUAL_ENV = venv,
+        }
+      end
     end
   }
 
