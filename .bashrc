@@ -1,4 +1,4 @@
-# shellcheck shell=bash disable=SC1091,SC2034,SC2139
+# shellcheck shell=bash disable=SC1091,SC2016,SC2028,SC2034,SC2139
 
 # If not running interactively, don't do anything
 if [[ $- != *i* ]]; then
@@ -17,36 +17,67 @@ fi
 ## build prompt
 # -----------------------------------------------------------------------------
 
-boldblue='\e[1;34m'
-boldred='\e[1;31m'
-white='\e[37m'
-reset='\e[m'
+function __prompt_start(){
+  local time=$((SECONDS-START_TIME)) exit_code=$?
+  local white='\[\e[37m\]' yellow='\[\e[33m\]' reset='\[\e[m\]'
+  local boldred='\[\e[1;31m\]' boldblue='\[\e[1;34m\]'
 
-# echo return code on failure
-returncode="\$(exit=\$?; [[ \$exit -ne 0 ]] && echo \"$boldred\$exit \")"
-# root user is red, other users are blue
-user="\$([[ \$EUID -eq 0 ]] && echo \"$boldred\"\u || echo \"$boldblue\"\u)"
-dir="$reset@\h $white\w$reset"
+  if [[ -v REPORT_STATUS && $exit_code -ne 0 ]]; then
+    # display exit code of previous command if it is nonzero
+    printf "%s " "$boldred$exit_code"
+  fi
 
-# prompt stuff that should come before and after git integration
-firstline=$returncode$user$dir
-secondline='\n> '
+  if [[ $EUID -eq 0 ]]; then
+    printf "%s" "$boldred\u$reset"
+  else
+    printf "%s" "$boldblue\u$reset"
+  fi
+
+  printf "@%s %s" "\h" "$white\w$reset"
+
+  if [[ -v REPORT_STATUS ]]; then
+    local -x TZ=UTC0 # interpret $time as unix epoch time
+    # display execution time of previous command if above threshold
+    if ((time >= 86400)); then
+      printf " (%s%d-%(%T)T%s)" "$yellow" "$((time/86400))" "$time" "$reset"
+    elif ((time >= 3600)); then
+      printf " (%s%(%-H:%M:%S)T%s)" "$yellow" "$time" "$reset"
+    elif ((time >= 10)); then
+      printf " (%s%(%-M:%S)T%s)" "$yellow" "$time" "$reset"
+    fi
+  fi
+}
+
+function __prompt_end(){
+  local purple='\[\e[35m\]' aqua='\[\e[36m\]' reset='\[\e[m\]'
+
+  if [[ -n "$VIRTUAL_ENV" ]]; then
+    printf " (%s)" "$purple${VIRTUAL_ENV##*/}$reset"
+  fi
+
+  printf '$(%s %s; %s)' \
+    "if [[ \j -gt 0 ]]; then" \
+      "printf ' (%s%d job%.*s%s)' ${aqua@Q} \j \$((\j>1)) s ${reset@Q}" \
+    "fi"
+
+  printf "%s>%s " "\n" "$reset"
+}
 
 # integrate git into prompt via PROMPT_COMMAND
 if [[ -r /usr/share/git/git-prompt.sh ]]; then
   source /usr/share/git/git-prompt.sh
-  GIT_PS1_SHOWCOLORHINTS=1
-  # when using PROMPT_COMMAND we have to manually integrate python virtualenvs
-  firstline=\$VIRTUAL_ENV_PROMPT$firstline
-  PROMPT_COMMAND="__git_ps1 '$firstline' '$secondline';"
+  GIT_PS1_SHOWCOLORHINTS=yes GIT_PS1_SHOWCONFLICTSTATE=yes
+  PROMPT_COMMAND=('__git_ps1 "$(__prompt_start)" "$(__prompt_end)"')
 else
-  # if git-promt.sh doesn't exist create prompt directly with PS1
-  PS1="$firstline$secondline"
+  PROMPT_COMMAND=('PS1="$(__prompt_start)$(__prompt_end)"')
 fi
 
-PS2="» "
+# whenever PS0 is evaluated (non-empty command) set status flag and timestamp
+PS0='\[${PS0:$((START_TIME=$SECONDS, REPORT_STATUS=yes, 0)):0}\]'
+PROMPT_COMMAND+=("unset START_TIME REPORT_STATUS")
 
-unset boldblue boldred white reset returncode user dir firstline secondline
+PROMPT_DIRTRIM=3
+PS2="» "
 
 ## general shell behavior
 # -----------------------------------------------------------------------------
@@ -64,9 +95,9 @@ shopt -s extglob                    # enable extended pattern matching features
 
 # reset cursor shape before executing a command (see .config/readline/inputrc)
 if [[ $TERM = linux ]]; then
-  PS0="\e[?8c"
+  PS0+='\[\e[?8c\]'
 else
-  PS0="\e[2 q"
+  PS0+='\[\e[2 q\]'
 fi
 
 # bash history stuff
@@ -76,7 +107,7 @@ HISTTIMEFORMAT="%d/%m/%y %T "
 HISTCONTROL=ignoreboth:erasedups
 # don't append wifi passwords to history file
 HISTIGNORE="nmcli d* w* [ch]* * password *"
-PROMPT_COMMAND+="history -a;"
+PROMPT_COMMAND+=("history -a")
 
 ## Aliases
 # -----------------------------------------------------------------------------
@@ -237,8 +268,8 @@ function ncp(){
 # -----------------------------------------------------------------------------
 
 # advise the terminal of the current working directory
-PROMPT_COMMAND+='printf "\e]7;file://%s%s\e\\" "$HOSTNAME" "$PWD";'
+PROMPT_COMMAND+=('printf "\e]7;file://%s%s\e\\" "$HOSTNAME" "$PWD"')
 
 # set window title to currently running command or current working directory
-PROMPT_COMMAND+='[ -n "$BASH_COMMAND" ] && printf "\e]0;%s\a" "$PWD";'
+PROMPT_COMMAND+=('[ -n "$BASH_COMMAND" ] && printf "\e]0;%s\a" "$PWD"')
 trap 'printf "\e]0;%s\a" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
