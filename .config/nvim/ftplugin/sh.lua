@@ -24,8 +24,7 @@ if not vim.b.did_user_ftplugin then
           return
         end
         return vim.lsp.util.open_floating_preview(markdown_lines, language_id, config)
-    end
-  }
-
+      end
+    }
   }
 end
