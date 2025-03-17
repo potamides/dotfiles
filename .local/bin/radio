@@ -11,9 +11,10 @@ declare -A stations=(
   [Chilled Cow]=https://youtu.be/jfKfPfyJRdk
   [Code Radio]=https://coderadio-admin-v2.freecodecamp.org/listen/coderadio/radio.mp3
   [Final Fantasy Radio]=http://finalfantasystation.com:8000/stream
-  [FUTURE FNK]=http://node-16.zeno.fm:80/etbbu6a3dnruv
+  #[FUTURE FNK]=http://node-16.zeno.fm:80/etbbu6a3dnruv
   [Gensokyo Radio]=https://stream.gensokyoradio.net/1
-  [Hand of Doom Radio]=http://s5.nexuscast.com:8042/stream
+  [Hit Radio AI]=https://cast6.my-control-panel.com/proxy/kool_fm/stream
+  [Keygen FM]=http://stream.keygen-fm.ru:8042/live.ogg
   [Kohina]=http://kohina.duckdns.org:8000/stream.ogg
   [Nightride FM]=https://stream.nightride.fm/nightride.ogg
   [Nightwave Plaza]=https://radio.plaza.one/mp3
@@ -21,8 +22,9 @@ declare -A stations=(
   [Radio 1920]=https://radio1920.stream.laut.fm/radio1920
   [Radio Monacensis]=https://monacensis.stream.laut.fm/monacensis
   [Radio PARALAX]=http://radio-paralax.de:8000
-  [Rapture Radio]=http://192.111.140.6:8411
+  #[Rapture Radio]=http://192.111.140.6:8411
   [Shonan Beach FM]=http://shonanbeachfm.out.airtime.pro:8000/shonanbeachfm_c
+  [The Voice Of Doom]=https://streaming.galaxywebsolutions.com:9046/stream
 )
 
 select station in $(sort <<< "${!stations[@]}"); do
