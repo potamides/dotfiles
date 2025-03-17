@@ -48,7 +48,7 @@ class ArxivMail:
         filtered_papers = [
             paper
             for paper in self.papers
-            if any(key.lower() in paper.replace("\n", " ").lower() for key in keywords)
+            if any(key.lower() in " ".join(paper.split()).lower() for key in keywords)
         ]
         return ArxivMail(
             header=self.header,
