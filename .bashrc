@@ -1,4 +1,4 @@
-# shellcheck shell=bash disable=SC1091,SC2016,SC2028,SC2034,SC2139
+# shellcheck shell=bash disable=SC1091,SC2016,SC2028,SC2034,SC2059,SC2139
 
 # If not running interactively, don't do anything
 if [[ $- != *i* ]]; then
@@ -17,64 +17,70 @@ fi
 ## build prompt
 # -----------------------------------------------------------------------------
 
-function __prompt_start(){
-  local time=$((SECONDS-START_TIME)) exit_code=$?
+function __start_ps1(){
+  local fmt args time=$((SECONDS-START_TIME)) exit_code=$?
   local white='\[\e[37m\]' yellow='\[\e[33m\]' reset='\[\e[m\]'
   local boldred='\[\e[1;31m\]' boldblue='\[\e[1;34m\]'
 
   if [[ -v REPORT_STATUS && $exit_code -ne 0 ]]; then
     # display exit code of previous command if it is nonzero
-    printf "%s " "$boldred$exit_code"
+    __printf "%s " "$boldred$exit_code"
   fi
 
   if [[ $EUID -eq 0 ]]; then
-    printf "%s" "$boldred\u$reset"
+    __printf "%s" "$boldred\u$reset"
   else
-    printf "%s" "$boldblue\u$reset"
+    __printf "%s" "$boldblue\u$reset"
   fi
 
-  printf "@%s %s" "\h" "$white\w$reset"
+  __printf "@%s %s" "\h" "$white\w$reset"
 
   if [[ -v REPORT_STATUS ]]; then
     local -x TZ=UTC0 # interpret $time as unix epoch time
     # display execution time of previous command if above threshold
     if ((time >= 86400)); then
-      printf " (%s%d-%(%T)T%s)" "$yellow" "$((time/86400))" "$time" "$reset"
+      __printf " (%s%d-%(%T)T%s)" "$yellow" "$((time/86400))" "$time" "$reset"
     elif ((time >= 3600)); then
-      printf " (%s%(%-H:%M:%S)T%s)" "$yellow" "$time" "$reset"
+      __printf " (%s%(%-H:%M:%S)T%s)" "$yellow" "$time" "$reset"
     elif ((time >= 10)); then
-      printf " (%s%(%-M:%S)T%s)" "$yellow" "$time" "$reset"
+      __printf " (%s%(%-M:%S)T%s)" "$yellow" "$time" "$reset"
     fi
   fi
+
+  printf -v START_PS1 "$fmt" "${args[@]}"
 }
 
-function __prompt_end(){
-  local purple='\[\e[35m\]' aqua='\[\e[36m\]' reset='\[\e[m\]'
+function __end_ps1(){
+  local fmt args purple='\[\e[35m\]' aqua='\[\e[36m\]' reset='\[\e[m\]'
 
   if [[ -n "$VIRTUAL_ENV" ]]; then
-    printf " (%s)" "$purple${VIRTUAL_ENV##*/}$reset"
+    __printf " (%s)" "$purple${VIRTUAL_ENV##*/}$reset"
   fi
 
-  printf '$(%s %s; %s)' \
+  __printf '$(%s %s; %s)' \
     "if [[ \j -gt 0 ]]; then" \
       "printf ' (%s%d job%.*s%s)' ${aqua@Q} \j \$((\j>1)) s ${reset@Q}" \
     "fi"
 
-  printf "%s>%s " "\n" "$reset"
+  printf -v END_PS1 "$fmt%s>%s " "${args[@]}" "\n" "$reset"
+}
+
+function __printf(){
+  fmt+="$1" args+=("${@:2}")
 }
 
 # integrate git into prompt via PROMPT_COMMAND
 if [[ -r /usr/share/git/git-prompt.sh ]]; then
   source /usr/share/git/git-prompt.sh
   GIT_PS1_SHOWCOLORHINTS=yes GIT_PS1_SHOWCONFLICTSTATE=yes
-  PROMPT_COMMAND=('__git_ps1 "$(__prompt_start)" "$(__prompt_end)"')
+  PROMPT_COMMAND=(__start_ps1 __end_ps1 '__git_ps1 "$START_PS1" "$END_PS1"')
 else
-  PROMPT_COMMAND=('PS1="$(__prompt_start)$(__prompt_end)"')
+  PROMPT_COMMAND=(__start_ps1 __end_ps1 'PS1="$START_PS1$END_PS1"')
 fi
 
 # whenever PS0 is evaluated (non-empty command) set status flag and timestamp
 PS0='\[${PS0:$((START_TIME=$SECONDS, REPORT_STATUS=yes, 0)):0}\]'
-PROMPT_COMMAND+=("unset START_TIME REPORT_STATUS")
+PROMPT_COMMAND+=("unset START_TIME REPORT_STATUS START_PS1 END_PS1")
 
 PROMPT_DIRTRIM=3
 PS2="» "
