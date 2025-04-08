@@ -9,7 +9,7 @@ fi
 # -----------------------------------------------------------------------------
 
 # if not in vim or ranger show reminders for today
-if [[ -z $VIMRUNTIME && -z $RANGER_LEVEL && -n $(type -t when) ]]; then
+if [[ -z $NVIM && -z $RANGER_LEVEL && -n $(type -t when) ]]; then
   when --wrap=78 --noheader --styled_output_if_not_tty w | sed 's/^/│ /' |
     xargs -r0 printf "┌─[ Reminders ]\\n%s└$(printf '%0.s─' {0..22})\\n"
 fi

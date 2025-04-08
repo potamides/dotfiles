@@ -102,16 +102,10 @@ if not vim.b.did_user_ftplugin then
         },
       }
     },
-    handlers = {
-      -- report ltex diagnostics similar to internal spell checking
-      ["textDocument/publishDiagnostics"] = vim.lsp.with(
-         vim.lsp.diagnostic.on_publish_diagnostics, {
-           underline = true,
-           virtual_text = false,
-           signs = false
-         }
-       )
-    },
+    on_attach = function(client)
+      local namespace = vim.lsp.diagnostic.get_namespace(client.id)
+      vim.diagnostic.config({virtual_text = false, signs = false}, namespace)
+    end
   }
 
   local function ltex_command(setting, id)

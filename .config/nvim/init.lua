@@ -7,7 +7,7 @@
 --]]
 
 -------------------------------------------------------------------------------
--- {{{ Generic Configuration
+-- {{{ General Configuration
 -------------------------------------------------------------------------------
 
 -- Options
@@ -36,7 +36,7 @@ vim.opt.listchars:append{tab = "» ", precedes = "<", extends = ">"}
 vim.opt.list = true
 
 -- built-in completion & tag search
-vim.opt.completeopt:append{"menuone", "noinsert", "popup"}
+vim.opt.completeopt:append{"fuzzy", "menuone", "noinsert", "popup"}
 vim.opt.complete:remove{"t"}
 vim.opt.completefunc = "v:lua.require'snipcomp'" -- custom snippet completion defined in lua/snipcomp.lua
 
@@ -65,16 +65,21 @@ vim.opt.mouse = "a"
 vim.opt.keymap = "kana"
 vim.opt.iminsert = 0
 
-vim.opt.undofile = true        -- persistent undo history
-vim.opt.showmode = false       -- do not show mode message on last line
-vim.opt.hidden = true          -- switch buffers without having to save changes
-vim.opt.joinspaces = false     -- insert one space when joining two sentences
-vim.opt.confirm = true         -- raise dialog asking to save changes when commands like ':q' fail
-vim.opt.title = true           -- set terminal window title to something descriptive
-vim.opt.foldlevel = 99         -- do not automatically close folds when editing a file
-vim.opt.inccommand = "nosplit" -- show incremental changes of commands such as search & replace
-vim.opt.virtualedit = "block"  -- virtual editing in visual block mode
-vim.opt.shortmess:append("I")  -- don't give intro message when starting vim
+vim.opt.undofile = true         -- persistent undo history
+vim.opt.showmode = false        -- do not show mode message on last line
+vim.opt.hidden = true           -- switch buffers without having to save changes
+vim.opt.joinspaces = false      -- insert one space when joining two sentences
+vim.opt.confirm = true          -- raise dialog asking to save changes when commands like ':q' fail
+vim.opt.title = true            -- set terminal window title to something descriptive
+vim.opt.foldlevel = 99          -- do not automatically close folds when editing a file
+vim.o.foldtext = ''             -- enable syntax highlighting for folds
+vim.opt.inccommand = "nosplit"  -- show incremental changes of commands such as search & replace
+vim.opt.virtualedit = "block"   -- virtual editing in visual block mode
+vim.opt.shortmess:append("Ic")  -- disable intro and ins-completion messages
+
+if vim.env.TERM == "linux" then
+  vim.opt.title = false
+end
 
 -- Variables
 -------------------------------------------------------------------------------
@@ -102,10 +107,16 @@ vim.g.netrw_browsex_viewer = "xdg-open"
 vim.g.netrw_list_hide = [[\(^\|\s\s\)\zs\.\S\+]]
 vim.g.netrw_sort_options = "i"
 
-vim.g.python3_host_prog = "/usr/bin/python3"   -- use system python (useful when working with virualenvs)
-vim.g.vga_compatible = vim.env.TERM == "linux" -- VGA textmode fallback (with CP437 character set) for legacy terminals
+vim.g.clipboard = "osc52"                    -- use OSC 52 for copying and pasting
+vim.g.python3_host_prog = "/usr/bin/python3" -- use system python (useful when working with virualenvs)
+vim.g.vga_compatible = false                 -- VGA textmode fallback (with CP437 character set) for legacy terminals
 
--- Automatic commands
+if vim.env.TERM == "linux" then
+  vim.g.vga_compatible = true
+  vim.g.clipboard = nil
+end
+
+-- Autocmds
 -------------------------------------------------------------------------------
 local au = require("au") -- small wrapper around lua autocmd api
 
@@ -182,63 +193,87 @@ cmd("Bd", "bp|bd #", {})             -- delete buffer without closing split
 cmd("Config", "edit $MYVIMRC", {})   -- open config file with :Config
 cmd("Reload", "source $MYVIMRC", {}) -- reload config file with :Reload
 
--- Mappings
--------------------------------------------------------------------------------
+-- mappings for some comands
 local map, opts = vim.keymap.set, {noremap = true, silent = true}
 
--- navigate buffers like tabs (gt & gT)
-map("n", "gb", function() vim.cmd.bnext{count = vim.v.count1} end, opts)
-map("n", "gB", function() vim.cmd.bprev{count = vim.v.count1} end, opts)
+map("n", "<leader>tm", vim.cmd.Terminal, opts)
+map("n", "<leader>fe", vim.cmd.Lexplore, opts)
+
+-- Diagnostics
+-------------------------------------------------------------------------------
 
 -- diagnostics mappings
 map("n", "<leader>ll", vim.diagnostic.setloclist, opts)
 map("n", "<leader>ld", vim.diagnostic.open_float, opts)
-map("n", "[d",         vim.diagnostic.goto_prev, opts)
-map("n", "]d",         vim.diagnostic.goto_next, opts)
-
--- open netrw file explorer and terminal
-map("n", "<leader>fe", vim.cmd.Lexplore, opts)
-map("n", "<leader>tm", vim.cmd.Terminal, opts)
-
--- language server mappings
-local function lsp_mappings(_, buf)
-  local bufopts = {buffer = buf, unpack(opts)}
-  map("n", "gd",         vim.lsp.buf.definition, bufopts)
-  map("n", "gD",         vim.lsp.buf.declaration, bufopts)
-  map("n", "<leader>gi", vim.lsp.buf.implementation, bufopts)
-  map("n", "<leader>gt", vim.lsp.buf.type_definition, bufopts)
-  map("n", "K",          vim.lsp.buf.hover, bufopts)
-  map("n", "<C-k>",      vim.lsp.buf.signature_help, bufopts)
-  map("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, bufopts)
-  map("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, bufopts)
-  map("n", "<leader>wl", function() vim.print(vim.lsp.buf.list_workspace_folders()) end, bufopts)
-  map("n", "<leader>rn", vim.lsp.buf.rename, bufopts)
-  map("n", "<leader>ca", vim.lsp.buf.code_action, bufopts)
-  map("n", "<leader>rf", vim.lsp.buf.references, bufopts)
-  map("n", "<leader>fm", function() vim.lsp.buf.format{async = true} end, bufopts)
-  map("v", "<leader>fm", ":lua vim.lsp.formatexpr()<cr>", bufopts) -- return to normal mode
-end
-
--- Diagnostics
--------------------------------------------------------------------------------
-local prefix = "DiagnosticSign"
 
 -- when not on the console set some nice signs
 if not vim.g.vga_compatible then
-  vim.fn.sign_define{
-    {name = prefix .. "Error", text = "▌", texthl = prefix .. "Error"},
-    {name = prefix .. "Warn",  text = "▌", texthl = prefix .. "Warn"},
-    {name = prefix .. "Hint",  text = "▌", texthl = prefix .. "Hint"},
-    {name = prefix .. "Info",  text = "▌", texthl = prefix .. "Info"}
-  }
   vim.diagnostic.config{
-    virtual_text = {prefix = "▪"}
+    signs = {
+      text = {
+        [vim.diagnostic.severity.ERROR] = "▌",
+        [vim.diagnostic.severity.WARN]  = "▌",
+        [vim.diagnostic.severity.HINT]  = "▌",
+        [vim.diagnostic.severity.INFO]  = "▌",
+      },
+      texthl = {
+        [vim.diagnostic.severity.ERROR] = "DiagnosticSignError",
+        [vim.diagnostic.severity.WARN]  = "DiagnosticSignWarn",
+        [vim.diagnostic.severity.HINT]  = "DiagnosticSignHint",
+        [vim.diagnostic.severity.INFO]  = "DiagnosticSignInfo",
+      }
+    }
   }
+end
+
+vim.diagnostic.config{
+  jump = {float = true},
+  virtual_text = vim.g.vga_compatible and true or {prefix = "▪"}
+}
+
+-- LSP
+-------------------------------------------------------------------------------
+local lsp = au("user_lsp")
+
+function lsp.LspAttach(args)
+  local client = vim.lsp.get_client_by_id(args.data.client_id)
+  local bufopts = {buffer = args.buf, unpack(opts)}
+
+  --additional mappings
+  map("n", "grd",         vim.lsp.buf.definition, bufopts)
+  map("n", "<localleader>wa", vim.lsp.buf.add_workspace_folder, bufopts)
+  map("n", "<localleader>wr", vim.lsp.buf.remove_workspace_folder, bufopts)
+  map("n", "<localleader>wl", function() vim.print(vim.lsp.buf.list_workspace_folders()) end, bufopts)
+
+  -- enable completion if supported
+  if client:supports_method("textDocument/completion") then
+    vim.lsp.completion.enable(true, client.id, args.buf, {autotrigger = true})
+  end
+
+  -- enable LSP folding if supported
+  if client:supports_method('textDocument/foldingRange') then
+    vim.opt_local.foldmethod = "expr"
+    vim.opt_local.foldexpr = "v:lua.vim.lsp.foldexpr()"
+  end
+end
+
+-- Treesitter
+-------------------------------------------------------------------------------
+local treesitter = au("user_treesitter")
+
+-- enable Treesitter folding and highlighting if parser available
+function treesitter.FileType(args)
+  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  if vim.treesitter.language.add(lang) then
+    vim.opt_local.foldmethod = "expr"
+    vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+    vim.treesitter.start(args.buf, lang)
+  end
 end
 
 -- }}}
 -------------------------------------------------------------------------------
--- {{{ Plugin-Specific Configuration
+-- {{{ User-installed plugin Configuration
 -------------------------------------------------------------------------------
 local autopaq = require("autopaq")
 
@@ -257,6 +292,7 @@ autopaq.bootstrap{
   "ibhagwan/fzf-lua",
   "robitx/gp.nvim",
   "ellisonleao/gruvbox.nvim",
+  {"nvim-treesitter/nvim-treesitter", build = ":TSInstallSync all | TSUpdate"},
   {"L3MON4D3/LuaSnip", build = "make install_jsregexp"},
 
   -- dependencies
@@ -279,7 +315,7 @@ end
 local gruvbox = require("gruvbox")
 
 gruvbox.setup{
-  italic = {strings = false},
+  terminal_colors = false,
   overrides = {
     -- diagnostic highlighting
     DiagnosticHint            = {link = "GruvboxPurple"},
@@ -350,12 +386,13 @@ local quickscope = au{"user_quickscope", LoadPost = {"ColorScheme", "VimEnter"}}
 vim.g.qs_highlight_on_keys = {"f", "F", "t", "T"}
 
 function quickscope.LoadPost()
-  for group, color in pairs{QuickScopePrimary = 10, QuickScopeSecondary = 13} do
-    vim.api.nvim_set_hl(0, group, {
-      sp = vim.g["terminal_color_" .. color],
-      ctermfg = color,
+  for group, severity in pairs{Primary = "Ok", Secondary = "Hint"} do
+    local hl = vim.api.nvim_get_hl(0, {name = "Diagnostic" .. severity, link = false})
+    vim.api.nvim_set_hl(0, "QuickScope" .. group, {
+      sp = hl.fg,
+      ctermfg = hl.ctermfg,
       bold = true,
-      underline = true
+      underline = vga(true)
     })
   end
 end
@@ -412,15 +449,6 @@ colorizer.setup{
   }
 }
 
--- nvim-lspconfig
--------------------------------------------------------------------------------
-local lsputil = require("lspconfig.util")
-
--- setup calls to specific language servers are located in ftplugins
-lsputil.on_setup = lsputil.add_hook_before(lsputil.on_setup, function(config)
-  config.on_attach = lsputil.add_hook_before(config.on_attach, lsp_mappings)
-end)
-
 -- nvim-dap
 -------------------------------------------------------------------------------
 local dap = require("dap")
@@ -470,19 +498,31 @@ map("n", "<leader>dp", function() require("dap.ui.widgets").hover(nil, {border =
 local luasnip = lazy_require("luasnip")
 require("luasnip.loaders.from_vscode").lazy_load()
 
-local function try_change_choice(direction)
-  if luasnip.choice_active() then
-    luasnip.change_choice(direction)
+-- combined function for builtin-in and luasnip jumping
+local function snipjump(direction, lhs)
+  if vim.snippet.active{direction = direction} then
+    return ("<cmd>lua vim.snippet.jump(%d)<cr>"):format(direction)
+  elseif luasnip.jumpable(direction) then
+    luasnip.jump(direction)
+  else
+    return lhs
   end
 end
 
--- we only define LuaSnip mappings for jumping around, expansion is handled by
--- insert mode completion (see help-page for 'ins-completion' and
--- 'completefunc' defined above).
-map({"n", "i", "s"}, "<C-s><C-n>", function() luasnip.jump(1) end, opts)
-map({"n", "i", "s"}, "<C-s><C-p>", function() luasnip.jump(-1) end, opts)
-map({"n", "i", "s"}, "<C-s><C-j>", function() try_change_choice(1) end, opts)
-map({"n", "i", "s"}, "<C-s><C-k>", function() try_change_choice(-1) end, opts)
+local function snipchoice(direction, lhs)
+  if luasnip.choice_active() then
+    luasnip.change_choice(direction)
+  else
+    return lhs
+  end
+end
+
+-- we only define mappings for jumping around, expansion is handled by insert
+-- mode completion (see h: 'ins-completion' and 'completefunc' defined above).
+map({"i", "s"}, "<Tab>", function() return snipjump(1, "<Tab>") end, {expr = true, unpack(opts)})
+map({"i", "s"}, "<S-Tab>", function() return snipjump(-1, "<S-Tab>") end, {expr = true, unpack(opts)})
+map({"i", "s"}, "<C-n>", function() return snipchoice(1, "<C-n>") end, {expr = true, unpack(opts)})
+map({"i", "s"}, "<C-p>", function() return snipchoice(-1, "C-p") end, {expr = true, unpack(opts)})
 
 -- fzf-lua
 -------------------------------------------------------------------------------
@@ -514,7 +554,7 @@ fzf.setup{
       Hint  = {text = statusline.opts.symbols.hint,    texthl = "DiagnosticHint"},
     }
   },
-  lsp = {jump_to_single_result = true},
+  lsp = {jump1 = true},
   fzf_opts = {["--layout"] = "default"},
   defaults = {file_icons = not vim.g.vga_compatible}
 }
@@ -522,14 +562,12 @@ fzf.setup{
 -- when a count N is given to a fzf mapping called through the following
 -- function, the search is started in the Nth parent directory
 local function fzf_cwd(picker, args)
-  local target_dir = vim.loop.fs_realpath(("../"):rep(vim.v.count) .. ".")
+  local target_dir = vim.uv.fs_realpath(("../"):rep(vim.v.count) .. ".")
   fzf[picker](vim.tbl_extend("error", args or {}, {cwd = target_dir}))
 end
 
 map("n", "<leader>ff", function() fzf_cwd("files") end, opts)
 map("n", "<leader>rg", function() fzf_cwd("live_grep") end, opts)
-map("n", "<leader>ds", fzf.lsp_document_symbols, opts)
-map("n", "<leader>ws", fzf.lsp_live_workspace_symbols, opts)
 map("n", "<leader>fz", fzf.builtin, opts)
 
 -- if fzf binary is available patch ui.select and some previous mappings
@@ -538,15 +576,16 @@ if vim.fn.executable("fzf") == 1 then
   map("n", "<leader>ll", fzf.diagnostics_document, opts)
   map("n", "<leader>bs", fzf.dap_breakpoints, opts)
 
-  lsp_mappings = lsputil.add_hook_after(lsp_mappings, function(_, buf)
-    local bufopts = {buffer = buf, unpack(opts)}
-    map("n", "gd",         fzf.lsp_definitions, bufopts)
-    map("n", "gD",         fzf.lsp_declarations, bufopts)
-    map("n", "<leader>gi", fzf.lsp_implementations, bufopts)
-    map("n", "<leader>gt", fzf.lsp_typedefs, bufopts)
-    map("n", "<leader>ca", fzf.lsp_code_actions, bufopts)
-    map("n", "<leader>rf", fzf.lsp_references, bufopts)
-  end)
+  function lsp.LspAttach(args)
+    local bufopts = {buffer = args.buf, unpack(opts)}
+    map("n", "grd", fzf.lsp_definitions, bufopts)
+    map("n", "gri", fzf.lsp_implementations, bufopts)
+    map("n", "gri", fzf.lsp_implementations, bufopts)
+    map("n", "gra", fzf.lsp_code_actions, bufopts)
+    map("n", "grr", fzf.lsp_references, bufopts)
+    map("n", "gO", fzf.lsp_document_symbols, bufopts)
+    map("n", "<localleader>gO", fzf.lsp_live_workspace_symbols, bufopts)
+  end
 end
 
 -- pantran.nvim

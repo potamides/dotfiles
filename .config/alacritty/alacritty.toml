@@ -19,6 +19,9 @@ hide_when_typing = true
 [cursor]
 vi_mode_style = "Block"
 
+[terminal]
+osc52 = "CopyPaste"
+
 ## keybindings
 # -----------------------------------------------------------------------------
 
