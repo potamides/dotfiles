@@ -56,7 +56,7 @@ if not vim.b.did_user_ftplugin then
         {text = true},
         vim.schedule_wrap(function(obj)
           -- find actual aux_dir following latexmk approach: https://github.com/latex-lsp/texlab/pull/968
-          local aux_dir, out_dir = obj.stdout:match("Normalized aux dir and out dir: '(.-)', '(.-)'")
+          local aux_dir, out_dir = obj.stdout:match("Normalized aux dir, out dir, out2 dir:%s-'(.-)', '(.-)'")
           -- even when using --dir-report-only latexmk still creates these
           -- directories which might not be what we want
           for _, path in ipairs{aux_dir, out_dir} do
@@ -83,7 +83,7 @@ if not vim.b.did_user_ftplugin then
 
   -- Configure ltex so that it is not started automatically. Instead, it can be
   -- started manually if needed (see keybindings below).
-  lsputils.ltex.setup{
+  lsputils.ltex_plus.setup{
     autostart = false,
     -- make ltex root directory the same as texlab
     root_dir = configs.texlab.get_root_dir,

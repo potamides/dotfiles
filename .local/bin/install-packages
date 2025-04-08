@@ -39,7 +39,7 @@ AUR=(
   bash-complete-alias # Required by: bash
   qt5-styleplugins # Required by: theme
   dragon-drop # Required by: ranger
-  ltex-ls-bin # Required by: neovim
+  ltex-ls-plus-bin # Required by: neovim
 )
 
 PIP=(
