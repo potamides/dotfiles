@@ -19,7 +19,7 @@ c.downloads.location.prompt = False
 c.downloads.open_dispatcher = join(config.configdir, "userscripts/dispatcher")
 
 c.tabs.last_close = "close"
-c.tabs.select_on_remove = "last-used"
+c.tabs.select_on_remove = "prev"
 c.tabs.show = "multiple"
 
 c.content.cookies.store = False
