@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+###############################################################################
+#  Neovim wrapper that opens files inside parent Neovim instance when called  #
+#            from the Neovim terminal and all arguments are files.            #
+###############################################################################
+
+nvim=$(which --skip-tilde nvim)
+files=()
+offset=1
+
+# support one init command
+if [[ "${!offset}" = +* ]]; then
+  init_cmd=${!offset:1}
+  (( offset+=1 ))
+fi
+
+# recognize end of options
+if [[ "${!offset}" = "--" ]]; then
+  (( offset+=1 ))
+fi
+
+# check whether all arguments are files
+for arg in "${@:$offset}"; do
+  if [[ ! -e "$arg" ]]; then
+    exec "$nvim" "$@"
+  elif [[ "$arg" != /* ]]; then
+    arg="$PWD/$arg"
+  fi
+  files+=("$arg")
+done
+
+"$nvim" --server "$NVIM" --remote "${files[@]}"
+if [[ -v init_cmd ]]; then
+  "$nvim" --server "$NVIM" --remote-send "<C-\><C-n>:${init_cmd}<cr>"
+fi

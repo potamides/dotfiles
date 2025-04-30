@@ -210,7 +210,7 @@ if [[ -n $(type -t fzf) ]]; then
       --header 'ctrl-g to switch between fuzzy/regex search' \
       --preview "pygmentize -f terminal {1} || cat {1}" \
       --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
-      --bind "enter:become($EDITOR {+1} +{2})"
+      --bind "enter:become($EDITOR +{2} {1})"
   }
 fi
 

@@ -198,11 +198,14 @@ cmd("Bd", "bp|bd #", {})             -- delete buffer without closing split
 cmd("Config", "edit $MYVIMRC", {})   -- open config file with :Config
 cmd("Reload", "source $MYVIMRC", {}) -- reload config file with :Reload
 
--- mappings for some comands
+-- mappings for some commands
 local map, opts = vim.keymap.set, {noremap = true, silent = true}
 
 map("n", "<leader>tm", vim.cmd.Terminal, opts)
 map("n", "<leader>fe", vim.cmd.Lexplore, opts)
+
+-- find wrapper command for nvim (see bin/nvim)
+vim.env.PATH = ("%s/bin:%s"):format(vim.fn.stdpath("config"), vim.env.PATH)
 
 -- Diagnostics
 -------------------------------------------------------------------------------
