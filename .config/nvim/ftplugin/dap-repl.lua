@@ -6,6 +6,9 @@ if not vim.b.did_user_ftplugin then
   -- same behavior like quickfix window
   vim.cmd.runtime{"ftplugin/qf.lua", bang = true}
 
+  -- configure completion to trigger automatically:
+  require('dap.ext.autocompl').attach()
+
   vim.api.nvim_create_autocmd("BufWinEnter", {
     group = vim.api.nvim_create_augroup(vim.bo.filetype, {clear = false}),
     buffer = 0,

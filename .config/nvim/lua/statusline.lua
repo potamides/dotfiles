@@ -215,7 +215,17 @@ function statusline.setup(opts)
   lualine.setup{
     extensions = {
       -- special statusline for netrw that only shows the path
-      {sections = {lualine_c = {pathshorten(components.cwd)}}, filetypes = {"netrw"}}
+      {sections = {lualine_c = {pathshorten(components.cwd)}}, filetypes = {"netrw"}},
+      -- special statusline for custom nvim-dap sidebar
+      {sections = {
+        lualine_c = {{
+            "filename",
+            file_status = false,
+            fmt = function(str) return str:gsub("%-%d+$", "") end
+          }}
+        },
+        filetypes = {"dap-sidebar"}
+      }
     },
     options = {
       theme = opts.theme,
