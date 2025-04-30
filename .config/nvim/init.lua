@@ -269,7 +269,7 @@ local treesitter = au("user_treesitter")
 -- enable Treesitter folding and highlighting if parser available
 function treesitter.FileType(args)
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
-  if vim.treesitter.language.add(lang) then
+  if lang and vim.treesitter.language.add(lang) then
     vim.opt_local.foldmethod = "expr"
     vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
     vim.treesitter.start(args.buf, lang)
