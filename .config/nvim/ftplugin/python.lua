@@ -44,15 +44,15 @@ if not vim.b.did_user_ftplugin then
     on_new_config = function(config, root_dir)
       -- If we have a folder in the root directory whose name contains the
       -- string "venv" treat it as a virtual env folder and activate it.
-      local venv = vim.fn.globpath(root_dir, ".*venv*\\|*venv*", nil, true)[1]
+      local venv = vim.fn.globpath(root_dir, ".*venv*\\|*venv*/bin", nil, true)[1]
       if venv then
         config.cmd_env = {
-          PATH = ("%s/bin:%s"):format(venv, vim.env.PATH),
+          PATH = ("%s:%s"):format(venv, vim.env.PATH),
           VIRTUAL_ENV = venv,
         }
         -- we also use the virtual env for debugpy
         for _, dapconf in ipairs(dap.configurations.python) do
-          dapconf.python = ("%s/bin/python"):format(venv)
+          dapconf.python = ("%s/python"):format(venv)
         end
       end
     end
