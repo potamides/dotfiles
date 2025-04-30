@@ -6,11 +6,7 @@ local term = {
   termwin = -1,
   termbuf = -1,
   height = 15,
-  augroup = vim.api.nvim_create_augroup("toggleterm", {}),
   opts = {
-    spell = false,
-    number = false,
-    relativenumber = false
   }
 }
 
@@ -41,8 +37,8 @@ function term:open(args)
   if not vim.api.nvim_buf_is_valid(self.termbuf) then
     self.termbuf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_set_current_buf(self.termbuf)
-    if args.cmd ~= false then -- false means termopen is handled externally
-      vim.fn.termopen(args.cmd or vim.o.shell, args.opts or vim.empty_dict())
+    if args.cmd ~= false then -- false means jobstart is handled externally
+      vim.fn.jobstart(args.cmd or vim.o.shell, {term = true, unpack(args.opts or {})})
     end
     for opt, val in pairs(self.opts) do
       vim.opt_local[opt] = val

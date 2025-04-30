@@ -129,6 +129,11 @@ function open.BufReadPost()
   end
 end
 
+-- disable spell checking inside terminal buffers
+function open.TermOpen()
+  vim.opt_local.spelllang = ""
+end
+
 -- briefly highlight a selection on yank
 local yank = au("user_yank")
 function yank.TextYankPost()
