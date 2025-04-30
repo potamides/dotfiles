@@ -341,7 +341,7 @@ gruvbox.setup{
     GitSignsUntracked         = {link = "GruvboxGreenSign"},
     -- misc
     NormalFloat               = {link = "Pmenu"},
-    Todo                      = {link = "htmlBoldItalic"},
+    Todo                      = {link = "MiniHipatternsTodo"},
   }
 }
 
