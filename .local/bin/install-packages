@@ -23,7 +23,7 @@ PKG=(
   python-adblock # Required by: qutebrowser
   gtk-engine-murrine # Required by: theme
 
-  ttf-iosevka-nerd ttc-iosevka-ss09 ttc-iosevka-aile
+  ttf-iosevka-nerd ttc-iosevka-ss09 ttc-iosevka-aile ttc-iosevka-etoile
 )
 
 AUR=(
