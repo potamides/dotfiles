@@ -203,6 +203,7 @@ local map, opts = vim.keymap.set, {noremap = true, silent = true}
 
 map("n", "<leader>tm", vim.cmd.Terminal, opts)
 map("n", "<leader>fe", vim.cmd.Lexplore, opts)
+map("n", "<leader>il", function() vim.cmd.set("cursorcolumn!") end, opts)
 
 -- find wrapper command for nvim (see bin/nvim)
 vim.env.PATH = ("%s/bin:%s"):format(vim.fn.stdpath("config"), vim.env.PATH)
