@@ -19,7 +19,7 @@ fi
 
 function __start_ps1(){
   local fmt args time=$((SECONDS-START_TIME)) exit_code=$?
-  local white='\[\e[37m\]' yellow='\[\e[33m\]' reset='\[\e[m\]'
+  local white='\[\e[37m\]' ylw='\[\e[33m\]' reset='\[\e[m\]'
   local boldred='\[\e[1;31m\]' boldblue='\[\e[1;34m\]'
 
   if [[ -v REPORT_STATUS && $exit_code -ne 0 ]]; then
@@ -37,13 +37,16 @@ function __start_ps1(){
 
   if [[ -v REPORT_STATUS ]]; then
     local -x TZ=UTC0 # interpret $time as unix epoch time
-    # display execution time of previous command if above threshold
-    if ((time >= 86400)); then
-      __printf " (%s%d-%(%T)T%s)" "$yellow" "$((time/86400))" "$time" "$reset"
-    elif ((time >= 3600)); then
-      __printf " (%s%(%-H:%M:%S)T%s)" "$yellow" "$time" "$reset"
-    elif ((time >= 10)); then
-      __printf " (%s%(%-M:%S)T%s)" "$yellow" "$time" "$reset"
+    # ring bell and show execution time of previous command if above threshold
+    if ((time >= 10)); then
+      __printf "\[\a\]"
+      if ((time >= 86400)); then
+        __printf " (%s%d-%(%T)T%s)" "$ylw" "$((time/86400))" "$time" "$reset"
+      elif ((time >= 3600)); then
+        __printf " (%s%(%-H:%M:%S)T%s)" "$ylw" "$time" "$reset"
+      else
+        __printf " (%s%(%-M:%S)T%s)" "$ylw" "$time" "$reset"
+      fi
     fi
   fi
 
@@ -138,7 +141,7 @@ alias pacro='pacman -Qtd > /dev/null && sudo pacman -Rns $(pacman -Qtdq)'
 alias calc='ptpython -i <(echo "from math import *; from statistics import *")'
 alias todo='$EDITOR +sil\ /^##\ $(date +%A) +noh +norm\ zz ~/Documents/TODO.md'
 alias {vim,nvim}="$EDITOR"
-alias ring="printf '\a'"
+alias bell="printf '\a'"
 alias nmcli='nmcli --ask --pretty'
 alias server='python3 -m http.server 9999'
 alias {dotfiles,dofi}='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
