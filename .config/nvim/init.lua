@@ -538,7 +538,7 @@ local function snipjump(direction, lhs)
   if vim.snippet.active{direction = direction} then
     return ("<cmd>lua vim.snippet.jump(%d)<cr>"):format(direction)
   elseif luasnip.jumpable(direction) then
-    luasnip.jump(direction)
+    return ("<cmd>lua require('luasnip').jump(%d)<cr>"):format(direction)
   else
     return lhs
   end
