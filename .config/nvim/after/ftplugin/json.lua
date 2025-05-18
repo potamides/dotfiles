@@ -1,3 +1,7 @@
+--[[
+  Use python as a json formatter.
+]]
+
 if not vim.b.did_user_ftplugin then
 -- when python is installed use it for formatting with 'gq' operator
   if vim.fn.executable(vim.g.python3_host_prog) == 1 then

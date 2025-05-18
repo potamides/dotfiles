@@ -265,6 +265,14 @@ function lsp.LspAttach(args)
   end
 end
 
+-- enable LSP servers (check /lsp)
+vim.lsp.enable({
+  vim.fn.executable('basedpyright') == 1 and "basedpyright" or "pyright",
+  "bashls",
+  "lua_ls",
+  "texlab"
+})
+
 -- Treesitter
 -------------------------------------------------------------------------------
 local treesitter = au("user_treesitter")

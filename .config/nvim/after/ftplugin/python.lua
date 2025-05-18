@@ -1,11 +1,9 @@
 --[[
-  Setup pyright language server and debugpy debug adapter. Also set some
-  filetype-specific options.
+  Setup debugpy debug adapter. Also set some filetype-specific options.
 --]]
 
 if not vim.b.did_user_ftplugin then
   local dap = require('dap')
-  local pyright = require("lsputils").pyright
 
   dap.adapters.debugpy = dap.adapters.debugpy or {
     type = 'executable',
@@ -25,40 +23,13 @@ if not vim.b.did_user_ftplugin then
       justMyCode = false,
 
       args = function()
-        return vim.split(vim.fn.expandcmd(vim.fn.input('Arguments: ')), " +")
-      end;
-    }
-  }
-
-  pyright.setup{
-    settings = {
-      python = {
-        analysis = {
-          autoSearchPaths = true,
-          autoImportCompletions  = true,
-          useLibraryCodeForTypes = true, -- can get slow for big projects
-          diagnosticMode = "workspace"
-        }
-      }
-    },
-    on_new_config = function(config, root_dir)
-      -- If we have a folder in the root directory whose name contains the
-      -- string "venv" treat it as a virtual env folder and activate it.
-      local venv = vim.fn.globpath(root_dir, ".*venv*\\|*venv*/bin", nil, true)[1]
-      if venv then
-        config.cmd_env = {
-          PATH = ("%s:%s"):format(venv, vim.env.PATH),
-          VIRTUAL_ENV = venv,
-        }
-        -- we also use the virtual env for debugpy
-        for _, dapconf in ipairs(dap.configurations.python) do
-          dapconf.python = ("%s/python"):format(venv)
+        local args = vim.fn.input("Arguments: ")
+        if #args > 0 then
+          return vim.split(vim.fn.expandcmd(args), " +")
         end
       end
-    end
+    }
   }
-
-  vim.keymap.set("n", "<localleader>or", '<cmd>PyrightOrganizeImports<cr>', {silent = true, buffer = true})
 
   -- when black is installed use it for formatting with 'gq' operator
   if vim.fn.executable("black") == 1 then

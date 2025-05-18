@@ -2,6 +2,7 @@
   Remove the repl window from the buffer list and close nvim when repl is last
   window. Also set some options.
 ]]
+
 if not vim.b.did_user_ftplugin then
   -- same behavior like quickfix window
   vim.cmd.runtime{"ftplugin/qf.lua", bang = true}
