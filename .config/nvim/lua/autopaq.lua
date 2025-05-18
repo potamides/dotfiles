@@ -18,19 +18,24 @@ function paq.bootstrap(plugins)
   paq(plugins)
   if not already_installed then
     vim.notify("Installing plugins...")
-    -- Temporally prevent sourcing of packages. By default paq sources plugins
-    -- after installing them. This is fine when this happens after VimEnter,
-    -- which is usually the case. However, here we install packages while
-    -- loading the vimrc, and loading plugins before this is finished can lead
-    -- to complications.
-    local paq_done, nosource = false, vim.api.nvim_create_autocmd("SourceCmd", {command = ":"})
+    -- reload packages after VimEnter to take user configuration into account
+    vim.api.nvim_create_autocmd("VimEnter", {
+      once = true,
+      callback = function()
+        for _, plugin in pairs(plugins) do
+          local name = vim.tbl_get(plugin, 1) or plugin
+          vim.g["loaded_" .. vim.fs.basename(name):gsub("-", "_")] = nil
+        end
+        vim.cmd.packloadall{bang=true}
+      end
+    })
     -- no way to run paq synchronously, so we wait for the 'done' event
+    local paq_done = false
     vim.api.nvim_create_autocmd("User", {
       pattern = "PaqDoneInstall",
       once = true,
       callback = function()
         paq_done = true
-        vim.api.nvim_del_autocmd(nosource)
       end
     })
     paq.install()
