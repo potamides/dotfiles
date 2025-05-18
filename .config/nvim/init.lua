@@ -249,10 +249,17 @@ function lsp.LspAttach(args)
   local bufopts = {buffer = args.buf, unpack(opts)}
 
   --additional mappings
-  map("n", "grd",         vim.lsp.buf.definition, bufopts)
+  map("n", "grd",             vim.lsp.buf.definition, bufopts)
   map("n", "<localleader>wa", vim.lsp.buf.add_workspace_folder, bufopts)
   map("n", "<localleader>wr", vim.lsp.buf.remove_workspace_folder, bufopts)
   map("n", "<localleader>wl", function() vim.print(vim.lsp.buf.list_workspace_folders()) end, bufopts)
+
+  -- map inlay hints if supported
+  if client:supports_method("textDocument/inlayHint") then
+    local hint, bufnr = vim.lsp.inlay_hint, {bufnr = args.buf}
+    map("n", "grh", function() hint.enable(not hint.is_enabled(bufnr), bufnr) end, bufopts)
+    hint.enable(true, bufnr)
+  end
 
   -- enable completion if supported
   if client:supports_method("textDocument/completion") then
