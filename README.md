@@ -146,17 +146,19 @@ sure to install itself and all specified plugins on its own on the first launch
 of Neovim, eliminating the need for any further setup steps. I tried to keep
 the main configuration file, [init.lua](.config/nvim/init.lua), mostly language
 agnostic. Therefore, I refactored language-specific and buffer-local code into
-stand-alone [ftplugins](.config/nvim/ftplugin). Similarly, I moved a lot of
-complex functionality into [libraries](.config/nvim/lua) and
-[plugins](.config/nvim/plugin) to keep the main configuration uncluttered and
-readable. Notable examples include
-[components.lua](.config/nvim/lua/components.lua), a collection of (mostly
-LSP-related) components for the
-[lightline.vim](https://github.com/itchyny/lightline.vim) status line, and
+[ftplugins and lsp servers](.config/nvim/after). Similarly, I moved a lot of
+functionality into standalone [libraries](.config/nvim/lua). Some examples
+include [statusline.lua](.config/nvim/lua/statusline.lua), a custom statusline
+based on [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim), and
 [snipcomp.lua](.config/nvim/plugin/snipcomp.lua), a companion plugin for the
-[LuaSnip](https://github.com/L3MON4D3/LuaSnip) snippet engine, which provides a
+[LuaSnip](https://github.com/L3MON4D3/LuaSnip) snippet engine which provides a
 snippet completion function for the built-in insert mode completion commands.
-Consult `:h ins-completion` for details.
+Consult `:h ins-completion` for details. There is also a Neovim [remote
+wrapper](.config/nvim/bin/nvim) used, e.g., within embedded terminals to open
+files in the parent instance and a custom [Lua interpreter](.local/bin/nlua)
+that communicates with Neovim under the hood, making it possible to
+interactively explore its stdlib (it also has other useful features like
+automatic pretty-printing).
 
 ### Mutt
 Mutt is configured for multiple email accounts. It makes use of the command
@@ -195,7 +197,7 @@ locations of KeePassXC files.
 
 ### Ptpython
 I configured ptpython to embed itself into the default Python REPL. That way,
-it can be started by simply executing the standard Python binary. This is
+it can be started simply by executing the standard Python binary. This is
 realized through the environment variable `PYTHONSTARTUP`, which points to a
 setup [script](.config/python/config.py) that is executed when Python is
 launched in interactive mode.
@@ -216,15 +218,14 @@ below:
   [udiskie](https://archlinux.org/packages/community/any/udiskie).
 * To compile L<sup>A</sup>T<sub>E</sub>X with Neovim using qpdfview as the
   previewer, install [T<sub>E</sub>X
-  Live](https://wiki.archlinux.org/title/TeX_Live). For inverse search also
-  install [neovim-remote](https://aur.archlinux.org/packages/neovim-remote)
-  and set `nvr --remote-silent +%2 %1` as the source editor in qpdfview.
+  Live](https://wiki.archlinux.org/title/TeX_Live). For inverse search set
+  `nvim +%2 %1` as the source editor in qpdfview.
 * Install [mythes](https://archlinux.org/packages/?sort=&q=mythes-) for
   thesaurus lookup and
   [languagetool-word2vec](https://aur.archlinux.org/packages/?K=languagetool-word2vec-)
   and/or
   [languagetool-ngrams](https://aur.archlinux.org/packages/?K=languagetool-ngrams-)
-  to detect confusion errors with [ltex](https://github.com/valentjn/ltex-ls)
+  to detect confusion errors with [LT<sub>E</sub>X+](https://github.com/ltex-plus/ltex-ls-plus)
   in Neovim.
 * For Japanese pop-up dictionary search in qutebrowser install
   [jamdict](https://pypi.org/project/jamdict) and
