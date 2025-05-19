@@ -16,7 +16,7 @@ PKG=(
   python-websocket-client # Required by: weechat
   bash-language-server lua-language-server texlab pyright # Required by: neovim
   python-debugpy # Required by: neovim
-  xorg-xinit physlock scrot redshift mpv # Required by: awesome
+  xorg-xinit scrot redshift mpv # Required by: awesome
   xorg-xrandr # Required by: awesome  conky
   ueberzug # Required by: ranger
   bash-completion fzf ripgrep # Required by: bash
@@ -40,6 +40,7 @@ AUR=(
   qt5-styleplugins # Required by: theme
   dragon-drop # Required by: ranger
   ltex-ls-plus-bin # Required by: neovim
+  physlock # Required by: awesome
 )
 
 PIP=(
