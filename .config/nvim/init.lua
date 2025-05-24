@@ -620,6 +620,7 @@ if vim.fn.executable("fzf") == 1 then
     map("n", "grr", fzf.lsp_references, bufopts)
     map("n", "gO", fzf.lsp_document_symbols, bufopts)
     map("n", "<localleader>gO", fzf.lsp_live_workspace_symbols, bufopts)
+    map("n", "<localleader>gf", fzf.lsp_finder, bufopts)
   end
 end
 
