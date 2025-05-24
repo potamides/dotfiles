@@ -636,7 +636,9 @@ modes.launcher = gears.table.join(
         local host = os.getenv("MPD_HOST") or "localhost"
         local port = os.getenv("MPD_PORT") or 6600
 
-        awful.spawn.raise_or_spawn(terminal .. " -e ncmpcpp --host " .. host .. " --port " .. port)
+        awful.spawn.raise_or_spawn(
+          terminal .. " --title ncmpcpp -e ncmpcpp --host " .. host .. " --port " .. port
+        )
       end
     },
     {
@@ -776,7 +778,7 @@ awful.rules.rules = {
     properties = { floating = true, placement = awful.placement.centered }},
 
   -- always put ncmpcpp on last tag
-  { rule = { name = "ncmpcpp.*" },
+  { rule = { name = "^ncmpcpp$" },
     properties = { tag = tags[#tags] }},
 
   -- display keyboard (and mouse) status nicely
