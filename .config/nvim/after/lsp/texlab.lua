@@ -71,7 +71,7 @@ return {
         end
         vim.api.nvim_create_user_command(
           "TexlabLog",
-          function() TexlabLog(vim.fs.joinpath(client.config.root_dir, aux_dir)) end,
+          function() TexlabLog(vim.fs.joinpath(client.config.root_dir or ".", aux_dir)) end,
           {desc = "Show content of log files in a floating window."}
         )
       end)
