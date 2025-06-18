@@ -203,7 +203,7 @@ local map, opts = vim.keymap.set, {noremap = true, silent = true}
 
 map("n", "<leader>tm", vim.cmd.Terminal, opts)
 map("n", "<leader>fe", vim.cmd.Lexplore, opts)
-map("n", "<leader>il", function() vim.cmd.set("cursorcolumn!") end, opts)
+map("n", "<leader>ci", function() vim.cmd.set("cursorcolumn!") end, opts)
 
 -- find wrapper command for nvim (see bin/nvim)
 vim.env.PATH = ("%s/bin:%s"):format(vim.fn.stdpath("config"), vim.env.PATH)
@@ -249,7 +249,6 @@ function lsp.LspAttach(args)
   local bufopts = {buffer = args.buf, unpack(opts)}
 
   --additional mappings
-  map("n", "grd",             vim.lsp.buf.definition, bufopts)
   map("n", "<localleader>wa", vim.lsp.buf.add_workspace_folder, bufopts)
   map("n", "<localleader>wr", vim.lsp.buf.remove_workspace_folder, bufopts)
   map("n", "<localleader>wl", function() vim.print(vim.lsp.buf.list_workspace_folders()) end, bufopts)
@@ -297,7 +296,7 @@ end
 
 -- }}}
 -------------------------------------------------------------------------------
--- {{{ User-installed plugin Configuration
+-- {{{ User-installed plugin configuration
 -------------------------------------------------------------------------------
 local autopaq = require("autopaq")
 
@@ -316,7 +315,7 @@ autopaq.bootstrap{
   "ibhagwan/fzf-lua",
   "robitx/gp.nvim",
   "ellisonleao/gruvbox.nvim",
-  {"nvim-treesitter/nvim-treesitter", build = ":TSInstallSync all | TSUpdate"},
+  {"nvim-treesitter/nvim-treesitter", build = ":TSInstall all | TSUpdate"},
   {"L3MON4D3/LuaSnip", build = "make install_jsregexp"},
 
   -- dependencies
@@ -613,8 +612,7 @@ if vim.fn.executable("fzf") == 1 then
 
   function lsp.LspAttach(args)
     local bufopts = {buffer = args.buf, unpack(opts)}
-    map("n", "grd", fzf.lsp_definitions, bufopts)
-    map("n", "gri", fzf.lsp_implementations, bufopts)
+    map("n", "g<c-]>", fzf.lsp_definitions, bufopts)
     map("n", "gri", fzf.lsp_implementations, bufopts)
     map("n", "gra", fzf.lsp_code_actions, bufopts)
     map("n", "grr", fzf.lsp_references, bufopts)
