@@ -52,6 +52,8 @@ config.bind("<Ctrl-e>", "scroll down")
 config.bind("<Ctrl-y>", "scroll up")
 config.bind("ao", "download-open")
 
+config.bind('xt', 'open translate.google.com/translate?hl=en&tl=en&u={url}')
+
 optval = "content.javascript.clipboard access access-paste none ;; reload"
 config.bind("tXH", " ".join(["config-cycle -pu *://*.{url:host}/*", optval]))
 config.bind("tXh", " ".join(["config-cycle -pu *://{url:host}/*", optval]))
