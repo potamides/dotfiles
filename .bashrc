@@ -60,10 +60,17 @@ function __end_ps1(){
     __printf " (%s)" "$purple${VIRTUAL_ENV##*/}$reset"
   fi
 
-  __printf '$(%s %s; %s)' \
-    "if [[ \j -gt 0 ]]; then" \
-      "printf ' (%s%d job%.*s%s)' ${aqua@Q} \j \$((\j>1)) s ${reset@Q}" \
-    "fi"
+  # output of $(jobs) is updated only after evaluating PROMPT_COMMAND, so we
+  # have to check ourselves which jobs are still alive here
+  for pid in ${ jobs -p; }; do
+    if kill -0 "$pid" &> /dev/null; then
+      local -i alive+=1
+    fi
+  done
+
+  if [[ -v alive ]]; then
+    __printf " (%s%d job%.*s%s)" "${aqua}" "$alive" $((alive>1)) s "${reset}"
+  fi
 
   printf -v END_PS1 "$fmt%s>%s " "${args[@]}" "\n" "$reset"
 }
