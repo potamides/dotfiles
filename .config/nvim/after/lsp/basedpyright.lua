@@ -6,7 +6,6 @@ local config = assert(
 )()
 
 config.settings.basedpyright = config.settings.python
-config.settings.python = nil
 
 for name, func in pairs(config.commands or {}) do
   config.commands["based" .. name] = func

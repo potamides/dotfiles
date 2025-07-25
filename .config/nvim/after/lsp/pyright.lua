@@ -2,8 +2,6 @@
   Configure pyright and integrate with debugpy (via nvim-dap).
 --]]
 
-local dap = require('dap')
-
 return {
   settings = {
     python = {
@@ -25,14 +23,8 @@ return {
   on_init = function(client)
     local pythonPath = vim.fs.joinpath(client.config.root_dir or ".", ".venv/bin/python")
     if vim.uv.fs_stat(pythonPath) then
-      -- if there is a virtualenv in root dir, use it (only for pyright)
-      if client.settings.python then
-        client.settings.python.pythonPath = pythonPath
-      end
-      -- we also use the virtual env for debugpy
-      for _, dapconf in ipairs(dap.configurations.python or {}) do
-        dapconf.python = pythonPath
-      end
+      -- if there is a virtualenv in root dir, use it (required for pyright)
+      client.settings.python.pythonPath = pythonPath
     end
 
     -- NOTE: cannot set on_attach directly as it would overwrite lspconfig one
@@ -46,10 +38,5 @@ return {
 
     -- disable LSP semantic highlighting (only relevant for basedpyright)
     client.server_capabilities.semanticTokensProvider = nil
-  end,
-  on_exit = function()
-    for _, dapconf in ipairs(dap.configurations.python or {}) do
-      dapconf.python = nil
-    end
   end
 }

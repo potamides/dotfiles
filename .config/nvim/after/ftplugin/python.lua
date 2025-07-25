@@ -4,6 +4,7 @@
 
 if not vim.b.did_user_ftplugin then
   local dap = require('dap')
+  local augroup = vim.api.nvim_create_augroup("debugpy_pyright_integration", {clear=false})
 
   dap.adapters.debugpy = dap.adapters.debugpy or {
     type = 'executable',
@@ -30,6 +31,24 @@ if not vim.b.did_user_ftplugin then
       end
     }
   }
+
+  -- use the virtual env of (based)pyright for debugpy if it is set
+  vim.api.nvim_create_autocmd({"LspAttach", "LspDetach", "BufEnter", "BufLeave"}, {
+    group = augroup,
+    buffer = 0,
+    callback = function(args)
+      local pythonPath = nil
+      for _, client in ipairs(vim.lsp.get_clients{bufnr=0}) do
+        if not vim.tbl_contains({"LspDetach", "BufLeave"}, args.event) and client.name:find("pyright") then
+          pythonPath = client.settings.python.pythonPath
+        end
+      end
+
+      for _, dapconf in ipairs(dap.configurations.python or {}) do
+        dapconf.python = pythonPath
+      end
+    end
+  })
 
   -- when black is installed use it for formatting with 'gq' operator
   if vim.fn.executable("black") == 1 then
