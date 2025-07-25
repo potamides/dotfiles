@@ -9,7 +9,9 @@ c.search.incremental = False
 c.spellcheck.languages = ["en-US", "de-DE"]
 
 terminal, editor = getenv("TERMCMD", "alacritty"), getenv("EDITOR", "nvim")
-c.editor.command = [terminal, "-e", editor, "{file}", "+norm{line}G{column0}l"]
+c.editor.command = [
+    *terminal.split(), "-e", editor, "{file}", "+norm{line}G{column0}l"
+]
 
 c.confirm_quit = ["downloads", "multiple-tabs"]
 #c.auto_save.session = True
