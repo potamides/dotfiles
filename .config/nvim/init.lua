@@ -662,6 +662,7 @@ gp.setup{
   chat_shortcut_delete = {modes = {"n", "v"}, shortcut = "<leader>gd"},
   chat_shortcut_stop = {modes = {"n", "v"}, shortcut = "<leader>gx"},
   chat_shortcut_new = {modes = {"n", "v"}, shortcut = "<leader>gn"},
+  providers = {anthropic = {disable = false}},
 }
 
 for mode, key in pairs{n = "<cmd>", v = ":"} do
