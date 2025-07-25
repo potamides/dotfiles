@@ -10,6 +10,8 @@
 
 set -o errexit -o pipefail -o nounset
 histfile=${XDG_DATA_HOME:-~/.local/share}/nvim/$(basename "$0")_history
+compfile=${XDG_DATA_HOME:-~/.local/share}/nvim/$(basename "$0")_completion
+COMP_WORDBREAKS="\"'><=;|&(){}+=*^/~ "
 
 function send(){
   printf "%s\n" "$*" >& "${COPROC[1]}"
@@ -31,7 +33,7 @@ function hist(){
 function repl(){
   local cmd prefix
   while [[ -z "${cmd:-}" ]]; do
-    read -rep '> ' -d $'\r' || exit 0
+    read -Erp '> ' -d $'\r' || exit 0
     cmd=$REPLY prefix=""
     # hack to find out if the line can be interpreted as an expression to print
     # its value, similar to what lua 5.3 does (see
@@ -43,7 +45,7 @@ function repl(){
       # line. Luajit error messages which expect statements to continue seem to
       # end with "'<eof>'".
       while [[ $(luajit -e "$cmd" 2>&1) == *"'<eof>'" ]]; do
-        read -rep '>> ' -d $'\r' || { cmd=''; break; }
+        read -Erp '>> ' -d $'\r' || { cmd=''; break; }
         cmd+=$'\n'$REPLY
       done
     fi
@@ -68,12 +70,33 @@ function add_newline(){
   fi
 }
 
+function complete_repl(){
+  local word=
+  if [[ -v COMP_WORDS ]]; then
+    word=${COMP_WORDS[$COMP_CWORD]}
+  fi
+
+  send call "writefile([''] + getcompletion(${word@Q}, 'lua'), ${compfile@Q})"
+  while [[ ! -s "$compfile" ]]; do :; done
+
+  mapfile -ts 1 COMPREPLY <<< "$(< "$compfile")"
+  if [[ $word == *[.:]* ]]; then
+    local stem=${word%[.:]*}
+    for i in "${!COMPREPLY[@]}"; do
+      COMPREPLY[i]="${word::((${#stem}+1))}${COMPREPLY[i]}"
+    done
+  fi
+
+  rm "$compfile"
+}
+
 case "${1:-}" in
   "") # without arguments start interactive repl
     hist load
     nvim --version | sed '/^$/,$d'
     coproc nvim -es -i NONE
     trap "add_newline && repl" SIGUSR1
+    complete -o nospace -IF complete_repl -EF complete_repl -DF complete_repl
     repl
     # use a loop as wait returns when a signal with a trap is received
     until wait; do
