@@ -110,7 +110,7 @@ else
 fi
 
 # bash history stuff
-HISTSIZE=5000
+HISTSIZE=10000
 HISTFILESIZE=inf
 HISTTIMEFORMAT="%d/%m/%y %T "
 HISTCONTROL=ignoreboth:erasedups
