@@ -47,6 +47,10 @@ function term:open(args)
     vim.api.nvim_set_current_buf(self.termbuf)
   end
 
+  -- make term window mutually exclusive with quickfix windows (also see
+  -- after/ftplugin/qf.lua)
+  vim.cmd.cclose()
+
   if args.nofocus then
     vim.api.nvim_set_current_win(current)
   elseif not args.noinsert then
