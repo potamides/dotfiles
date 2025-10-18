@@ -54,26 +54,20 @@ function __start_ps1(){
 }
 
 function __end_ps1(){
-  local fmt args purple='\[\e[35m\]' aqua='\[\e[36m\]' reset='\[\e[m\]'
+  local fmt args jobs purple='\[\e[35m\]' aqua='\[\e[36m\]' reset='\[\e[m\]'
 
   if [[ -n "$VIRTUAL_ENV" ]]; then
     __printf " (%s)" "$purple${VIRTUAL_ENV##*/}$reset"
   fi
 
-  # output of $(jobs) is updated only after evaluating PROMPT_COMMAND, so we
-  # have to check ourselves which jobs are still alive here
-  for pid in ${ jobs -p; }; do
-    if kill -0 "$pid" &> /dev/null; then
-      local -i alive+=1
-    fi
-  done
-
-  if [[ -v alive ]]; then
-    __printf " (%s%d job%.*s%s)" "${aqua}" "$alive" $((alive>1)) s "${reset}"
+  # -V flag is new in bash 5.3. Be backwards compatible.
+  compgen -jV jobs || readarray jobs < <(compgen -j)
+  if (( jobs=${#jobs[@]}, jobs )); then
+    __printf " (%s%d job%.*s%s)" "${aqua}" $jobs $((jobs>1)) s "${reset}"
   fi
 
   printf -v END_PS1 "$fmt%s>%s " "${args[@]}" "\n" "$reset"
-}
+} 2> /dev/null
 
 function __printf(){
   fmt+="$1" args+=("${@:2}")
