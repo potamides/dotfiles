@@ -242,7 +242,7 @@ function statusline.setup(opts)
       lualine_z = {components.location}
     },
     inactive_sections = {
-      lualine_c = {{"filename", file_status = false}},
+      lualine_c = {components.filename},
       lualine_x = {"location"},
     },
     tabline = {
