@@ -161,6 +161,7 @@ alias starwars='telnet towel.blinkenlights.nl'
 alias maps='telnet mapscii.me'
 alias 2048='ssh play@ascii.town'
 alias tron='ssh sshtron.zachlatta.com'
+alias chat='ssh -o StrictHostKeyChecking=no -o LogLevel=QUIET ch.at'
 alias nyancat="mpv --no-terminal --no-video --loop ytdl://QH2-TGUlwu4 & \
   telnet rainbowcat.acc.umu.se; kill %%"
 
