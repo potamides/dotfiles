@@ -311,11 +311,14 @@ autopaq.bootstrap{
   "tpope/vim-fugitive",
   "potamides/pantran.nvim",
   "lewis6991/gitsigns.nvim",
-  "nvim-lualine/lualine.nvim",
   "ibhagwan/fzf-lua",
   "robitx/gp.nvim",
   "ellisonleao/gruvbox.nvim",
   {"L3MON4D3/LuaSnip", build = "make install_jsregexp"},
+  {"nvim-lualine/lualine.nvim", patches = {
+    "nvim-lualine/lualine.nvim/pull/1134.patch",
+    "nvim-lualine/lualine.nvim/pull/1135.patch",
+  }},
 
   -- dependencies
   "rafamadriz/friendly-snippets", -- LuaSnip

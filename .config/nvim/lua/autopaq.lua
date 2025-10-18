@@ -1,7 +1,9 @@
 --[[
   Lightweight wrapper around paq-nvim. It simply makes sure that paq-nvim is
   installed, if not it downloads it and installs packages which makes running
-  neovim for the first time a pleasant experience.
+  neovim for the first time a pleasant experience. It also adds support for an
+  optional "patch" field which can contain links to patches that are applied to
+  downloaded packages.
 --]]
 
 local function require_and_install_paq()
@@ -14,8 +16,34 @@ end
 
 local already_installed, paq = xpcall(function() return require("paq") end, require_and_install_paq)
 
+local function get_info(name)
+  for _, info in pairs(require("paq").query("installed")) do
+    if vim.endswith(name, info.name) then
+      return info
+    end
+  end
+end
+
+local function register_patches(plugins)
+  for _, plugin in pairs(plugins) do
+    if plugin.patches and not plugin.run then
+      function plugin.build()
+        local info = get_info(plugin[1])
+        for _, uri in ipairs(plugin.patches or {}) do
+          uri = uri:match("^https?://") and uri or ((info.url):match(".-[^:/]/") .. uri)
+          local patch = vim.system{"curl", "-L", uri}:wait().stdout
+          vim.system({"git", "apply"}, {cwd = info.dir, stdin = patch}):wait()
+        end
+        vim.system({"git", "config", "merge.autoStash"}, {cwd = info.dir}):wait()
+      end
+    end
+  end
+
+  return plugins
+end
+
 function paq.bootstrap(plugins)
-  paq(plugins)
+  paq(register_patches(plugins))
   if not already_installed then
     vim.notify("Installing plugins...")
     -- reload packages after VimEnter to take user configuration into account
