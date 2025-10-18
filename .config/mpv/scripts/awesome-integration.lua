@@ -40,8 +40,8 @@ end
 
 function playback.update_title(_, metadata)
   if metadata then
-    playback.info.title = metadata.title or metadata["icy-title"]
-    playback.info.artist = metadata.artist
+    playback.info.title = metadata.title or metadata.TITLE or metadata["icy-title"]
+    playback.info.artist = metadata.artist or metadata.ARTIST
     playback.dbus_update()
   end
 end
