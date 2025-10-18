@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2128
+
+###############################################################################
+#  Phone backup script for essential files (media, chats, contacts). For the  #
+#    sake of simplicity assumes that only one Android device is connected.    #
+#                          Dependencies: adb, rsync                           #
+###############################################################################
+
+tmp=$(mktemp -dp "$HOME" android-backup.XXX)
+target=NAS:/media/storage/backup/Phone/$(date +%Y)
+media=(DCIM/Camera Movies Music Pictures Recordings)
+declare -A chats=(
+  [Signal]=sdcard/Signal
+  [WhatsApp]=sdcard/Android/media/com.whatsapp/WhatsApp
+  [Line/data]=sdcard/Android/data/jp.naver.line.android
+  [KakaoTalk/data]=sdcard/Android/data/com.kakao.talk
+  # [Line/db]=data/jp.naver.line.android/databases # TODO: requires root
+  # [KakaoTalk/db]=data/com.kakao.talk/databases # TODO: requires root
+)
+
+function backup(){
+  case "$1" in
+    contacts)
+      # TODO: with root maybe something like this would be possible:
+      # adb shell am start -n com.android.contacts/com.android.contacts.vcard.ExportVCardActivity
+      adb shell content query --uri content://com.android.contacts/data \
+        > "$tmp/contacts.txt"
+      ;;
+    media)
+      mkdir -p "$tmp/Media"
+      for media in "${media[@]}"; do
+        adb pull -a "sdcard/$media" "$tmp/Media"
+      done
+      ;;
+    chats)
+      for chat in "${!chats[@]}"; do
+        mkdir -p "$tmp/Chats/$chat"
+        adb pull -a "${chats[$chat]}" "$tmp/Chats/$chat"
+      done
+      ;;
+  esac
+}
+
+function upload(){
+  rsync --info=progress2 --secluded-args --archive "$tmp/" "$target"
+}
+
+trap 'rm -r "$tmp"' EXIT
+
+if [[ "$BASH_SOURCE" == "$0" ]]; then
+  set -o errexit -o nounset
+  backup contacts
+  backup media
+  backup chats
+  upload
+fi
