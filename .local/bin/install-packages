@@ -22,6 +22,7 @@ PKG=(
   bash-completion fzf ripgrep # Required by: bash
   python-adblock # Required by: qutebrowser
   gtk-engine-murrine # Required by: theme
+  tree-sitter-grammars # Required by: neovim
 
   ttf-iosevka-nerd ttc-iosevka-ss09 ttc-iosevka-aile ttc-iosevka-etoile
 )

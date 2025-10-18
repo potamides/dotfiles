@@ -315,7 +315,6 @@ autopaq.bootstrap{
   "ibhagwan/fzf-lua",
   "robitx/gp.nvim",
   "ellisonleao/gruvbox.nvim",
-  {"nvim-treesitter/nvim-treesitter", build = ":TSInstall all | TSUpdate"},
   {"L3MON4D3/LuaSnip", build = "make install_jsregexp"},
 
   -- dependencies
