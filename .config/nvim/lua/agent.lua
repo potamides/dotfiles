@@ -10,11 +10,11 @@ function agent:launch()
   local command = vim.list_extend(vim.list_slice(self.command), self.opts)
   self.instance:open{cmd = command, opts=self.opts.opts}
 
-  local opts = {buffer = 0, noremap = true, silent = true}
-  for _, lhs in pairs{"<esc>", "<s-esc>"} do
+  local opts = {buffer = self.instance.termbuf, noremap = true, silent = true}
+  for _, lhs in pairs{"<esc>", "<localleader><esc>"} do
     vim.keymap.set("n", lhs, function() self.instance:close() end, opts)
   end
-  vim.keymap.set("t", "<s-esc>", vim.cmd.stopinsert, opts)
+  vim.keymap.set("t", "<localleader><esc>", vim.cmd.stopinsert, opts)
 end
 
 function agent:specialize(args)
