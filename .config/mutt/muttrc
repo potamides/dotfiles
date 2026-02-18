@@ -14,6 +14,7 @@ set use_from      = yes
 set reverse_name  = yes
 set edit_headers  = yes
 set text_flowed   = yes
+set mime_forward  = ask-no
 set send_charset  = "us-ascii:utf-8"
 set editor        = '$EDITOR +/^$ +nohlsearch' # Jump past header
 
