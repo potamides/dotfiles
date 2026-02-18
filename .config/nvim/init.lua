@@ -65,6 +65,9 @@ vim.opt.mouse = "a"
 vim.opt.keymap = "kana"
 vim.opt.iminsert = 0
 
+-- quickfix to find system-installed queries
+vim.opt.runtimepath:append("/usr/share/tree-sitter")
+
 vim.opt.undofile = true         -- persistent undo history
 vim.opt.showmode = false        -- do not show mode message on last line
 vim.opt.hidden = true           -- switch buffers without having to save changes
