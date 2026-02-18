@@ -73,6 +73,7 @@ vim.opt.confirm = true          -- raise dialog asking to save changes when comm
 vim.opt.title = true            -- set terminal window title to something descriptive
 vim.opt.foldlevel = 99          -- do not automatically close folds when editing a file
 vim.o.foldtext = ''             -- enable syntax highlighting for folds
+vim.opt.guifont = "monospace"   -- set a gui font (e.g., for Neovide)
 vim.opt.inccommand = "nosplit"  -- show incremental changes of commands such as search & replace
 vim.opt.virtualedit = "block"   -- virtual editing in visual block mode
 vim.opt.shortmess:append("Ic")  -- disable intro and ins-completion messages
@@ -107,13 +108,13 @@ vim.g.netrw_browsex_viewer = "xdg-open"
 vim.g.netrw_list_hide = [[\(^\|\s\s\)\zs\.\S\+]]
 vim.g.netrw_sort_options = "i"
 
-vim.g.clipboard = "osc52"                    -- use OSC 52 for copying and pasting
 vim.g.python3_host_prog = "/usr/bin/python3" -- use system python (useful when working with virualenvs)
 vim.g.vga_compatible = false                 -- VGA textmode fallback (with CP437 character set) for legacy terminals
 
-if vim.env.TERM == "linux" then
+if vim.env.TERM == "alacritty" and not vim.env.TMUX then
+  vim.g.clipboard = "osc52" -- alacritty doesn't support runtime capability detection
+elseif vim.env.TERM == "linux" and vim.fn.has("gui_running") == 0 then
   vim.g.vga_compatible = true
-  vim.g.clipboard = nil
 end
 
 -- Autocmds
@@ -352,7 +353,7 @@ end
 local gruvbox = require("gruvbox")
 
 gruvbox.setup{
-  terminal_colors = false,
+  terminal_colors = vim.fn.has("gui_running") == 1,
   overrides = {
     -- diagnostic highlighting
     DiagnosticHint            = {link = "GruvboxPurple"},
