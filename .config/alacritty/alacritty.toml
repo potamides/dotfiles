@@ -42,6 +42,12 @@ mods = "Control|Shift"
 command.program = "sh"
 command.args = ["-c", "alacritty msg create-window --command ranger \"$PWD\""]
 
+[[keyboard.bindings]]
+chars = "\n"
+key = "Return"
+mode = "~Search"
+mods = "Shift"
+
 [[hints.enabled]]
 binding = { key = "X", mods = "Control|Shift" } # "U" conflicts with fcitx
 command = "xdg-open"
