@@ -136,7 +136,7 @@ alias info="info --vi-keys -v match-style=underline,bold,nocolor \
 # other useful aliases
 alias pac='pacman'
 alias spac='sudo pacman'
-alias apac='yay -a --editmenu'
+alias apac='yay --aur --editmenu --removemake'
 alias pacli='pacman -Q | wc -l'
 alias pacro='pacman -Qtd > /dev/null && sudo pacman -Rns $(pacman -Qtdq)'
 alias calc='ptpython -i <(echo "from math import *; from statistics import *")'
