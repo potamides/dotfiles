@@ -205,6 +205,20 @@ map("n", "<leader>tm", vim.cmd.Terminal, opts)
 map("n", "<leader>fe", vim.cmd.Lexplore, opts)
 map("n", "<leader>ci", function() vim.cmd.set("cursorcolumn!") end, opts)
 
+-- integrate agent through external cli
+local agent = require("agent")
+local grammar = agent:specialize{
+  prompt="Assist with writing by improving grammar, clarity, structure, and style based on user instructions.",
+  model="opus",
+  isolate=true
+}
+
+map("n", "<leader>cl", function() agent:launch() end, opts)
+map("n", "<leader>gr", function() grammar:launch() end, opts)
+
+map({"n", "v"}, "<leader>ts", agent.send, {expr = true, unpack(opts)})
+map("n", "<leader>tss", function() return agent.send() .. "_" end, {expr = true, unpack(opts)})
+
 -- find wrapper command for nvim (see bin/nvim)
 vim.env.PATH = ("%s/bin:%s"):format(vim.fn.stdpath("config"), vim.env.PATH)
 
@@ -309,10 +323,8 @@ autopaq.bootstrap{
   "neovim/nvim-lspconfig",
   "mfussenegger/nvim-dap",
   "tpope/vim-fugitive",
-  "potamides/pantran.nvim",
   "lewis6991/gitsigns.nvim",
   "ibhagwan/fzf-lua",
-  "robitx/gp.nvim",
   "ellisonleao/gruvbox.nvim",
   {"L3MON4D3/LuaSnip", build = "make install_jsregexp"},
   {"nvim-lualine/lualine.nvim", patches = {
@@ -566,8 +578,8 @@ local fzf = require("fzf-lua")
 
 fzf.setup{
   hls = {
-    title = "PantranTitle",
-    preview_title = "PantranTitle"
+    title = "Constant",
+    preview_title = "Constant"
   },
   winopts = {
     backdrop = 100,
@@ -622,80 +634,6 @@ if vim.fn.executable("fzf") == 1 then
     map("n", "<localleader>gO", fzf.lsp_live_workspace_symbols, bufopts)
     map("n", "<localleader>gf", fzf.lsp_finder, bufopts)
   end
-end
-
--- pantran.nvim
--------------------------------------------------------------------------------
-local pantran = require("pantran")
-
-pantran.setup{
-  default_engine = vim.env.DEEPL_AUTH_KEY and "deepl" or nil,
-  controls = {
-    mappings = {
-      edit = {
-        n = {
-          ["j"] = "gj",
-          ["k"] = "gk"
-        }
-      }
-    }
-  }
-}
-
-map({"n", "v"}, "<leader>tr", pantran.motion_translate, {expr = true, unpack(opts)})
-map("n", "<leader>trr", function() return pantran.motion_translate() .. "_" end, {expr = true, unpack(opts)})
-map("n", "<leader>tro", vim.cmd.Pantran, opts)
-
--- gp.nvim
--------------------------------------------------------------------------------
-local def = require("gp.defaults")
-def.chat_system_prompt = (def.chat_system_prompt):match("(.-)\n")
-local gp = require("gp")
-
-gp.setup{
-  chat_user_prefix = "## User",
-  chat_assistant_prefix = {"## Assistant", " ({{agent}})"},
-  command_prompt_prefix_template = "{{agent}}: ",
-  prompt_prefix_template = "{{agent}}: ",
-  prompt_save = "Directory: ",
-  toggle_target = "popup",
-  chat_confirm_delete = false,
-  chat_shortcut_respond = {modes = {"n", "v"}, shortcut = "<cr>"},
-  chat_shortcut_delete = {modes = {"n", "v"}, shortcut = "<leader>gd"},
-  chat_shortcut_stop = {modes = {"n", "v"}, shortcut = "<leader>gx"},
-  chat_shortcut_new = {modes = {"n", "v"}, shortcut = "<leader>gn"},
-  providers = {anthropic = {disable = false}},
-}
-
-for mode, key in pairs{n = "<cmd>", v = ":"} do
-  map(mode, "<leader>gp", key .. "GpChatToggle popup<cr>", opts)
-  map(mode, "<leader>gg", key .. "GpPopup<cr>", opts)
-  map(mode, "<leader>gs", key .. "GpChatToggle vsplit<cr>", opts)
-  map(mode, "<leader>g/", key .. "GpChatFinder<cr>", opts)
-
-  map(mode, "<leader>gm", "<cmd>GpImage<cr>", opts)
-  map(mode, "<leader>gx", "<cmd>GpStop<cr>", opts)
-end
-
--- see :h :map-operator
-local function motion_cmd(command, suffix)
-  return function()
-    vim.opt.operatorfunc = ([[{ -> execute("'[,']%s")}]]):format(command)
-    return "g@" .. (suffix or "")
-  end
-end
-
-for mapping, key in pairs{GpImplement = "<leader>gc", GpChatPaste = "<leader>gy"} do
-  map({"n", "v"}, key, motion_cmd(mapping), {expr = true, unpack(opts)})
-  map("n", key .. key:sub(-1), motion_cmd(mapping, "_"), {expr = true, unpack(opts)})
-end
-
--- hack to modify style of popup window
-local popup = gp.render.popup
-function gp.render.popup(optbuf, title, ...)
-  local buf, win, close, resize = popup(optbuf, (" %s "):format(title), ...)
-  vim.opt_local.winhighlight = {Normal = "PantranNormal", FloatTitle = "PantranTitle", FloatBorder = "PantranBorder"}
-  return buf, win, close, resize
 end
 
 -- }}}
