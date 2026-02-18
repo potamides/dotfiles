@@ -12,7 +12,7 @@ export TERMCMD="alacritty msg create-window"
 export DIFFPROG="$EDITOR -d"
 
 # find locally installed executables
-export PATH="$PATH:$HOME/.local/bin:$HOME/.luarocks/bin"
+export PATH="$HOME/.local/bin:$HOME/.luarocks/bin:$PATH"
 
 # run askpass to enter password when not launched from a terminal
 export SUDO_ASKPASS="/usr/lib/git-core/git-gui--askpass"
