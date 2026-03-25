@@ -45,8 +45,9 @@ dnl Script installation / advanced configuration
 dnl ---------------------------------------------------------------------------
 
 dnl Slack
-/secure set slack_token KEEPASS("Slack - Adobe Research", Token)
+/secure set slack_token KEEPASS(QuiverAI, Token)
 /set plugins.var.python.slack.slack_api_token ${sec.data.slack_token}
+/set plugins.var.python.slack.files_download_location "~/Pictures/weechat"
 
 dnl Slack emoji characters and tab completions of emoji names
 /exec -sh curl --output-dir "${WEECHAT_HOME:-~/.weechat}" -LO dnl
