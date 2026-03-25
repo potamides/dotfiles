@@ -13,6 +13,8 @@ require("awful.autofocus")
 local wibox = require("wibox")
 -- Theme handling library
 local beautiful = require("beautiful")
+-- Low-level system library
+local glib = require("lgi").GLib
 -- Notification library
 local naughty       = require("naughty")
 local menubar       = require("menubar")
@@ -693,21 +695,44 @@ modes.launcher = gears.table.join(
                 naughty.notify({ text = stdout:gsub("%s$", "")})
               end
             end)
-          end,
-          hooks = {
-            -- Launch command on dedicated GPU
-            {{'Shift'}, 'Return', function(command)
-              if gears.filesystem.is_dir("/sys/module/nvidia") then
-                -- variables copied from prime-run utility
-                return "__NV_PRIME_RENDER_OFFLOAD=1 " ..
-                  "__VK_LAYER_NV_optimus=NVIDIA_only " ..
-                  "__GLX_VENDOR_LIBRARY_NAME=nvidia " ..
-                  command
-              end
-              return  "DRI_PRIME=1 " .. command
-            end},
-          }
+          end
         }
+      end
+    },
+    {
+      description = "toggle dedicated GPU",
+      pattern = {'g'},
+      handler = function()
+        local vars, uses_dedicated
+
+        if gears.filesystem.is_dir("/sys/module/nvidia") then
+          vars = {
+            -- variables copied from prime-run utility
+            __NV_PRIME_RENDER_OFFLOAD = "1",
+            __VK_LAYER_NV_optimus = "NVIDIA_only",
+            __GLX_VENDOR_LIBRARY_NAME = "nvidia"
+          }
+        else
+          vars = {DRI_PRIME = "1"}
+        end
+
+        for var, val in pairs(vars) do
+          if uses_dedicated == nil then
+            uses_dedicated = glib.getenv(var) == val
+          end
+          if uses_dedicated then
+            glib.unsetenv(var)
+          else
+            glib.setenv(var, val, true)
+          end
+        end
+
+        modes.launcher.cid = naughty.notify({
+          title = "Switching GPU",
+          text = ("Now using <b>%s</b> GPU."):format(uses_dedicated and "integrated" or "dedicated"),
+          icon = menubar.utils.lookup_icon("GPU_Viewer"),
+          replaces_id = modes.launcher.cid,
+        }).id
       end
     },
     {
