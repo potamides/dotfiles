@@ -211,14 +211,17 @@ map("n", "<leader>ci", function() vim.cmd.set("cursorcolumn!") end, opts)
 
 -- integrate agent through external cli
 local agent = require("agent")
-local grammar = agent:specialize{
-  prompt="Assist with writing by improving grammar, clarity, structure, and style based on user instructions.",
-  model="opus",
-  isolate=true
+local prompts = {
+  ai =  "You are a helpful assistant.",
+  gr = "Assist with writing by improving grammar, clarity, structure, and style based on user instructions.",
+  tr = "Assist with translation between languages. Default to English unless specified.",
 }
 
-map("n", "<leader>cl", function() agent:launch() end, opts)
-map("n", "<leader>gr", function() grammar:launch() end, opts)
+map("n", "<leader>cc", function() agent:launch(vim.lsp.buf.list_workspace_folders()[1]) end, opts)
+for mapping, prompt in pairs(prompts) do
+  local expert = agent:specialize{prompt = prompt, model = "opus", isolate = true}
+    map("n", "<leader>" .. mapping, function() expert:launch() end, opts)
+end
 
 map({"n", "v"}, "<leader>ts", agent.send, {expr = true, unpack(opts)})
 map("n", "<leader>tss", function() return agent.send() .. "_" end, {expr = true, unpack(opts)})

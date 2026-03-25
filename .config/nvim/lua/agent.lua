@@ -6,9 +6,9 @@ local agent = {
   instance = term.instance(true)
 }
 
-function agent:launch()
+function agent:launch(cwd)
   local command = vim.list_extend(vim.list_slice(self.command), self.opts)
-  self.instance:open{cmd = command, opts=self.opts.opts}
+  self.instance:open{cmd = command, opts = {cwd = cwd or self.opts.cwd}}
 
   local opts = {buffer = self.instance.termbuf, noremap = true, silent = true}
   for _, lhs in pairs{"<esc>", "<localleader><esc>"} do
@@ -19,7 +19,7 @@ end
 
 function agent:specialize(args)
   local opts = {"--tools", "", "--strict-mcp-config", "--mcp-config", "", "--no-chrome"}
-  opts.opts = {cwd = vim.fn.stdpath("run")}
+  opts.cwd = vim.fn.stdpath("run")
   args = args or {}
 
   if not args.isolate then
