@@ -87,16 +87,6 @@ completion,slack_typing_notice,cmd_completion"
 /trigger addreplace vimode signal "python_script_loaded" "${tg_signal_data} dnl
 ==* */vimode.py" "" "/window refresh; /vimode bind_keys" "ok" "delete"
 
-dnl Autosort
-/set irc.look.server_buffer "independent"
-/set buflist.format.indent  "${color:green}dnl
-${if:${buffer.next_buffer.local_variables.type}=~^(channel|private)$?├─:└─}"
-
-dnl Show notifications for all messages on select channels
-/trigger set beep conditions "${tg_displayed} && ${tg_tags} !!- dnl
-,notify_none, && (${tg_highlight} || ${tg_msg_pv} || ${buffer.full_name} == dnl
-irc.oftc.#awesome)"
-
 dnl Install all scripts lastly, because some depend on previously set options
 /script install vimode.py autosort.py slack.py
 
