@@ -25,7 +25,7 @@ c.tabs.select_on_remove = "last-used"
 c.tabs.show = "multiple"
 
 c.content.cookies.store = False
-c.content.cookies.accept = "no-3rdparty"
+#c.content.cookies.accept = "no-3rdparty"
 #c.content.pdfjs = True
 #c.content.javascript.enabled = False
 #content.javascript.clipboard = True
