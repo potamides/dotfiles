@@ -523,7 +523,7 @@ local sidebars = {
   dapwidgets.sidebar(dapwidgets.frames, nil, "wincmd p | split")
 }
 
-map("n", "<leader>cc", dap.continue, opts)
+map("n", "<leader>cn", dap.continue, opts)
 map("n", "<leader>ss", dap.step_over, opts)
 map("n", "<leader>si", dap.step_into, opts)
 map("n", "<leader>so", dap.step_out, opts)
