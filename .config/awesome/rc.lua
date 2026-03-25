@@ -806,11 +806,17 @@ awful.rules.rules = {
   { rule = { class = "mpv" },
     properties = { size_hints_honor = true }},
 
-  -- quickfix for screen blanking inhibition in qutebrowser (https://github.com/qutebrowser/qutebrowser/issues/5504)
-  { rule = { class = "qutebrowser" },
+  { rule = { class = browser },
     callback = function(c)
+      -- quickfix for screen blanking inhibition (https://github.com/qutebrowser/qutebrowser/issues/5504)
       c:connect_signal("property::fullscreen", function()
         awful.spawn(c.fullscreen and "xset -dpms s off" or "xset +dpms s on", false)
+      end)
+      -- quickfix for immediately unset urgency hint (https://github.com/qutebrowser/qutebrowser/issues/2603)
+      c:connect_signal("request::urgent", function()
+        gears.timer.delayed_call(function(urgent)
+          awful.ewmh.urgent(c, urgent)
+        end, c.urgent)
       end)
     end
   },
