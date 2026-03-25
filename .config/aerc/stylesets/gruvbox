@@ -1,0 +1,76 @@
+#
+# aerc gruvbox styleset
+#
+
+# reset everything
+*.default = true
+*.normal = true
+
+# -----------------------------------------------------------------------------
+spinner.fg = #928374
+
+border.fg = #a89984
+
+header.fg = #b8bb26
+header.bold = true
+
+title.fg = #d3869b
+
+# -----------------------------------------------------------------------------
+statusline_*.bg = #282828
+statusline_*.fg = #a89984
+statusline_*.reverse = true
+
+tab.bg = #504945
+tab.fg = #a89984
+tab.selected.bg = #a89984
+tab.selected.fg = #282828
+
+# -----------------------------------------------------------------------------
+*warning.bold = true
+*warning.fg = #fabd2f
+*success.bold = true
+*success.fg = #b8bb26
+*error.bold = true
+*error.fg = #fb4934
+
+# -----------------------------------------------------------------------------
+*list*.fg = #ebdbb2
+*list*.selected.reverse = true
+
+dirlist_unread.fg = #b8bb26
+
+msglist_pill.bg = #a89984
+msglist_unread.fg = #b8bb26
+msglist_flagged.fg = #fabd2f
+msglist_answered.fg = #d3869b
+msglist_deleted.fg = #928374
+msglist_marked.bg = #665c54
+msglist_marked.selected.bg = #282828
+msglist_result.bg = #fabd2f
+msglist_result.fg = #282828
+msglist_result.selected.bg = #fe8019
+msglist_result.selected.reverse = false
+msglist_thread_folded.bg = #3c3836
+
+# -----------------------------------------------------------------------------
+completion_*.bg = #504945 
+completion_*.selected.bg = #83a598 
+completion_*.selected.fg = #504945 
+completion_*.selected.bold = true 
+completion_pill.bg = #7c6f64
+
+# -----------------------------------------------------------------------------
+part_mimetype.fg = #83a598
+part_mimetype.selected.reverse = true
+part_switcher.selected.bg = #83a598
+part_filename.selected.bg = #83a598
+part_filename.selected.fg = #282828
+
+# -----------------------------------------------------------------------------
+selector_default.fg = #928374
+selector_chooser.fg = #ebdbb2
+selector_focused.fg = #282828
+selector_focused.bg = #ebdbb2
+
+# vim: ft=dosini

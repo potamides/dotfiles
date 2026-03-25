@@ -281,6 +281,9 @@ function ncp(){
 # advise the terminal of the current working directory
 PROMPT_COMMAND+=('printf "\e]7;file://%s%s\e\\" "$HOSTNAME" "$PWD"')
 
-# set window title to currently running command or current working directory
-PROMPT_COMMAND+=('[ -n "$BASH_COMMAND" ] && printf "\e]0;%s\a" "$PWD"')
-trap 'printf "\e]0;%s\a" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
+# aerc's terminal doesn't like this
+if [[ $(< /proc/$PPID/comm) != aerc ]]; then
+  # set window title to currently running command or current working directory
+  PROMPT_COMMAND+=('[ -n "$BASH_COMMAND" ] && printf "\e]0;%s\a" "$PWD"')
+  trap 'printf "\e]0;%s\a" "${BASH_COMMAND//[^[:print:]]/}"' DEBUG
+fi

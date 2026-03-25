@@ -1,0 +1,90 @@
+#!/bin/bash
+# shellcheck disable=SC2128,SC2086,SC2155
+
+###############################################################################
+#     Expand environment variables using envsubst and macros using m4 to      #
+#     implement custom conditional logic in aerc configuration files. In      #
+#       addition, for the accounts configuration file keepassxc-cli is        #
+#                     used to populate email credentials.                     #
+###############################################################################
+
+config_home=${XDG_CONFIG_HOME:-~/.config}/aerc
+main=$config_home/aerc.conf
+accounts=$config_home/accounts.conf
+binds=$config_home/binds.conf
+aerc=$(which --skip-tilde aerc)
+
+database=${KEEPASSXC_DATABASE:-~/database.kdbx}
+keyfile=${KEEPASSXC_KEYFILE:-} # optional
+timeout=600
+
+# https://stackoverflow.com/a/10660730
+function rawurlencode(){
+  local pos char
+
+  for (( pos=0 ; pos<${#1} ; pos++ )); do
+     char=${1:$pos:1}
+     case "$char" in
+        [-_.~a-zA-Z0-9])
+          echo -n "${char}"
+          ;;
+        *)
+          printf '%%%02x' "'$char"
+     esac
+  done
+}
+
+function get_accounts(){
+  while IFS= read -r line; do
+    if [[ "$line" =~ ^\[(.+)\]$ ]]; then
+      echo "${BASH_REMATCH[1]}"
+    fi
+  done < "$@"
+}
+
+function load_credentials(){
+  local entry secrets passwd="$(keyctl print "%user:$0" 2>/dev/null)" IFS=$'\n'
+
+  for entry in $(get_accounts "$@"); do
+    coproc keepassxc-cli show -a UserName -a Email -a Password -k "$keyfile" \
+      ${passwd:+--quiet} "$database" "$entry"
+
+    if [[ -z "$passwd" ]]; then
+      read -rs passwd
+    fi
+
+    exec 3>&"${COPROC[0]}"
+    echo "$passwd">&"${COPROC[1]}"
+    wait $COPROC_PID
+    read -rd '' -u 3 -a secrets
+
+    # if we misspelled the password, try again
+    if [[ "${#secrets[@]}" -eq 0 ]]; then
+      load_credentials "$@"
+      return
+    fi
+
+    export ${entry@U}_USER=${secrets[0]}
+    export ${entry@U}_MAIL=${secrets[1]}
+    export ${entry@U}_PASS="$(rawurlencode ${secrets[2]})"
+  done
+
+  keyctl add user "$0" "$passwd" @u >/dev/null
+  keyctl timeout "%user:$0" "$timeout"
+}
+
+function expand(){
+  envsubst "$(compgen -eP '$')" <<< "$(< "$@")" | m4
+}
+
+if [[ "$BASH_SOURCE" == "$0" ]]; then
+  exec 3< <(
+    trap 'kill -- -$$' INT
+    load_credentials "$accounts"
+    expand "$accounts"
+  )
+
+  wait $!
+
+  exec "$aerc" -C <(expand "$main") -B <(expand "$binds") -A /dev/fd/3 "$@"
+fi

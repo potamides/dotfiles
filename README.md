@@ -73,12 +73,12 @@ This repository also contains a [script](.local/bin/install-packages) which can
 be used to install all required packages. However, please note that it is
 specific to [Arch Linux](https://www.archlinux.org). When this script is
 sourced it defines the array variables `PKG`, `PIP` and `AUR`. You can then use
-`pacman`, `pip` and an [AUR
+`pacman` and an [AUR
 helper](https://wiki.archlinux.org/index.php/AUR_helpers) of your choice to
 install everything:
 ```sh
 source <(curl -LfsS https://github.com/potamides/dotfiles/raw/master/.local/bin/install-packages)
-sudo pacman -S "${PKG[@]}" && yay -Sa "${AUR[@]}" && pip install "${PIP[@]}" --user
+sudo pacman -S "${PKG[@]}" && yay -Sa "${AUR[@]}"
 ```
 
 ## Content
@@ -89,14 +89,14 @@ respective homepages for further information. For applications where I
 developed a more individual workflow, I give additional instructions below.
 | | Name | Files & Directories | Links |
 |-| ---- | ------- | ----- |
-| **Shell**                | bash        | [.inputrc](.inputrc), [.bashrc](.bashrc), [.bash\_profile](.bash_profile) | [Repository](https://git.savannah.gnu.org/cgit/bash.git), [Homepage](https://www.gnu.org/software/bash) |
+| **Shell**                | bash        | [.config/readline](.config/readline), [.bashrc](.bashrc), [.bash\_profile](.bash_profile) | [Repository](https://git.savannah.gnu.org/cgit/bash.git), [Homepage](https://www.gnu.org/software/bash) |
 | **Window Manager**       | awesome     | [.config/awesome](.config/awesome), [.xinitrc](.xinitrc) | [Repository](https://github.com/awesomeWM/awesome), [Homepage](https://awesomewm.org) |
 | **Editor**               | neovim      | [.config/nvim](.config/nvim) | [Repository](https://github.com/neovim/neovim), [Homepage](https://neovim.io) |
 | **Terminal**             | alacritty   | [.config/alacritty](.config/alacritty) | [Repository](https://github.com/alacritty/alacritty), [Homepage](https://alacritty.org) |
 | **Terminal Multiplexer** | tmux        | [.config/tmux](.config/tmux) | [Repository](https://github.com/tmux/tmux), [Homepage](https://tmux.github.io) |
 | **Music Player**         | ncmpcpp     | [.config/ncmpcpp](.config/ncmpcpp) | [Repository](https://github.com/ncmpcpp/ncmpcpp), [Homepage](https://rybczak.net/ncmpcpp) |
 | **System Monitor**       | conky       | [.config/conky](.config/conky) | [Repository](https://github.com/brndnmtthws/conky), [Homepage](https://github.com/brndnmtthws/conky/wiki) |
-| **Mail Client**          | mutt        | [.config/mutt](.config/mutt) | [Repository](https://gitlab.com/muttmua/mutt), [Homepage](http://www.mutt.org) |
+| **Mail Client**          | aerc        | [.local/bin/aerc](.local/bin/aerc), [.config/aerc](.config/aerc) | [Repository](https://git.sr.ht/~rjarry/aerc), [Homepage](https://aerc-mail.org) |
 | **IRC Client**           | weechat     | [.config/weechat](.config/weechat) | [Repository](https://github.com/weechat/weechat), [Homepage](https://weechat.org) |
 | **File Manager**         | ranger      | [.config/ranger](.config/ranger) | [Repository](https://github.com/ranger/ranger), [Homepage](https://ranger.github.io) |
 | **Calculator** ;-)       | ptpython    | [.config/ptpython](.config/ptpython) | [Repository](https://github.com/prompt-toolkit/ptpython) |
@@ -160,19 +160,30 @@ that communicates with Neovim under the hood, making it possible to
 interactively explore its stdlib (it also has other useful features like
 automatic pretty-printing).
 
-### Mutt
-Mutt is configured for multiple email accounts. It makes use of the command
-line tool distributed with [KeePassXC](https://keepassxc.org) to access
-passwords. The location of the password database and the keyfile can be
-controlled with the `KEEPASSXC_DATABASE` and `KEEPASSXC_KEYFILE` environment
-variables.
+### Aerc
+Aerc uses [dosini](https://vim.fandom.com/wiki/Dosini_files) as its
+configuration language which has only limited support for branching statements.
+Therefore, I wrote a [custom wrapper](.local/bin/aerc) that expands
+[m4](https://www.gnu.org/software/m4) macros and environment variables inside
+its config files, e.g., to set the colorscheme to something
+[ANSI-compatible](https://en.wikipedia.org/wiki/ANSI_escape_code#3-bit_and_4-bit)
+*only* when working on the Linux console. In addition, the wrapper parses
+configured account names and looks up their credentials using the command line
+tool distributed with the [KeePassXC](https://keepassxc.org) password manager.
+The location of the password database and the keyfile can be controlled with
+the `KEEPASSXC_DATABASE` and `KEEPASSXC_KEYFILE` environment variables. This is
+more powerful than aerc's built-in password lookup, as it supports looking up
+arbitrary information, such as the email addresses themselves which I want to
+keep out of version control to protect myself from spambots.
 
-Mutt also contains a [script](.config/mutt/scripts/create-alias.sh) which
-automatically creates aliases for addresses in the `FROM` field, when reading
-an email. It also utilizes the
-[markdown2html](https://git.madduck.net/etc/mutt.git/blob_plain/HEAD:/.mutt/markdown2html)
-script to conveniently create `multipart/alternative` emails when the need
-arises.
+My aerc config also contains a custom
+[addressbook](.config/aerc/filters/addressbook.py) script that automatically
+imports addresses when reading emails, and a [display
+filter](.config/aerc/filters/arxiv.p) for filtering papers from the
+[arXiv](https://arxiv.org) mailing lists according to my interests. Finally,
+another script, [invite.py](.config/aerc/scripts/invite.py), can be used to
+create and attach [calendar invitations](https://icalendar.org/) in a popover
+dialog when composing emails.
 
 ### Weechat
 Weechat keeps a lot of separate configuration files, which contain both default

@@ -1,0 +1,12 @@
+X-Mailer: aerc {{version}}
+
+On {{dateFormat (.OriginalDate | toLocal) "Mon Jan 2, 2006 at 3:04 PM MST"}}, {{.OriginalFrom | names | join ", "}} wrote:
+{{ if eq .OriginalMIMEType "text/html" -}}
+{{- exec `pandoc -f html -t plain --reference-links` .OriginalText | trimSignature | quote -}}
+{{- else -}}
+{{- trimSignature .OriginalText | quote -}}
+{{- end}}
+{{- with .Signature }}
+
+{{.}}
+{{- end }}

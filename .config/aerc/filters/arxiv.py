@@ -5,10 +5,8 @@
 #                                  interest.                                  #
 ###############################################################################
 
-from re import MULTILINE, search
 from sys import stdin
 
-PATTERN = "^To: .* daily title/abstract distribution <rabble@arXiv.org>$"
 KEYWORDS = [
     "code generation",
     "document understanding",
@@ -66,7 +64,4 @@ class ArxivMail:
 
 
 if __name__ == "__main__":
-    if search(PATTERN, mail := stdin.read(), MULTILINE):
-        print(ArxivMail(mail).filter(KEYWORDS))
-    else:
-        print(mail)
+    print(ArxivMail(stdin.read()).filter(KEYWORDS))

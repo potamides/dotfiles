@@ -9,11 +9,12 @@
 ###############################################################################
 
 PKG=(
-  awesome ranger neovim tmux ncmpcpp mutt weechat conky when
-  qutebrowser alacritty
+  awesome ranger neovim tmux ncmpcpp aerc weechat conky when qutebrowser
+  alacritty
 
-  keepassxc # Required by: mutt  weechat
+  keepassxc # Required by: aerc, weechat
   python-websocket-client # Required by: weechat
+  python-vobject # Required by: aerc
   bash-language-server lua-language-server texlab pyright # Required by: neovim
   python-debugpy # Required by: neovim
   xorg-xinit scrot redshift mpv # Required by: awesome
@@ -36,7 +37,7 @@ AUR=(
   xcursor-simp1e-gruvbox-dark
 
   absolutely-proprietary # Required by: conky
-  pandoc-bin mutt-ics # Required by: mutt
+  pandoc-bin # Required by: aerc
   bash-complete-alias # Required by: bash
   qt5-styleplugins # Required by: theme
   dragon-drop # Required by: ranger
@@ -44,9 +45,7 @@ AUR=(
   physlock # Required by: awesome
 )
 
-PIP=(
-  pypandoc pynliner # Required by: mutt
-)
+# PIP=()
 
 # make this script a modulino, i.e., install packages automatically when it is
 # run instead of being sourced
@@ -54,5 +53,5 @@ if [[ "$BASH_SOURCE" == "$0" ]]; then
   set -o errexit
   sudo pacman -S --needed "${PKG[@]}"
   yay -S --aur --needed --removemake "${AUR[@]}"
-  pip install "${PIP[@]}" --user
+  # pip install "${PIP[@]}" --user --break-system-packages
 fi
