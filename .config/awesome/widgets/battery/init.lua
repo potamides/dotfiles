@@ -8,10 +8,13 @@ local unpack = unpack or table.unpack -- luacheck: globals unpack (compatibility
 
 local battery_widget = {}
 
+local replaces_id
 local function show_battery_warning(time)
-  naughty.notify({ preset = naughty.config.presets.critical,
+  replaces_id = naughty.notify({ preset = naughty.config.presets.critical,
     title = "Battery is low!",
-    text = string.format("About %smin left based on your usage.", time) })
+    text = string.format("About %smin left based on your usage.", time),
+    replaces_id = replaces_id
+  }).id
 end
 
 local function parse_battery_info(content)
