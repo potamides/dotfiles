@@ -179,7 +179,7 @@ keep out of version control to protect myself from spambots.
 My aerc config also contains a custom
 [addressbook](.config/aerc/filters/addressbook.py) script that automatically
 imports addresses when reading emails, and a [display
-filter](.config/aerc/filters/arxiv.p) for filtering papers from the
+filter](.config/aerc/filters/arxiv.py) for filtering papers from the
 [arXiv](https://arxiv.org) mailing lists according to my interests. Finally,
 another script, [invite.py](.config/aerc/scripts/invite.py), can be used to
 create and attach [calendar invitations](https://icalendar.org/) in a popover
