@@ -630,6 +630,23 @@ modes.launcher = gears.table.join(
       handler = function() awful.spawn("physlock -s", false) end
     },
     {
+      description = "launch scratch terminal",
+      pattern = {'T'},
+      handler = function(mode)
+        awful.spawn.single_instance(
+          terminal .. " --title scratch -o 'window.dimensions = { columns = 80, lines = 20 }'",
+          { floating = true, placement = awful.placement.centered },
+          nil,
+          nil,
+          function(c)
+            mode.stop()
+            c:connect_signal("unfocus", function()
+              c:kill()
+            end)
+          end)
+      end
+    },
+    {
       description = "launch ncmpcpp",
       pattern = {'n'},
       handler = function()
