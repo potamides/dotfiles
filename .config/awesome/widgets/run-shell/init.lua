@@ -17,6 +17,7 @@ function widget.new()
       height       = (beautiful.run_shell_height or dpi(50))  + 2 * beautiful.border_width,
       width        = (beautiful.run_shell_width or dpi(200)) + 2 * beautiful.border_width,
       bg           = beautiful.bg_normal,
+      fg           = beautiful.fg_focus,
       border_color = beautiful.border_focus,
       border_width = beautiful.border_width,
     }
