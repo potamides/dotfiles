@@ -72,7 +72,7 @@ alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 This repository also contains a [script](.local/bin/install-packages) which can
 be used to install all required packages. However, please note that it is
 specific to [Arch Linux](https://www.archlinux.org). When this script is
-sourced it defines the array variables `PKG`, `PIP` and `AUR`. You can then use
+sourced it defines the array variables `PKG` and `AUR`. You can then use
 `pacman` and an [AUR
 helper](https://wiki.archlinux.org/index.php/AUR_helpers) of your choice to
 install everything:
