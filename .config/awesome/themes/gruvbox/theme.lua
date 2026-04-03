@@ -82,7 +82,7 @@ theme.taglist_bg_occupied = theme.bg1
 theme.taglist_bg_volatile = theme.lightpurple
 theme.taglist_bg_empty    = theme.bg1
 theme.taglist_bg_hover    = theme.bg2
-theme.taglist_font        = "sans-serif:weight=heavy 13"
+theme.taglist_font        = "monospace heavy 14"
 
 -- Menu
 theme.menu_height       = dpi(16)
