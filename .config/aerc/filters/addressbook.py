@@ -19,9 +19,9 @@ def match_addr(addr, content):
     return search(rf'\b{escape(addr)}\t', content) is not None
 
 
-def iter_addrs(prefix):
+def iter_addrs(pattern):
     for line in ADDRESS_BOOK.read_text().splitlines():
-        if any(part.startswith(prefix) for part in line.split("\t")):
+        if pattern.lower() in line.lower():
             yield line
 
 
@@ -64,7 +64,7 @@ def parse_args():
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
         "--match",
-        help="Match prefix against all registered addresses.",
+        help="Match search string against all registered addresses.",
     )
     group.add_argument(
         "--add",
