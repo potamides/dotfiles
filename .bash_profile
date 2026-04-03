@@ -4,8 +4,7 @@
 # -----------------------------------------------------------------------------
 
 export BROWSER="qutebrowser"
-export EDITOR="nvim"
-export VISUAL="$EDITOR"
+export {EDITOR,VISUAL}="nvim"
 export TERMCMD="alacritty msg create-window"
 
 # merge program for pacdiff
@@ -39,11 +38,15 @@ export FZF_DEFAULT_OPTS="--color 16,fg:15,bg:0,hl:11,fg+:15,bg+:237,hl+:11 \
   --color border:7 --bind alt-a:toggle-all \
   --walker-skip .git,node_modules,.venv"
 
-# use old python repl which supports vi mode
-export PYTHON_BASIC_REPL="true"
-
 # set up LS_COLORS environment variable
 eval "$(dircolors)"
+
+# colored manpages
+export MANPAGER="less -Dd+R -DuGd -Dsybd"
+export MANROFFOPT='-c'
+
+# use old python repl which supports vi mode
+export PYTHON_BASIC_REPL="true"
 
 # source environment variables which are not under version control
 if [[ -r ~/.bash_profile.local ]]; then
