@@ -73,4 +73,28 @@ selector_chooser.fg = #ebdbb2
 selector_focused.fg = #282828
 selector_focused.bg = #ebdbb2
 
+[viewer]
+# -----------------------------------------------------------------------------
+
+# reset everything
+*.default = true
+*.normal = true
+
+url.fg = #d3869b
+url.underline = true
+header.fg = #fabd2f
+header.bold = true
+signature.fg = #928374
+diff_meta.fg = #fe8019
+diff_meta.bold = true
+diff_chunk.fg = #82a396
+diff_chunk_func.fg = #8ec07c
+diff_add.fg = #afb226
+diff_del.fg = #fb4934
+quote_1.fg = #8ec07c
+quote_2.fg = #d3869b
+quote_3.fg = #fabd2f
+quote_4.fg = #afb226
+quote_x.fg = #fb4934
+
 # vim: ft=dosini
