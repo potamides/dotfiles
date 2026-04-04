@@ -12,18 +12,19 @@ PKG=(
   awesome ranger neovim tmux ncmpcpp aerc weechat conky when qutebrowser
   alacritty
 
-  keepassxc # Required by: aerc, weechat
-  python-websocket-client # Required by: weechat
-  python-vobject # Required by: aerc
-  bash-language-server lua-language-server texlab pyright # Required by: neovim
-  python-debugpy # Required by: neovim
-  xorg-xinit scrot redshift mpv # Required by: awesome
-  xorg-xrandr # Required by: awesome  conky
-  ueberzug # Required by: ranger
-  bash-completion fzf ripgrep # Required by: bash
-  python-adblock # Required by: qutebrowser
-  gtk-engine-murrine # Required by: theme
-  tree-sitter-grammars # Required by: neovim
+  keepassxc # Used by: aerc, weechat
+  python-websocket-client # Used by: weechat
+  python-vobject # Used by: aerc
+  bash-language-server lua-language-server texlab # Used by: neovim
+  pyright ruff python-debugpy # Used by: neovim
+  xorg-xinit scrot redshift mpv # Used by: awesome
+  xorg-xrandr # Used by: awesome  conky
+  ueberzug # Used by: ranger
+  bash-completion fzf ripgrep # Used by: bash
+  python-adblock # Used by: qutebrowser
+  gtk-engine-murrine # Used by: theme
+  tree-sitter-grammars # Used by: neovim
+  shellcheck # Used by: bash-language-server
 
   ttf-iosevka-nerd ttc-iosevka-ss09 ttc-iosevka-aile ttc-iosevka-etoile
 )
@@ -36,13 +37,13 @@ AUR=(
   colloid-gruvbox-gtk-theme-git
   xcursor-simp1e-gruvbox-dark
 
-  absolutely-proprietary # Required by: conky
-  pandoc-bin # Required by: aerc
-  bash-complete-alias # Required by: bash
-  qt5-styleplugins # Required by: theme
-  dragon-drop # Required by: ranger
-  ltex-ls-plus-bin # Required by: neovim
-  physlock # Required by: awesome
+  absolutely-proprietary # Used by: conky
+  pandoc-bin # Used by: aerc
+  bash-complete-alias # Used by: bash
+  qt5-styleplugins # Used by: theme
+  dragon-drop # Used by: ranger
+  ltex-ls-plus-bin # Used by: neovim
+  physlock # Used by: awesome
 )
 
 # PIP=()

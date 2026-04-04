@@ -35,9 +35,9 @@ vim.opt.showbreak = "> "
 vim.opt.listchars:append{tab = "» ", precedes = "<", extends = ">"}
 vim.opt.list = true
 
--- built-in completion & tag search
-vim.opt.completeopt:append{"fuzzy", "menuone", "noinsert", "popup"}
-vim.opt.complete:remove{"t"}
+-- built-in completion
+vim.opt.complete = {"o", "F", ".^5", "kspell^5"}
+vim.opt.completeopt:append{"fuzzy", "menuone", "noinsert"}
 vim.opt.completefunc = "v:lua.require'snipcomp'" -- custom snippet completion defined in lua/snipcomp.lua
 
 -- show line numbers and highlight cursor line number
@@ -49,7 +49,6 @@ vim.opt.cursorlineopt = "number"
 -- spell checking
 vim.opt.spell = true
 vim.opt.spelllang = {"en_us", "de_de", "cjk"}
-vim.opt.spellfile = ("%s/spell/spf.%s.add"):format(vim.fn.stdpath("config"), vim.o.encoding)
 vim.opt.thesaurusfunc = "v:lua.require'mythes'" -- support openoffice thesauri, see lua/mythes.lua
 vim.opt.thesaurus = {
   -- archlinux packages extra/mythes-{en,de,..}
@@ -68,18 +67,23 @@ vim.opt.iminsert = 0
 -- quickfix to find system-installed queries
 vim.opt.runtimepath:append("/usr/share/tree-sitter")
 
-vim.opt.undofile = true         -- persistent undo history
-vim.opt.showmode = false        -- do not show mode message on last line
-vim.opt.hidden = true           -- switch buffers without having to save changes
-vim.opt.joinspaces = false      -- insert one space when joining two sentences
-vim.opt.confirm = true          -- raise dialog asking to save changes when commands like ':q' fail
-vim.opt.title = true            -- set terminal window title to something descriptive
-vim.opt.foldlevel = 99          -- do not automatically close folds when editing a file
-vim.o.foldtext = ''             -- enable syntax highlighting for folds
-vim.opt.guifont = "monospace"   -- set a gui font (e.g., for Neovide)
-vim.opt.inccommand = "nosplit"  -- show incremental changes of commands such as search & replace
-vim.opt.virtualedit = "block"   -- virtual editing in visual block mode
-vim.opt.shortmess:append("Ic")  -- disable intro and ins-completion messages
+-- restore old default to silence bell for everything except the terminal
+vim.opt.belloff = vim.iter(vim.fn.getcompletion("set belloff=", "cmdline"))
+  :filter(function(v) return not vim.tbl_contains({"term", "all"}, v) end)
+  :totable()
+
+vim.opt.undofile = true               -- persistent undo history
+vim.opt.showmode = false              -- do not show mode message on last line
+vim.opt.joinspaces = false            -- insert one space when joining two sentences
+vim.opt.confirm = true                -- raise dialog asking to save changes when commands like ':q' fail
+vim.opt.title = true                  -- set terminal window title to something descriptive
+vim.opt.foldlevel = 99                -- do not automatically close folds when editing a file
+vim.o.foldtext = ''                   -- enable syntax highlighting for folds
+vim.opt.guifont = "monospace"         -- set a gui font (e.g., for Neovide)
+vim.opt.virtualedit = "block"         -- virtual editing in visual block mode
+vim.opt.jumpoptions = "view"          -- restore view of current window when switching buffers
+vim.opt.diffopt:append("inline:word") -- automatically merge adjacent diff blocks
+vim.opt.shortmess:append("Ic")        -- disable intro and ins-completion messages
 
 if vim.env.TERM == "linux" then
   vim.opt.title = false
@@ -124,18 +128,15 @@ end
 -------------------------------------------------------------------------------
 local au = require("au") -- small wrapper around lua autocmd api
 
--- jump to last position when opening a file
-local open = au("user_open")
-function open.BufReadPost()
-  local last_cursor_pos, last_line = vim.fn.line([['"]]), vim.fn.line("$")
-  if last_cursor_pos > 1 and last_cursor_pos <= last_line then
-    vim.fn.cursor(last_cursor_pos, 1)
-  end
-end
-
 -- disable spell checking inside terminal buffers
+local open = au("user_open")
 function open.TermOpen()
   vim.opt_local.spelllang = ""
+end
+
+-- replace builtin message + cmdline presentation layer
+function open.VimEnter()
+  require('vim._core.ui2').enable{}
 end
 
 -- briefly highlight a selection on yank
@@ -159,27 +160,6 @@ end
 function number.Absolute()
   if vim.opt_local.number:get() then
     vim.opt_local.relativenumber = false
-  end
-end
-
--- close preview window when completion is finished
-local preview = au("user_preview")
-function preview.CompleteDone()
-  if vim.fn.pumvisible() == 0 and vim.fn.getcmdwintype() == "" then
-    vim.cmd.pclose()
-  end
-end
-
--- restore view of current window when switching buffers
-local view = au("user_view")
-function view.BufWinLeave()
-  vim.b.view = vim.fn.winsaveview()
-end
-
-function view.BufWinEnter()
-  if vim.b.view then
-    vim.fn.winrestview(vim.b.view)
-    vim.b.view = nil
   end
 end
 
@@ -207,24 +187,7 @@ local map, opts = vim.keymap.set, {noremap = true, silent = true}
 
 map("n", "<leader>tm", vim.cmd.Terminal, opts)
 map("n", "<leader>fe", vim.cmd.Lexplore, opts)
-map("n", "<leader>ci", function() vim.cmd.set("cursorcolumn!") end, opts)
-
--- integrate agent through external cli
-local agent = require("agent")
-local prompts = {
-  ai =  "You are a helpful assistant.",
-  gr = "Assist with writing by improving grammar, clarity, structure, and style based on user instructions.",
-  tr = "Assist with translation between languages. Default to English unless specified.",
-}
-
-map("n", "<leader>cc", function() agent:launch(vim.lsp.buf.list_workspace_folders()[1]) end, opts)
-for mapping, prompt in pairs(prompts) do
-  local expert = agent:specialize{prompt = prompt, model = "opus", isolate = true}
-    map("n", "<leader>" .. mapping, function() expert:launch() end, opts)
-end
-
-map({"n", "v"}, "<leader>ts", agent.send, {expr = true, unpack(opts)})
-map("n", "<leader>tss", function() return agent.send() .. "_" end, {expr = true, unpack(opts)})
+map("n", "<leader>rs", vim.cmd.restart, opts)
 
 -- find wrapper command for nvim (see bin/nvim)
 vim.env.PATH = ("%s/bin:%s"):format(vim.fn.stdpath("config"), vim.env.PATH)
@@ -275,31 +238,46 @@ function lsp.LspAttach(args)
   map("n", "<localleader>wl", function() vim.print(vim.lsp.buf.list_workspace_folders()) end, bufopts)
 
   -- map inlay hints if supported
-  if client:supports_method("textDocument/inlayHint") then
+  if client:supports_method("textDocument/inlayHint", args.buf) then
     local hint, bufnr = vim.lsp.inlay_hint, {bufnr = args.buf}
     map("n", "grh", function() hint.enable(not hint.is_enabled(bufnr), bufnr) end, bufopts)
     hint.enable(true, bufnr)
   end
 
   -- enable completion if supported
-  if client:supports_method("textDocument/completion") then
+  if client:supports_method("textDocument/completion", args.buf) then
     vim.lsp.completion.enable(true, client.id, args.buf, {autotrigger = true})
   end
 
+  if client:supports_method("textDocument/inlineCompletion", args.buf) then
+    vim.lsp.inline_completion.enable(true, {bufnr = args.buf})
+  end
+
   -- enable LSP folding if supported
-  if client:supports_method('textDocument/foldingRange') then
+  if client:supports_method('textDocument/foldingRange', args.buf) then
     vim.opt_local.foldmethod = "expr"
     vim.opt_local.foldexpr = "v:lua.vim.lsp.foldexpr()"
   end
 end
 
--- enable LSP servers (check /lsp)
-vim.lsp.enable({
-  vim.fn.executable('basedpyright') == 1 and "basedpyright" or "pyright",
+-- enable/toggle LSP servers (also check /lsp)
+-- schedule wrap added for https://github.com/neovim/neovim/issues/38302
+vim.schedule_wrap(vim.lsp.enable){
+  ({"pyright", "basedpyright"})[vim.fn.executable('basedpyright') + 1],
+  "ruff",
   "bashls",
   "lua_ls",
   "texlab"
-})
+}
+
+local function lsp_toggle(name)
+  vim.lsp.enable(name, not vim.lsp.is_enabled(name))
+end
+
+map("n", "<leader>lt", function() lsp_toggle("ltex_plus") end, opts)
+map("n", "<leader>cp", function() lsp_toggle("copilot") end, opts)
+
+map("n", "<leader>ch", function() vim.cmd.checkhealth("vim.lsp") end, opts)
 
 -- Treesitter
 -------------------------------------------------------------------------------
@@ -315,37 +293,79 @@ function treesitter.FileType(args)
   end
 end
 
+-- Misc
+-------------------------------------------------------------------------------
+
+-- don't ask to confirm download of missing spellfiles
+require("nvim.spellfile").config{confirm = false}
+
+-- toggle mapping for indent lines
+local function toggle_indentline()
+  if vim.opt_local.listchars:get()['leadmultispace'] then
+    return vim.opt_local.listchars:remove('leadmultispace')
+  end
+  vim.opt_local.listchars:append{leadmultispace = "│" .. (" "):rep(vim.fn.shiftwidth() - 1)}
+end
+
+map("n", "<leader>il", toggle_indentline, opts)
+
+-- integrate agent through external cli
+local agent = require("agent")
+local prompts = {
+  ai =  "You are a helpful assistant.",
+  gr = "Assist with writing by improving grammar, clarity, structure, and style based on user instructions.",
+  tr = "Assist with translation between languages. Default to English unless specified.",
+}
+
+map("n", "<leader>cc", function() agent:launch(vim.lsp.buf.list_workspace_folders()[1]) end, opts)
+for mapping, prompt in pairs(prompts) do
+  local expert = agent:specialize{prompt = prompt, model = "opus", isolate = true}
+    map("n", "<leader>" .. mapping, function() expert:launch() end, opts)
+end
+
+map({"n", "v"}, "<leader>ts", agent.send, {expr = true, unpack(opts)})
+map("n", "<leader>tss", function() return agent.send() .. "_" end, {expr = true, unpack(opts)})
+
 -- }}}
 -------------------------------------------------------------------------------
 -- {{{ User-installed plugin configuration
 -------------------------------------------------------------------------------
-local autopaq = require("autopaq")
+local pu = require("packutils")
 
--- small, custom wrapper around paq-nvim which installs paq automatically when
--- it is missing
-autopaq.bootstrap{
-  "savq/paq-nvim",
-  "unblevable/quick-scope",
-  "NvChad/nvim-colorizer.lua",
-  "neovim/nvim-lspconfig",
-  "mfussenegger/nvim-dap",
-  "tpope/vim-fugitive",
-  "lewis6991/gitsigns.nvim",
-  "ibhagwan/fzf-lua",
-  "ellisonleao/gruvbox.nvim",
-  {"L3MON4D3/LuaSnip", build = "make install_jsregexp"},
-  {"nvim-lualine/lualine.nvim", patches = {
-    "nvim-lualine/lualine.nvim/pull/1134.patch",
-    "nvim-lualine/lualine.nvim/pull/1135.patch",
-  }},
+vim.pack.add({
+  pu.gh("unblevable/quick-scope"),
+  pu.gh("NvChad/nvim-colorizer.lua"),
+  pu.gh("mfussenegger/nvim-dap"),
+  pu.gh("tpope/vim-fugitive"),
+  pu.gh("lewis6991/gitsigns.nvim"),
+  pu.gh("ibhagwan/fzf-lua"),
+  pu.gh("ellisonleao/gruvbox.nvim"),
+  {src = pu.gh("L3MON4D3/LuaSnip"),      data = {build = "make install_jsregexp"}},
+  {src = pu.gh("neovim/nvim-lspconfig"), data = {build = pu.npm("@github/copilot-language-server")}},
+  {
+    src = pu.gh("nvim-lualine/lualine.nvim"),
+    data = {
+      patch = {
+        pu.gh("nvim-lualine/lualine.nvim/pull/1134.patch"),
+        pu.gh("nvim-lualine/lualine.nvim/pull/1135.patch"),
+      }
+    }
+  },
 
   -- dependencies
-  "rafamadriz/friendly-snippets", -- LuaSnip
-  "nvim-tree/nvim-web-devicons",  -- lualine.nvim, fzf-lua
-}
+  pu.gh("rafamadriz/friendly-snippets"), -- LuaSnip
+  pu.gh("nvim-tree/nvim-web-devicons"),  -- lualine.nvim, fzf-lua
+}, {confirm = false})
 
--- shorthand for updating packages with paq-nvim and showing (new) updates
-cmd("Update", "silent PaqLogClean | PaqSync | autocmd User PaqDoneSync ++once ++nested PaqLogOpen", {})
+map("n", "<leader>ql", function() vim.pack.update(nil, { offline = true }) end, opt)
+map("n", "<leader>su", function() vim.pack.update(nil, { offline = true, target = 'lockfile' }) end, opt)
+map("n", "<leader>sy", function() vim.pack.update() end, opt)
+
+-- load some plugins included with nvim
+vim.cmd.packadd{"nvim.tohtml", bang=true}
+vim.cmd.packadd{"nvim.undotree", bang=true}
+
+map("n", "<leader>ut", function() require("undotree").open{command="Vexplore | enew"} end, opts)
 
 local function lazy_require(module)
   return setmetatable({}, {
@@ -519,7 +539,7 @@ local function repl_open()
 end
 
 local sidebars = {
-  dapwidgets.sidebar(dapwidgets.scopes, nil, "Lexplore!"),
+  dapwidgets.sidebar(dapwidgets.scopes, nil, "Vexplore!"),
   dapwidgets.sidebar(dapwidgets.frames, nil, "wincmd p | split")
 }
 
@@ -559,7 +579,7 @@ local function snipjump(direction, lhs)
     return ("<cmd>lua vim.snippet.jump(%d)<cr>"):format(direction)
   elseif luasnip.jumpable(direction) then
     return ("<cmd>lua require('luasnip').jump(%d)<cr>"):format(direction)
-  else
+  elseif not vim.lsp.inline_completion.get() then
     return lhs
   end
 end
@@ -577,7 +597,8 @@ end
 map({"i", "s"}, "<Tab>", function() return snipjump(1, "<Tab>") end, {expr = true, unpack(opts)})
 map({"i", "s"}, "<S-Tab>", function() return snipjump(-1, "<S-Tab>") end, {expr = true, unpack(opts)})
 map({"i", "s"}, "<C-n>", function() return snipchoice(1, "<C-n>") end, {expr = true, unpack(opts)})
-map({"i", "s"}, "<C-p>", function() return snipchoice(-1, "C-p") end, {expr = true, unpack(opts)})
+map({"i", "s"}, "<C-p>", function() return snipchoice(-1, "<C-p>") end, {expr = true, unpack(opts)})
+map({"i", "s"}, "<C-b>", function() luasnip.unlink_current() end, opts)
 
 -- fzf-lua
 -------------------------------------------------------------------------------

@@ -5,7 +5,10 @@ local config = assert(
   loadfile(vim.api.nvim_get_runtime_file("after/lsp/pyright.lua", false)[1])
 )()
 
-config.settings.basedpyright = config.settings.python
+config.settings.basedpyright = vim.tbl_extend("error",
+  config.settings.pyright or {},
+  config.settings.python or {}
+)
 
 for name, func in pairs(config.commands or {}) do
   config.commands["based" .. name] = func

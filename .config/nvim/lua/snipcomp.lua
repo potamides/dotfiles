@@ -14,7 +14,7 @@ local function snippet2completion(snippet)
   return {
     word      = snippet.trigger,
     menu      = snippet.name,
-    info      = vim.trim(table.concat(vim.tbl_flatten({snippet.dscr or "", "", snippet:get_docstring()}), "\n")),
+    info      = vim.trim(vim.iter({snippet.dscr or "", "", snippet:get_docstring()}):flatten():join("\n")),
     dup       = true,
     user_data = "luasnip"
   }

@@ -6,17 +6,19 @@
   askPass = ""
 [commit]
   verbose = true
-[diff]
-  mnemonicPrefix = true
 [pull]
   rebase = false
 [help]
   autoCorrect = "prompt"
+[diff]
+  mnemonicPrefix = true
+  tool = nvim_difftool
 [merge]
-  # tool = nvimdiff2
   tool = fugitive
+[difftool "nvim_difftool"]
+  cmd = nvim -c \"packadd nvim.difftool\" -d \"$LOCAL\" \"$REMOTE\"
 [mergetool "fugitive"]
-  cmd = nvim -c "Gvdiffsplit!" "$MERGED"
+  cmd = nvim -c \"Gvdiffsplit!\" \"$MERGED\"
 [filter "lfs"]
   clean = git-lfs clean -- %f
   smudge = git-lfs smudge -- %f

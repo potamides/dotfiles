@@ -147,24 +147,25 @@ function components:setup(opts)
     end
   end
 
-  local lsp_progress = component:extend()
-  function lsp_progress:init(...)
+  local progress_status = component:extend()
+  function progress_status:init(...)
     self.super.init(self, ...)
     self.index = 1
     self.timer = vim.loop.new_timer()
     self.timeout = 75
   end
 
-  function lsp_progress.update_status()
+  function progress_status.update_status()
     for _, client in ipairs(vim.lsp.get_clients()) do
       if not vim.tbl_isempty(client.progress.pending) then
         local msg = vim.tbl_values(client.progress.pending)[1]
         return #msg > 0 and msg or "Loading"
       end
     end
+    return vim.ui.progress_status()
   end
 
-  function lsp_progress:apply_icon()
+  function progress_status:apply_icon()
     if #self.status > 0 then
       if self.timer:get_due_in() == 0 then
         self.timer:start(self.timeout, 0, vim.schedule_wrap(function()
@@ -178,7 +179,7 @@ function components:setup(opts)
     end
   end
 
-  self.lsp_progress = {lsp_progress}
+  self.progress_status = {progress_status}
   setmetatable(self, {__index = function(_, key) return key end})
 end
 
@@ -216,7 +217,7 @@ function statusline.setup(opts)
     extensions = {
       -- special statusline for netrw that only shows the path
       {sections = {lualine_c = {pathshorten(components.cwd)}}, filetypes = {"netrw"}},
-      -- special statusline for custom nvim-dap sidebar
+      -- special statusline for custom nvim-dap and undotree sidebar
       {sections = {
         lualine_c = {{
             "filename",
@@ -224,7 +225,7 @@ function statusline.setup(opts)
             fmt = function(str) return str:gsub("%-%d+$", "") end
           }}
         },
-        filetypes = {"dap-sidebar"}
+        filetypes = {"dap-sidebar", "nvim-undotree"}
       }
     },
     options = {
@@ -236,7 +237,7 @@ function statusline.setup(opts)
     sections = {
       lualine_a = {components.mode},
       lualine_b = {components.filename},
-      lualine_c = {hide(components.branch), components.lsp_progress, hide(components.dap), components.diagnostics},
+      lualine_c = {hide(components.branch), components.progress_status, hide(components.dap), components.diagnostics},
       lualine_x = {hide(components.fileformat), hide(components.encoding), components.filetype},
       lualine_y = {components.progress},
       lualine_z = {components.location}

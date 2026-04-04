@@ -50,15 +50,6 @@ if not vim.b.did_user_ftplugin then
     end
   })
 
-  -- when black is installed use it for formatting with 'gq' operator
-  if vim.fn.executable("black") == 1 then
-    vim.opt_local.formatprg = "black --fast --quiet -"
-  end
-
-  -- /usr/share/nvim/runtime/ftplugin/python.vim unconditionally overwrites
-  -- omnifunc, so we have to reset it >:(
-  vim.opt_local.omnifunc = vim.opt_global.omnifunc:get()
-
   vim.opt_local.formatoptions:append{
     t = false, -- auto-wrap text using textwidth
     r = true,  -- auto insert comment leader after hitting <Enter>

@@ -139,12 +139,11 @@ resolutions, the plugin tries to calculate the best scaling automatically.
 
 ### Neovim
 For my Neovim configuration, I made heavy use of the new features introduced
-with [Neovim 0.5](https://neovim.io/news/2021/07) and wrote it entirely in Lua.
-I wrote a small wrapper around the [paq-nvim](https://github.com/savq/paq-nvim)
-plugin manager called [autopaq.lua](.config/nvim/lua/autopaq.lua), which makes
-sure to install itself and all specified plugins on its own on the first launch
-of Neovim, eliminating the need for any further setup steps. I tried to keep
-the main configuration file, [init.lua](.config/nvim/init.lua), mostly language
+with [Neovim 0.5+](https://neovim.io/news/2021/07) and wrote it entirely in
+[Lua](https://neovim.io/doc/user/luaref). All required plugins and external
+files should be downloaded and installed automatically on the first launch,
+eliminating the need for further setup steps. I tried to keep the main
+configuration file, [init.lua](.config/nvim/init.lua), mostly language
 agnostic. Therefore, I refactored language-specific and buffer-local code into
 [ftplugins and lsp servers](.config/nvim/after). Similarly, I moved a lot of
 functionality into standalone [libraries](.config/nvim/lua). Some examples

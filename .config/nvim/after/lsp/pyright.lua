@@ -1,5 +1,5 @@
 --[[
-  Configure pyright and integrate with debugpy (via nvim-dap).
+  Configure pyright.
 --]]
 
 return {
@@ -13,12 +13,6 @@ return {
         typeCheckingMode = "standard"
       }
     }
-  },
-  commands = {
-    ['pyright.organizeimports'] = function(params, args)
-      local client = vim.lsp.get_client_by_id(args.client_id)
-      client.request('workspace/executeCommand', params, nil, args.bufnr)
-    end
   },
   on_init = function(client)
     local pythonPath = vim.fs.joinpath(client.config.root_dir or ".", ".venv/bin/python")

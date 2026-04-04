@@ -12,7 +12,7 @@ end
 -- do some window local things outside of the buffer guard
 local term = require("term")
 
-vim.opt_local.winheight = term.height
+vim.opt_local.winheight = term.horizontal.size
 if vim.tbl_contains(vim.api.nvim_tabpage_list_wins(0), term.termwin) then
   term:close()
 end
