@@ -1,3 +1,6 @@
+--[[
+  Small wrapper for the claude code cli.
+--]]
 local term = require("term")
 
 local agent = {
@@ -11,10 +14,10 @@ function agent:launch(cwd)
   self.instance:open{cmd = command, opts = {cwd = cwd or self.opts.cwd}}
 
   local opts = {buffer = self.instance.termbuf, noremap = true, silent = true}
-  for _, lhs in pairs{"q", "<esc>", "<localleader><esc>"} do
+  for _, lhs in pairs{"q", "<esc>", "<S-esc>"} do
     vim.keymap.set("n", lhs, function() self.instance:close() end, opts)
   end
-  vim.keymap.set("t", "<localleader><esc>", vim.cmd.stopinsert, opts)
+  vim.keymap.set("t", "<S-esc>", vim.cmd.stopinsert, opts)
 end
 
 function agent:specialize(args)

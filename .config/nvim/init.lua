@@ -309,7 +309,7 @@ end
 
 map("n", "<leader>il", toggle_indentline, opts)
 
--- integrate agent through external cli
+-- integrate agent through external cli (cf. lua/agent.lua)
 local agent = require("agent")
 local prompts = {
   ai =  "You are a helpful assistant.",
@@ -598,7 +598,7 @@ map({"i", "s"}, "<Tab>", function() return snipjump(1, "<Tab>") end, {expr = tru
 map({"i", "s"}, "<S-Tab>", function() return snipjump(-1, "<S-Tab>") end, {expr = true, unpack(opts)})
 map({"i", "s"}, "<C-n>", function() return snipchoice(1, "<C-n>") end, {expr = true, unpack(opts)})
 map({"i", "s"}, "<C-p>", function() return snipchoice(-1, "<C-p>") end, {expr = true, unpack(opts)})
-map({"i", "s"}, "<C-b>", function() luasnip.unlink_current() end, opts)
+map({"i", "s"}, "<C-g>", function() luasnip.unlink_current() end, opts)
 
 -- fzf-lua
 -------------------------------------------------------------------------------
