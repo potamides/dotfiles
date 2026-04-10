@@ -69,7 +69,9 @@ function patches.tabline()
   local function autohide()
     local num_tabs = #vim.api.nvim_list_tabpages()
     local num_bufs = #vim.tbl_filter(is_listed, vim.api.nvim_list_bufs())
-    lualine.hide{place = {"tabline"}, unhide = math.max(num_tabs, num_bufs) > 1}
+    local unhide = vim.v.vim_did_enter == 1 and math.max(num_tabs, num_bufs) > 1
+    lualine.hide{place = {"tabline"}, unhide = unhide}
+    vim.opt.showtabline = unhide and 2 or 0
   end
   vim.api.nvim_create_autocmd({"OptionSet"}, {
     group = vim.api.nvim_create_augroup("user_lualine", {clear = true}),
@@ -233,6 +235,7 @@ function statusline.setup(opts)
       icons_enabled = opts.icons_enabled,
       component_separators = opts.separators.component,
       section_separators = opts.separators.section,
+      always_show_tabline = false
     },
     sections = {
       lualine_a = {components.mode},
