@@ -38,31 +38,39 @@ end
 function packutils.parse_extended_spec(ev)
   local data, kind, path = ev.data.spec.data or {}, ev.data.kind, ev.data.path
 
-  -- apply patches
-  if data.patch and kind == "install" then
-    for _, uri in ipairs(packutils.totable(data.patch)) do
-      local patch = packutils.request_sync(uri)
-      vim.system({"git", "apply"}, {cwd = path, stdin = patch}):wait()
+  if kind == 'install' or kind == 'update' then
+    -- apply patches
+    if data.patch then
+      for _, uri in ipairs(packutils.totable(data.patch)) do
+        local patch = packutils.request_sync(uri)
+        vim.system({"git", "apply"}, {cwd = path, stdin = patch}):wait()
+      end
     end
-    vim.system({"git", "config", "merge.autoStash"}, {cwd = path}):wait()
-  end
 
-  -- run build script
-  if data.build and (kind == 'install' or kind == 'update') then
-    for _, build in ipairs(packutils.totable(data.build)) do
-      if vim.is_callable(build) then
-        data.build()
-      else
-        vim.system({build}, { cwd = path }):wait()
+    -- run build script
+    if data.build then
+      for _, build in ipairs(packutils.totable(data.build)) do
+        if vim.is_callable(build) then
+          data.build()
+        else
+          vim.system(vim.split(build, "%s", {trimempty=true}), { cwd = path }):wait()
+        end
       end
     end
   end
 end
 
+function packutils.safe_parse_extended_spec(ev)
+  xpcall(
+    function() return packutils.parse_extended_spec(ev) end,
+    function(msg) vim.notify(msg, vim.log.levels.ERROR) end
+  )
+end
+
 -- install hook to enable support for extended plugin spec
 vim.api.nvim_create_autocmd("PackChanged", {
   group = vim.api.nvim_create_augroup("user_packutils", {clear = true}),
-  callback = packutils.parse_extended_spec
+  callback = packutils.safe_parse_extended_spec
 })
 
 return packutils
