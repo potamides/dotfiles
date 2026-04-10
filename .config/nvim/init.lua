@@ -85,7 +85,7 @@ vim.opt.jumpoptions = "view"          -- restore view of current window when swi
 vim.opt.diffopt:append("inline:word") -- automatically merge adjacent diff blocks
 vim.opt.shortmess:append("Ic")        -- disable intro and ins-completion messages
 
-if vim.env.TERM == "linux" then
+if vim.env.TERM == "linux" or vim.env.AERC_ACCOUNT ~= nil then
   vim.opt.title = false
 end
 
