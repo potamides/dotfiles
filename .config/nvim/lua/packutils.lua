@@ -29,9 +29,16 @@ function packutils.gh(proj)
 end
 
 function packutils.npm(proj)
-  return function() vim.system(
-    {"npm", "update", "-g", unpack(packutils.totable(proj))},
-    {NPM_CONFIG_PREFIX=vim.fn.expand("~/.local")}):wait()
+  local opts = {env = {NPM_CONFIG_PREFIX = vim.fn.expand("~/.local")}}
+
+  return function()
+    if vim.fn.executable("npm") == 1 then
+      local result = vim.system({"npm", "list", "-g", proj}, opts):wait()
+      local cmd = result.code == 0 and "update" or "install"
+      vim.system({"npm", cmd, "-g", proj}, opts):wait()
+    else
+      vim.notify("You need to install npm!", vim.log.levels.ERROR)
+    end
   end
 end
 
