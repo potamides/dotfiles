@@ -134,11 +134,6 @@ function open.TermOpen()
   vim.opt_local.spelllang = ""
 end
 
--- replace builtin message + cmdline presentation layer
-function open.VimEnter()
-  require('vim._core.ui2').enable{}
-end
-
 -- briefly highlight a selection on yank
 local yank = au("user_yank")
 function yank.TextYankPost()
@@ -298,6 +293,9 @@ end
 
 -- don't ask to confirm download of missing spellfiles
 require("nvim.spellfile").config{confirm = false}
+
+-- replace builtin message + cmdline presentation layer
+require('vim._core.ui2').enable{}
 
 -- toggle mapping for indent lines
 local function toggle_indentline()
