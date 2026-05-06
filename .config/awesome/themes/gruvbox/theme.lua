@@ -133,8 +133,8 @@ theme.med_gap          = theme.gap + 0.5 * theme.pgram_slope
 theme.small_gap        = theme.gap / 2
 theme.big_negative_gap = -theme.pgram_slope
 theme.negative_gap     = theme.big_negative_gap + theme.gap
-theme.wibar_height     = dpi(21)
-theme.titlebar_height  = dpi(20)
+theme.wibar_height     = dpi(20)
+theme.titlebar_height  = dpi(18)
 
 -- Systray
 theme.systray_icon_spacing = theme.gap
