@@ -8,9 +8,8 @@ local wallpaper = {}
 -- Scales surface to width or height of screen and then repeats along other
 -- axis. By default scales horizontally and repeats vertically, which can be
 -- reversed by setting the "vertical" parameter to true.
-function wallpaper.repeated(original_surf, s, vertical, offset)
-  local geom, cr = gwallpaper.prepare_context(s)
-  local surf = gsurface.load_uncached(original_surf)
+function wallpaper.repeated(img, cr, width, height, vertical, offset)
+  local surf = gsurface.load_uncached(img)
 
   if offset then
     cr:translate(offset.x, offset.y)
@@ -18,8 +17,8 @@ function wallpaper.repeated(original_surf, s, vertical, offset)
 
   -- Now fit the surface
   local w, h = gsurface.get_size(surf)
-  local scale = vertical and geom.width / w or geom.height / h
-  cr:translate((geom.width - (w * scale)), 0)
+  local scale = vertical and width / w or height / h
+  cr:translate((width - (w * scale)), 0)
   cr:scale(scale, scale)
 
   local pattern = cairo.Pattern.create_for_surface(surf)
@@ -29,7 +28,7 @@ function wallpaper.repeated(original_surf, s, vertical, offset)
   cr.operator = cairo.Operator.SOURCE
   cr:paint()
 
-  if surf ~= original_surf then
+  if surf ~= img then
     surf:finish()
   end
   if cr.status ~= "SUCCESS" then

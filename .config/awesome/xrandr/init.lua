@@ -93,7 +93,7 @@ local function menu()
   return _menu
 end
 
-local function naughty_destroy_callback(reason)
+local function naughty_destroy_callback(notification, reason)
   if reason == naughty.notificationClosedReason.expired or
     reason == naughty.notificationClosedReason.dismissedByUser then
    local action = xrandr.state.index and xrandr.state.menu[xrandr.state.index - 1][2]
@@ -102,6 +102,8 @@ local function naughty_destroy_callback(reason)
     xrandr.state.index = nil
    end
   end
+
+  naughty.notification.destroy(notification, reason)
 end
 
 function xrandr.show()

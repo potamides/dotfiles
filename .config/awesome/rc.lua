@@ -16,7 +16,9 @@ local beautiful = require("beautiful")
 -- Low-level system library
 local glib = require("lgi").GLib
 -- Notification library
-local naughty       = require("naughty")
+local naughty = require("naughty")
+-- Declarative object management
+local ruled         = require("ruled")
 local menubar       = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
 -- other stuff
@@ -38,11 +40,13 @@ local unpack       = unpack or table.unpack -- luacheck: globals unpack (compati
 
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
-if awesome.startup_errors then
-  naughty.notify({ preset = naughty.config.presets.critical,
-  title = "Oops, there were errors during startup!",
-  text = awesome.startup_errors })
-end
+naughty.connect_signal("request::display_error", function(message, startup)
+    naughty.notification {
+        urgency = "critical",
+        title   = "Oops, an error happened"..(startup and " during startup!" or "!"),
+        message = message
+    }
+end)
 
 -- Handle runtime errors after startup
 do
@@ -80,15 +84,17 @@ menubar.utils.terminal = terminal
 local modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
-awful.layout.layouts = {
-  utils.layout.centerwork,
-  awful.layout.suit.tile,
-  awful.layout.suit.tile.bottom,
-  awful.layout.suit.fair,
-  awful.layout.suit.spiral,
-  awful.layout.suit.corner.nw,
-  awful.layout.suit.max,
-}
+tag.connect_signal("request::default_layouts", function()
+    awful.layout.append_default_layouts({
+      utils.layout.centerwork,
+      awful.layout.suit.tile,
+      awful.layout.suit.tile.bottom,
+      awful.layout.suit.fair,
+      awful.layout.suit.spiral,
+      awful.layout.suit.corner.nw,
+      awful.layout.suit.max,
+    })
+end)
 
 -- }}}
 -------------------------------------------------------------------------------
@@ -215,14 +221,18 @@ mytextclock:buttons(gears.table.join(
 
 -- Wallpaper
 -------------------------------------------------------------------------------
-local function set_wallpaper(s)
-  if beautiful.wallpaper then
-      utils.wallpaper.repeated(beautiful.wallpaper, s)
-  end
-end
-
--- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
-screen.connect_signal("property::geometry", set_wallpaper)
+screen.connect_signal("request::wallpaper", function(s)
+  awful.wallpaper{
+    screen = s,
+    widget = wibox.widget{
+      draw = function(_, _, ...)
+        if beautiful.wallpaper then
+          utils.wallpaper.repeated(beautiful.wallpaper, ...)
+        end
+      end
+    }
+  }
+end)
 
 -- Widget Initialization
 -------------------------------------------------------------------------------
@@ -247,12 +257,12 @@ function playback.create_widget()
       bottom = beautiful.small_gap,
       left = beautiful.med_gap,
       right = beautiful.med_gap,
+      draw_empty = false,
       widget = wibox.container.margin
     },
     shape = gears.shape.rectangle,
     bg = beautiful.bg_focus,
     widget = wibox.container.background,
-    opacity = 0,
     buttons = awful.button({ }, 1, function(self)
       self.widget.bg = beautiful.playback_bg_press
       if #title.text > 0 then
@@ -271,7 +281,6 @@ function playback.create_widget()
 
   widget:connect_signal('mouse::enter', function() widget.bg = beautiful.playback_bg_hover end)
   widget:connect_signal('mouse::leave', function() widget.bg = beautiful.playback_bg_normal end)
-  title:connect_signal("widget::redraw_needed", function() widget.opacity = #title.text > 0 and 1 or 0 end)
 
   return widget
 end
@@ -339,10 +348,8 @@ local widget_template = {
   end,
 }
 
-awful.screen.connect_for_each_screen(function(s)
-  -- Wallpaper
-  set_wallpaper(s)
 
+screen.connect_signal("request::desktop_decoration", function(s)
   -- Taglist
   local ultrawide, highres = s.geometry.width / s.geometry.height > 2, s.geometry.height >= 1440
   for index, tag in ipairs(tags) do
@@ -358,10 +365,11 @@ awful.screen.connect_for_each_screen(function(s)
   -- We need one layoutbox per screen.
   s.mylayoutbox = awful.widget.layoutbox(s)
   s.mylayoutbox:buttons(gears.table.join(
-  awful.button({ }, 1, function() awful.layout.inc( 1) end),
-  awful.button({ }, 3, function() awful.layout.inc(-1) end),
-  awful.button({ }, 4, function() awful.layout.inc( 1) end),
-  awful.button({ }, 5, function() awful.layout.inc(-1) end)))
+    awful.button({ }, 1, function() awful.layout.inc( 1) end),
+    awful.button({ }, 3, function() awful.layout.inc(-1) end),
+    awful.button({ }, 4, function() awful.layout.inc( 1) end),
+    awful.button({ }, 5, function() awful.layout.inc(-1) end)
+  ))
   -- Create a taglist widget
   s.mytaglist = awful.widget.taglist{
     screen = s,
@@ -371,8 +379,7 @@ awful.screen.connect_for_each_screen(function(s)
     },
     layout = {
       spacing = beautiful.negative_gap,
-      homogeneous = false,
-      layout  = wibox.layout.grid.horizontal
+      layout  = wibox.layout.fixed.horizontal
     },
     widget_template = widget_template,
     buttons = taglist_buttons
@@ -482,19 +489,19 @@ end)
 -- {{{ Bindings
 -------------------------------------------------------------------------------
 
-local clientbuttons = gears.table.join(
-  awful.button({ }, 1, function(c)
-    c:emit_signal("request::activate", "mouse_click", {raise = true})
-  end),
-  awful.button({ modkey }, 1, function(c)
-    c:emit_signal("request::activate", "mouse_click", {raise = true})
-    awful.mouse.client.move(c)
-  end),
-  awful.button({ modkey }, 3, function(c)
-    c:emit_signal("request::activate", "mouse_click", {raise = true})
-    awful.mouse.client.resize(c)
-  end)
-)
+client.connect_signal("request::default_mousebindings", function()
+    awful.mouse.append_client_mousebindings({
+        awful.button({ }, 1, function (c)
+            c:activate { context = "mouse_click" }
+        end),
+        awful.button({ modkey }, 1, function (c)
+            c:activate { context = "mouse_click", action = "mouse_move"  }
+        end),
+        awful.button({ modkey }, 3, function (c)
+            c:activate { context = "mouse_click", action = "mouse_resize"}
+        end),
+    })
+end)
 
 -- Initialize modalawesome & customize modes
 -------------------------------------------------------------------------------
@@ -780,58 +787,81 @@ modalawesome.init{
 -------------------------------------------------------------------------------
 
 -- Rules to apply to new clients (through the "manage" signal).
-awful.rules.rules = {
+ruled.client.connect_signal("request::rules", function()
   -- All clients will match this rule.
-  { rule = { },
+  ruled.client.append_rule{
+    id = "global",
+    rule = { },
     properties = {
       border_color = beautiful.border_normal,
       focus = awful.client.focus.filter,
       raise = true,
-      buttons = clientbuttons,
       screen = awful.screen.preferred,
       placement = awful.placement.no_overlap+awful.placement.no_offscreen,
       size_hints_honor = false,
     }
-  },
+  }
 
   -- Browser & keepassxc always on tag 1
-  { rule_any = { class = { browser, "KeePassXC" }},
+  ruled.client.append_rule{
+    id = "tag1",
+    rule_any = { class = { browser, "KeePassXC" }},
     except_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }},
-    properties = { tag = tags[1] }},
+    properties = { tag = tags[1] }
+  }
 
   -- Spawn keepassxc prompts on tags were they were called (which they don't do by default)
-  { rule_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }},
-    properties = { tag = function() return awful.screen.focused().selected_tag end }},
+  ruled.client.append_rule{
+    id = "keepassxc-prompts",
+    rule_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }},
+    properties = { tag = function() return awful.screen.focused().selected_tag end }
+  }
 
   -- dirty hack to preven Ctrl-q from closing firefox
-  { rule = { class = "firefox" },
-    properties = { keys = awful.key({ "Control" }, "q", function() end) }},
+  ruled.client.append_rule{
+    id = "firefox-exit",
+    rule = { class = "firefox" },
+    properties = { keys = awful.key({ "Control" }, "q", function() end) }
+  }
 
   -- Make dragon sticky for easy drag and drop in ranger
-  { rule = { class = "Dragon-drop" },
-    properties = { ontop = true, sticky = true }},
+  ruled.client.append_rule{
+    rule = { class = "Dragon-drop" },
+    properties = { ontop = true, sticky = true }
+  }
 
   -- askpass has wrong height on multi-screen setups somehow
-  { rule = { class = "Git-gui--askpass" },
-    properties = { height = 200 }},
+  ruled.client.append_rule{
+    rule = { class = "Git-gui--askpass" },
+    properties = { height = 200 }
+  }
 
   -- some applications like password prompt for keepassxc autotype should be floating and centered
-  { rule_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }, class = { "Git-gui--askpass" }},
-    properties = { floating = true, placement = awful.placement.centered }},
+  ruled.client.append_rule{
+    rule_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }, class = { "Git-gui--askpass" }},
+    properties = { floating = true, placement = awful.placement.centered }
+  }
 
   -- always put ncmpcpp on last tag
-  { rule = { name = "^ncmpcpp$" },
-    properties = { tag = tags[#tags] }},
+  ruled.client.append_rule{
+    rule = { name = "^ncmpcpp$" },
+    properties = { tag = tags[#tags] }
+  }
 
   -- display keyboard (and mouse) status nicely
-  { rule = { class = "Key-mon" },
-    properties = { placement = awful.placement.bottom, sticky = true, floating = true, focusable = false }},
+  ruled.client.append_rule{
+    rule = { class = "Key-mon" },
+    properties = { placement = awful.placement.bottom, sticky = true, floating = true, focusable = false }
+  }
 
   -- honor size hints of mpv video player
-  { rule = { class = "mpv" },
-    properties = { size_hints_honor = true }},
+  ruled.client.append_rule{
+    rule = { class = "mpv" },
+    properties = { size_hints_honor = true }
+  }
 
-  { rule = { class = browser },
+  ruled.client.append_rule{
+    rule = { class = browser },
     callback = function(c)
       -- quickfix for screen blanking inhibition (https://github.com/qutebrowser/qutebrowser/issues/5504)
       c:connect_signal("property::fullscreen", function()
@@ -844,10 +874,11 @@ awful.rules.rules = {
         end, c.urgent)
       end)
     end
-  },
+  }
 
   -- place conky in background on primary screen
-  { rule = { class = "conky" },
+  ruled.client.append_rule{
+    rule = { class = "conky" },
     properties = { focusable = false, screen = function() return screen.primary end,
       placement = awful.placement.restore, new_tag = { hide = true, volatile = true }},
     callback = function()
@@ -864,34 +895,48 @@ awful.rules.rules = {
         awful.rules.conky_signals_connected = true
       end
     end
-  },
+  }
 
   -- super ugly hack to hide menubar in qpdfview which is not possible (yet)
   -- through its configuration options (see https://answers.launchpad.net/qpdfview/+question/681572)
-  { rule = { class = "qpdfview" },
+  ruled.client.append_rule{
+    rule = { class = "qpdfview" },
     callback = function(c)
-      if not c.transient_for then
-        local function hide_menu_bar()
-          -- we need to do wait until the end of the next main loop because
-          -- the actual SetInputFocus request is only send to the X11 server at
-          -- the end of the current main loop iteration (thanks psychon for
-          -- figuring this out)
-          utils.timer.next_main_loop(function()
-            local kb = awful.keygrabber.current_instance
-            if kb then kb:stop() end
-            -- execute qpdfview keybinding which hides menu bar
-            awful.key.execute({"Control"}, "m")
-            if kb then kb:start() end
-          end)
-          c:disconnect_signal("focus", hide_menu_bar)
+        if not c.transient_for then
+          local function hide_menu_bar()
+            -- we need to do wait until the end of the next main loop because
+            -- the actual SetInputFocus request is only send to the X11 server at
+            -- the end of the current main loop iteration (thanks psychon for
+            -- figuring this out)
+            utils.timer.next_main_loop(function()
+              local kb = awful.keygrabber.current_instance
+              if kb then kb:stop() end
+              -- execute qpdfview keybinding which hides menu bar
+              awful.key.execute({"Control"}, "m")
+              if kb then kb:start() end
+            end)
+            c:disconnect_signal("focus", hide_menu_bar)
+          end
+          c:connect_signal("focus", hide_menu_bar)
         end
-        c:connect_signal("focus", hide_menu_bar)
-      end
-  end}
-}
+    end
+  }
+end)
+
+-- notification rules
+ruled.notification.connect_signal('request::rules', function()
+    -- All notifications will match this rule.
+    ruled.notification.append_rule {
+        rule       = { },
+        properties = {
+            screen           = awful.screen.preferred,
+            implicit_timeout = 5,
+        }
+    }
+end)
 
 -- filter for qpdfview to prevent focus stealing after compiling latex documents
-awful.ewmh.add_activate_filter(function(c)
+awful.permissions.add_activate_filter(function(c)
   if c.class == "qpdfview" then
     return false
   end
@@ -1062,7 +1107,7 @@ end
 
 local function buttons_remove(c)
   -- delay removal for smoother transitions
-  gears.timer.delayed_call(function(buttonsbox, container)
+  gears.timer.delayed_call(gears.timer.delayed_call, function(buttonsbox, container)
     if buttonsbox and container and container.widget == buttonsbox then
       container.widget = nil
     end

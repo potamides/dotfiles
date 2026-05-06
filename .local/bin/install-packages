@@ -9,8 +9,7 @@
 ###############################################################################
 
 PKG=(
-  awesome ranger neovim tmux ncmpcpp aerc weechat conky when qutebrowser
-  alacritty
+  ranger neovim tmux ncmpcpp aerc weechat conky when qutebrowser alacritty
 
   keepassxc # Used by: aerc, weechat
   python-websocket-client # Used by: weechat
@@ -30,7 +29,7 @@ PKG=(
 )
 
 AUR=(
-  ptpython qpdfview
+  awesome-git ptpython qpdfview
 
   # gruvbox theme
   gruvbox-plus-icon-theme
