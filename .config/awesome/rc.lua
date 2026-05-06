@@ -348,6 +348,53 @@ local widget_template = {
   end,
 }
 
+-- Systray (and typed sequence)
+-------------------------------------------------------------------------------
+local systray_visible = false -- visibilty can be toggled with keybinding
+local systray_sequence = wibox.widget{
+  {
+    {
+      {
+        {
+          {
+            id        = "text_role",
+            ellipsize = "start",
+            widget    = wibox.widget.textbox,
+          },
+          {
+            wibox.widget.systray,
+            id      = "image_role",
+            visible = systray_visible,
+            widget  = wibox.container.background,
+          },
+          layout = wibox.layout.stack
+        },
+        top        = beautiful.small_gap,
+        bottom     = beautiful.small_gap,
+        left       = beautiful.med_gap,
+        right      = beautiful.med_gap,
+        draw_empty = false,
+        widget     = wibox.container.margin
+      },
+      bg     = beautiful.bg_focus,
+      widget = wibox.container.background,
+    },
+    width  = beautiful.playback_width, -- symmetric max width with playback
+    widget = wibox.container.constraint
+  },
+  right  = beautiful.pgram_slope,
+  widget = wibox.container.margin
+}
+
+modalawesome.sequence:connect_signal("widget::redraw_needed", function()
+  local sequency = systray_sequence:get_children_by_id("text_role")[1]
+  local systray = systray_sequence:get_children_by_id("image_role")[1]
+  local text = gears.string.xml_escape(modalawesome.sequence.text or "")
+
+  systray.visible = systray_visible and text == ""
+  sequency:set_markup(beautiful.widget_markup:format(beautiful.fg_normal, text))
+  systray_sequence:emit_signal("widget::layout_changed")
+end)
 
 screen.connect_signal("request::desktop_decoration", function(s)
   -- Taglist
@@ -408,7 +455,9 @@ screen.connect_signal("request::desktop_decoration", function(s)
       layout = wibox.layout.align.horizontal,
     },
     { -- Right widgets
-      wibox.container.margin(modalawesome.sequence, beautiful.gap, beautiful.big_gap),
+
+      -- systray + typed sequence
+      systray_sequence,
 
       -- Internet Widget
       utils.widget.compose{
@@ -704,6 +753,14 @@ modes.launcher = gears.table.join(
             end)
           end
         }
+      end
+    },
+    {
+      description = "toggle systray",
+      pattern = {'e'},
+      handler = function()
+        systray_visible = not systray_visible
+        systray_sequence:get_children_by_id("image_role")[1].visible = systray_visible
       end
     },
     {
