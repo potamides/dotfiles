@@ -89,7 +89,7 @@ return {
 
       -- help texlab find the compiled pdf for forward search
       client.config.settings.texlab.build.pdfDirectory = dirs[3]
-      client.notify("workspace/didChangeConfiguration",
+      client:notify("workspace/didChangeConfiguration",
         {settings = client.config.settings}
       )
 
