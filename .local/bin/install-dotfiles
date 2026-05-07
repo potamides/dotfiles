@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ###############################################################################
 #  Install dotfiles as a bare git repository. Conflicting files found during  #
