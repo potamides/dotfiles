@@ -4,7 +4,7 @@
 ###############################################################################
 # Makeshift KakaoTalk client for Linux. Launches KakaoTalk on an ADB-enabled  #
 # Android device connected via USB and displays the application screen using  #
-#     scrcpy. Also has rudamentary support for forwarding notifications.      #
+#     scrcpy. Also has rudimentary support for forwarding notifications.      #
 ###############################################################################
 
 set -o errexit -o nounset -o pipefail
