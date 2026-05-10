@@ -355,9 +355,9 @@ vim.pack.add({
   pu.gh("nvim-tree/nvim-web-devicons"),  -- lualine.nvim, fzf-lua
 }, {confirm = false})
 
-map("n", "<leader>ql", function() vim.pack.update(nil, { offline = true }) end, opt)
-map("n", "<leader>su", function() vim.pack.update(nil, { offline = true, target = 'lockfile' }) end, opt)
-map("n", "<leader>sy", function() vim.pack.update() end, opt)
+map("n", "<leader>ql", function() vim.pack.update(nil, { offline = true }) end, opts)
+map("n", "<leader>su", function() vim.pack.update(nil, { offline = true, target = 'lockfile' }) end, opts)
+map("n", "<leader>sy", function() vim.pack.update() end, opts)
 
 -- load some plugins included with nvim
 vim.cmd.packadd{"nvim.tohtml", bang=true}
