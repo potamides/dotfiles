@@ -18,7 +18,7 @@ PKG=(
   pyright ruff python-debugpy # Used by: neovim
   xorg-xinit scrot redshift mpv # Used by: awesome
   xorg-xrandr # Used by: awesome  conky
-  ueberzug # Used by: ranger
+  ueberzugpp # Used by: ranger
   bash-completion fzf ripgrep # Used by: bash
   python-adblock # Used by: qutebrowser
   gtk-engine-murrine # Used by: theme
