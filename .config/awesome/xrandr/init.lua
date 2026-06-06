@@ -13,21 +13,17 @@ local xrandr = {
 }
 
 -- Get active outputs
-local function outputs()
-  local _outputs = {}
-  local handle = io.popen("xrandr -q --current")
-
-  if handle then
-    for line in handle:lines() do
+local function outputs(callback)
+  spawn.easy_async("xrandr -q --current", function(stdout)
+    local _outputs = {}
+    for line in stdout:gmatch("[^\n]+") do
       local output = line:match("^([%w-]+) connected ")
       if output then
         _outputs[#_outputs + 1] = output
       end
     end
-    handle:close()
-  end
-
-  return _outputs
+    callback(_outputs)
+  end)
 end
 
 local function arrange(out)
@@ -55,43 +51,44 @@ local function arrange(out)
 end
 
 -- Build available choices
-local function menu()
-  local _menu = {}
-  local out = outputs()
-  local choices = arrange(out)
+local function menu(callback)
+  outputs(function(out)
+    local _menu = {}
+    local choices = arrange(out)
 
-  for _, choice in pairs(choices) do
-    local cmd = "xrandr"
-    -- Enabled outputs
-    for i, o in pairs(choice) do
-      cmd = cmd .. " --output " .. o .. " --auto"
-      if i > 1 then
-        cmd = cmd .. string.format(" --%s ", xrandr.position) .. choice[i-1]
-      else
-        cmd = cmd .. " --primary"
-      end
-    end
-    -- Disabled outputs
-    for _, o in pairs(out) do
-      if not gtable.hasitem(choice, o) then
-        cmd = cmd .. " --output " .. o .. " --off"
-      end
-    end
-
-    local label = ""
-    if #choice == 1 then
-      label = 'Only <span weight="bold">' .. choice[1] .. '</span>'
-    else
+    for _, choice in pairs(choices) do
+      local cmd = "xrandr"
+      -- Enabled outputs
       for i, o in pairs(choice) do
-        if i > 1 then label = label .. " + " end
-        label = label .. '<span weight="bold">' .. o .. '</span>'
+        cmd = cmd .. " --output " .. o .. " --auto"
+        if i > 1 then
+          cmd = cmd .. string.format(" --%s ", xrandr.position) .. choice[i-1]
+        else
+          cmd = cmd .. " --primary"
+        end
       end
+      -- Disabled outputs
+      for _, o in pairs(out) do
+        if not gtable.hasitem(choice, o) then
+          cmd = cmd .. " --output " .. o .. " --off"
+        end
+      end
+
+      local label = ""
+      if #choice == 1 then
+        label = 'Only <span weight="bold">' .. choice[1] .. '</span>'
+      else
+        for i, o in pairs(choice) do
+          if i > 1 then label = label .. " + " end
+          label = label .. '<span weight="bold">' .. o .. '</span>'
+        end
+      end
+
+      _menu[#_menu + 1] = { label, cmd }
     end
 
-    _menu[#_menu + 1] = { label, cmd }
-  end
-
-  return _menu
+    callback(_menu)
+  end)
 end
 
 local function naughty_destroy_callback(_, reason)
@@ -105,13 +102,7 @@ local function naughty_destroy_callback(_, reason)
   end
 end
 
-function xrandr.show()
-  -- Build the list of choices
-  if not xrandr.state.index then
-    xrandr.state.menu = menu()
-    xrandr.state.index = 1
-  end
-
+local function show_selection()
   -- Select one and display the appropriate notification
   local label
   local next  = xrandr.state.menu[xrandr.state.index]
@@ -135,6 +126,19 @@ function xrandr.show()
   else
     xrandr.state.notification.message = label
     xrandr.state.notification:reset_timeout(xrandr.timeout)
+  end
+end
+
+function xrandr.show()
+  -- Build the list of choices
+  if not xrandr.state.index then
+    menu(function(_menu)
+      xrandr.state.menu = _menu
+      xrandr.state.index = 1
+      show_selection()
+    end)
+  else
+    show_selection()
   end
 end
 
