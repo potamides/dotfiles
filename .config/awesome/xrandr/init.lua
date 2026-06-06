@@ -7,7 +7,8 @@ local naughty = require("naughty")
 local mutils = require("menubar.utils")
 
 local xrandr = {
-  state = { cid = nil },
+  state = {},
+  timeout = 4,
   position = "below"
 }
 
@@ -93,7 +94,7 @@ local function menu()
   return _menu
 end
 
-local function naughty_destroy_callback(notification, reason)
+local function naughty_destroy_callback(_, reason)
   if reason == naughty.notificationClosedReason.expired or
     reason == naughty.notificationClosedReason.dismissedByUser then
    local action = xrandr.state.index and xrandr.state.menu[xrandr.state.index - 1][2]
@@ -102,8 +103,6 @@ local function naughty_destroy_callback(notification, reason)
     xrandr.state.index = nil
    end
   end
-
-  naughty.notification.destroy(notification, reason)
 end
 
 function xrandr.show()
@@ -124,14 +123,19 @@ function xrandr.show()
   else
     label = next[1]
   end
-  xrandr.state.cid = naughty.notify({
-    text        = label,
-    icon        = mutils.lookup_icon("display"),
-    timeout     = 4,
-    screen      = mouse.screen,
-    replaces_id = xrandr.state.cid,
-    destroy     = naughty_destroy_callback
-  }).id
+
+  if not xrandr.state.notification or xrandr.state.notification.is_expired then
+    xrandr.state.notification = naughty.notification{
+      message = label,
+      icon    = mutils.lookup_icon("display"),
+      timeout = xrandr.timeout,
+      screen  = mouse.screen,
+    }
+    xrandr.state.notification:connect_signal("destroyed", naughty_destroy_callback)
+  else
+    xrandr.state.notification.message = label
+    xrandr.state.notification:reset_timeout(xrandr.timeout)
+  end
 end
 
 return xrandr
