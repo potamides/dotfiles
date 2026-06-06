@@ -1,3 +1,4 @@
+
 -------------------------------------------------------------------------------
 -- {{{ Imports
 -------------------------------------------------------------------------------
@@ -658,15 +659,48 @@ modes.launcher = gears.table.join(
     },
     {
       description = "take screenshot",
-      pattern = {'c'},
-      handler = function()
-        local sgeo = awful.screen.focused().geometry
-        local boxflag = string.format("--autoselect %s,%s,%s,%s", sgeo.x, sgeo.y, sgeo.width, sgeo.height)
-        local path = os.getenv("HOME") .. "/Pictures/Screenshots/Screenshot-%Y%m%d-%H%M%S.png"
+      pattern = {"%d*", "[cC]"},
+      handler = function(mode, delay, trigger)
+        mode.grabber:stop()
+        local ss = awful.screenshot{
+          auto_save_delay = delay == '' and 0 or tonumber(delay),
+          frame_color     = beautiful.border_marked,
+          directory       = ("%s/Pictures/Screenshots"):format(os.getenv("HOME")),
+          interactive     = trigger:match("%u")
+        }
 
-        awful.spawn.easy_async(string.format("scrot %s %s", boxflag, path), function()
-          naughty.notify({ text = "Took screenshot." })
-        end)
+        gears.filesystem.make_directories(ss.directory)
+
+        if ss.auto_save_delay > 0 then
+          local countdown = naughty.notification{
+            title   = "Screenshot in:",
+            message = tostring(ss.auto_save_delay) .. " seconds"
+          }
+
+          ss:connect_signal("timer::tick", function(_, remain)
+            countdown.message = tostring(remain) .. " seconds"
+          end)
+
+          ss:connect_signal("timer::timeout", function()
+            if countdown then countdown:destroy() end
+          end)
+        end
+
+        local function finalize(self)
+          mode.grabber:start()
+          naughty.notification{
+            title     = self.file_name,
+            message   = "Screenshot saved",
+            icon      = self.surface,
+            icon_size = 128,
+          }
+        end
+
+        if ss.auto_save_delay > 0 or ss.interactive then
+          ss:connect_signal("file::saved", finalize)
+        else
+          finalize(ss)
+        end
       end
     },
     {

@@ -16,7 +16,7 @@ PKG=(
   python-vobject # Used by: aerc
   bash-language-server lua-language-server texlab # Used by: neovim
   pyright ruff python-debugpy # Used by: neovim
-  xorg-xinit scrot redshift mpv # Used by: awesome
+  xorg-xinit redshift mpv # Used by: awesome
   xorg-xrandr # Used by: awesome  conky
   ueberzugpp # Used by: ranger
   bash-completion fzf ripgrep # Used by: bash
