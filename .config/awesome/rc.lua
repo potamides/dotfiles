@@ -206,15 +206,27 @@ mytextclock:buttons(gears.table.join(
 
 -- Wallpaper
 -------------------------------------------------------------------------------
+
+-- Scales wallpaper to height of screen and then repeat along width axis.
 screen.connect_signal("request::wallpaper", function(s)
+  local wallpaper = gears.surface.load_uncached(beautiful.wallpaper)
+  local width, height = gears.surface.get_size(wallpaper)
+
   awful.wallpaper{
     screen = s,
-    widget = wibox.widget{
-      draw = function(_, _, ...)
-        if beautiful.wallpaper then
-          utils.wallpaper.repeated(beautiful.wallpaper, ...)
-        end
-      end
+    widget = {
+      {
+        vertical_fit_policy = "fit",
+        scaling_quality     = "nearest",
+        widget              = wibox.widget.imagebox,
+        image               = gears.surface.crop_surface{
+          surface = wallpaper,
+          left    = math.max(width - s.geometry.width / (s.geometry.height / height), 0),
+        },
+      },
+      tiled  = true,
+      halign = "right",
+      widget = wibox.container.tile,
     }
   }
 end)

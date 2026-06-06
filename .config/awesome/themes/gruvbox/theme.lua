@@ -3,7 +3,7 @@
 -------------------------------------------------------------------------------
 
 local awful = require("awful")
-local usurface = require("utils.surface")
+local gsurface = require("gears.surface")
 local dpi = require("beautiful.xresources").apply_dpi
 local theme_assets = require("beautiful.theme_assets")
 local icon_utils = require("utils.icon")
@@ -15,7 +15,9 @@ theme.font       = "sans-serif 11"
 theme.icon_theme = icon_utils.convert_theme("Gruvbox-Plus-Dark")
 
 -- crop to size where wallpaper repeats itself
-theme.wallpaper = usurface.crop(theme_path .. "wallpaper.png", 384, 0, 1920, 1080)
+theme.wallpaper = gsurface.crop_surface{
+  surface=gsurface.load_uncached(theme_path .. "wallpaper.png"), left=384
+}
 
 -- Dark Gruvbox Colors
 theme.lightred    = "#fb4934"
