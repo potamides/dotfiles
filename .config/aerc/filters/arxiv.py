@@ -8,27 +8,17 @@
 from sys import stdin
 
 KEYWORDS = [
-    "code generation",
-    "document understanding",
     "graphics program",
     "inverse graphics",
-    "procedural material",
+    "code generation",
     "program synthesis",
-    "LaTeX",
-    "vector graphics",
-    "LMM",
-    "MLLM",
     "multimodal",
-    "optical character recognition"
-    "perceptual similarity",
-    "poetry",
-    "scientific document"
-    "scientific figure"
+    "CAD",
+    "3D",
+    "mesh"
+    "procedural material",
     "TikZ",
-    "vectorization",
-    "vision language model",
-    "VLLM",
-    "VLM",
+    "perceptual similarity",
 ]
 
 
