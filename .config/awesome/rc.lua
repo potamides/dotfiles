@@ -666,7 +666,8 @@ modes.launcher = gears.table.join(
           auto_save_delay = delay == '' and 0 or tonumber(delay),
           frame_color     = beautiful.border_marked,
           directory       = ("%s/Pictures/Screenshots"):format(os.getenv("HOME")),
-          interactive     = trigger:match("%u")
+          interactive     = trigger:match("%u"),
+          screen          = awful.screen.focused()
         }
 
         gears.filesystem.make_directories(ss.directory)
