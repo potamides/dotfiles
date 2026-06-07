@@ -559,10 +559,10 @@ local keybindings = {
   {{}, "XF86AudioMute", volume.toggle},
   {{}, "XF86AudioLowerVolume", volume.lower},
   {{}, "XF86AudioRaiseVolume", volume.raise},
-  {{}, "XF86AudioMicMute", function() awful.spawn("amixer set Capture toggle", false) end},
   {{}, "XF86MonBrightnessDown", function() awful.spawn("xbacklight -perceived -dec 10", false) end},
   {{}, "XF86MonBrightnessUp", function() awful.spawn("xbacklight -perceived -inc 10", false) end},
   {{}, "XF86Display", xrandr.show},
+  {{}, "XF86AudioMicMute", function() awful.spawn("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle", false) end},
   {{}, "XF86Tools", function() awful.spawn(editor_cmd .. awesome.conffile) end},
 }
 
@@ -635,7 +635,7 @@ modes.launcher = gears.table.join(
     {
       description = "toggle mic",
       pattern = { "F4" },
-      handler = function() awful.spawn("amixer set Capture toggle") end
+      handler = function() awful.spawn("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle") end
     },
     {
       description = "decrease backlight",
