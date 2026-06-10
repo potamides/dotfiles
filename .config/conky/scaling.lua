@@ -9,9 +9,16 @@
 -- reference the primary screen is used. "Xrandr" must be installed for this to
 -- work as intended.
 
+local function read(cmd)
+  local p = io.popen(cmd)
+  local output = p:read("*a")
+  p:close()
+  return output
+end
+
 local scaling = {
   format = "<%s>",
-  resolution = tonumber(io.popen("xrandr"):read("*a"):match("primary %d+x(%d+)")) or 1080
+  resolution = tonumber(read("xrandr"):match("primary %d+x(%d+)")) or 1080,
 }
 
 function scaling:autoscale()
