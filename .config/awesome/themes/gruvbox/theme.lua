@@ -12,12 +12,17 @@ local theme_path = awful.util.getdir("config") .. "/themes/gruvbox/"
 local theme = {}
 
 theme.font       = "sans-serif 11"
-theme.icon_theme = icon_utils.convert_theme("Gruvbox-Plus-Dark")
+theme.font_large = "sans-serif 36"
+theme.icon_theme = icon_utils.convert_theme_async("Gruvbox-Plus-Dark")
 
 -- crop to size where wallpaper repeats itself
 theme.wallpaper = gsurface.crop_surface{
   surface=gsurface.load_uncached(theme_path .. "wallpaper.png"), left=384
 }
+
+-- cursor theme and size
+root.cursor_theme("Simp1e-Gruvbox-Dark")
+root.cursor_size(32)
 
 -- Dark Gruvbox Colors
 theme.lightred    = "#fb4934"
@@ -59,12 +64,13 @@ theme.fg_focus   = theme.fg1
 theme.fg_urgent  = theme.lightorange
 
 --  Borders
-theme.useless_gap       = dpi(10)
-theme.gap_single_client = true
-theme.border_width      = dpi(3)
-theme.border_normal     = theme.bg2
-theme.border_focus      = theme.bg4
-theme.border_marked     = theme.lightpurple
+theme.useless_gap         = dpi(10)
+theme.gap_single_client   = true
+theme.border_width        = dpi(3)
+theme.border_normal       = theme.bg2
+theme.border_focus        = theme.bg4
+theme.border_color_active = theme.bg4
+theme.border_marked       = theme.lightpurple
 
 -- Titlebars
 theme.titlebar_bg_focus  = theme.bg0_s
@@ -106,7 +112,7 @@ theme.hotkeys_border_color = theme.bg4
 theme.menubar_border_width = theme.border_width
 
 -- Notifications
-theme.notification_opacity   = 0.75
+theme.notification_opacity   = 1
 theme.notification_icon_size = 32
 
 -- Calendar
@@ -169,6 +175,7 @@ theme.layout_cornerne   = theme_path .. "layouts/cornerne.svg"
 theme.layout_cornersw   = theme_path .. "layouts/cornersw.svg"
 theme.layout_cornerse   = theme_path .. "layouts/cornerse.svg"
 theme.layout_centerwork = theme_path .. "layouts/centerwork.svg"
+theme.layout_carousel   = theme_path .. "layouts/carousel.svg"
 
 -- Titlebar
 theme.titlebar_ontop_button_focus_active    = theme_path .. "titlebar/ontop_select.svg"

@@ -17,7 +17,8 @@ export PATH="$HOME/.local/bin:$HOME/.luarocks/bin:$PATH"
 export SUDO_ASKPASS="/usr/lib/git-core/git-gui--askpass"
 export SSH_ASKPASS="$SUDO_ASKPASS"
 
-# get qt5 apps to use native gtk style (through qt5-styleplugins)
+# configure qt apps for wayland and native gtk style (through qt5-styleplugins)
+export QT_QPA_PLATFORM="wayland;xcb"
 export QT_QPA_PLATFORMTHEME="gtk2"
 export DESKTOP_SESSION="gnome"
 
@@ -56,8 +57,8 @@ fi
 ## Start session
 # -----------------------------------------------------------------------------
 
-if [[ -z $DISPLAY && -n $(type -t startx) && $(tty) = /dev/tty1 ]]; then
-  exec systemd-cat startx -- -keeptty
+if [[ -z $DISPLAY && -n $(type -p somewm) && $(tty) = /dev/tty1 ]]; then
+  exec somewm-session
 elif [[ -r ~/.bashrc ]]; then
   source ~/.bashrc
 fi

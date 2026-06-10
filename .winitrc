@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+###############################################################################
+#           Wayland replacement for .xinitrc. Started with SomeWM.            #
+###############################################################################
+
+conky --daemonize
+fcitx5 -d
+udiskie &
+gammastep &
+alacritty --daemon

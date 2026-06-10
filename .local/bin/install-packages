@@ -9,16 +9,14 @@
 ###############################################################################
 
 PKG=(
-  ranger neovim tmux ncmpcpp aerc weechat conky when qutebrowser alacritty
+  ranger neovim tmux ncmpcpp aerc weechat conky when qutebrowser
 
   keepassxc # Used by: aerc, weechat
   python-websocket-client # Used by: weechat
   python-vobject # Used by: aerc
   bash-language-server lua-language-server texlab # Used by: neovim
   pyright ruff python-debugpy # Used by: neovim
-  xorg-xinit redshift mpv # Used by: awesome
-  xorg-xrandr # Used by: awesome  conky
-  ueberzugpp # Used by: ranger
+  brightnessctl gammastep mpv wtype # Used by: somewm
   bash-completion fzf ripgrep # Used by: bash
   python-adblock # Used by: qutebrowser
   gtk-engine-murrine # Used by: theme
@@ -29,7 +27,7 @@ PKG=(
 )
 
 AUR=(
-  awesome-git ptpython qpdfview
+  somewm alacritty-graphics ptpython qpdfview
 
   # gruvbox theme
   gruvbox-plus-icon-theme
@@ -42,7 +40,6 @@ AUR=(
   qt5-styleplugins # Used by: theme
   dragon-drop # Used by: ranger
   ltex-ls-plus-bin # Used by: neovim
-  physlock # Used by: awesome
 )
 
 # PIP=()

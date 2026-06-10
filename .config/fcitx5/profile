@@ -1,10 +1,10 @@
 [Groups/0]
 # Group Name
-Name=JP
+Name=KR
 # Layout
 Default Layout=eu
 # Default Input Method
-DefaultIM=mozc
+DefaultIM=hangul
 
 [Groups/0/Items/0]
 # Name
@@ -14,17 +14,17 @@ Layout=
 
 [Groups/0/Items/1]
 # Name
-Name=mozc
+Name=hangul
 # Layout
 Layout=
 
 [Groups/1]
 # Group Name
-Name=KR
+Name=JP
 # Layout
 Default Layout=eu
 # Default Input Method
-DefaultIM=hangul
+DefaultIM=mozc
 
 [Groups/1/Items/0]
 # Name
@@ -34,7 +34,7 @@ Layout=
 
 [Groups/1/Items/1]
 # Name
-Name=hangul
+Name=mozc
 # Layout
 Layout=
 

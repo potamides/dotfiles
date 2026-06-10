@@ -23,6 +23,7 @@ local ruled         = require("ruled")
 local menubar       = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
 -- other stuff
+local lockscreen   = require("lockscreen")
 local freedesktop  = require("freedesktop")
 local modalawesome = require("modalawesome")
 local utils        = require("utils")
@@ -31,7 +32,6 @@ local volume       = require("widgets.volume")
 local playback     = require("widgets.playback")
 local net_widget   = require("widgets.net")
 local run_shell    = require("widgets.run-shell")
-local xrandr       = require("xrandr")
 local unpack       = unpack or table.unpack -- luacheck: globals unpack (compatibility with Lua 5.1)
 
 -- }}}
@@ -49,9 +49,12 @@ naughty.connect_signal("request::display_error", function(message, startup)
   }
 end)
 
+-- temporary fixes for inconsistencies between somewm and awesome and related issues
+utils.patches.apply()
+
 -- }}}
 -------------------------------------------------------------------------------
--- {{{ Variable definitions
+-- {{{ Variable & fractional scaling definitions
 -------------------------------------------------------------------------------
 
 -- Themes define colors, icons, font and wallpapers.
@@ -71,15 +74,26 @@ local modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 tag.connect_signal("request::default_layouts", function()
-    awful.layout.append_default_layouts({
-      utils.layout.centerwork,
-      awful.layout.suit.tile,
-      awful.layout.suit.tile.bottom,
-      awful.layout.suit.fair,
-      awful.layout.suit.spiral,
-      awful.layout.suit.corner.nw,
-      awful.layout.suit.max,
-    })
+  awful.layout.append_default_layouts({
+    utils.layout.centerwork,
+    awful.layout.suit.tile,
+    awful.layout.suit.carousel,
+    awful.layout.suit.tile.bottom,
+    awful.layout.suit.fair,
+    awful.layout.suit.spiral,
+    awful.layout.suit.corner.nw,
+    awful.layout.suit.max,
+  })
+end)
+
+-- Different scale based on screen size
+awful.screen.connect_for_each_screen(function(s)
+  local values = {[1500] = 4 / 3, [2000] = 5 / 3}
+  for height, scale in pairs(values) do
+    if s.geometry.height >= height then
+      s.scale = scale
+    end
+  end
 end)
 
 -- }}}
@@ -94,7 +108,7 @@ local myawesomemenu = {
   { "Restart", awesome.restart },
   { "Quit", function() awesome.quit() end},
   { "Open Terminal", terminal },
-  { "Lock", function() awesome.spawn("physlock -s") end },
+  { "Lock", function() awesome.lock() end },
   { "Reboot", function() awesome.spawn("systemctl reboot") end },
   { "Shutdown", function() awesome.spawn("systemctl poweroff") end },
 }
@@ -147,7 +161,7 @@ end)
 
 -- menu of clients that match a particular rule.
 local function clientmenu(filter, selected_tags_only)
-  local scr, items, clients = awful.screen.focused(), {
+  local scr, clients, items = awful.screen.focused(), {}, {
     theme = {
       width        = beautiful.clientsmenu_width,
       border_color = beautiful.clientsmenu_border_color
@@ -157,7 +171,7 @@ local function clientmenu(filter, selected_tags_only)
   if selected_tags_only then
     clients = gears.table.join(unpack(gears.table.map(function(t) return t:clients() end, scr.selected_tags)))
   else
-    clients = client.get()
+    for s in screen do gears.table.merge(clients, client.get(s)) end
   end
 
   for c in gears.table.iterate(clients, function(c) return awful.rules.match(c, filter) end) do
@@ -238,6 +252,7 @@ volume.init()
 battery.init()
 net_widget.init()
 playback.init()
+lockscreen.init()
 
 -- create new playback widgets for each screen so that mouse feedback isn't shown in every wibar
 function playback.create_widget()
@@ -395,15 +410,46 @@ modalawesome.sequence:connect_signal("widget::redraw_needed", function()
 end)
 
 screen.connect_signal("request::desktop_decoration", function(s)
-  -- Taglist
-  local ultrawide, highres = s.geometry.width / s.geometry.height > 2, s.geometry.height >= 1440
-  for index, tag in ipairs(tags) do
-    awful.tag.add(tag, {
-      layout   = awful.layout.layouts[ultrawide and 1 or 2],
-      gap      = highres and beautiful.useless_gap or 0,
-      screen   = s,
-      selected = index == 1,
-    })
+  local output_name = s.output and s.output.name
+  local restore = output_name and awful.permissions.saved_tags[output_name]
+  if restore then
+    awful.permissions.saved_tags[output_name] = nil
+    -- Pass 1: recreate tags and build per-client tag lists
+    local client_tags = {}
+    for _, td in ipairs(restore) do
+      local t = awful.tag.add(td.name, {
+        screen = s,
+        layout = td.layout,
+        master_width_factor = td.master_width_factor,
+        master_count = td.master_count,
+        gap = td.gap,
+        selected = td.selected,
+      })
+      for _, c in ipairs(td.clients) do
+        if c.valid then
+          if not client_tags[c] then
+            client_tags[c] = {}
+          end
+          table.insert(client_tags[c], t)
+        end
+      end
+    end
+    -- Pass 2: move clients and assign full tag lists
+    for c, tags in pairs(client_tags) do
+      c:move_to_screen(s)
+      c:tags(tags)
+    end
+  else
+    -- Taglist
+    local ultrawide, highres = s.geometry.width / s.geometry.height > 2, s.geometry.height >= 1440
+    for index, tag in ipairs(tags) do
+      awful.tag.add(tag, {
+        layout   = awful.layout.layouts[ultrawide and 1 or 2],
+        gap      = highres and beautiful.useless_gap or 0,
+        screen   = s,
+        selected = index == 1,
+      })
+    end
   end
 
   -- Create an imagebox widget which will contain an icon indicating which layout we're using.
@@ -556,14 +602,23 @@ local modes = require("modalawesome.modes")
 
 local keybindings = {
   -- Media keys
-  {{}, "XF86AudioMute", volume.toggle},
   {{}, "XF86AudioLowerVolume", volume.lower},
   {{}, "XF86AudioRaiseVolume", volume.raise},
-  {{}, "XF86MonBrightnessDown", function() awful.spawn("xbacklight -perceived -dec 10", false) end},
-  {{}, "XF86MonBrightnessUp", function() awful.spawn("xbacklight -perceived -inc 10", false) end},
-  {{}, "XF86Display", xrandr.show},
+  {{}, "XF86AudioMute", volume.toggle},
   {{}, "XF86AudioMicMute", function() awful.spawn("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle", false) end},
+  {{}, "XF86MonBrightnessDown", function() awful.spawn("brightnessctl -e set 10%-", false) end},
+  {{}, "XF86MonBrightnessUp", function() awful.spawn("brightnessctl -e set +10%", false) end},
   {{}, "XF86Tools", function() awful.spawn(editor_cmd .. awesome.conffile) end},
+  {{}, "XF86Display", function()
+      local s = awful.screen.focused()
+      s.scale = s.scale % 2 + 1/3
+      s._cid = naughty.notify({
+        title = "Fractional Scaling",
+        text = ("Now using a scale factor of <b>%.3f</b>."):format(s.scale),
+        icon = menubar.utils.lookup_icon("display"),
+        replaces_id = s._cid,
+      }).id
+  end},
 }
 
 modes.tag = gears.table.join(
@@ -620,37 +675,37 @@ modes.launcher = gears.table.join(
     {
       description = "lower volume",
       pattern = { "F1" },
-      handler = volume.lower
+      handler = keybindings[2]
     },
     {
       description = "raise volume",
       pattern = { "F2" },
-      handler = volume.raise
+      handler = keybindings[2]
     },
     {
       description = "toggle volume",
       pattern = { "F3" },
-      handler = volume.toggle
+      handler = keybindings[3]
     },
     {
       description = "toggle mic",
       pattern = { "F4" },
-      handler = function() awful.spawn("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle") end
+      handler = keybindings[4]
     },
     {
       description = "decrease backlight",
       pattern = { "F5" },
-      handler = function() awful.spawn("xbacklight -dec 10") end
+      handler = keybindings[5]
     },
     {
       description = "increase backlight",
       pattern = { "F6" },
-      handler = function() awful.spawn("xbacklight -inc 10") end
+      handler = keybindings[6]
     },
     {
       description = "switch monitor setup",
       pattern = { "F7" },
-      handler = xrandr.show
+      handler = keybindings[7]
     },
     {
       description = "launch ranger",
@@ -717,7 +772,7 @@ modes.launcher = gears.table.join(
     {
       description = "lock screen",
       pattern = {'l'},
-      handler = function() awful.spawn("physlock -s", false) end
+      handler = function() awesome.lock() end
     },
     {
       description = "launch scratch terminal",
@@ -823,11 +878,11 @@ modes.launcher = gears.table.join(
           end
         end
 
-        modes.launcher.cid = naughty.notify({
+        modes.launcher._cid = naughty.notify({
           title = "Switching GPU",
           text = ("Now using <b>%s</b> GPU."):format(uses_dedicated and "integrated" or "dedicated"),
           icon = menubar.utils.lookup_icon("GPU_Viewer"),
-          replaces_id = modes.launcher.cid,
+          replaces_id = modes.launcher._cid,
         }).id
       end
     },
@@ -875,7 +930,10 @@ modalawesome.init{
 -- {{{ Rules & Filters
 -------------------------------------------------------------------------------
 
--- Rules to apply to new clients (through the "manage" signal).
+-- keyboard layout
+awful.input.xkb_layout = "eu"
+
+-- Rules to apply to new clients .
 ruled.client.connect_signal("request::rules", function()
   -- All clients will match this rule.
   ruled.client.append_rule{
@@ -915,7 +973,7 @@ ruled.client.connect_signal("request::rules", function()
 
   -- Make dragon sticky for easy drag and drop in ranger
   ruled.client.append_rule{
-    rule = { class = "Dragon-drop" },
+    rule = { class = "dragon-drop" },
     properties = { ontop = true, sticky = true }
   }
 
@@ -954,7 +1012,7 @@ ruled.client.connect_signal("request::rules", function()
     callback = function(c)
       -- quickfix for screen blanking inhibition (https://github.com/qutebrowser/qutebrowser/issues/5504)
       c:connect_signal("property::fullscreen", function()
-        awful.spawn(c.fullscreen and "xset -dpms s off" or "xset +dpms s on", false)
+        awesome.idle_inhibit = c.fullscreen
       end)
       -- quickfix for immediately unset urgency hint (https://github.com/qutebrowser/qutebrowser/issues/2603)
       c:connect_signal("request::urgent", function()
@@ -965,11 +1023,19 @@ ruled.client.connect_signal("request::rules", function()
     end
   }
 
-  -- place conky in background on primary screen
+  -- yomichad qutebrowser plugin draws a border under wayland which we don't want to see
   ruled.client.append_rule{
-    rule = { class = "conky" },
-    properties = { focusable = false, screen = function() return screen.primary end,
-      placement = awful.placement.restore, new_tag = { hide = true, volatile = true }},
+    rule = { class = "yomichad"},
+    properties = { maximized = true }
+  }
+
+  -- conky uses the native Wayland (wlr-layer-shell) backend, so it arrives as a
+  -- layer_surface, not a client -- hence a ruled.client rule never matched it.
+  -- Position/anchor/layer are client-driven (read-only here), so placement lives
+  -- in conky's own config; this rule just keeps it out of keyboard focus and
+  -- re-triggers conky's placement when the screen layout changes.
+  ruled.layer_surface.append_rule{
+    rule = { namespace = "conky_namespace" },
     callback = function()
       if not awful.rules.conky_signals_connected then
         local function conky_restart()
@@ -978,6 +1044,7 @@ ruled.client.connect_signal("request::rules", function()
 
         -- restart conky when a screen is removed or its geometry changes, or when awesome restarts
         screen.connect_signal("property::geometry", conky_restart)
+        screen.connect_signal("property::scale", conky_restart)
         screen.connect_signal("removed", conky_restart)
         awesome.connect_signal("exit", conky_restart)
 
@@ -1030,6 +1097,23 @@ awful.permissions.add_activate_filter(function(c)
     return false
   end
 end, "ewmh")
+
+-- dim displays after 10 minutes
+awesome.set_idle_timeout("dim", 600, function()
+  awesome.dpms_off()
+end)
+
+-- lock after 60 minutes
+awesome.set_idle_timeout("lock", 3600, function()
+  awesome.lock()
+end)
+
+-- lock on suspend
+awesome.connect_signal("logind::prepare_sleep", function(going_to_sleep)
+  if going_to_sleep then
+    awesome.lock()
+  end
+end)
 
 -- }}}
 -------------------------------------------------------------------------------
@@ -1140,9 +1224,17 @@ end)
 
 -- global titlebar
 -------------------------------------------------------------------------------
+local function get_title(c)
+  local class = c.class or "client"
+  if gears.string.startswith(class, "org.") then
+    return select(-1, unpack(gears.string.split(class, ".")))
+  end
+  return gears.string.split(class, ".")[1]
+end
+
 local function title_create(c)
   return wibox.widget {
-    markup = "<b>" .. (c.class or "client") .. "</b>",
+    markup = "<b>" .. get_title(c) .. "</b>",
     align = "center",
     widget = wibox.widget.textbox,
   }
@@ -1152,13 +1244,15 @@ local function title_insert(c)
   if not c.title then
     c.title = title_create(c)
   end
-  c.screen.title_container.widget = c.title
-  c.title_container = c.screen.title_container
+  if c.screen.title_container then
+    c.screen.title_container.widget = c.title
+    c.title_container = c.screen.title_container
+  end
 end
 
 local function title_update(c)
   if c.title then
-    c.title:set_markup("<b>" .. (c.class or "client") .. "</b>")
+    c.title:set_markup("<b>" .. get_title(c) .. "</b>")
   end
 end
 
@@ -1190,8 +1284,10 @@ local function buttons_insert(c)
   if not c.buttonsbox then
     c.buttonsbox = buttons_create(c)
   end
-  c.screen.buttonsbox_container.widget = c.buttonsbox
-  c.container = c.screen.buttonsbox_container
+  if c.screen.buttonsbox_container then
+    c.screen.buttonsbox_container.widget = c.buttonsbox
+    c.container = c.screen.buttonsbox_container
+  end
 end
 
 local function buttons_remove(c)

@@ -18,7 +18,7 @@ end
 
 local scaling = {
   format = "<%s>",
-  resolution = tonumber(read("xrandr"):match("primary %d+x(%d+)")) or 1080,
+  resolution = tonumber(read("somewm-client screen list"):match("%d+x(%d+)")) or 1080,
 }
 
 function scaling:autoscale()
@@ -32,7 +32,7 @@ function scaling:autoscale()
 
   for id, value in pairs(conky.sizes[fallback]) do
     local scaled = (self.resolution * value) / fallback
-    autosizes[id] = math.floor(scaled + 0.5)
+    autosizes[id] = math.type(value) == "float" and scaled or math.floor(scaled + 0.5)
   end
 
   return autosizes
