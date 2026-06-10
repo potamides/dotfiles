@@ -569,7 +569,7 @@ local keybindings = {
 modes.tag = gears.table.join(
   {
     {
-      description = "show all clients on screen",
+      description = "show all clients on all screens",
       pattern = {'s', 's'},
       handler = function() clientmenu{focusable = true} end
     },
