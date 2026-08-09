@@ -1023,10 +1023,11 @@ ruled.client.connect_signal("request::rules", function()
     end
   }
 
-  -- yomichad qutebrowser plugin draws a border under wayland which we don't want to see
+  -- make yomichad under wayland make behave like a popup under X11
   ruled.client.append_rule{
-    rule = { class = "yomichad"},
-    properties = { maximized = true }
+    rule = {class = "yomichad"},
+    properties = {placement = awful.placement.centered},
+    callback = function(c) awful.titlebar.hide(c, "bottom") end
   }
 
   -- conky uses the native Wayland (wlr-layer-shell) backend, so it arrives as a
