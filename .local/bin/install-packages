@@ -37,7 +37,7 @@ AUR=(
   absolutely-proprietary # Used by: conky
   pandoc-bin # Used by: aerc
   bash-complete-alias # Used by: bash
-  qt5-styleplugins # Used by: theme
+  qt5-styleplugins qt6gtk2 # Used by: theme
   dragon-drop # Used by: ranger
   ltex-ls-plus-bin # Used by: neovim
 )
