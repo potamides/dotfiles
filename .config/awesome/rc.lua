@@ -1014,12 +1014,6 @@ ruled.client.connect_signal("request::rules", function()
       c:connect_signal("property::fullscreen", function()
         awesome.idle_inhibit = c.fullscreen
       end)
-      -- quickfix for immediately unset urgency hint (https://github.com/qutebrowser/qutebrowser/issues/2603)
-      c:connect_signal("request::urgent", function()
-        gears.timer.delayed_call(function(urgent)
-          awful.ewmh.urgent(c, urgent)
-        end, c.urgent)
-      end)
     end
   }
 
