@@ -58,6 +58,20 @@ fi
 # -----------------------------------------------------------------------------
 
 if [[ -z $DISPLAY && -n $(type -p somewm) && $(tty) = /dev/tty1 ]]; then
+  for card in /sys/class/drm/card?; do
+    if [[ -e $card/device/removable ]]; then
+      egpu=/dev/dri/${card##*/}
+    else
+      rest="$rest${rest:+:}/dev/dri/${card##*/}"
+    fi
+  done
+  if [[ -v egpu ]]; then
+    # prompt if eGPU should be used as video device when available
+    read -rp "Force eGPU as primary card? [y/N] " -st 3 -n 1 reply
+    if [[ $reply = [yY]* ]]; then
+      export WLR_DRM_DEVICES="$egpu${rest:+:$rest}"
+    fi
+  fi
   exec somewm-session
 elif [[ -r ~/.bashrc ]]; then
   source ~/.bashrc
