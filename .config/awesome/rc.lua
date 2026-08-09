@@ -675,37 +675,37 @@ modes.launcher = gears.table.join(
     {
       description = "lower volume",
       pattern = { "F1" },
-      handler = keybindings[2]
+      handler = keybindings[2][3]
     },
     {
       description = "raise volume",
       pattern = { "F2" },
-      handler = keybindings[2]
+      handler = keybindings[2][3]
     },
     {
       description = "toggle volume",
       pattern = { "F3" },
-      handler = keybindings[3]
+      handler = keybindings[3][3]
     },
     {
       description = "toggle mic",
       pattern = { "F4" },
-      handler = keybindings[4]
+      handler = keybindings[4][3]
     },
     {
       description = "decrease backlight",
       pattern = { "F5" },
-      handler = keybindings[5]
+      handler = keybindings[5][3]
     },
     {
       description = "increase backlight",
       pattern = { "F6" },
-      handler = keybindings[6]
+      handler = keybindings[6][3]
     },
     {
       description = "switch monitor setup",
       pattern = { "F7" },
-      handler = keybindings[7]
+      handler = keybindings[7][3]
     },
     {
       description = "launch ranger",
