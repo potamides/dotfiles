@@ -643,7 +643,7 @@ modes.tag = gears.table.join(
         awful.tag.viewnone(awful.screen.focused())
         mode.grabber:stop()
 
-        grabber = awful.keygrabber {
+        grabber = awful.keygrabber{
           autostart = true,
           keypressed_callback = function()
             awful.tag.viewmore(tags_)
@@ -773,6 +773,21 @@ modes.launcher = gears.table.join(
       description = "lock screen",
       pattern = {'l'},
       handler = function() awesome.lock() end
+    },
+    {
+      description = "turn displays off",
+      pattern = { "o" },
+      handler = function(mode)
+        mode.grabber:stop()
+        awful.keygrabber{
+          autostart = true,
+          keyreleased_callback = function(self)
+            self:stop()
+            mode.grabber:start()
+            awesome.dpms_off()
+          end
+        }
+      end
     },
     {
       description = "launch scratch terminal",
