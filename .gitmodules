@@ -1,8 +1,8 @@
 [submodule "config/awesome/freedesktop"]
-	path = .config/awesome/freedesktop
+	path = .config/somewm/freedesktop
 	url = https://github.com/lcpz/awesome-freedesktop
 [submodule "config/awesome/modalawesome"]
-	path = .config/awesome/modalawesome
+	path = .config/somewm/modalawesome
 	url = https://github.com/potamides/modalawesome
 [submodule "config/ranger/plugins/ranger_devicons"]
 	path = .config/ranger/plugins/ranger_devicons
