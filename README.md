@@ -90,7 +90,7 @@ developed a more individual workflow, I give additional instructions below.
 | | Name | Files & Directories | Links |
 |-| ---- | ------- | ----- |
 | **Shell**                | bash        | [.config/readline](.config/readline), [.bashrc](.bashrc), [.bash\_profile](.bash_profile) | [Repository](https://git.savannah.gnu.org/cgit/bash.git), [Homepage](https://www.gnu.org/software/bash) |
-| **Window Manager**       | SomeWM      | [.config/somewm](.config/somewm), [.xinitrc](.xinitrc) | [Repository](https://github.com/trip-zip/somewm), [Homepage](https://somewm.org) |
+| **Window Manager**       | SomeWM      | [.config/somewm](.config/somewm), [.winitrc](.winitrc) | [Repository](https://github.com/trip-zip/somewm), [Homepage](https://somewm.org) |
 | **Editor**               | neovim      | [.config/nvim](.config/nvim) | [Repository](https://github.com/neovim/neovim), [Homepage](https://neovim.io) |
 | **Terminal**             | alacritty   | [.config/alacritty](.config/alacritty) | [Repository](https://github.com/alacritty/alacritty), [Homepage](https://alacritty.org) |
 | **Terminal Multiplexer** | tmux        | [.config/tmux](.config/tmux) | [Repository](https://github.com/tmux/tmux), [Homepage](https://tmux.github.io) |
