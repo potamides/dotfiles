@@ -91,7 +91,7 @@ theme.taglist_bg_volatile = theme.lightpurple
 theme.taglist_bg_empty    = theme.bg1
 theme.taglist_bg_hover    = theme.bg2
 -- inject line_height into font_desc to shrink logical extents for proper centering in the wibar
-theme.taglist_font        = "monospace heavy 14' line_height='0.75"
+theme.taglist_font        = "monospace heavy 14' line_height='0.5"
 
 -- Menu
 theme.menu_height       = dpi(16)
