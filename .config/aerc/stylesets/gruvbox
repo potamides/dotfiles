@@ -91,10 +91,12 @@ diff_chunk.fg = #82a396
 diff_chunk_func.fg = #8ec07c
 diff_add.fg = #afb226
 diff_del.fg = #fb4934
+diff_whitespace.bg = #722529
 quote_1.fg = #8ec07c
 quote_2.fg = #d3869b
 quote_3.fg = #fabd2f
 quote_4.fg = #afb226
 quote_x.fg = #fb4934
+code.fg = #afb226
 
 # vim: ft=dosini
