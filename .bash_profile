@@ -57,7 +57,7 @@ fi
 ## Start session
 # -----------------------------------------------------------------------------
 
-if [[ -z $DISPLAY && -n $(type -p somewm) && $(tty) = /dev/tty1 ]]; then
+if [[ -z $WAYLAND_DISPLAY && -n $(type -p somewm) && $(tty) = */tty1 ]]; then
   for card in /sys/class/drm/card?; do
     if [[ -e $card/device/removable ]]; then
       egpu=/dev/dri/${card##*/}
