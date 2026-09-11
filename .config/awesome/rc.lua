@@ -1036,7 +1036,10 @@ ruled.client.connect_signal("request::rules", function()
   ruled.client.append_rule{
     rule = {class = "yomichad"},
     properties = {placement = awful.placement.centered},
-    callback = function(c) awful.titlebar.hide(c, "bottom") end
+    callback = function(c)
+      awful.titlebar.hide(c, "bottom")
+      c:connect_signal("unfocus", function() c:kill() end)
+    end
   }
 
   -- conky uses the native Wayland (wlr-layer-shell) backend, so it arrives as a
