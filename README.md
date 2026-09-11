@@ -90,7 +90,7 @@ developed a more individual workflow, I give additional instructions below.
 | | Name | Files & Directories | Links |
 |-| ---- | ------- | ----- |
 | **Shell**                | bash        | [.config/readline](.config/readline), [.bashrc](.bashrc), [.bash\_profile](.bash_profile) | [Repository](https://git.savannah.gnu.org/cgit/bash.git), [Homepage](https://www.gnu.org/software/bash) |
-| **Window Manager**       | awesome     | [.config/awesome](.config/awesome), [.xinitrc](.xinitrc) | [Repository](https://github.com/awesomeWM/awesome), [Homepage](https://awesomewm.org) |
+| **Window Manager**       | SomeWM      | [.config/somewm](.config/somewm), [.xinitrc](.xinitrc) | [Repository](https://github.com/trip-zip/somewm), [Homepage](https://somewm.org) |
 | **Editor**               | neovim      | [.config/nvim](.config/nvim) | [Repository](https://github.com/neovim/neovim), [Homepage](https://neovim.io) |
 | **Terminal**             | alacritty   | [.config/alacritty](.config/alacritty) | [Repository](https://github.com/alacritty/alacritty), [Homepage](https://alacritty.org) |
 | **Terminal Multiplexer** | tmux        | [.config/tmux](.config/tmux) | [Repository](https://github.com/tmux/tmux), [Homepage](https://tmux.github.io) |
@@ -108,13 +108,13 @@ Apart from the applications mentioned in the table, this repository also
 contains some additional [scripts](.local/bin) to automate or facilitate
 various tasks. All scripts contain a header explaining how to use them.
 
-### Awesome
+### SomeWM
 Instead of the standard
 [awful.key](https://awesomewm.org/doc/api/libraries/awful.key.html)
 keybindings, my awesome configuration uses
 [modalawesome](https://github.com/potamides/modalawesome) to create vi-like
 keybindings with motions, counts and multiple modes. To understand how to
-control my awesome configuration, I recommend to check it out beforehand.
+control my SomeWM configuration, I recommend to check it out beforehand.
 
 Additionally, if an [mpd](https://www.musicpd.org) server is running on
 `$MPD_HOST:$MPD_PORT`, song information is displayed in the status bar. Songs
@@ -125,6 +125,14 @@ user service](.config/systemd/user/mpd-tunnel.service):
 ```sh
 systemctl --user enable --now mpd-tunnel
 ```
+
+Since I used to use the [awesome window manager](https://awesomewm.org) in the
+past, I am still accustomed to
+[X11](https://en.wikipedia.org/wiki/X_Window_System) and miss having a
+dedicated [.xinitrc](https://wiki.archlinux.org/title/Xinit#xinitrc) to launch
+programs with the window manager. To simplify my transition to
+[Wayland](https://wayland.freedesktop.org), I configured SomeWM to launch
+.winitrc instead.
 
 ### Conky
 My conky configuration merges with my background image, so the position and
@@ -170,10 +178,10 @@ its config files, e.g., to set the colorscheme to something
 configured account names and looks up their credentials using the command line
 tool distributed with the [KeePassXC](https://keepassxc.org) password manager.
 The location of the password database and the keyfile can be controlled with
-the `KEEPASSXC_DATABASE` and `KEEPASSXC_KEYFILE` environment variables. This is
-more powerful than aerc's built-in password lookup, as it supports looking up
-arbitrary information, such as the email addresses themselves which I want to
-keep out of version control to protect myself from spambots.
+the `$KEEPASSXC_DATABASE` and `$KEEPASSXC_KEYFILE` environment variables. This
+is more powerful than aerc's built-in password lookup, as it supports looking
+up arbitrary information, such as the email addresses themselves which I want
+to keep out of version control to protect myself from spambots.
 
 My aerc config also contains a custom
 [addressbook](.config/aerc/filters/addressbook.py) script that automatically
@@ -202,13 +210,13 @@ information managed with KeePassXC. When this script is loaded for the first
 time it prompts the user for the KeePassXC password and then loads the config
 file. On subsequent launches of weechat this process can be manually invoked
 with the command `/confload <passphrase>`. Again you can use the
-`KEEPASSXC_DATABASE` and `KEEPASSXC_KEYFILE` environment variables for the
+`$KEEPASSXC_DATABASE` and `$KEEPASSXC_KEYFILE` environment variables for the
 locations of KeePassXC files.
 
 ### Ptpython
 I configured ptpython to embed itself into the default Python REPL. That way,
 it can be started simply by executing the standard Python binary. This is
-realized through the environment variable `PYTHONSTARTUP`, which points to a
+realized through the environment variable `$PYTHONSTARTUP`, which points to a
 setup [script](.config/python/config.py) that is executed when Python is
 launched in interactive mode.
 
