@@ -4,7 +4,7 @@
 #           Wayland replacement for .xinitrc. Started with SomeWM.            #
 ###############################################################################
 
-conky --daemonize
+while ! conky; do sleep 1; done &
 fcitx5 -d
 udiskie &
 gammastep &
