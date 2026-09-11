@@ -64,6 +64,7 @@ function load_credentials(){
       return
     fi
 
+    entry=${entry//[^[:alnum:]_]/}
     export ${entry@U}_USER=${secrets[0]}
     export ${entry@U}_MAIL=${secrets[1]}
     export ${entry@U}_PASS="$(rawurlencode ${secrets[2]})"
