@@ -1,0 +1,1 @@
+/usr/share/doc/pi/examples/extensions/subagent/prompts/scout-and-plan.md

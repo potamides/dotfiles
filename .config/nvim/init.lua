@@ -307,19 +307,11 @@ end
 
 map("n", "<leader>il", toggle_indentline, opts)
 
--- integrate agent through external cli (cf. lua/agent.lua)
+-- integrate agents through external cli (cf. lua/agent.lua)
 local agent = require("agent")
-local prompts = {
-  ai =  "You are a helpful assistant.",
-  gr = "Assist with writing by improving grammar, clarity, structure, and style based on user instructions.",
-  tr = "Assist with translation between languages. Default to English unless specified.",
-}
 
-map("n", "<leader>cc", function() agent:launch(vim.lsp.buf.list_workspace_folders()[1]) end, opts)
-for mapping, prompt in pairs(prompts) do
-  local expert = agent:specialize{prompt = prompt, model = "opus", isolate = true}
-    map("n", "<leader>" .. mapping, function() expert:launch() end, opts)
-end
+map("n", "<leader>pi", function() agent:launch("pi-safe", vim.lsp.buf.list_workspace_folders()[1]) end, opts)
+map("n", "<leader>cc", function() agent:launch("claude", vim.lsp.buf.list_workspace_folders()[1]) end, opts)
 
 map({"n", "v"}, "<leader>ts", agent.send, {expr = true, unpack(opts)})
 map("n", "<leader>tss", function() return agent.send() .. "_" end, {expr = true, unpack(opts)})

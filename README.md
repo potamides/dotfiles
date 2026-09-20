@@ -249,6 +249,16 @@ below:
   [jamdict](https://pypi.org/project/jamdict) and
   [jamdict-data](https://pypi.org/project/jamdict-data) (for further
   information see [yomichad](https://github.com/potamides/yomichad)).
+* For agentic coding with open-weight models install
+  [llama-cpp](https://archlinux.org/packages/extra/x86_64/llama-cpp), one of
+  its [backends](https://wiki.archlinux.org/title/Llama.cpp#Installation), the
+  [pi](https://aur.archlinux.org/packages/pi) agent, and
+  [bubblewrap](https://archlinux.org/packages/extra/x86_64/bubblewrap) to use
+  the sandboxed [pi-safe](.local/bin/pi-safe) wrapper. Then, enable the
+  following user service:
+  ```sh
+  systemctl --user enable --now llama-server.service
+  ```
 
 [^1]: [Ask HN: What do you use to manage dotfiles?](https://news.ycombinator.com/item?id=11070797)  
   [The best way to store your dotfiles: A bare Git repository](https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo)  

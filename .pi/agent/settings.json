@@ -1,0 +1,17 @@
+{
+  "lastChangelogVersion": "0.86.1",
+  "theme": "gruvbox-dark-medium",
+  "defaultProvider": "llama.cpp",
+  "defaultModel": "gemma4:12B",
+  "quietStartup": true,
+  "packages": [
+    "npm:pi-web-access",
+    "git:https://github.com/hasit/pi-community-themes",
+    "/usr/share/doc/pi/examples/extensions/plan-mode",
+    "/usr/share/doc/pi/examples/extensions/modal-editor.ts",
+    "/usr/share/doc/pi/examples/extensions/tools.ts",
+    "/usr/share/doc/pi/examples/extensions/inline-bash.ts",
+    "/usr/share/doc/pi/examples/extensions/permission-gate.ts",
+    "/usr/share/doc/pi/examples/extensions/questionnaire.ts"
+  ]
+}

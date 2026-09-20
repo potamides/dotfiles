@@ -13,13 +13,13 @@ local term = {
   },
   vertical = {
     termwin = -1,
-    size = 80,
+    -- size = 80,
     split = "vsplit",
     wincmd = "L"
   },
   opts = {
     winfixheight = true,
-    winfixwidth = true
+    -- winfixwidth = true
   },
   _M = {}
 }

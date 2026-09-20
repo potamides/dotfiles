@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+bwrap \
+  --unshare-all \
+  --share-net \
+  --die-with-parent \
+  --ro-bind / / \
+  --dev /dev \
+  --proc /proc \
+  --tmpfs /tmp \
+  --bind "$HOME/.pi" "$HOME/.pi" \
+  --bind "$PWD" "$PWD" \
+  --chdir "$PWD" \
+  -- pi "$@"
