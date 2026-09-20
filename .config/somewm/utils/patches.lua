@@ -1,6 +1,4 @@
 local awful = require("awful")
-local beautiful = require("beautiful")
-local timer = require("gears.timer")
 
 local patches = {fix = {}}
 
