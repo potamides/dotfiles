@@ -666,6 +666,13 @@ modes.tag = gears.table.join(
         end
       end
     },
+    {
+      description = "set focused screen as primary",
+      pattern = {'o'},
+      handler = function()
+        screen.primary = awful.screen.focused()
+      end
+    },
   },
   modes.tag
 )
