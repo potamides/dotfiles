@@ -17,9 +17,9 @@ export PATH="$HOME/.local/bin:$HOME/.luarocks/bin:$PATH"
 export SUDO_ASKPASS="/usr/lib/git-core/git-gui--askpass"
 export SSH_ASKPASS="$SUDO_ASKPASS"
 
-# configure qt apps for wayland and native gtk style (through qt5-styleplugins)
+# configure qt apps for wayland and native gtk style
 export QT_QPA_PLATFORM="wayland;xcb"
-export QT_QPA_PLATFORMTHEME="gtk2"
+export QT_QPA_PLATFORMTHEME="gtk3"
 export DESKTOP_SESSION="gnome"
 
 # integrate Fcitx input method framework
