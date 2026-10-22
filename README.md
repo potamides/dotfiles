@@ -119,20 +119,22 @@ control my SomeWM configuration, I recommend to check it out beforehand.
 Additionally, if an [mpd](https://www.musicpd.org) server is running on
 `$MPD_HOST:$MPD_PORT`, song information is displayed in the status bar. Songs
 are also played back via [mpv](https://mpv.io) by listening on
-`$MPD_HOST:$MPD_STREAM_PORT`. In my case, all my audio files are located on a
-server and to connect to its mpd instance I use an ssh tunnel via a [systemd
-user service](.config/systemd/user/mpd-tunnel.service):
+`$MPD_HOST:$MPD_STREAM_PORT`. In my case, my audio files are located on a
+remote server where I connect via WireGuard, but I've kept the SSH tunnel
+configuration (via a [systemd user
+service](.config/systemd/user/mpd-tunnel.service)) I used previously for easy
+testing.
 ```sh
 systemctl --user enable --now mpd-tunnel
 ```
 
-Since I used to use the [awesome window manager](https://awesomewm.org) in the
-past, I am still accustomed to
+Since the [awesome window manager](https://awesomewm.org) was my daily driver
+for a long time, I am still accustomed to how things worked under
 [X11](https://en.wikipedia.org/wiki/X_Window_System) and miss having a
 dedicated [.xinitrc](https://wiki.archlinux.org/title/Xinit#xinitrc) to launch
-programs with the window manager. To simplify my transition to
-[Wayland](https://wayland.freedesktop.org), I configured SomeWM to launch
-.winitrc instead.
+programs with the window manager. To simplify my
+[Wayland](https://wayland.freedesktop.org) journey, I therefore configured
+SomeWM to launch [.winitrc](.winitrc) instead.
 
 ### Conky
 My conky configuration merges with my background image, so the position and
