@@ -959,7 +959,6 @@ awful.input.xkb_layout = "eu"
 ruled.client.connect_signal("request::rules", function()
   -- All clients will match this rule.
   ruled.client.append_rule{
-    id = "global",
     rule = { },
     properties = {
       border_color = beautiful.border_normal,
@@ -973,7 +972,6 @@ ruled.client.connect_signal("request::rules", function()
 
   -- Browser & keepassxc always on tag 1
   ruled.client.append_rule{
-    id = "tag1",
     rule_any = { class = { browser, "KeePassXC" }},
     except_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }},
     properties = { tag = tags[1] }
@@ -981,14 +979,12 @@ ruled.client.connect_signal("request::rules", function()
 
   -- Spawn keepassxc prompts on tags were they were called (which they don't do by default)
   ruled.client.append_rule{
-    id = "keepassxc-prompts",
     rule_any = { name = { "Unlock Database - KeePassXC", "Auto-Type - KeePassXC" }},
     properties = { tag = function() return awful.screen.focused().selected_tag end }
   }
 
   -- dirty hack to preven Ctrl-q from closing firefox
   ruled.client.append_rule{
-    id = "firefox-exit",
     rule = { class = "firefox" },
     properties = { keys = awful.key({ "Control" }, "q", function() end) }
   }
@@ -1021,6 +1017,18 @@ ruled.client.connect_signal("request::rules", function()
   ruled.client.append_rule{
     rule = { class = "Key-mon" },
     properties = { placement = awful.placement.bottom, sticky = true, floating = true, focusable = false }
+  }
+
+  -- subtitle overlay for any window
+  ruled.client.append_rule{
+    id = "subtitle-overlay",
+    rule = { name = "Penguin Subtitle Player" },
+    properties = {
+      placement = awful.placement.bottom, floating = true, focusable = false, ontop = true, maximized_horizontal = true
+    },
+    callback = function(c)
+      awful.titlebar.hide(c, "bottom")
+    end
   }
 
   -- honor size hints of mpv video player
