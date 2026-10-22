@@ -128,8 +128,16 @@ end
 -------------------------------------------------------------------------------
 local au = require("au") -- small wrapper around lua autocmd api
 
--- disable spell checking inside terminal buffers
+-- jump to last position when opening a file
 local open = au("user_open")
+function open.BufReadPost()
+  local last_cursor_pos, last_line = vim.fn.line([['"]]), vim.fn.line("$")
+  if last_cursor_pos > 1 and last_cursor_pos <= last_line then
+    vim.fn.cursor(last_cursor_pos, 1)
+  end
+end
+
+-- disable spell checking inside terminal buffers
 function open.TermOpen()
   vim.opt_local.spelllang = ""
 end
