@@ -32,6 +32,7 @@ export WEECHAT_HOME="$HOME/.config/weechat"
 export GTK2_RC_FILES="$HOME/.config/gtk-2.0/gtkrc"
 export PYTHONSTARTUP="$HOME/.config/python/config.py"
 export INPUTRC="$HOME/.config/readline/inputrc"
+export PI_CODING_AGENT_DIR="$HOME/.config/pi"
 
 # custom fzf color configuration and keybindings
 export FZF_DEFAULT_OPTS="--color 16,fg:15,bg:0,hl:11,fg+:15,bg+:237,hl+:11 \

@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.86.1",
+  "lastChangelogVersion": "1.0.2",
   "theme": "gruvbox-dark-medium",
   "defaultProvider": "llama.cpp",
   "defaultModel": "gemma4:12B",
