@@ -166,9 +166,9 @@ class SixelImageDisplayer(ImageDisplayer, FileManagerAware):
             try:
                 check_call(
                     [
-                        "convert",
+                        "magick",
                         path + "[0]",
-                        "-geometry",
+                        "-scale",
                         "{0}x{1}>".format(fit_width, fit_height),
                         "-dither",
                         "FloydSteinberg",
