@@ -20,7 +20,6 @@ export SSH_ASKPASS="$SUDO_ASKPASS"
 # configure qt apps for wayland and native gtk style
 export QT_QPA_PLATFORM="wayland;xcb"
 export QT_QPA_PLATFORMTHEME="gtk3"
-export DESKTOP_SESSION="gnome"
 
 # integrate Fcitx input method framework
 export GTK_IM_MODULE="fcitx"
