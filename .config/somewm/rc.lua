@@ -725,7 +725,6 @@ modes.launcher = gears.table.join(
       handler = function(mode, delay, trigger)
         mode.grabber:stop()
         local ss = awful.screenshot{
-          auto_save_delay = delay == '' and 0 or tonumber(delay),
           frame_color     = beautiful.border_marked,
           directory       = ("%s/Pictures/Screenshots/"):format(os.getenv("HOME")),
           interactive     = trigger:match("%u"),
@@ -733,6 +732,8 @@ modes.launcher = gears.table.join(
         }
 
         gears.filesystem.make_directories(ss.directory)
+        -- set after construction to avoid a pairs() ordering race with `directory`
+        ss.auto_save_delay = delay == '' and 0 or tonumber(delay)
 
         if ss.auto_save_delay > 0 then
           local countdown = naughty.notification{
