@@ -338,8 +338,8 @@ vim.pack.add({
   pu.gh("lewis6991/gitsigns.nvim"),
   pu.gh("ibhagwan/fzf-lua"),
   pu.gh("ellisonleao/gruvbox.nvim"),
-  {src = pu.gh("L3MON4D3/LuaSnip"),      data = {build = "make install_jsregexp"}},
-  {src = pu.gh("neovim/nvim-lspconfig"), data = {build = pu.npm("@github/copilot-language-server")}},
+  pu.gh("neovim/nvim-lspconfig"),
+  {src = pu.gh("L3MON4D3/LuaSnip"), data = {build = "make install_jsregexp"}},
   {
     src = pu.gh("nvim-lualine/lualine.nvim"),
     data = {

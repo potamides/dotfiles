@@ -39,7 +39,7 @@ AUR=(
   pandoc-bin # Used by: aerc
   bash-complete-alias # Used by: bash
   dragon-drop # Used by: ranger
-  ltex-ls-plus-bin # Used by: neovim
+  ltex-ls-plus-bin copilot-language-server-bin # Used by: neovim
 )
 
 # PIP=()
