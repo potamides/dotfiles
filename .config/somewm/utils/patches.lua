@@ -1,4 +1,5 @@
 local awful = require("awful")
+local timer = require("gears.timer")
 
 local patches = {fix = {}}
 
@@ -25,8 +26,9 @@ function patches.fix.stuck_lockscreen()
     kb = awful.keygrabber.current_instance
     if kb then kb:stop() end
   end)
+
   awesome.connect_signal("lock::deactivate", function()
-    if kb then kb:start() end
+    if kb then timer.delayed_call(kb.start, kb) end
   end)
 end
 
