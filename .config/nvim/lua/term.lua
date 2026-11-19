@@ -38,7 +38,7 @@ function term:open(args)
   else
     -- if someone stole our window but there is only one window in total create
     -- a new split before taking our old window back
-    if #vim.api.nvim_tabpage_list_wins(0) == 1 and vim.api.nvim_win_get_buf(self.termwin) ~= self.termbuf then
+    if vim.fn.winnr("$") == 1 and vim.api.nvim_win_get_buf(self.termwin) ~= self.termbuf then
       vim.cmd.split()
     end
     -- take our window back, just in case
@@ -46,7 +46,9 @@ function term:open(args)
     -- only resize if there are more then one windows
     if #vim.api.nvim_list_wins() > 1 then
       vim.cmd.wincmd(self.wincmd)
-      vim.cmd.resize{self.size, mods = {vertical = self.sidebar}}
+      if self.size then
+        vim.cmd.resize{self.size, mods = {vertical = self.sidebar}}
+      end
     end
   end
 
