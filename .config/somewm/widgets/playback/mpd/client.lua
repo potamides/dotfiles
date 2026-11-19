@@ -55,69 +55,71 @@ function mpc:_connect()
     address = Gio.NetworkAddress.new(self._host, self._port)
   end
   local client = Gio.SocketClient()
-  local conn, con_err = client:connect(address)
-
-  if not conn then
-    self:_error(con_err)
-    return false
-  end
-
-  local input, output = conn:get_input_stream(), conn:get_output_stream()
-  self._conn, self._output, self._input = conn, output, Gio.DataInputStream.new(input)
-
-  -- Set up the reading loop. This will asynchronously read lines by
-  -- calling itself.
-  local do_read
-  do_read = function()
-    self._input:read_line_async(GLib.PRIORITY_DEFAULT, nil, function(obj, res)
-      local line, err = obj:read_line_finish(res)
-      -- Ugly API. On success we get string, length-of-string
-      -- and on error we get nil, error. Other versions of lgi
-      -- behave differently.
-      if line == nil or tostring(line) == "" then
-        err = "Connection closed"
-      end
-      if type(err) ~= "number" then
-        self._output, self._input = nil, nil
-        self:_error(err)
-      else
-        do_read()
-        line = tostring(line)
-        if line == "OK" or line:match("^ACK ") then
-          local success = line == "OK"
-          local arg
-          if success then
-            arg = self._pending_reply
-          else
-            arg = { line }
-          end
-          local handler = self._reply_handlers[1]
-          table.remove(self._reply_handlers, 1)
-          self._pending_reply = {}
-          handler(success, arg)
-        else
-          local _, _, key, value = string.find(line, "([^:]+):%s(.+)")
-          if key then
-              self._pending_reply[string.lower(key)] = value
-          end
-        end
-      end
-    end)
-  end
-
-  self._input:read_line_async(GLib.PRIORITY_DEFAULT, nil, function(obj, res)
-    -- Read the welcome message
-    obj:read_line_finish(res)
-
-    if self._password and self._password ~= "" then
-      self:_send("password " .. self._password)
+  client:set_timeout(5)
+  client:connect_async(address, nil, function(_, res)
+    local conn, con_err = client:connect_finish(res)
+    if not conn then
+      self:_error(con_err)
+      return
     end
 
-    do_read()
+    local input, output = conn:get_input_stream(), conn:get_output_stream()
+    self._conn, self._output, self._input = conn, output, Gio.DataInputStream.new(input)
 
-    -- To synchronize the state on startup, send the idle commands now. As a
-    -- side effect, this will enable idle state.
-    self:_send_idle_commands(true)
+    -- Set up the reading loop. This will asynchronously read lines by
+    -- calling itself.
+    local do_read
+    do_read = function()
+      self._input:read_line_async(GLib.PRIORITY_DEFAULT, nil, function(obj, res)
+        local line, err = obj:read_line_finish(res)
+        -- Ugly API. On success we get string, length-of-string
+        -- and on error we get nil, error. Other versions of lgi
+        -- behave differently.
+        if line == nil or tostring(line) == "" then
+          err = "Connection closed"
+        end
+        if type(err) ~= "number" then
+          self._output, self._input = nil, nil
+          self:_error(err)
+        else
+          do_read()
+          line = tostring(line)
+          if line == "OK" or line:match("^ACK ") then
+            local success = line == "OK"
+            local arg
+            if success then
+              arg = self._pending_reply
+            else
+              arg = { line }
+            end
+            local handler = self._reply_handlers[1]
+            table.remove(self._reply_handlers, 1)
+            self._pending_reply = {}
+            handler(success, arg)
+          else
+            local _, _, key, value = string.find(line, "([^:]+):%s(.+)")
+            if key then
+                self._pending_reply[string.lower(key)] = value
+            end
+          end
+        end
+      end)
+    end
+
+    self._input:read_line_async(GLib.PRIORITY_DEFAULT, nil, function(obj, res)
+      -- Read the welcome message
+      obj:read_line_finish(res)
+
+      if self._password and self._password ~= "" then
+        self:_send("password " .. self._password)
+      end
+
+      do_read()
+
+      -- To synchronize the state on startup, send the idle commands now. As a
+      -- side effect, this will enable idle state.
+      self:_send_idle_commands(true)
+    end)
   end)
 
   return self
@@ -180,7 +182,7 @@ function mpc:send(...)
   end
   local args = { ... }
   if not self._idle then
-    error("Something is messed up, we should be idle here...")
+    error("Cannot send commands: MPD connection is not ready yet.")
   end
   self:_stop_idle()
   for i = 1, #args, 2 do
