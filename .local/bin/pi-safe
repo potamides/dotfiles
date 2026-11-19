@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+PI_CODING_AGENT_DIR="${PI_CODING_AGENT_DIR:-$HOME/.pi}"
+
 bwrap \
   --unshare-all \
   --share-net \
@@ -8,7 +10,7 @@ bwrap \
   --dev /dev \
   --proc /proc \
   --tmpfs /tmp \
-  --bind "$HOME/.pi" "$HOME/.pi" \
+  --bind "$PI_CODING_AGENT_DIR" "$PI_CODING_AGENT_DIR" \
   --bind "$PWD" "$PWD" \
   --chdir "$PWD" \
   -- pi "$@"
